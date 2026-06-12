@@ -11,7 +11,7 @@ typedef HostsMap = Map<String, String>;
 
 const defaultClashConfig = ClashConfig();
 
-const defaultTun = Tun(enable: true);
+const defaultTun = Tun(enable: false);
 const defaultDns = Dns();
 const defaultGeoXUrl = GeoXUrl();
 
@@ -257,8 +257,80 @@ class Dns with _$Dns {
     @JsonKey(name: "fake-ip-range")
     String fakeIpRange,
     @Default([
+      // 本地域名
       "*.lan",
+      "*.local",
+      "*.localhost",
+      // 腾讯
       "localhost.ptlogin2.qq.com",
+      "+.qq.com",
+      "+.tencent.com",
+      "+.weixin.qq.com",
+      // 阿里
+      "+.taobao.com",
+      "+.tmall.com",
+      "+.alipay.com",
+      "+.alibaba.com",
+      "+.alicdn.com",
+      "+.aliyun.com",
+      // 百度
+      "+.baidu.com",
+      "+.bdstatic.com",
+      "+.baidubce.com",
+      // 网易
+      "+.163.com",
+      "+.126.com",
+      "+.netease.com",
+      // 京东
+      "+.jd.com",
+      "+.360buyimg.com",
+      // 新浪/微博
+      "+.sina.com",
+      "+.sina.com.cn",
+      "+.weibo.com",
+      // 字节跳动/抖音
+      "+.douyin.com",
+      "+.toutiao.com",
+      "+.bytedance.com",
+      "+.pstatp.com",
+      // 美团
+      "+.meituan.com",
+      "+.dianping.com",
+      // 滴滴
+      "+.didichuxing.com",
+      "+.didiglobal.com",
+      // 哔哩哔哩
+      "+.bilibili.com",
+      "+.bilivideo.com",
+      "+.hdslb.com",
+      // 爱奇艺
+      "+.iqiyi.com",
+      // 优酷
+      "+.youku.com",
+      // 中国移动/联通/电信
+      "+.10086.cn",
+      "+.10010.com",
+      "+.189.cn",
+      // 银行
+      "+.icbc.com.cn",
+      "+.ccb.com",
+      "+.abchina.com",
+      "+.boc.cn",
+      "+.cmbchina.com",
+      // 政务
+      "+.gov.cn",
+      // NTP服务
+      "ntp.*.com",
+      "ntp*.*.com",
+      "+.pool.ntp.org",
+      // STUN服务
+      "stun.*.*",
+      "stun.*.*.*",
+      // 其他常见
+      "+.csdn.net",
+      "+.zhihu.com",
+      "+.jianshu.com",
+      "+.gitee.com",
     ])
     @JsonKey(name: "fake-ip-filter")
     List<String> fakeIpFilter,
@@ -505,6 +577,7 @@ class ClashConfig with _$ClashConfig {
     GeodataLoader geodataLoader,
     @Default([]) @JsonKey(name: "proxy-groups") List<ProxyGroup> proxyGroups,
     @Default([]) List<String> rule,
+    @Default([]) @JsonKey(name: "custom-rules") List<String> customRules,
     @JsonKey(name: "global-ua") String? globalUa,
     @Default(ExternalControllerStatus.close)
     @JsonKey(name: "external-controller")

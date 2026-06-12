@@ -6,7 +6,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:fl_clash/xboard/features/online_support/providers/chat_provider.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/xboard/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -167,37 +167,48 @@ class CommonNavigationBar extends ConsumerWidget {
 
   // 为指定的 PageLabel 创建带未读标记的图标
   Widget _buildIconWithBadge(PageLabel label, Widget icon, WidgetRef ref) {
-    // 只有联系客服页面需要显示未读标记
-    if (label == PageLabel.onlineSupport) {
-      final chatState = ref.watch(chatProvider);
-      final unreadCount = chatState.unreadCount;
-
-      return BadgeIcon(
-        icon: icon,
-        count: unreadCount,
-      );
-    }
+    // 客服系统已移除，直接返回原图标
     return icon;
   }
 
   @override
   Widget build(BuildContext context, ref) {
     if (viewMode == ViewMode.mobile) {
-      return NavigationBarTheme(
-        data: _NavigationBarDefaultsM3(context),
-        child: NavigationBar(
-          destinations: navigationItems
-              .map(
-                (e) => NavigationDestination(
-                  icon: _buildIconWithBadge(e.label, e.icon, ref),
-                  label: Intl.message(e.label.name),
-                ),
-              )
-              .toList(),
-          onDestinationSelected: (index) {
-            globalState.appController.toPage(navigationItems[index].label);
-          },
-          selectedIndex: currentIndex,
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+        child: NavigationBarTheme(
+          data: _NavigationBarDefaultsM3(context),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: AppColors.getBackgroundGradient(),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: NavigationBar(
+                destinations: navigationItems
+                    .map(
+                      (e) => NavigationDestination(
+                        icon: _buildIconWithBadge(e.label, e.icon, ref),
+                        label: Intl.message(e.label.name),
+                      ),
+                    )
+                    .toList(),
+                onDestinationSelected: (index) {
+                  globalState.appController
+                      .toPage(navigationItems[index].label);
+                },
+                selectedIndex: currentIndex,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                indicatorColor: Colors.white.withValues(alpha: 0.15),
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              ),
+            ),
+          ),
         ),
       );
     }
@@ -277,16 +288,15 @@ class _NavigationBarDefaultsM3 extends NavigationBarThemeData {
   _NavigationBarDefaultsM3(this.context)
       : super(
           height: 60.0,
-          elevation: 3.0,
+          elevation: 0.0,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         );
 
   final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get backgroundColor => _colors.surfaceContainer;
+  Color? get backgroundColor => Colors.transparent;
 
   @override
   Color? get shadowColor => Colors.transparent;
@@ -300,16 +310,16 @@ class _NavigationBarDefaultsM3 extends NavigationBarThemeData {
       return IconThemeData(
         size: 24.0,
         color: states.contains(WidgetState.disabled)
-            ? _colors.onSurfaceVariant.opacity38
+            ? Colors.white.withValues(alpha: 0.38)
             : states.contains(WidgetState.selected)
-                ? _colors.onSecondaryContainer
-                : _colors.onSurfaceVariant,
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.6),
       );
     });
   }
 
   @override
-  Color? get indicatorColor => _colors.secondaryContainer;
+  Color? get indicatorColor => Colors.white.withValues(alpha: 0.15);
 
   @override
   ShapeBorder? get indicatorShape => const StadiumBorder();
@@ -321,10 +331,10 @@ class _NavigationBarDefaultsM3 extends NavigationBarThemeData {
       return style.apply(
           overflow: TextOverflow.ellipsis,
           color: states.contains(WidgetState.disabled)
-              ? _colors.onSurfaceVariant.opacity38
+              ? Colors.white.withValues(alpha: 0.38)
               : states.contains(WidgetState.selected)
-                  ? _colors.onSurface
-                  : _colors.onSurfaceVariant);
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.6));
     });
   }
 }

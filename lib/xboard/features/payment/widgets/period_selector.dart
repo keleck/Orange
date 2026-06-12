@@ -29,7 +29,7 @@ class PeriodSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             AppLocalizations.of(context).xboardSelectPaymentPeriod,
             style: TextStyle(
@@ -88,6 +88,7 @@ class PeriodSelector extends StatelessWidget {
     final aspectRatio = (3.0 * scaleFactor).clamp(2.5, 3.5);
     
     return GridView.builder(
+      padding: EdgeInsets.zero, // 移除 GridView 的默认 padding
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

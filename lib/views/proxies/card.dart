@@ -120,6 +120,37 @@ class ProxyCard extends StatelessWidget {
     );
   }
 
+  _showContextMenu(BuildContext context, TapDownDetails details) {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        details.globalPosition.dx,
+        details.globalPosition.dy,
+        overlay.size.width - details.globalPosition.dx,
+        overlay.size.height - details.globalPosition.dy,
+      ),
+      items: [
+        PopupMenuItem(
+          onTap: _handleTestCurrentDelay,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.speed, size: 18),
+              const SizedBox(width: 12),
+              Text(appLocalizations.testDelay),
+            ],
+          ),
+        ),
+      ],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final measure = globalState.measure;
@@ -127,66 +158,69 @@ class ProxyCard extends StatelessWidget {
     final proxyNameText = _buildProxyNameText(context);
     return Stack(
       children: [
-        Consumer(
-          builder: (_, ref, child) {
-            final selectedProxyName =
-                ref.watch(getSelectedProxyNameProvider(groupName));
-            return CommonCard(
-              key: key,
-              onPressed: () {
-                _changeProxy(ref);
-              },
-              isSelected: selectedProxyName == proxy.name,
-              child: child!,
-            );
-          },
-          child: Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                proxyNameText,
-                const SizedBox(
-                  height: 8,
-                ),
-                if (type == ProxyCardType.expand) ...[
-                  SizedBox(
-                    height: measure.bodySmallHeight,
-                    child: _ProxyDesc(
-                      proxy: proxy,
-                    ),
-                  ),
+        GestureDetector(
+          onSecondaryTapDown: (details) => _showContextMenu(context, details),
+          child: Consumer(
+            builder: (_, ref, child) {
+              final selectedProxyName =
+                  ref.watch(getSelectedProxyNameProvider(groupName));
+              return CommonCard(
+                key: key,
+                onPressed: () {
+                  _changeProxy(ref);
+                },
+                isSelected: selectedProxyName == proxy.name,
+                child: child!,
+              );
+            },
+            child: Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  proxyNameText,
                   const SizedBox(
-                    height: 6,
+                    height: 8,
                   ),
-                  delayText,
-                ] else
-                  SizedBox(
-                    height: measure.bodySmallHeight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: TooltipText(
-                            text: Text(
-                              proxy.type,
-                              style: context.textTheme.bodySmall?.copyWith(
-                                overflow: TextOverflow.ellipsis,
-                                color: context
-                                    .textTheme.bodySmall?.color?.opacity80,
+                  if (type == ProxyCardType.expand) ...[
+                    SizedBox(
+                      height: measure.bodySmallHeight,
+                      child: _ProxyDesc(
+                        proxy: proxy,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    delayText,
+                  ] else
+                    SizedBox(
+                      height: measure.bodySmallHeight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: TooltipText(
+                              text: Text(
+                                proxy.type,
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  overflow: TextOverflow.ellipsis,
+                                  color: context
+                                      .textTheme.bodySmall?.color?.opacity80,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        delayText,
-                      ],
+                          delayText,
+                        ],
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

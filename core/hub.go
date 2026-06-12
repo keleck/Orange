@@ -5,8 +5,15 @@ import (
 	"core/state"
 	"encoding/json"
 	"fmt"
+	"net"
+	"runtime"
+	"sort"
+	"strconv"
+	"time"
+
 	"github.com/metacubex/mihomo/adapter"
 	"github.com/metacubex/mihomo/adapter/outboundgroup"
+	"github.com/metacubex/mihomo/common/convert"
 	"github.com/metacubex/mihomo/common/observable"
 	"github.com/metacubex/mihomo/common/utils"
 	"github.com/metacubex/mihomo/component/mmdb"
@@ -18,13 +25,8 @@ import (
 	"github.com/metacubex/mihomo/hub/executor"
 	"github.com/metacubex/mihomo/listener"
 	"github.com/metacubex/mihomo/log"
-	"github.com/metacubex/mihomo/tunnel"
 	"github.com/metacubex/mihomo/tunnel/statistic"
-	"net"
-	"runtime"
-	"sort"
-	"strconv"
-	"time"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -91,10 +93,76 @@ func handleValidateConfig(bytes []byte) string {
 	return ""
 }
 
+// handleConvertSubscription 将订阅内容（Base64编码的节点链接列表或YAML）转换为标准Clash YAML格式
+// 如果已经是有效的YAML格式，直接返回原内容
+// 如果是节点链接格式，转换为YAML格式
+func handleConvertSubscription(bytes []byte) string {
+	// 先尝试解析为YAML
+	_, err := config.UnmarshalRawConfig(bytes)
+	if err == nil {
+		// 已经是有效的Clash配置，直接返回
+		return string(bytes)
+	}
+
+	// 尝试使用convert.ConvertsV2Ray转换节点链接
+	proxies, err := convert.ConvertsV2Ray(bytes)
+	if err != nil {
+		return "" // 返回空字符串表示转换失败
+	}
+
+	if len(proxies) == 0 {
+		return "" // 没有解析到任何节点
+	}
+
+	// 生成基础Clash配置
+	yamlConfig := generateClashConfig(proxies)
+	return yamlConfig
+}
+
+// generateClashConfig 根据代理列表生成Clash配置
+func generateClashConfig(proxies []map[string]any) string {
+	// 收集所有代理名称
+	proxyNames := make([]string, 0, len(proxies))
+	for _, proxy := range proxies {
+		if name, ok := proxy["name"].(string); ok {
+			proxyNames = append(proxyNames, name)
+		}
+	}
+
+	// 构建配置结构
+	configMap := map[string]any{
+		"proxies": proxies,
+		"proxy-groups": []map[string]any{
+			{
+				"name":     "自动选择",
+				"type":     "url-test",
+				"proxies":  proxyNames,
+				"url":      "https://www.gstatic.com/generate_204",
+				"interval": 300,
+			},
+			{
+				"name":    "节点选择",
+				"type":    "select",
+				"proxies": append([]string{"自动选择"}, proxyNames...),
+			},
+		},
+		"rules": []string{
+			"MATCH,节点选择",
+		},
+	}
+
+	// 序列化为YAML
+	yamlBytes, err := yaml.Marshal(configMap)
+	if err != nil {
+		return ""
+	}
+	return string(yamlBytes)
+}
+
 func handleGetProxies() map[string]constant.Proxy {
 	runLock.Lock()
 	defer runLock.Unlock()
-	return tunnel.ProxiesWithProviders()
+	return proxiesWithProviders()
 }
 
 func handleChangeProxy(data string, fn func(string string)) {
@@ -109,7 +177,7 @@ func handleChangeProxy(data string, fn func(string string)) {
 		}
 		groupName := *params.GroupName
 		proxyName := *params.ProxyName
-		proxies := tunnel.ProxiesWithProviders()
+		proxies := proxiesWithProviders()
 		group, ok := proxies[groupName]
 		if !ok {
 			fn("Not found group")
@@ -137,7 +205,7 @@ func handleChangeProxy(data string, fn func(string string)) {
 }
 
 func handleGetTraffic() string {
-	up, down := statistic.DefaultManager.Current(state.CurrentState.OnlyStatisticsProxy)
+	up, down := statistic.DefaultManager.NowTraffic(state.CurrentState.OnlyStatisticsProxy)
 	traffic := map[string]int64{
 		"up":   up,
 		"down": down,
@@ -151,7 +219,7 @@ func handleGetTraffic() string {
 }
 
 func handleGetTotalTraffic() string {
-	up, down := statistic.DefaultManager.Total(state.CurrentState.OnlyStatisticsProxy)
+	up, down := statistic.DefaultManager.TotalTraffic(state.CurrentState.OnlyStatisticsProxy)
 	traffic := map[string]int64{
 		"up":   up,
 		"down": down,
@@ -186,7 +254,7 @@ func handleAsyncTestDelay(paramsString string, fn func(string)) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(params.Timeout))
 		defer cancel()
 
-		proxies := tunnel.ProxiesWithProviders()
+		proxies := proxiesWithProviders()
 		proxy := proxies[params.ProxyName]
 
 		delayData := &Delay{

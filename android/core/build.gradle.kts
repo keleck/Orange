@@ -1,12 +1,10 @@
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.argumentsWithVarargAsSingleArray
-
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.follow.clash.core"
+    namespace = "com.follow.DreamCloud.core"
     compileSdk = 35
     ndkVersion = "28.0.13004108"
 

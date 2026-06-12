@@ -2,6 +2,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:yaml/yaml.dart';
 import '../core/config_settings.dart';
 import '../../core/core.dart';
+import 'url_cipher.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('config_file_loader.dart');
@@ -13,19 +14,147 @@ class ConfigFileLoader {
   /// 配置文件路径
   static const String configPath = 'assets/config/xboard.config.yaml';
   
+  /// 加密的远程配置源列表
+  /// 
+  /// 包含多个已加密的远程 URL，使用 XOR + HMAC-SHA256 加密
+  /// 防止在反编译时直接暴露，生产部署时应使用构建时注入的加密密钥
+  /// 格式：(name: 源名称, encryptedUrl: 加密URL, priority: 优先级)
+  static const List<({String name, String encryptedUrl, int priority})> encryptedRemoteSources = [
+    (name: 'redirect', encryptedUrl: 'CeLpWHfIgRtNEc0z+8fR6mB+f3x+NCA/Y3NkOnJ/Y3t2fn4yfnFyD0pHT0FGTQhcY2JhemR+IGJwZTx5dH95N2t/dnNpezFDTkxFTUIITVtnZET4Q7y96fbo7P3OFzaKmBeAZznB4aR32lOlrbP0bPnd', priority: 100),
+    // (name: 'redirect-2', encryptedUrl: 'PrX6v/3cDA85G7BQW5Ole2B+f3x+NCA/ZmVkOm14OjUgcWplLCh9FlJEDUpAUghLZ2RtZWogZWN+fIgDDgWxeAGVRjsOCAora4mtddkUx08dkIn+eqrVdQ7N', priority: 100),
+    // 可以添加更多源：
+    // (name: 'redirect-3', encryptedUrl: '...', priority: 80),
+    // (name: 'redirect-4', encryptedUrl: '...', priority: 70),
+  ];
+  
+  /// 加密密钥（应从环境变量或安全存储读取）
+  /// 
+  /// 使用 `openssl rand -base64 32` 生成新密钥，或使用 UrlCipher.generateEncryptionKey()
+  static String? _encryptionKey;
+  
+  /// 内嵌的远程配置源（敏感 URL 打包到客户端，防止暴露）
+  /// URL 已加密，使用 UrlCipher 在启动时解密
+  static final List<RemoteSourceConfig> _builtInRemoteSources = 
+    encryptedRemoteSources.map((source) => 
+      RemoteSourceConfig(
+        name: source.name,
+        url: source.encryptedUrl,
+        priority: source.priority,
+        isEncrypted: true,
+      )).toList();
+  
+  /// 设置加密密钥
+  /// 
+  /// 在应用启动时调用此方法设置加密密钥
+  /// 建议从环境变量、构建参数或安全存储读取
+  static void setEncryptionKey(String key) {
+    if (UrlCipher.isValidKey(key)) {
+      _encryptionKey = key;
+      _logger.info('加密密钥已设置');
+    } else {
+      _logger.warning('无效的加密密钥格式（应为 32 字节 Base64 编码）');
+    }
+  }
+  
+  /// 对URL进行打码处理（用于日志输出）
+  /// 
+  /// 保留协议、域名和路径开头，隐藏中间敏感部分
+  static String _maskUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final scheme = uri.scheme;
+      final host = uri.host;
+      final path = uri.path;
+      
+      // 如果路径较短，直接显示
+      if (path.length <= 10) {
+        return '$scheme://$host$path';
+      }
+      
+      // 路径较长时，只显示开头和结尾
+      final pathStart = path.substring(0, 5);
+      final pathEnd = path.substring(path.length - 5);
+      final maskedPath = '$pathStart***$pathEnd';
+      
+      return '$scheme://$host$maskedPath';
+    } catch (e) {
+      // 解析失败时返回通用打码
+      return '***URL已打码***';
+    }
+  }
+  
+  /// 对密钥进行打码处理（用于日志输出）
+  /// 
+  /// 只显示开头和结尾字符，隐藏中间敏感部分
+  static String _maskKey(String key) {
+    if (key.length <= 8) {
+      return '***';
+    }
+    
+    final start = key.substring(0, 4);
+    final end = key.substring(key.length - 4);
+    return '$start***$end';
+  }
+
   /// 加载配置文件
   /// 
   /// 从 assets/config/xboard.config.yaml 加载配置
+  /// 如果 YAML 中的远程配置源为空，则使用内嵌的默认源
   static Future<ConfigSettings> loadFromFile() async {
     try {
       final yamlString = await rootBundle.loadString(configPath);
-      final config = _parseYamlString(yamlString);
+      var config = _parseYamlString(yamlString);
+      
+      // 如果配置文件中的远程源为空，使用内嵌的默认源
+      if (config.remoteConfig.sources.isEmpty) {
+        final sources = await _prepareRemoteSources();
+        config = ConfigSettings(
+          currentProvider: config.currentProvider,
+          remoteConfig: RemoteConfigSettings(
+            sources: sources,
+            maxRetries: config.remoteConfig.maxRetries,
+            timeout: config.remoteConfig.timeout,
+            retryDelay: config.remoteConfig.retryDelay,
+          ),
+          subscription: config.subscription,
+          log: config.log,
+        );
+        _logger.info('使用内嵌的远程配置源');
+      }
+      
       _logger.info('从 assets 加载配置: $configPath');
       return config;
     } catch (e) {
       _logger.error('加载配置文件失败', e);
       return const ConfigSettings();
     }
+  }
+  
+  /// 准备远程配置源（处理加密 URL）
+  static Future<List<RemoteSourceConfig>> _prepareRemoteSources() async {
+    final sources = <RemoteSourceConfig>[];
+    
+    for (final source in _builtInRemoteSources) {
+      if (source.isEncrypted && _encryptionKey != null) {
+        try {
+          // 解密 URL
+          final decryptedUrl = UrlCipher.decryptUrl(
+            source.url,
+            encryptionKey: _encryptionKey,
+          );
+
+            sources.add(source.copyWith(url: decryptedUrl, isEncrypted: false));
+            _logger.info('已解密配置源: [36m${source.name}[0m');
+        } catch (e) {
+          _logger.error('解密配置源 ${source.name} 失败: $e');
+          sources.add(source); // 保留原始加密 URL
+        }
+      } else {
+        sources.add(source);
+      }
+    }
+    
+    return sources;
   }
   
   /// 解析 YAML 配置字符串
@@ -96,14 +225,17 @@ class ConfigFileLoader {
   
   /// 解析远程源配置
   static RemoteSourceConfig _parseRemoteSource(Map<String, dynamic> json) {
+    final isEncrypted = json['encrypted'] as bool? ?? false;
     return RemoteSourceConfig(
       name: json['name'] as String? ?? '',
       url: json['url'] as String? ?? '',
+      priority: json['priority'] as int? ?? 50,
       headers: (json['headers'] as Map<String, dynamic>?)?.cast<String, String>(),
       timeout: json['timeout_seconds'] != null 
           ? Duration(seconds: json['timeout_seconds'] as int)
           : null,
       encryptionKey: json['encryption_key'] as String?,
+      isEncrypted: isEncrypted,
     );
   }
   
@@ -243,9 +375,10 @@ extension ConfigFileLoaderHelper on ConfigFileLoader {
   /// 获取证书配置
   static Future<Map<String, dynamic>> getCertificateConfig() async {
     // 硬编码证书配置，不再从配置文件读取
+    // 禁用证书固定，因为测试环境没有证书文件
     return {
       'path': 'assets/cer/client-cert.crt',
-      'enabled': true,
+      'enabled': false,
     };
   }
   

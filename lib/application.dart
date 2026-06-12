@@ -10,6 +10,7 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -242,9 +243,7 @@ class ApplicationState extends ConsumerState<Application> {
       _buildState(
         Consumer(
           builder: (_, ref, child) {
-            // 初始化 WebSocket 自动连接器 - 监听登录状态并自动管理 WebSocket 连接
-            // 这个 Provider 会在登录成功时自动连接,登出时自动断开
-            ref.watch(webSocketAutoConnectorProvider);
+            // 客服系统 WebSocket 自动连接器已移除
 
             final locale =
                 ref.watch(appSettingProvider.select((state) => state.locale));
@@ -272,22 +271,50 @@ class ApplicationState extends ConsumerState<Application> {
               title: appName,
               locale: utils.getLocaleForString(locale),
               supportedLocales: AppLocalizations.delegate.supportedLocales,
-              themeMode: themeProps.themeMode,
+              themeMode: ThemeMode.dark, // 强制使用深色主题
               theme: ThemeData(
                 useMaterial3: true,
                 pageTransitionsTheme: _pageTransitionsTheme,
+                scaffoldBackgroundColor: const Color(0xFF0F0E1D), // 深紫色基调
+                appBarTheme: const AppBarTheme(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  surfaceTintColor: Colors.transparent,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness: Brightness.light,
+                  ),
+                ),
                 colorScheme: _getAppColorScheme(
-                  brightness: Brightness.light,
+                  brightness: Brightness.dark, // 强制深色
                   primaryColor: themeProps.primaryColor,
+                ).copyWith(
+                  surface: const Color(0xFF1A1535), // 深紫色表面
+                  surfaceContainer: const Color(0xFF1E2A47), // 海军蓝容器
                 ),
               ),
               darkTheme: ThemeData(
                 useMaterial3: true,
                 pageTransitionsTheme: _pageTransitionsTheme,
+                scaffoldBackgroundColor: const Color(0xFF0F0E1D), // 深紫色基调
+                appBarTheme: const AppBarTheme(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  surfaceTintColor: Colors.transparent,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness: Brightness.light,
+                  ),
+                ),
                 colorScheme: _getAppColorScheme(
                   brightness: Brightness.dark,
                   primaryColor: themeProps.primaryColor,
-                ).toPureBlack(themeProps.pureBlack),
+                ).copyWith(
+                  surface: const Color(0xFF1A1535), // 深紫色表面
+                  surfaceContainer: const Color(0xFF1E2A47), // 海军蓝容器
+                ),
               ),
             );
           },

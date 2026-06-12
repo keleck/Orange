@@ -21,9 +21,11 @@ import '../../config/utils/config_file_loader.dart';
 /// ```
 class UserAgentConfig {
   // 硬编码的 User-Agent（非域名竞速场景）
-  static const String _subscription = 'FlClash';
-  static const String _subscriptionRacing = 'FlClash/1.0 (XBoard Race Subscription Client)';
-  static const String _attachment = 'FlClash/1.0';
+  // 使用 clash-verge 作为订阅下载的 UA，因为 V2Board 服务器会根据 UA 返回不同格式
+  // FlClash UA 会导致服务器返回空节点列表
+  static const String _subscription = 'clash-verge';
+  static const String _subscriptionRacing = 'clash-verge/1.0 (XBoard Race Subscription Client)';
+  static const String _attachment = 'clash-verge/1.0';
   
   // 缓存从配置文件加载的 UA（域名竞速专用）
   static Map<String, String>? _cachedUserAgents;

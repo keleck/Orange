@@ -5,9 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"os"
+	"sync"
+
 	"github.com/metacubex/mihomo/adapter"
 	"github.com/metacubex/mihomo/adapter/inbound"
-	"github.com/metacubex/mihomo/adapter/outboundgroup"
 	"github.com/metacubex/mihomo/adapter/provider"
 	"github.com/metacubex/mihomo/common/batch"
 	"github.com/metacubex/mihomo/component/dialer"
@@ -22,8 +24,6 @@ import (
 	"github.com/metacubex/mihomo/log"
 	rp "github.com/metacubex/mihomo/rules/provider"
 	"github.com/metacubex/mihomo/tunnel"
-	"os"
-	"sync"
 )
 
 var (
@@ -33,6 +33,20 @@ var (
 	runLock       sync.Mutex
 	mBatch, _     = batch.New[bool](context.Background(), batch.WithConcurrencyNum[bool](50))
 )
+
+// proxiesWithProviders returns all proxies including those from providers
+func proxiesWithProviders() map[string]constant.Proxy {
+	allProxies := make(map[string]constant.Proxy)
+	for name, proxy := range tunnel.Proxies() {
+		allProxies[name] = proxy
+	}
+	for _, provider := range tunnel.Providers() {
+		for _, proxy := range provider.Proxies() {
+			allProxies[proxy.Name()] = proxy
+		}
+	}
+	return allProxies
+}
 
 type ExternalProviders []ExternalProvider
 
@@ -137,13 +151,13 @@ func stopListeners() {
 }
 
 func patchSelectGroup(mapping map[string]string) {
-	for name, proxy := range tunnel.ProxiesWithProviders() {
+	for name, proxy := range proxiesWithProviders() {
 		outbound, ok := proxy.(*adapter.Proxy)
 		if !ok {
 			continue
 		}
 
-		selector, ok := outbound.ProxyAdapter.(outboundgroup.SelectAble)
+		selector, ok := outbound.ProxyAdapter.(interface{ ForceSet(string) })
 		if !ok {
 			continue
 		}

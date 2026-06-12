@@ -117,6 +117,23 @@ class XBoardPaymentNotifier extends Notifier<void> {
       }
       
       final paymentMethods = paymentMethodModels.map(_mapPaymentMethod).toList();
+
+      // 添加余额支付选项
+      final userInfo = ref.read(userInfoProvider);
+      if (userInfo != null && userInfo.balanceInCents > 0) {
+        // 检查是否已存在余额支付（避免重复）
+        final hasBalanceMethod = paymentMethods.any((m) => m.id == -1 || m.name.contains('余额'));
+        if (!hasBalanceMethod) {
+          paymentMethods.insert(0, const DomainPaymentMethod(
+            id: -1,
+            name: '余额支付',
+            description: '使用账户余额支付',
+            isAvailable: true,
+            feePercentage: 0,
+          ));
+        }
+      }
+
       ref.read(paymentMethodsProvider.notifier).state = paymentMethods;
       
       _logger.info('📋 [Payment] ✅ 支付方式加载成功，共 ${paymentMethods.length} 个');
@@ -184,9 +201,8 @@ class XBoardPaymentNotifier extends Notifier<void> {
   }
   /// 提交支付
   /// 
-  /// 返回支付结果，包含 type 和 data
-  /// type: -1 表示余额支付成功, 0 表示跳转支付, 1 表示二维码支付
-  Future<Map<String, dynamic>?> submitPayment({
+  /// 返回支付结果 PaymentResultModel
+  Future<PaymentResultModel?> submitPayment({
     required String tradeNo,
     required String method,
   }) async {
@@ -201,25 +217,23 @@ class XBoardPaymentNotifier extends Notifier<void> {
       isProcessingPayment: true,
     );
     try {
-      _logger.info('提交支付: tradeNo=$tradeNo, method=$method');
+      // 处理余额支付
+      final actualMethod = method == '-1' ? 'balance' : method;
+      _logger.info('提交支付: tradeNo=$tradeNo, method=$actualMethod (original: $method)');
 
       // 调用 Repository 提交支付，返回支付结果
       final paymentResultModel = await XBoardSDK.instance.order.checkoutOrder(
         tradeNo,
-        method,
+        actualMethod,
       );
 
       ref.read(paymentProcessStateProvider.notifier).state = const PaymentProcessState(
         isProcessingPayment: false,
       );
 
-      final paymentResult = _mapPaymentResult(paymentResultModel);
-      if (paymentResult != null) {
-        await loadPendingOrders();
-        _logger.info('支付提交成功，结果: $paymentResult');
-        return paymentResult;
-      }
-      return null;
+      await loadPendingOrders();
+      _logger.info('支付提交成功，结果: $paymentResultModel');
+      return paymentResultModel;
     } catch (e) {
       _logger.info('支付提交失败: $e');
       ref.read(paymentProcessStateProvider.notifier).state = const PaymentProcessState(
@@ -348,20 +362,5 @@ DomainPaymentMethod _mapPaymentMethod(PaymentMethodModel method) {
     minAmount: method.minAmount,
     maxAmount: method.maxAmount,
     config: method.config ?? {},
-  );
-}
-
-Map<String, dynamic>? _mapPaymentResult(PaymentResultModel result) {
-  return result.when(
-    success: (transactionId, message, extra) => {
-      'type': -1,
-      'data': true, // Balance payment success
-    },
-    redirect: (url, method, headers) => {
-      'type': 0, // Redirect
-      'data': url,
-    },
-    failed: (message, errorCode, extra) => null, // Or throw?
-    canceled: (message) => null,
   );
 }

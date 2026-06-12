@@ -54,6 +54,9 @@ class DomainUser with _$DomainUser {
     
     /// 流量提醒
     @Default(true) bool remindTraffic,
+
+    /// 自动续费
+    @Default(false) bool autoRenewal,
     
     /// 折扣率（0-1）
     double? discount,

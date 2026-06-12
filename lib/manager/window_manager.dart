@@ -126,31 +126,8 @@ class WindowHeaderContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (_, ref, child) {
-        final version = ref.watch(versionProvider);
-        if (version <= 10 && Platform.isMacOS) {
-          return child!;
-        }
-        return Stack(
-          children: [
-            Column(
-              children: [
-                SizedBox(
-                  height: kHeaderHeight,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: child!,
-                ),
-              ],
-            ),
-            const WindowHeader(),
-          ],
-        );
-      },
-      child: child,
-    );
+    // 完全隐藏标题栏，直接返回子组件
+    return child;
   }
 }
 

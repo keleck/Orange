@@ -54,6 +54,16 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
+  /// `Welcome Back`
+  String get welcomeBack {
+    return Intl.message(
+      'Welcome Back',
+      name: 'welcomeBack',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Rule`
   String get rule {
     return Intl.message('Rule', name: 'rule', desc: '', args: []);
@@ -4299,6 +4309,16 @@ class AppLocalizations {
     );
   }
 
+  /// `No Expiration`
+  String get xboardNoExpiration {
+    return Intl.message(
+      'No Expiration',
+      name: 'xboardNoExpiration',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Confirm purchase`
   String get xboardConfirmPurchase {
     return Intl.message(
@@ -5992,6 +6012,16 @@ class AppLocalizations {
   /// `Loading...`
   String get loading {
     return Intl.message('Loading...', name: 'loading', desc: '', args: []);
+  }
+
+  /// `Loading nodes...`
+  String get xboardLoadingNodes {
+    return Intl.message(
+      'Loading nodes...',
+      name: 'xboardLoadingNodes',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Register Account`

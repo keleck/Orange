@@ -218,9 +218,8 @@ class Utils {
   }
 
   ViewMode getViewMode(double viewWidth) {
-    if (viewWidth <= maxMobileWidth) return ViewMode.mobile;
-    if (viewWidth <= maxLaptopWidth) return ViewMode.laptop;
-    return ViewMode.desktop;
+    // 在所有平台上使用 mobile 布局
+    return ViewMode.mobile;
   }
 
   int getProxiesColumns(double viewWidth, ProxiesLayout proxiesLayout) {

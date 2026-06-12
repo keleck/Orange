@@ -5,6 +5,7 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:collection/collection.dart';
 import 'package:fl_clash/clash/clash.dart';
 import 'package:fl_clash/common/archive.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -85,6 +86,33 @@ class AppController {
 
   updateStatus(bool isStart) async {
     if (isStart) {
+      // 检查是否选择了节点，如果没有则默认选择第一个
+      final mode = _ref.read(patchClashConfigProvider).mode;
+      if (mode == Mode.global) {
+        final currentProfile = _ref.read(currentProfileProvider);
+        final groups = _ref.read(groupsProvider);
+        final globalGroup = groups
+            .firstWhereOrNull((e) => e.name == GroupName.GLOBAL.name);
+        if (currentProfile != null && globalGroup != null) {
+          final selected = currentProfile.selectedMap[GroupName.GLOBAL.name];
+          if (selected == null || selected.isEmpty) {
+            final auto = globalGroup.all.firstWhereOrNull(
+                (e) => e.name.contains("自动") || e.name.contains("Auto"));
+            if (auto != null) {
+              updateCurrentSelectedMap(GroupName.GLOBAL.name, auto.name);
+              await clashCore.changeProxy(ChangeProxyParams(
+                  groupName: GroupName.GLOBAL.name, proxyName: auto.name));
+            } else if (globalGroup.all.isNotEmpty) {
+              updateCurrentSelectedMap(
+                  GroupName.GLOBAL.name, globalGroup.all.first.name);
+              await clashCore.changeProxy(ChangeProxyParams(
+                  groupName: GroupName.GLOBAL.name,
+                  proxyName: globalGroup.all.first.name));
+            }
+          }
+        }
+      }
+
       await globalState.handleStart([
         updateRunTime,
         updateTraffic,
@@ -278,6 +306,8 @@ class AppController {
       switch (code) {
         case AuthorizeCode.success:
           await restartCore();
+          // 授权成功后继续执行后续逻辑，确保立即应用 TUN 配置并触发网卡安装
+          break;
           return Result.error("");
         case AuthorizeCode.none:
           break;
@@ -299,7 +329,8 @@ class AppController {
   }
 
   _setupClashConfig() async {
-    await _ref.read(currentProfileProvider)?.checkAndUpdate();
+    final currentProfile = _ref.read(currentProfileProvider);
+    await currentProfile?.checkAndUpdate();
     final patchConfig = _ref.read(patchClashConfigProvider);
     final res = await _requestAdmin(patchConfig.tun.enable);
     if (res.isError) {
@@ -311,14 +342,12 @@ class AppController {
       pathConfig: realPatchConfig,
     );
     final message = await clashCore.setupConfig(params);
-    lastProfileModified = await _ref.read(
-      currentProfileProvider.select(
-        (state) => state?.profileLastModified,
-      ),
-    );
     if (message.isNotEmpty) {
       throw message;
     }
+    // 配置文件已在 getProfileConfig 中读取后删除
+    // 设置 lastProfileModified 为 0
+    lastProfileModified = 0;
   }
 
   Future _applyProfile() async {
@@ -404,12 +433,32 @@ class AppController {
     required String groupName,
     required String proxyName,
   }) async {
+    // 1. Change the target group
     await clashCore.changeProxy(
       ChangeProxyParams(
         groupName: groupName,
         proxyName: proxyName,
       ),
     );
+
+    // 2. Synchronize other groups
+    final groups = getCurrentGroups();
+    
+    // Allow syncing between Global and Rule groups, and between Rule groups
+    for (final group in groups) {
+      if (group.name == groupName) continue;
+      
+      // If the other group contains this proxy, switch it too
+      if (group.all.any((p) => p.name == proxyName)) {
+        await clashCore.changeProxy(
+          ChangeProxyParams(
+            groupName: group.name,
+            proxyName: proxyName,
+          ),
+        );
+      }
+    }
+
     if (_ref.read(appSettingProvider).closeConnections) {
       clashCore.closeConnections();
     }
@@ -653,12 +702,11 @@ class AppController {
   }
 
   _handlerDisclaimer() async {
-    if (_ref.read(appSettingProvider).disclaimerAccepted) {
-      return;
-    }
-    final isDisclaimerAccepted = await showDisclaimer();
-    if (!isDisclaimerAccepted) {
-      await handleExit();
+    // 跳过重要提示弹窗，直接标记为已接受
+    if (!_ref.read(appSettingProvider).disclaimerAccepted) {
+      _ref.read(appSettingProvider.notifier).updateState(
+        (state) => state.copyWith(disclaimerAccepted: true),
+      );
     }
     return;
   }
@@ -814,10 +862,25 @@ class AppController {
     });
   }
 
-  updateTun() {
+  updateTun() async {
+    final currentEnable = _ref.read(patchClashConfigProvider).tun.enable;
+    final willEnable = !currentEnable;
+    
+    // 切换 TUN 前先刷新当前订阅
+    final currentProfile = _ref.read(currentProfileProvider);
+    if (currentProfile != null && currentProfile.url.isNotEmpty) {
+      try {
+        await updateProfile(currentProfile);
+      } catch (e) {
+        // 刷新失败不影响 TUN 切换
+        commonPrint.log("刷新订阅失败: $e");
+      }
+    }
+    
     _ref.read(patchClashConfigProvider.notifier).updateState(
-          (state) => state.copyWith.tun(enable: !state.tun.enable),
+          (state) => state.copyWith.tun(enable: willEnable),
         );
+    updateClashConfigDebounce();
   }
 
   updateSystemProxy() {
@@ -845,11 +908,58 @@ class AppController {
 
   updateCurrentSelectedMap(String groupName, String proxyName) {
     final currentProfile = _ref.read(currentProfileProvider);
-    if (currentProfile != null &&
-        currentProfile.selectedMap[groupName] != proxyName) {
-      final SelectedMap selectedMap = Map.from(
-        currentProfile.selectedMap,
-      )..[groupName] = proxyName;
+    if (currentProfile == null) return;
+    
+    // Copy current map
+    final SelectedMap selectedMap = Map.from(currentProfile.selectedMap);
+    bool changed = false;
+
+    // Update target group
+    if (selectedMap[groupName] != proxyName) {
+      selectedMap[groupName] = proxyName;
+      changed = true;
+    }
+
+    // Synchronize with other groups
+    final groups = getCurrentGroups();
+    
+    if (groupName == GroupName.GLOBAL.name) {
+      // If updating GLOBAL, sync to all other groups containing this proxy
+      for (final group in groups) {
+        if (group.name == GroupName.GLOBAL.name) continue;
+        // Check if group contains this proxy
+        if (group.all.any((p) => p.name == proxyName)) {
+          if (selectedMap[group.name] != proxyName) {
+            selectedMap[group.name] = proxyName;
+            changed = true;
+          }
+        }
+      }
+    } else {
+      // If updating other group, sync to GLOBAL if it contains this proxy
+      final globalGroup = groups.firstWhereOrNull((g) => g.name == GroupName.GLOBAL.name);
+      if (globalGroup != null && globalGroup.all.any((p) => p.name == proxyName)) {
+        if (selectedMap[GroupName.GLOBAL.name] != proxyName) {
+          selectedMap[GroupName.GLOBAL.name] = proxyName;
+          changed = true;
+        }
+      }
+      
+      // OPTIONAL: Sync to other rule groups as well? 
+      // User request "chooses a node", implies global uniqueness preference. 
+      // Let's sync to ALL groups that have this node.
+      for (final group in groups) {
+        if (group.name == groupName || group.name == GroupName.GLOBAL.name) continue;
+        if (group.all.any((p) => p.name == proxyName)) {
+           if (selectedMap[group.name] != proxyName) {
+            selectedMap[group.name] = proxyName;
+            changed = true;
+           }
+        }
+      }
+    }
+
+    if (changed) {
       _ref.read(profilesProvider.notifier).setProfile(
             currentProfile.copyWith(
               selectedMap: selectedMap,
@@ -870,13 +980,73 @@ class AppController {
         );
   }
 
-  changeMode(Mode mode) {
+  changeMode(Mode mode) async {
+    final currentMode = _ref.read(patchClashConfigProvider).mode;
+    if (currentMode == mode) return;
+    
     _ref.read(patchClashConfigProvider.notifier).updateState(
           (state) => state.copyWith(mode: mode),
         );
     if (mode == Mode.global) {
       updateCurrentGroupName(GroupName.GLOBAL.name);
+
+      // 切换到全局模式时，同步规则模式下的节点选择
+      final currentProfile = _ref.read(currentProfileProvider);
+      final groups = _ref.read(groupsProvider);
+      final globalGroup = groups
+          .firstWhereOrNull((e) => e.name == GroupName.GLOBAL.name);
+      
+      if (currentProfile != null && globalGroup != null) {
+        final selected = currentProfile.selectedMap[GroupName.GLOBAL.name];
+        if (selected == null || selected.isEmpty) {
+          // 首先尝试获取规则模式下选中的节点
+          String? targetProxyName;
+          
+          // 遍历规则组，找到第一个有选中节点的规则组
+          for (final group in groups) {
+            if (group.hidden == true) continue;
+            if (group.name == GroupName.GLOBAL.name) continue;
+            final selectedProxyName = currentProfile.selectedMap[group.name];
+            if (selectedProxyName != null && selectedProxyName.isNotEmpty) {
+              // 检查这个节点是否在全局组中
+              final proxyInGlobal = globalGroup.all.firstWhereOrNull(
+                (p) => p.name == selectedProxyName,
+              );
+              if (proxyInGlobal != null) {
+                targetProxyName = selectedProxyName;
+                break;
+              }
+            }
+          }
+          
+          // 如果规则模式中没有找到节点，则优先寻找自动选择
+          if (targetProxyName == null) {
+            final auto = globalGroup.all.firstWhereOrNull(
+                (e) => e.name.contains("自动") || e.name.contains("Auto"));
+            
+            if (auto != null) {
+              targetProxyName = auto.name;
+            } else if (globalGroup.all.isNotEmpty) {
+              targetProxyName = globalGroup.all.first.name;
+            }
+          }
+
+          if (targetProxyName != null) {
+            updateCurrentSelectedMap(GroupName.GLOBAL.name, targetProxyName);
+            await clashCore.changeProxy(ChangeProxyParams(
+                groupName: GroupName.GLOBAL.name, proxyName: targetProxyName));
+          }
+        }
+      }
     }
+    
+    // 直接更新模式到核心，不触发完整的配置更新流程
+    final updateParams = _ref.read(updateParamsProvider);
+    await clashCore.updateConfig(updateParams);
+    
+    // 关闭所有现有连接，强制使用新模式重新建立连接
+    clashCore.closeConnections();
+    
     addCheckIpNumDebounce();
   }
 

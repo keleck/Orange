@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/xboard/features/profile/profile.dart';
 import 'package:fl_clash/xboard/features/profile/services/profile_import_service.dart';
 import 'package:fl_clash/xboard/core/core.dart';
+import 'package:fl_clash/xboard/utils/url_masker.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('profile_import_provider.dart');
@@ -10,8 +11,11 @@ class ProfileImportNotifier extends StateNotifier<ImportState> {
   
   ProfileImportNotifier(this._ref) : super(const ImportState());
   
-  Future<bool> importSubscription(String url, {bool forceRefresh = false}) async {
-    _logger.info('开始导入订阅: $url, forceRefresh: $forceRefresh');
+  Future<bool> importSubscription(String url, {
+    bool forceRefresh = false,
+    Future<String?> Function()? refreshUrl,
+  }) async {
+    _logger.info('开始导入订阅: ${UrlMasker.mask(url)}, forceRefresh: $forceRefresh');
     
     state = state.copyWith(
       status: ImportStatus.downloading,
@@ -25,7 +29,7 @@ class ProfileImportNotifier extends StateNotifier<ImportState> {
       // 使用实际的导入服务
       final importService = _ref.read(xboardProfileImportServiceProvider);
       
-      final result = await importService.importSubscription(
+      final result = await importService.importSubscriptionWithRetry(
         url,
         onProgress: (status, progress, message) {
           state = state.copyWith(
@@ -34,6 +38,7 @@ class ProfileImportNotifier extends StateNotifier<ImportState> {
             message: message,
           );
         },
+        refreshUrl: refreshUrl,
       );
         
       state = state.copyWith(

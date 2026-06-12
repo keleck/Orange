@@ -4,6 +4,7 @@ import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:fl_clash/xboard/adapter/state/invite_state.dart';
 import 'package:fl_clash/xboard/adapter/state/user_state.dart';
+import '../../auth/providers/xboard_user_provider.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('invite_provider.dart');
@@ -73,12 +74,7 @@ class InviteState {
   String get formattedWalletBalance => _formatCommissionAmount(walletBalance);
 
   String _formatCommissionAmount(double amount) {
-    final value = amount;
-    if (value >= 1000) {
-      return '¥${(value / 1000).toStringAsFixed(1)}k';
-    } else {
-      return '¥${value.toStringAsFixed(2)}';
-    }
+    return '¥${amount.toStringAsFixed(2)}';
   }
 }
 
@@ -95,8 +91,8 @@ class InviteNotifier extends Notifier<InviteState> {
 
     try {
       _logger.info('加载邀请信息...');
-      _logger.info('加载邀请信息...');
-      final inviteInfoModel = await ref.read(getInviteInfoProvider.future);
+      // 强制刷新邀请信息
+      final inviteInfoModel = await ref.refresh(getInviteInfoProvider.future);
       final inviteData = _mapInviteInfo(inviteInfoModel);
 
       state = state.copyWith(
@@ -121,8 +117,8 @@ class InviteNotifier extends Notifier<InviteState> {
 
     try {
       _logger.info('加载佣金历史... 页码: $page');
-      _logger.info('加载佣金历史... 页码: $page');
-      final commissionList = await ref.read(getCommissionDetailsProvider(page: page).future);
+      // 强制刷新佣金历史
+      final commissionList = await ref.refresh(getCommissionDetailsProvider(page: page).future);
       final newHistory = commissionList.map(_mapCommission).toList();
 
 
@@ -161,10 +157,14 @@ class InviteNotifier extends Notifier<InviteState> {
   Future<void> loadUserInfo() async {
     try {
       _logger.info('加载用户信息...');
-      _logger.info('加载用户信息...');
-      final userModel = await ref.read(getUserInfoProvider.future);
+      // 强制刷新用户信息
+      final userModel = await ref.refresh(getUserInfoProvider.future);
       final userInfo = _mapUser(userModel);
       state = state.copyWith(userInfo: userInfo);
+      
+      // 同步更新全局用户信息
+      ref.read(userInfoProvider.notifier).state = userInfo;
+      
       _logger.info('用户信息加载成功: 钱包余额 ¥${(userInfo?.balanceInCents ?? 0) / 100.0}');
     } catch (e) {
       _logger.info('加载用户信息失败: $e');
@@ -231,7 +231,12 @@ class InviteNotifier extends Notifier<InviteState> {
         throw Exception('提现申请失败');
       }
 
-      await loadInviteData();
+      // 手动刷新邀请数据
+      await ref.refresh(getInviteInfoProvider.future).then((inviteInfoModel) {
+        final inviteData = _mapInviteInfo(inviteInfoModel);
+        state = state.copyWith(inviteData: inviteData);
+      });
+      
       await refreshCommissionHistory();
 
       state = state.copyWith(isLoading: false);
@@ -261,7 +266,11 @@ class InviteNotifier extends Notifier<InviteState> {
       }
       
       await Future.wait([
-        loadInviteData(),
+        // 手动刷新邀请数据，避免 loadInviteData 的 isLoading 检查冲突
+        ref.refresh(getInviteInfoProvider.future).then((inviteInfoModel) {
+          final inviteData = _mapInviteInfo(inviteInfoModel);
+          state = state.copyWith(inviteData: inviteData);
+        }),
         loadUserInfo(),
       ]);
       
@@ -341,8 +350,8 @@ DomainUser _mapUser(UserModel user) {
     transferLimit: user.transferEnable.toInt(),
     uploadedBytes: 0,
     downloadedBytes: 0,
-    balanceInCents: (user.balance * 100).toInt(),
-    commissionBalanceInCents: (user.commissionBalance * 100).toInt(),
+    balanceInCents: user.balance.toInt(),
+    commissionBalanceInCents: user.commissionBalance.toInt(),
     expiredAt: user.expiredAt,
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,

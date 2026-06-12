@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'package:fl_clash/xboard/features/subscription/providers/xboard_subscription_provider.dart';
+import 'package:fl_clash/xboard/features/payment/pages/plan_purchase_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/models/models.dart' as fl_models;
 import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:go_router/go_router.dart';
+import '../../shared/widgets/glass_container.dart';
 import '../services/subscription_status_service.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 class SubscriptionUsageCard extends ConsumerWidget {
@@ -41,12 +43,11 @@ class SubscriptionUsageCard extends ConsumerWidget {
     return _buildUsageCard(theme, context);
   }
   Widget _buildEmptyCard(ThemeData theme, BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return GlassContainer(
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(16),
+      opacity: 0.05,
+      blur: 10,
       child: Column(
         children: [
           Icon(
@@ -102,20 +103,15 @@ class SubscriptionUsageCard extends ConsumerWidget {
         statusText = statusResult.getMessage(context);
         statusDetail = statusResult.getDetailMessage(context) ?? '';
     }
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            statusColor.withValues(alpha: 0.03),
-            statusColor.withValues(alpha: 0.01),
-          ],
-        ),
-      ),
+    return GlassContainer(
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(16),
+      opacity: 0.05,
+      blur: 10,
+      gradientColors: [
+        statusColor.withValues(alpha: 0.05),
+        statusColor.withValues(alpha: 0.01),
+      ],
       child: Column(
         children: [
           Row(
@@ -252,19 +248,32 @@ class SubscriptionUsageCard extends ConsumerWidget {
   }
   
   Future<void> _handleRenewAction(BuildContext context, WidgetRef ref) async {
-    final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+    // 先尝试从 provider 获取已加载的订阅信息
+    var subscriptionInfo = ref.read(subscriptionInfoProvider);
+    int? currentPlanId = subscriptionInfo?.planId;
     
-    // 尝试获取用户当前订阅的套餐ID
-    final userState = ref.read(xboardUserProvider);
-    final currentPlanId = userState.subscriptionInfo?.planId;
+    // 如果 planId 为空或为0，则刷新订阅信息
+    if (currentPlanId == null || currentPlanId == 0) {
+      await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
+      
+      // 检查 context 是否仍然有效
+      if (!context.mounted) return;
+      
+      // 重新获取
+      subscriptionInfo = ref.read(subscriptionInfoProvider);
+      currentPlanId = subscriptionInfo?.planId;
+    }
     
-    if (currentPlanId != null) {
+    if (currentPlanId != null && currentPlanId != 0) {
       // 确保套餐列表已加载
       var plans = ref.read(xboardSubscriptionProvider);
       if (plans.isEmpty) {
         await ref.read(xboardSubscriptionProvider.notifier).loadPlans();
         plans = ref.read(xboardSubscriptionProvider);
       }
+      
+      // 再次检查 context 是否仍然有效
+      if (!context.mounted) return;
       
       DomainPlan? currentPlan;
       try {
@@ -274,43 +283,36 @@ class SubscriptionUsageCard extends ConsumerWidget {
       }
       
       if (currentPlan != null) {
-        if (isDesktop) {
-          // 桌面端：通过URL参数传递套餐ID，Plans页面内部会显示购买界面
-          context.go('/plans?planId=$currentPlanId');
-        } else {
-          // 移动端：直接跳转到全屏购买页面
-          context.push('/plans/purchase', extra: currentPlan);
-        }
+        // 直接跳转到购买页面（续费）
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PlanPurchasePage(plan: currentPlan!),
+          ),
+        );
         return;
       }
     }
     
+    // 检查 context 是否仍然有效
+    if (!context.mounted) return;
+    
     // 没找到套餐：跳转到套餐列表页面
-    if (isDesktop) {
-      context.go('/plans');
-    } else {
-      context.push('/plans');
-    }
+    context.push('/plans');
   }
   Widget _buildUsageCard(ThemeData theme, BuildContext context) {
     final progress = _getProgressValue();
     final usedTraffic = _getUsedTraffic();
     final totalTraffic = _getTotalTraffic();
     final remainingDays = _calculateRemainingDays();
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.primary.withValues(alpha: 0.03),
-            theme.colorScheme.secondary.withValues(alpha: 0.02),
-          ],
-        ),
-      ),
+    return GlassContainer(
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(16),
+      opacity: 0.05,
+      blur: 10,
+      gradientColors: [
+        theme.colorScheme.primary.withValues(alpha: 0.05),
+        theme.colorScheme.secondary.withValues(alpha: 0.02),
+      ],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -358,19 +360,26 @@ class SubscriptionUsageCard extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           Container(
-            height: 6,
+            height: 10,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
+              borderRadius: BorderRadius.circular(5),
               color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             ),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: Colors.transparent,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                _getProgressColor(progress, theme),
-              ),
-              minHeight: 6,
-              borderRadius: BorderRadius.circular(3),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: progress),
+              duration: const Duration(milliseconds: 1500),
+              curve: Curves.easeOutExpo,
+              builder: (context, value, _) {
+                return LinearProgressIndicator(
+                  value: value,
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    _getProgressColor(value, theme),
+                  ),
+                  minHeight: 10,
+                  borderRadius: BorderRadius.circular(5),
+                );
+              },
             ),
           ),
           const SizedBox(height: 16),
@@ -396,13 +405,39 @@ class SubscriptionUsageCard extends ConsumerWidget {
                 child: _buildStatItem(
                   icon: Icons.schedule,
                   label: AppLocalizations.of(context).xboardValidityPeriod,
-                  value: '$remainingDays',
-                  subtitle: AppLocalizations.of(context).xboardDays,
+                  value: remainingDays == -1 
+                      ? AppLocalizations.of(context).xboardNoExpiration 
+                      : '$remainingDays',
+                  subtitle: remainingDays == -1 
+                      ? '' 
+                      : AppLocalizations.of(context).xboardDays,
                   theme: theme,
                 ),
               ),
             ],
           ),
+          if (remainingDays != -1 && remainingDays <= 5) ...[
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (context, ref, child) {
+                return SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () async {
+                      await _handleRenewAction(context, ref);
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.orange.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    icon: const Icon(Icons.shopping_bag, size: 18),
+                    label: Text(AppLocalizations.of(context).xboardRenewPlan),
+                  ),
+                );
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -474,16 +509,30 @@ class SubscriptionUsageCard extends ConsumerWidget {
     }
   }
   int _calculateRemainingDays() {
-    DateTime? expiredAt;
-    if (profileSubscriptionInfo?.expire != null && profileSubscriptionInfo!.expire != 0) {
-      expiredAt = DateTime.fromMillisecondsSinceEpoch(profileSubscriptionInfo!.expire * 1000);
-    } else if (subscriptionInfo?.expiredAt != null) {
-      expiredAt = subscriptionInfo!.expiredAt;
+    // 1. 优先检查 Profile Subscription Info (来自订阅链接头部)
+    if (profileSubscriptionInfo != null) {
+      // expire 为 0 表示长期有效
+      if (profileSubscriptionInfo!.expire == 0) {
+        return -1;
+      }
+      if (profileSubscriptionInfo!.expire != null) {
+        final expiredAt = DateTime.fromMillisecondsSinceEpoch(profileSubscriptionInfo!.expire * 1000);
+        final now = DateTime.now();
+        return expiredAt.difference(now).inDays.clamp(0, double.infinity).toInt();
+      }
     }
-    if (expiredAt == null) return 0;
-    final now = DateTime.now();
-    final difference = expiredAt.difference(now);
-    return difference.inDays.clamp(0, double.infinity).toInt();
+
+    // 2. 检查 Domain Subscription Info (来自 API)
+    if (subscriptionInfo != null) {
+      // expiredAt 为 null 表示长期有效
+      if (subscriptionInfo!.expiredAt == null) {
+        return -1;
+      }
+      final now = DateTime.now();
+      return subscriptionInfo!.expiredAt!.difference(now).inDays.clamp(0, double.infinity).toInt();
+    }
+
+    return 0;
   }
   double _getProgressValue() {
     if (profileSubscriptionInfo != null && profileSubscriptionInfo!.total > 0) {

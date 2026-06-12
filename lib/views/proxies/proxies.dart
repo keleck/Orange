@@ -1,13 +1,17 @@
+import 'package:fl_clash/clash/clash.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/common.dart';
+import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/proxies/list.dart';
 import 'package:fl_clash/views/proxies/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'common.dart';
 import 'setting.dart';
 import 'tab.dart';
 
@@ -23,6 +27,39 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
   bool _hasProviders = false;
   bool _isTab = false;
 
+  _handleRefresh() async {
+    final providers = ref.read(providersProvider);
+    final providersNotifier = ref.read(providersProvider.notifier);
+    if (providers.isNotEmpty) {
+      final updateProviders = providers.map<Future>(
+        (provider) async {
+          providersNotifier.setProvider(
+            provider.copyWith(isUpdating: true),
+          );
+          await clashCore.updateExternalProvider(
+            providerName: provider.name,
+          );
+          providersNotifier.setProvider(
+            await clashCore.getExternalProvider(provider.name),
+          );
+        },
+      );
+      await Future.wait(updateProviders);
+    }
+    await globalState.appController.updateGroups();
+    final groups = ref.read(groupsProvider);
+    final proxies = <Proxy>[];
+    for (final group in groups) {
+      if (group.all.isNotEmpty) {
+        proxies.addAll(group.all);
+      }
+    }
+    final uniqueProxies = {for (var p in proxies) p.name: p}.values.toList();
+    if (uniqueProxies.isNotEmpty) {
+      await delayTest(uniqueProxies);
+    }
+  }
+
   @override
   get actions => [
         if (_isTab)
@@ -35,6 +72,12 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
               weight: 1,
             ),
           ),
+        IconButton(
+          onPressed: () {
+            _handleRefresh();
+          },
+          icon: const Icon(Icons.refresh),
+        ),
         CommonPopupBox(
           targetBuilder: (open) {
             return IconButton(
@@ -122,13 +165,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
   }
 
   @override
-  get floatingActionButton => _isTab
-      ? DelayTestButton(
-          onClick: () async {
-            await _proxiesTabKey.currentState?.delayTestCurrentGroup();
-          },
-        )
-      : null;
+  get floatingActionButton => null;
 
   @override
   void initState() {
@@ -203,18 +240,9 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
         if (prev == next) {
           return;
         }
-        if (next.pageLabel == PageLabel.proxies) {
-          _hasProviders = next.hasProviders;
-          _isTab = next.type == ProxiesType.tab;
-          initPageState();
-          return;
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              ref.read(proxiesQueryProvider.notifier).value = "";
-            }
-          });
-        }
+        _hasProviders = next.hasProviders;
+        _isTab = next.type == ProxiesType.tab;
+        initPageState();
       },
     );
     super.initState();
@@ -227,12 +255,37 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
         (state) => state.type,
       ),
     );
-    return switch (proxiesType) {
+    final content = switch (proxiesType) {
       ProxiesType.tab => ProxiesTabView(
           key: _proxiesTabKey,
         ),
       ProxiesType.list => const ProxiesListView(),
     };
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            context.colorScheme.surfaceVariant.opacity10,
+            context.colorScheme.surface,
+          ],
+        ),
+      ),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 240),
+        child: content is ProxiesTabView
+            ? KeyedSubtree(
+                key: const ValueKey('tab-view'),
+                child: content,
+              )
+            : KeyedSubtree(
+                key: const ValueKey('list-view'),
+                child: content,
+              ),
+      ),
+    );
   }
 }
 

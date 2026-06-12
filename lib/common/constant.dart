@@ -8,13 +8,13 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/material.dart';
 
-const appName = "Flclash";
+const appName = "梦想云";
 const appNameEn = "Flclash"; // 用于 HTTP User-Agent 的英文名称
 const appHelperService = "FlClashHelperService";
 const coreName = "clash.meta";
 const browserUa =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-const packageName = "com.follow.clash";
+const packageName = "com.follow.DreamCloud";
 final unixSocketPath = "/tmp/FlClashSocket_${Random().nextInt(10000)}.sock";
 const helperPort = 47890;
 const maxTextScale = 1.4;
@@ -83,7 +83,7 @@ const viewModeColumnsMap = {
 // const toolsStoreKey = PageStorageKey<String>('tools');
 // const profilesStoreKey = PageStorageKey<String>('profiles');
 
-const defaultPrimaryColor = 0XFFD8C0C3;
+const defaultPrimaryColor = 0xFF03A9F4;
 
 double getWidgetHeight(num lines) {
   return max(lines * 84 + (lines - 1) * 16, 0).ap;
@@ -97,10 +97,10 @@ final serviceIsolate = "FlClashServiceIsolate";
 
 const defaultPrimaryColors = [
   0xFF795548,
-  0xFF03A9F4,
   0xFFFFFF00,
   0XFFBBC9CC,
   0XFFABD397,
+  0XFFD8C0C3,
   defaultPrimaryColor,
   0XFF665390,
 ];

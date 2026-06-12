@@ -67,8 +67,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('订阅购买'),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -81,7 +86,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 86, bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

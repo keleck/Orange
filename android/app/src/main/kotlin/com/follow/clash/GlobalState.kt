@@ -1,9 +1,9 @@
-package com.follow.clash
+package com.follow.DreamCloud
 
 import androidx.lifecycle.MutableLiveData
-import com.follow.clash.plugins.AppPlugin
-import com.follow.clash.plugins.TilePlugin
-import com.follow.clash.plugins.VpnPlugin
+import com.follow.DreamCloud.plugins.AppPlugin
+import com.follow.DreamCloud.plugins.TilePlugin
+import com.follow.DreamCloud.plugins.VpnPlugin
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor

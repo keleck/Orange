@@ -71,6 +71,60 @@ class SubscriptionStatusChecker {
       _isChecking = false;
     }
   }
+
+  /// 强制刷新订阅信息：跳过正在检查与时间间隔限制
+  Future<void> forceRefreshSubscriptionInfo(
+    BuildContext context,
+    WidgetRef ref, {
+    bool preserveTun = true,
+  }) async {
+    if (!context.mounted) return;
+    _logger.info('[订阅状态检查][强制] 开始强制刷新订阅状态');
+    _isChecking = true;
+    _lastCheckTime = DateTime.now();
+    try {
+      final userState = ref.read(xboardUserProvider);
+      if (!userState.isAuthenticated) {
+        _logger.info('[订阅状态检查][强制] 用户未登录，跳过检查');
+        return;
+      }
+
+      // 记录刷新前的 TUN 状态，防止刷新后被覆盖重启
+      final bool? tunEnabledBefore = preserveTun
+          ? ref.read(patchClashConfigProvider).tun.enable
+          : null;
+
+      // 直接刷新订阅信息
+      await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
+
+      // 恢复 TUN 状态（仅在需要保留时）
+      if (preserveTun && tunEnabledBefore != null) {
+        ref.read(patchClashConfigProvider.notifier).updateState(
+              (state) => state.copyWith.tun(enable: tunEnabledBefore),
+            );
+      }
+
+      // 刷新后立即检查状态并按需弹窗
+      final updatedUserState = ref.read(xboardUserProvider);
+      final profileSubscriptionInfo = ref.read(currentProfileProvider)?.subscriptionInfo;
+      final statusResult = subscriptionStatusService.checkSubscriptionStatus(
+        userState: updatedUserState,
+        profileSubscriptionInfo: profileSubscriptionInfo,
+      );
+      _logger.info('[订阅状态检查][强制] 检查结果: ${statusResult.type}');
+      if (subscriptionStatusService.shouldShowStartupDialog(statusResult)) {
+        await _showSubscriptionStatusDialog(
+          context,
+          ref,
+          statusResult,
+        );
+      }
+    } catch (e) {
+      _logger.error('[订阅状态检查][强制] 检查时出错', e);
+    } finally {
+      _isChecking = false;
+    }
+  }
   Future<void> _showSubscriptionStatusDialog(
     BuildContext context,
     WidgetRef ref,

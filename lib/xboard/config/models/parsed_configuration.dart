@@ -4,6 +4,7 @@ import 'websocket_info.dart';
 import 'update_info.dart';
 import 'online_support_info.dart';
 import 'subscription_info.dart';
+import 'crisp_info.dart';
 
 /// 解析后的配置数据
 /// 
@@ -15,10 +16,16 @@ class ParsedConfiguration {
   final List<WebSocketInfo> webSockets;
   final List<UpdateInfo> updates;
   final List<OnlineSupportInfo> onlineSupport;
+  final CrispInfo? crisp;  // Crisp 客服系统配置
   final SubscriptionInfo? subscription;
+  final String? telegramDiscussLink;  // Telegram 讨论组链接
+  final String? websiteUrl;  // 官网地址
+  final bool showWallet;  // 是否显示"我的钱包"按钮
+  final bool showGiftCard;  // 是否显示"礼品卡兑换"按钮
   final DateTime parsedAt;
   final String sourceHash;
   final ConfigMetadata metadata;
+  final Map<String, dynamic>? rawRemoteData;  // 原始远程配置数据，用于访问额外字段如 campusHosts
 
   const ParsedConfiguration({
     required this.panelType,
@@ -27,10 +34,16 @@ class ParsedConfiguration {
     required this.webSockets,
     required this.updates,
     required this.onlineSupport,
+    this.crisp,
     this.subscription,
+    this.telegramDiscussLink,
+    this.websiteUrl,
+    this.showWallet = true,
+    this.showGiftCard = true,
     required this.parsedAt,
     required this.sourceHash,
     required this.metadata,
+    this.rawRemoteData,
   });
 
   /// 从JSON创建配置
@@ -49,7 +62,12 @@ class ParsedConfiguration {
     final wsList = json['ws'] as List<dynamic>? ?? [];
     final updateList = json['update'] as List<dynamic>? ?? [];
     final onlineSupportList = json['onlineSupport'] as List<dynamic>? ?? [];
+    final crispData = json['crisp'] as Map<String, dynamic>?;
     final subscriptionData = json['subscription'] as Map<String, dynamic>?;
+    final telegramLink = json['telegramDiscussLink'] as String?;
+    final websiteLink = json['websiteUrl'] as String?;
+    final showWallet = json['showWallet'] as bool? ?? true;
+    final showGiftCard = json['showGiftCard'] as bool? ?? true;
 
     return ParsedConfiguration(
       panelType: panelType,  // 面板类型
@@ -66,10 +84,16 @@ class ParsedConfiguration {
       onlineSupport: onlineSupportList
           .map((item) => OnlineSupportInfo.fromJson(item as Map<String, dynamic>))
           .toList(),
+      crisp: crispData != null ? CrispInfo.fromJson(crispData) : null,
       subscription: subscriptionData != null ? SubscriptionInfo.fromJson(subscriptionData) : null,
+      telegramDiscussLink: telegramLink,
+      websiteUrl: websiteLink,
+      showWallet: showWallet,
+      showGiftCard: showGiftCard,
       parsedAt: DateTime.now(),
       sourceHash: json.hashCode.toString(),
       metadata: ConfigMetadata.fromJson(json['metadata'] as Map<String, dynamic>? ?? {}),
+      rawRemoteData: json,  // 保存原始远程配置数据
     );
   }
 
@@ -103,6 +127,16 @@ class ParsedConfiguration {
     return onlineSupport.isNotEmpty ? onlineSupport.first.wsBaseUrl : null;
   }
 
+  /// 获取 Crisp 网站 ID
+  String? get crispWebsiteId {
+    return crisp?.websiteId;
+  }
+
+  /// 检查是否配置了 Crisp 客服系统
+  bool get hasCrispSupport {
+    return crisp != null && crisp!.isValid;
+  }
+
   /// 获取第一个可用的订阅URL
   String? get firstSubscriptionUrl {
     return subscription?.firstUrl;
@@ -126,7 +160,12 @@ class ParsedConfiguration {
       'ws': webSockets.map((e) => e.toJson()).toList(),
       'update': updates.map((e) => e.toJson()).toList(),
       'onlineSupport': onlineSupport.map((e) => e.toJson()).toList(),
+      if (crisp != null) 'crisp': crisp!.toJson(),
       if (subscription != null) 'subscription': subscription!.toJson(),
+      if (telegramDiscussLink != null) 'telegramDiscussLink': telegramDiscussLink,
+      if (websiteUrl != null) 'websiteUrl': websiteUrl,
+      'showWallet': showWallet,
+      'showGiftCard': showGiftCard,
       'parsedAt': parsedAt.toIso8601String(),
       'sourceHash': sourceHash,
       'metadata': metadata.toJson(),

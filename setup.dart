@@ -94,10 +94,12 @@ class Build {
         BuildItem(
           target: Target.macos,
           arch: Arch.arm64,
+          archName: 'arm64',
         ),
         BuildItem(
           target: Target.macos,
           arch: Arch.amd64,
+          archName: 'amd64',
         ),
         BuildItem(
           target: Target.linux,
@@ -132,7 +134,7 @@ class Build {
         ),
       ];
 
-  static String get appName => "Flclash";
+  static String get appName => "梦想云";
 
   static String get coreName => "FlClashCore";
 
@@ -149,10 +151,42 @@ class Build {
   static String _getCc(BuildItem buildItem) {
     final environment = Platform.environment;
     if (buildItem.target == Target.android) {
-      final ndk = environment["ANDROID_NDK"];
-      assert(ndk != null);
+      var ndk = environment["ANDROID_NDK"];
+      if (ndk == null) {
+        try {
+          final localProperties =
+              File(join(current, "android", "local.properties"));
+          if (localProperties.existsSync()) {
+            final lines = localProperties.readAsLinesSync();
+            for (final line in lines) {
+              if (line.startsWith("ndk.dir=")) {
+                ndk = line.substring(8).trim();
+                break;
+              }
+              if (line.startsWith("sdk.dir=")) {
+                final sdkDir = line.substring(8).trim();
+                final ndkDir = Directory(join(sdkDir, "ndk"));
+                if (ndkDir.existsSync()) {
+                  final versions =
+                      ndkDir.listSync().whereType<Directory>().toList();
+                  if (versions.isNotEmpty) {
+                    versions.sort((a, b) => b.path.compareTo(a.path));
+                    ndk = versions.first.path;
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) {
+          print("Error trying to find NDK: $e");
+        }
+      }
+      if (ndk == null) {
+        throw Exception(
+            "ANDROID_NDK environment variable not set and could not be found in local.properties");
+      }
       final prebuiltDir =
-          Directory(join(ndk!, "toolchains", "llvm", "prebuilt"));
+          Directory(join(ndk, "toolchains", "llvm", "prebuilt"));
       final prebuiltDirList = prebuiltDir.listSync();
       final map = {
         "armeabi-v7a": "armv7a-linux-androideabi21-clang",
@@ -314,6 +348,31 @@ class Build {
     await File(outPath).copy(targetPath);
   }
 
+  static Future<String> createUniversalBinary({
+    required String arm64Path,
+    required String amd64Path,
+    required String outputPath,
+  }) async {
+    final outputDir = File(outputPath).parent;
+    if (!outputDir.existsSync()) {
+      outputDir.createSync(recursive: true);
+    }
+
+    await exec(
+      [
+        "lipo",
+        "-create",
+        arm64Path,
+        amd64Path,
+        "-output",
+        outputPath,
+      ],
+      name: "create universal binary with lipo",
+    );
+
+    return outputPath;
+  }
+
   static List<String> getExecutable(String command) {
     return command.split(" ");
   }
@@ -380,6 +439,17 @@ class BuildCommand extends Command {
         help: 'The $name build archName',
       );
     }
+    
+    // Add universal binary option for macOS
+    if (target == Target.macos) {
+      argParser.addFlag(
+        "universal",
+        abbr: 'u',
+        help: 'Build universal binary for arm64 and amd64',
+        negatable: false,
+      );
+    }
+    
     argParser.addOption(
       "out",
       valueHelp: [
@@ -453,9 +523,17 @@ class BuildCommand extends Command {
   }
 
   _getMacosDependencies() async {
-    await Build.exec(
-      Build.getExecutable("npm install -g appdmg"),
-    );
+    try {
+      await Build.exec(
+        Build.getExecutable("appdmg -v"),
+        name: "check appdmg",
+      );
+    } catch (e) {
+      await Build.exec(
+        Build.getExecutable("npm install -g appdmg"),
+        name: "install appdmg",
+      );
+    }
   }
 
   _buildDistributor({
@@ -489,6 +567,17 @@ class BuildCommand extends Command {
     final String out = argResults?["out"] ?? (target.same ? "app" : "core");
     final archName = argResults?["arch"];
     final env = argResults?["env"] ?? "stable";
+    
+    // Check if macOS universal build is requested
+    final isUniversal = target == Target.macos && 
+                        (argResults?["universal"] as bool? ?? false);
+    
+    // For universal builds, skip arch validation and buildCore
+    if (isUniversal) {
+      await _buildMacosUniversal(out, env);
+      return;
+    }
+    
     final currentArches =
         arches.where((element) => element.name == archName).toList();
     final arch = currentArches.isEmpty ? null : currentArches.first;
@@ -570,6 +659,59 @@ class BuildCommand extends Command {
         );
         return;
     }
+  }
+  
+  Future<void> _buildMacosUniversal(String out, String env) async {
+    await _getMacosDependencies();
+    
+    print("Building universal macOS app for arm64 and amd64...");
+    
+    // Build arm64 core
+    final arm64Cores = await Build.buildCore(
+      target: Target.macos,
+      arch: Arch.arm64,
+      mode: Mode.core,
+    );
+    
+    // Build amd64 core
+    final amd64Cores = await Build.buildCore(
+      target: Target.macos,
+      arch: Arch.amd64,
+      mode: Mode.core,
+    );
+    
+    // Create universal binary by merging both architectures
+    final universalCoreDir = join(Build.outDir, Target.macos.name, "universal");
+    final universalCoreFile = join(universalCoreDir, "FlClashCore");
+    
+    print("Creating universal binary...");
+    await Build.createUniversalBinary(
+      arm64Path: arm64Cores.first,
+      amd64Path: amd64Cores.first,
+      outputPath: universalCoreFile,
+    );
+    
+    print("Universal binary created at: $universalCoreFile");
+    
+    if (out != "app") {
+      return;
+    }
+    
+    // Copy universal binary to the location where Flutter expects it
+    final flutterExpectedPath = join(Build.outDir, Target.macos.name, "FlClashCore");
+    print("Copying universal binary for Flutter: $flutterExpectedPath");
+    await Build.exec(
+      ["cp", universalCoreFile, flutterExpectedPath],
+      name: "copy universal binary for Flutter",
+    );
+    
+    // Build the app with flutter_distributor for universal distribution
+    _buildDistributor(
+      target: Target.macos,
+      targets: "dmg",
+      args: " --description universal",
+      env: env,
+    );
   }
 }
 

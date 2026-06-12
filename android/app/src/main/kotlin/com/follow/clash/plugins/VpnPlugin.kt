@@ -1,4 +1,4 @@
-package com.follow.clash.plugins
+package com.follow.DreamCloud.plugins
 
 import android.content.ComponentName
 import android.content.Context
@@ -11,17 +11,17 @@ import android.net.NetworkRequest
 import android.os.Build
 import android.os.IBinder
 import androidx.core.content.getSystemService
-import com.follow.clash.FlClashApplication
-import com.follow.clash.GlobalState
-import com.follow.clash.RunState
-import com.follow.clash.core.Core
-import com.follow.clash.extensions.awaitResult
-import com.follow.clash.extensions.resolveDns
-import com.follow.clash.models.StartForegroundParams
-import com.follow.clash.models.VpnOptions
-import com.follow.clash.services.BaseServiceInterface
-import com.follow.clash.services.FlClashService
-import com.follow.clash.services.FlClashVpnService
+import com.follow.DreamCloud.FlClashApplication
+import com.follow.DreamCloud.GlobalState
+import com.follow.DreamCloud.RunState
+import com.follow.DreamCloud.core.Core
+import com.follow.DreamCloud.extensions.awaitResult
+import com.follow.DreamCloud.extensions.resolveDns
+import com.follow.DreamCloud.models.StartForegroundParams
+import com.follow.DreamCloud.models.VpnOptions
+import com.follow.DreamCloud.services.BaseServiceInterface
+import com.follow.DreamCloud.services.FlClashService
+import com.follow.DreamCloud.services.FlClashVpnService
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall

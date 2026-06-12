@@ -1,44 +1,62 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/theme_dialog.dart';
-import 'package:fl_clash/xboard/features/invite/dialogs/logout_dialog.dart';
 
 class UserMenuWidget extends ConsumerWidget {
   const UserMenuWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = colorScheme.brightness == Brightness.dark;
+
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.person),
+      icon: Icon(Icons.person, color: Colors.white.withValues(alpha: 0.8)),
       tooltip: appLocalizations.userCenter,
       onSelected: (value) {
         if (value == 'theme') {
           _showThemeDialog(context);
-        } else if (value == 'logout') {
-          _showLogoutDialog(context);
         }
       },
+      position: PopupMenuPosition.under,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      color: Colors.transparent,
+      elevation: 0,
       itemBuilder: (BuildContext context) => [
         PopupMenuItem<String>(
           value: 'theme',
-          child: Row(
-            children: [
-              const Icon(Icons.brightness_6),
-              const SizedBox(width: 8),
-              Text(appLocalizations.switchTheme),
-            ],
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem<String>(
-          value: 'logout',
-          child: Row(
-            children: [
-              const Icon(Icons.logout, color: Colors.red),
-              const SizedBox(width: 8),
-              Text(appLocalizations.logout, style: const TextStyle(color: Colors.red)),
-            ],
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.brightness_6, color: Colors.white, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      appLocalizations.switchTheme,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -49,13 +67,6 @@ class UserMenuWidget extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => const ThemeDialog(),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const LogoutDialog(),
     );
   }
 }

@@ -1,4 +1,5 @@
 {
+  "welcomeBack": "Welcome Back",
   "rule": "Rule",
   "global": "Global",
   "direct": "Direct",
@@ -377,6 +378,7 @@
   "developerModeEnableTip": "Developer mode is enabled.",
   "messageTest": "Message test",
   "messageTestTip": "This is a message.",
+  "testDelay": "Test Delay",
   "crashTest": "Crash test",
   "clearData": "Clear Data",
   "textScale": "Text Scaling",
@@ -540,6 +542,7 @@
   "xboardTraffic": "Traffic",
   "xboardSpeedLimit": "Speed",
   "xboardUnlimited": "Unlimited",
+  "xboardNoExpiration": "No Expiration",
   "xboardProcessing": "Processing...",
   "xboardConfirmPurchase": "Confirm purchase",
   "xboardAutoOpeningPaymentPage": "Auto-opening payment page, please return to app after payment",

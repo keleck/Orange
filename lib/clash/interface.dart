@@ -20,6 +20,10 @@ mixin ClashInterface {
 
   FutureOr<String> validateConfig(String data);
 
+  /// 转换订阅内容（Base64编码的节点链接或YAML）为标准Clash YAML格式
+  /// 返回转换后的YAML字符串，如果转换失败返回空字符串
+  FutureOr<String> convertSubscription(String data);
+
   FutureOr<Result> getConfig(String path);
 
   Future<String> asyncTestDelay(String url, String proxyName);
@@ -202,6 +206,14 @@ abstract class ClashHandlerInterface with ClashInterface {
   FutureOr<String> validateConfig(String data) {
     return invoke<String>(
       method: ActionMethod.validateConfig,
+      data: data,
+    );
+  }
+
+  @override
+  FutureOr<String> convertSubscription(String data) {
+    return invoke<String>(
+      method: ActionMethod.convertSubscription,
       data: data,
     );
   }

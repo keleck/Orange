@@ -43,7 +43,7 @@ export 'features/profile/profile.dart';
 // ========== 系统功能模块 ==========
 export 'features/domain_status/domain_status.dart';
 export 'features/latency/latency.dart';
-export 'features/online_support/online_support.dart';
+// export 'features/online_support/online_support.dart'; // 客服系统已移除
 export 'features/remote_task/remote_task.dart';
 export 'features/update_check/update_check.dart';
 export 'features/notice/notice.dart';

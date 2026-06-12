@@ -2,6 +2,6 @@
 
 package main
 
-func nextHandle(action *Action, result func(data interface{})) bool {
+func nextHandle(action *Action, result ActionResult) bool {
 	return false
 }

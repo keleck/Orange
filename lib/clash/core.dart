@@ -94,12 +94,53 @@ class ClashCore {
     return clashInterface.validateConfig(data);
   }
 
+  /// 转换订阅内容为标准Clash YAML格式
+  /// 支持 Base64 编码的节点链接列表（如 ss://, vmess://, vless://, trojan://, hysteria2:// 等）
+  /// 如果已经是有效的 YAML 格式，直接返回原内容
+  /// 如果转换失败，返回空字符串
+  FutureOr<String> convertSubscription(String data) {
+    return clashInterface.convertSubscription(data);
+  }
+
   Future<String> updateConfig(UpdateParams updateParams) async {
     return await clashInterface.updateConfig(updateParams);
   }
 
   Future<String> setupConfig(SetupParams setupParams) async {
     return await clashInterface.setupConfig(setupParams);
+  }
+
+  // 需要隐藏的节点名称关键词
+  static const _hiddenProxyKeywords = [
+    'DIRECT',
+    'REJECT',
+    '剩余流量',
+    '套餐到期',
+    '过期时间',
+    '到期时间',
+    '剩余',
+    '流量',
+    '套餐',
+  ];
+
+  // 需要优先显示的节点关键字（自动选择/故障转移等）
+  static const _priorityProxyKeywords = [
+    '自动选择',
+    'auto',
+    '故障转移',
+    'fallback',
+  ];
+
+  // 检查节点名称是否应该被隐藏
+  static bool _shouldHideProxy(String? name) {
+    if (name == null) return true;
+    final nameLower = name.toLowerCase();
+    for (final keyword in _hiddenProxyKeywords) {
+      if (nameLower.contains(keyword.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<List<Group>> getProxiesGroups() async {
@@ -114,12 +155,33 @@ class ClashCore {
     ];
     final groupsRaw = groupNames.map((groupName) {
       final group = proxies[groupName];
-      group["all"] = ((group["all"] ?? []) as List)
+      final allProxies = ((group["all"] ?? []) as List)
           .map(
             (name) => proxies[name],
           )
-          .where((proxy) => proxy != null)
+          .where((proxy) {
+            if (proxy == null) return false;
+            // 过滤掉需要隐藏的节点
+            return !_shouldHideProxy(proxy['name'] as String?);
+          })
           .toList();
+      
+      // 分离优先级节点和普通节点，保持各自的原始顺序
+      final priorityProxies = <dynamic>[];
+      final normalProxies = <dynamic>[];
+      
+      for (final proxy in allProxies) {
+        final name = (proxy['name'] as String? ?? '').toLowerCase();
+        final isPriority = _priorityProxyKeywords.any((k) => name.contains(k.toLowerCase()));
+        if (isPriority) {
+          priorityProxies.add(proxy);
+        } else {
+          normalProxies.add(proxy);
+        }
+      }
+      
+      // 优先级节点在前，普通节点在后，各自保持原始顺序
+      group["all"] = [...priorityProxies, ...normalProxies];
       return group;
     }).toList();
     return groupsRaw

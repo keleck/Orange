@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/l10n/l10n.dart';
@@ -10,6 +11,7 @@ import 'package:fl_clash/xboard/features/invite/widgets/invite_qr_card.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/invite_stats_card.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/wallet_details_card.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/commission_history_card.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class InvitePage extends ConsumerStatefulWidget {
   const InvitePage({super.key});
@@ -33,10 +35,6 @@ class _InvitePageState extends ConsumerState<InvitePage>
       _hasInitialized = true;
       
       await ref.read(inviteProvider.notifier).refresh();
-      final inviteState = ref.read(inviteProvider);
-      if (!inviteState.hasInviteData || inviteState.inviteData!.codes.isEmpty) {
-        await ref.read(inviteProvider.notifier).generateInviteCode();
-      }
     });
   }
 
@@ -45,47 +43,122 @@ class _InvitePageState extends ConsumerState<InvitePage>
     super.build(context);  // 必须调用，配合 AutomaticKeepAliveClientMixin
     
     final appLocalizations = AppLocalizations.of(context);
-    // 根据操作系统平台判断设备类型
-    final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      appBar: isDesktop ? null : AppBar(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
         title: Text(appLocalizations.invite),
-        automaticallyImplyLeading: false,
-        actions: const [
-          UserMenuWidget(),
-        ],
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
       ),
-      body: Consumer(
-        builder: (_, ref, __) {
-          return RefreshIndicator(
-            onRefresh: () => ref.read(inviteProvider.notifier).refresh(),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const ErrorCard(),
-                  
-                  const InviteRulesCard(),
-                  const SizedBox(height: 16),
-                  
-                  const InviteQrCard(),
-                  const SizedBox(height: 16),
-                  
-                  const InviteStatsCard(),
-                  const SizedBox(height: 16),
-                  
-                  const WalletDetailsCard(),
-                  const SizedBox(height: 16),
-                  
-                  const CommissionHistoryCard(),
-                ],
+      body: Container(
+        decoration: AppColors.getBackgroundDecoration(),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: Consumer(
+            builder: (_, ref, __) {
+              return RefreshIndicator(
+              onRefresh: () => ref.read(inviteProvider.notifier).refresh(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), // 增加底部 padding 避免被导航栏遮挡
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const ErrorCard(),
+                    
+                    const InviteRulesCard(),
+                    const SizedBox(height: 16),
+                    
+                    const InviteQrCard(),
+                    const SizedBox(height: 16),
+                    
+                    const InviteStatsCard(),
+                    const SizedBox(height: 16),
+                    
+                    const WalletDetailsCard(),
+                    const SizedBox(height: 16),
+                    
+                    const CommissionHistoryCard(),
+                  ],
+                ),
+              ),
+            );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 液态玻璃装饰 - 返回 BoxDecoration
+BoxDecoration glassmorphicDecoration(BuildContext context) {
+  final theme = Theme.of(context);
+  return BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        theme.colorScheme.primary.withValues(alpha: 0.08),
+        theme.colorScheme.primary.withValues(alpha: 0.04),
+      ],
+    ),
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(
+      color: theme.colorScheme.primary.withValues(alpha: 0.15),
+      width: 1.5,
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: theme.shadowColor.withValues(alpha: 0.08),
+        blurRadius: 24,
+        offset: const Offset(0, 8),
+      ),
+      BoxShadow(
+        color: theme.shadowColor.withValues(alpha: 0.04),
+        blurRadius: 12,
+        offset: const Offset(0, 3),
+      ),
+    ],
+  );
+}
+
+/// 液态玻璃包装widget
+class GlassmorphicCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final VoidCallback? onTap;
+  
+  const GlassmorphicCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(16.0),
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: glassmorphicDecoration(context),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: padding,
+                child: child,
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

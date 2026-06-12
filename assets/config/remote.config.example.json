@@ -18,7 +18,9 @@
             {
                 "url": "https://xxx.xxx.xxx.3:8888",
                 "description": "服务器3-ecs"
-            }
+            },
+            "showWallet": true,      // 设为 false 隐藏"我的钱包"按钮
+            "showGiftCard": true    // 设为 false 隐藏"礼品卡兑换"按钮
         ]
     },
     "proxy": [
@@ -61,6 +63,12 @@
             "wsBaseUrl": "wss://chat.example.com"
         }
     ],
+    "crisp": {
+        "websiteId": "your-crisp-website-id-here",
+        "description": "Crisp 客服系统配置"
+    },
+    "telegramDiscussLink": "https://t.me/your_telegram_group",
+    "websiteUrl": "https://your-website.com",
     "subscription": {
         "urls": [
             {
@@ -136,5 +144,9 @@
                 }
             }
         ]
-    }
+    },
+    "campusHosts": [
+        "89.185.27.143 yyds2026410.515120123215461.xyz",
+        "89.185.27.143 example.edu.cn"
+    ]
 }

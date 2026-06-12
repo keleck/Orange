@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,123 +33,333 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
   Widget build(BuildContext context) {
     final inviteState = ref.read(inviteProvider);
     final double availableAmount = inviteState.availableCommission;  // 已经是元，不需要再除以100
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    return AlertDialog(
-      title: Text(appLocalizations.withdrawCommission),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: _isSuccess
-                ? const Icon(
-                    Icons.check_circle,
-                    size: 48,
-                    color: Colors.green,
-                    key: ValueKey('success'),
-                  )
-                : _isWithdrawing
-                    ? const SizedBox(
-                        width: 48,
-                        height: 48,
-                        child: CircularProgressIndicator(
-                          key: ValueKey('loading'),
-                        ),
-                      )
-                    : const Icon(
-                        Icons.account_balance_wallet,
-                        size: 48,
-                        color: Colors.blue,
-                        key: ValueKey('wallet'),
-                      ),
-          ),
-          const SizedBox(height: 16),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: _isSuccess
-                ? Text(
-                    '提现申请已提交',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: screenWidth > 600 ? 500 : double.infinity,
+              maxHeight: screenHeight * 0.85,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.blue.withValues(alpha: 0.15),
+                  Colors.white.withValues(alpha: 0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withValues(alpha: 0.2),
+                  blurRadius: 30,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.08),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
                     ),
-                    key: const ValueKey('success-text'),
-                  )
-                : _isWithdrawing
-                    ? Text(
-                        '提交中...',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        key: const ValueKey('loading-text'),
-                      )
-                    : Text(
-                        '可提现金额：¥${availableAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        key: const ValueKey('balance-text'),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        width: 1,
                       ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          appLocalizations.withdrawCommission,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => Navigator.of(context).pop(),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: Colors.white.withValues(alpha: 0.6),
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Content
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: _isSuccess
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  size: 48,
+                                  color: Colors.green,
+                                  key: ValueKey('success'),
+                                )
+                              : _isWithdrawing
+                                  ? const SizedBox(
+                                      width: 48,
+                                      height: 48,
+                                      child: CircularProgressIndicator(
+                                        key: ValueKey('loading'),
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Icons.account_balance_wallet,
+                                      size: 48,
+                                      color: Colors.blue,
+                                      key: ValueKey('wallet'),
+                                    ),
+                        ),
+                        const SizedBox(height: 16),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: _isSuccess
+                              ? Text(
+                                  '提现申请已提交',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                  key: const ValueKey('success-text'),
+                                )
+                              : _isWithdrawing
+                                  ? Text(
+                                      '提交中...',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                      key: const ValueKey('loading-text'),
+                                    )
+                                  : Text(
+                                      '可提现金额：¥${availableAmount.toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                      key: const ValueKey('balance-text'),
+                                    ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (!_isWithdrawing && !_isSuccess) ...[
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => _showMethodSelector(),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.2),
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.payment, color: Colors.white.withValues(alpha: 0.7), size: 20),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          _selectedMethod ?? '请选择提现方式',
+                                          style: TextStyle(
+                                            color: _selectedMethod != null
+                                                ? Colors.white
+                                                : Colors.white.withValues(alpha: 0.5),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.white.withValues(alpha: 0.5),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: _accountController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              labelText: '提现账号',
+                              labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                              hintText: '请输入您的账号',
+                              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Colors.blue.withValues(alpha: 0.5),
+                                  width: 2,
+                                ),
+                              ),
+                              prefixIcon: Icon(Icons.account_box, color: Colors.white.withValues(alpha: 0.7)),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            '提现申请将通过工单系统提交，请等待管理员审核',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white.withValues(alpha: 0.6),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                // Footer
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (!_isWithdrawing && !_isSuccess) ...[
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop(),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                appLocalizations.cancel,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _performWithdraw,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue.shade400.withValues(alpha: 0.6),
+                                    Colors.blue.shade600.withValues(alpha: 0.4),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.blue.withValues(alpha: 0.3),
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Text(
+                                '提交申请',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          if (!_isWithdrawing && !_isSuccess) ...[
-            DropdownButtonFormField<String>(
-              value: _selectedMethod,
-              decoration: InputDecoration(
-                labelText: '提现方式',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.payment),
-              ),
-              items: _withdrawMethods.map((String method) {
-                return DropdownMenuItem<String>(
-                  value: method,
-                  child: Text(method),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedMethod = newValue;
-                });
-              },
-              hint: const Text('请选择提现方式'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _accountController,
-              decoration: InputDecoration(
-                labelText: '提现账号',
-                hintText: '请输入您的账号',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.account_box),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '提现申请将通过工单系统提交，请等待管理员审核',
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ],
+        ),
       ),
-      actions: [
-        if (!_isWithdrawing && !_isSuccess) ...[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(appLocalizations.cancel),
-          ),
-          ElevatedButton(
-            onPressed: _performWithdraw,
-            child: const Text('提交申请'),
-          ),
-        ],
-      ],
     );
   }
 
@@ -209,5 +420,164 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
         XBoardNotification.showError('提交失败：$e');
       }
     }
+  }
+
+  void _showMethodSelector() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.blue.withValues(alpha: 0.15),
+                    Colors.white.withValues(alpha: 0.08),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withValues(alpha: 0.2),
+                    blurRadius: 30,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 10),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '选择提现方式',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop(),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: Icon(
+                                Icons.close_rounded,
+                                color: Colors.white.withValues(alpha: 0.6),
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: _withdrawMethods.map((method) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedMethod = method;
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                margin: const EdgeInsets.symmetric(vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: _selectedMethod == method
+                                      ? Colors.blue.withValues(alpha: 0.3)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: _selectedMethod == method
+                                        ? Colors.blue.withValues(alpha: 0.5)
+                                        : Colors.white.withValues(alpha: 0.1),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      _selectedMethod == method
+                                          ? Icons.radio_button_checked
+                                          : Icons.radio_button_unchecked,
+                                      color: Colors.white.withValues(
+                                        alpha: _selectedMethod == method ? 1.0 : 0.6,
+                                      ),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      method,
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(
+                                          alpha: _selectedMethod == method ? 1.0 : 0.7,
+                                        ),
+                                        fontWeight: _selectedMethod == method
+                                            ? FontWeight.w600
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

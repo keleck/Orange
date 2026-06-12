@@ -99,6 +99,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "allowLan": MessageLookupByLibrary.simpleMessage("LANを許可"),
     "allowLanDesc": MessageLookupByLibrary.simpleMessage("LAN経由でのプロキシアクセスを許可"),
+    "applyCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "キャンパスホストを適用",
+    ),
     "app": MessageLookupByLibrary.simpleMessage("アプリ"),
     "appAccessControl": MessageLookupByLibrary.simpleMessage("アプリアクセス制御"),
     "appDesc": MessageLookupByLibrary.simpleMessage("アプリ関連設定の処理"),
@@ -134,6 +137,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "bypassDomainDesc": MessageLookupByLibrary.simpleMessage("システムプロキシ有効時のみ適用"),
     "cacheCorrupt": MessageLookupByLibrary.simpleMessage(
       "キャッシュが破損しています。クリアしますか？",
+    ),
+    "campusHosts": MessageLookupByLibrary.simpleMessage("キャンパスホスト"),
+    "campusHostsDesc": MessageLookupByLibrary.simpleMessage(
+      "リモート設定からキャンパスネットワークバイパスルールを取得",
+    ),
+    "campusHostsApplied": MessageLookupByLibrary.simpleMessage(
+      "キャンパスホストが適用されました",
+    ),
+    "failedToLoadCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "キャンパスホストの読み込みに失敗しました",
+    ),
+    "loadingCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "キャンパスホストを読み込み中...",
+    ),
+    "campusHostsTip": MessageLookupByLibrary.simpleMessage(
+      "使用していないか必要ない場合はキャンパスバイパスをオフにしてください",
     ),
     "cancel": MessageLookupByLibrary.simpleMessage("キャンセル"),
     "cancelFilterSystemApp": MessageLookupByLibrary.simpleMessage(
@@ -302,6 +321,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "light": MessageLookupByLibrary.simpleMessage("ライト"),
     "list": MessageLookupByLibrary.simpleMessage("リスト"),
     "listen": MessageLookupByLibrary.simpleMessage("リスン"),
+    "loading": MessageLookupByLibrary.simpleMessage("読み込み中..."),
     "local": MessageLookupByLibrary.simpleMessage("ローカル"),
     "localBackupDesc": MessageLookupByLibrary.simpleMessage("ローカルにデータをバックアップ"),
     "localRecoveryDesc": MessageLookupByLibrary.simpleMessage("ファイルからデータを復元"),
@@ -828,13 +848,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardInvalidResponseFormat": MessageLookupByLibrary.simpleMessage(
       "サーバーからの無効なレスポンス形式",
     ),
-    "inviteCodeIncorrect": MessageLookupByLibrary.simpleMessage("招待コードが正しくない可能性があります。確認して再入力してください"),
     "xboardInviteCode": MessageLookupByLibrary.simpleMessage("招待コード"),
     "xboardKeepSubscriptionLinkSafe": MessageLookupByLibrary.simpleMessage(
       "サブスクリプションリンクを安全に保管し、他人と共有しないでください",
     ),
     "xboardLater": MessageLookupByLibrary.simpleMessage("後で"),
     "xboardLoadingFailed": MessageLookupByLibrary.simpleMessage("読み込みに失敗しました"),
+    "xboardLoadingNodes": MessageLookupByLibrary.simpleMessage("ノードを読み込み中..."),
     "xboardLoadingPaymentPage": MessageLookupByLibrary.simpleMessage(
       "支払いページを読み込み中",
     ),
@@ -878,6 +898,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardNoAvailableSubscription": MessageLookupByLibrary.simpleMessage(
       "利用可能なサブスクリプションがありません",
     ),
+    "xboardNoExpiration": MessageLookupByLibrary.simpleMessage("無期限"),
     "xboardNoInternetConnection": MessageLookupByLibrary.simpleMessage(
       "インターネット接続がありません、ネットワーク設定を確認してください",
     ),

@@ -24,14 +24,13 @@ class Window {
     final primaryDisplay = await screenRetriever.getPrimaryDisplay();
     final screenSize = primaryDisplay.size;
     
-    // 计算合适的窗口尺寸
-    // 1. 如果配置的尺寸小于屏幕的60%，使用配置的尺寸
-    // 2. 如果配置的尺寸过大，则使用屏幕的60%（留出足够空间给任务栏和其他窗口）
-    final maxWidth = screenSize.width * 0.55;
-    final maxHeight = screenSize.height * 0.55;
+    // 固定手机风格的窗口尺寸 (类似 iPhone 比例)
+    const double fixedWidth = 420;
+    const double fixedHeight = 780;
     
-    final windowWidth = props.width > maxWidth ? maxWidth : props.width.toDouble();
-    final windowHeight = props.height > maxHeight ? maxHeight : props.height.toDouble();
+    // 确保不超过屏幕尺寸
+    final windowWidth = fixedWidth > screenSize.width * 0.9 ? screenSize.width * 0.9 : fixedWidth;
+    final windowHeight = fixedHeight > screenSize.height * 0.9 ? screenSize.height * 0.9 : fixedHeight;
     
     WindowOptions windowOptions = WindowOptions(
       size: Size(windowWidth, windowHeight),

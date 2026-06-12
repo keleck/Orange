@@ -115,6 +115,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "allowLanDesc": MessageLookupByLibrary.simpleMessage(
       "Разрешить доступ к прокси через локальную сеть",
     ),
+    "applyCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "Применить хосты кампуса",
+    ),
     "app": MessageLookupByLibrary.simpleMessage("Приложение"),
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Контроль доступа приложений",
@@ -178,6 +181,22 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "cacheCorrupt": MessageLookupByLibrary.simpleMessage(
       "Кэш поврежден. Хотите очистить его?",
+    ),
+    "campusHosts": MessageLookupByLibrary.simpleMessage("Хосты кампуса"),
+    "campusHostsDesc": MessageLookupByLibrary.simpleMessage(
+      "Получить правила обхода сети кампуса из удаленной конфигурации",
+    ),
+    "campusHostsApplied": MessageLookupByLibrary.simpleMessage(
+      "Хосты кампуса применены",
+    ),
+    "failedToLoadCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "Ошибка при загрузке хостов кампуса",
+    ),
+    "loadingCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "Загрузка хостов кампуса...",
+    ),
+    "campusHostsTip": MessageLookupByLibrary.simpleMessage(
+      "Пожалуйста, отключите кампусный обход, когда он не используется или не требуется",
     ),
     "cancel": MessageLookupByLibrary.simpleMessage("Отмена"),
     "cancelFilterSystemApp": MessageLookupByLibrary.simpleMessage(
@@ -418,6 +437,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "light": MessageLookupByLibrary.simpleMessage("Светлый"),
     "list": MessageLookupByLibrary.simpleMessage("Список"),
     "listen": MessageLookupByLibrary.simpleMessage("Слушать"),
+    "loading": MessageLookupByLibrary.simpleMessage("Загрузка..."),
     "local": MessageLookupByLibrary.simpleMessage("Локальный"),
     "localBackupDesc": MessageLookupByLibrary.simpleMessage(
       "Резервное копирование локальных данных на локальный диск",
@@ -1119,7 +1139,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardInvalidResponseFormat": MessageLookupByLibrary.simpleMessage(
       "Неверный формат ответа от сервера",
     ),
-    "inviteCodeIncorrect": MessageLookupByLibrary.simpleMessage("Код приглашения может быть неверным, проверьте и введите снова"),
     "xboardInviteCode": MessageLookupByLibrary.simpleMessage("Код приглашения"),
     "xboardKeepSubscriptionLinkSafe": MessageLookupByLibrary.simpleMessage(
       "Храните ссылку на подписку в безопасности и не делитесь ею с другими",
@@ -1127,6 +1146,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardLater": MessageLookupByLibrary.simpleMessage("Позже"),
     "xboardLoadingFailed": MessageLookupByLibrary.simpleMessage(
       "Загрузка не удалась",
+    ),
+    "xboardLoadingNodes": MessageLookupByLibrary.simpleMessage(
+      "Загрузка узлов...",
     ),
     "xboardLoadingPaymentPage": MessageLookupByLibrary.simpleMessage(
       "Загрузка страницы оплаты",
@@ -1179,6 +1201,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardNoAvailableSubscription": MessageLookupByLibrary.simpleMessage(
       "Нет доступных подписок",
     ),
+    "xboardNoExpiration": MessageLookupByLibrary.simpleMessage("Бессрочно"),
     "xboardNoInternetConnection": MessageLookupByLibrary.simpleMessage(
       "Нет интернет-соединения, проверьте настройки сети",
     ),

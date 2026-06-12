@@ -1,9 +1,9 @@
+import 'dart:ui';
 import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
-import 'package:fl_clash/xboard/features/invite/dialogs/withdraw_dialog.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/commission_history_dialog.dart';
 
 class CommissionHistoryCard extends ConsumerWidget {
@@ -13,78 +13,79 @@ class CommissionHistoryCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final inviteState = ref.watch(inviteProvider);
     
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: _glassmorphicDecoration(context),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  appLocalizations.commissionHistory,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                if (inviteState.totalCommission > 0)
-                  TextButton.icon(
-                    onPressed: () => _showWithdrawDialog(context),
-                    icon: const Icon(Icons.payment),
-                    label: Text(appLocalizations.withdraw),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (inviteState.commissionHistory.isEmpty)
-              Center(
-                child: Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      Icons.history,
-                      size: 48,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                    ),
-                    const SizedBox(height: 8),
                     Text(
-                      appLocalizations.noCommissionRecord,
+                      appLocalizations.commissionHistory,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-              )
-            else
-              ...inviteState.commissionHistory.take(5).map((commission) => 
-                _buildCommissionItem(context, commission)
-              ),
-            if (inviteState.commissionHistory.length >= 5)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton.icon(
-                    onPressed: () => _showCommissionHistoryDialog(context),
-                    icon: const Icon(Icons.history),
-                    label: Text(appLocalizations.viewHistory),
-                  ),
-                  if (inviteState.commissionHistory.length >= 5)
-                    TextButton.icon(
-                      onPressed: () => ref.read(inviteProvider.notifier).loadNextHistoryPage(),
-                      icon: inviteState.isLoadingHistory 
-                        ? const SizedBox(
-                            width: 16, 
-                            height: 16, 
-                            child: CircularProgressIndicator(strokeWidth: 2)
-                          )
-                        : const Icon(Icons.refresh),
-                      label: Text(inviteState.isLoadingHistory ? appLocalizations.loading : appLocalizations.loadMore),
+                const SizedBox(height: 16),
+                if (inviteState.commissionHistory.isEmpty)
+                  Center(
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.history,
+                          size: 48,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          appLocalizations.noCommissionRecord,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
                     ),
-                ],
-              ),
-          ],
+                  )
+                else
+                  ...inviteState.commissionHistory.take(5).map((commission) => 
+                    _buildCommissionItem(context, commission)
+                  ),
+                if (inviteState.commissionHistory.length >= 5)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () => _showCommissionHistoryDialog(context),
+                        icon: const Icon(Icons.history),
+                        label: Text(appLocalizations.viewHistory),
+                      ),
+                      if (inviteState.commissionHistory.length >= 5)
+                        TextButton.icon(
+                          onPressed: () => ref.read(inviteProvider.notifier).loadNextHistoryPage(),
+                          icon: inviteState.isLoadingHistory 
+                            ? const SizedBox(
+                                width: 16, 
+                                height: 16, 
+                                child: CircularProgressIndicator(strokeWidth: 2)
+                              )
+                            : const Icon(Icons.refresh),
+                          label: Text(inviteState.isLoadingHistory ? appLocalizations.loading : appLocalizations.loadMore),
+                        ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -147,10 +148,34 @@ class CommissionHistoryCard extends ConsumerWidget {
     );
   }
 
-  void _showWithdrawDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const WithdrawDialog(),
+  BoxDecoration _glassmorphicDecoration(BuildContext context) {
+    final theme = Theme.of(context);
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          theme.colorScheme.primary.withValues(alpha: 0.08),
+          theme.colorScheme.primary.withValues(alpha: 0.04),
+        ],
+      ),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: theme.colorScheme.primary.withValues(alpha: 0.15),
+        width: 1.5,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: theme.shadowColor.withValues(alpha: 0.08),
+          blurRadius: 24,
+          offset: const Offset(0, 8),
+        ),
+        BoxShadow(
+          color: theme.shadowColor.withValues(alpha: 0.04),
+          blurRadius: 12,
+          offset: const Offset(0, 3),
+        ),
+      ],
     );
   }
 

@@ -74,6 +74,8 @@ Future<XBoardSDK> xboardSdk(Ref ref) async {
       panelType: panelType,
       proxyUrl: proxyUrl,
       httpConfig: httpConfig,
+      enableLogging: true,
+      usePrintLogger: true,
     );
     
     _logger.info('[XBoardSdkProvider] SDK初始化成功');
@@ -93,10 +95,9 @@ Future<XBoardSDK> xboardSdk(Ref ref) async {
 /// - 证书配置
 Future<HttpConfig> _loadHttpConfig() async {
   try {
-    // 从配置文件获取加密 UA（用于 API 请求和 Caddy 认证）
-    final userAgent = await UserAgentConfig.get(
-      UserAgentScenario.apiEncrypted,
-    );
+    // 使用标准浏览器 User-Agent 避免 WAF 拦截
+    // 不再从配置文件读取，因为配置文件的值可能导致被 WAF 拦截
+    const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     
     // 从配置文件获取混淆前缀
     final obfuscationPrefix = await ConfigFileLoaderHelper.getObfuscationPrefix();

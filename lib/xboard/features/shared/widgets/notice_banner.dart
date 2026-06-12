@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fl_clash/xboard/features/notice/notice.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 import '../styles/markdown_styles.dart';
 import '../styles/html_styles.dart';
 
@@ -99,65 +101,93 @@ class _NoticeBannerState extends ConsumerState<NoticeBanner>
     });
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    return Container(
-      height: 40,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isDark 
-            ? Theme.of(context).colorScheme.surfaceContainerHighest
-            : Theme.of(context).colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.15),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Icon(
-              Icons.campaign_rounded,
-              size: 18,
-              color: Theme.of(context).colorScheme.primary,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          height: 40,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      // 使用统一的背景色，增加透明度
+                      AppColors.gradientColor1.withValues(alpha: 0.7),
+                      AppColors.gradientColor3.withValues(alpha: 0.6),
+                    ]
+                  : [
+                      Colors.white.withValues(alpha: 0.15),
+                      Colors.blue.withValues(alpha: 0.08),
+                    ],
             ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDark
+                  ? AppColors.gradientColor1.withValues(alpha: 0.5)
+                  : Colors.white.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: isDark
+                    ? AppColors.gradientColor1.withValues(alpha: 0.4)
+                    : Colors.blue.withValues(alpha: 0.1),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.4)
+                    : Colors.black.withValues(alpha: 0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => _showNoticeDialog(),
-              child: ClipRect(
-                  child: SlideTransition(
-                  position: _slideAnimation,
-                  child: Container(
-                    height: 40,
-                    alignment: Alignment.centerLeft,
-                    child: notices.isEmpty
-                        ? const SizedBox.shrink()
-                        : MarkdownBody(
-                            data: notices[_currentIndex % notices.length],
-                            styleSheet: MarkdownStyleSheet(
-                              p: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontWeight: FontWeight.w500,
-                                overflow: TextOverflow.ellipsis,
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Icon(
+                  Icons.campaign_rounded,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => _showNoticeDialog(),
+                  child: ClipRect(
+                      child: SlideTransition(
+                      position: _slideAnimation,
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.centerLeft,
+                        child: notices.isEmpty
+                            ? const SizedBox.shrink()
+                            : MarkdownBody(
+                                data: notices[_currentIndex % notices.length],
+                                styleSheet: MarkdownStyleSheet(
+                                  p: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: FontWeight.w500,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  textAlign: WrapAlignment.start,
+                                ),
                               ),
-                              textAlign: WrapAlignment.start,
-                            ),
-                          ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              const SizedBox(width: 12), // 右侧间距
+            ],
           ),
-          const SizedBox(width: 12), // 右侧间距
-        ],
+        ),
       ),
     );
   }
@@ -254,51 +284,69 @@ class _NoticeDetailDialogState extends State<NoticeDetailDialog>
         backgroundColor: Colors.transparent,
         elevation: 0,
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: screenWidth > 600 ? 600 : double.infinity,
-            maxHeight: screenHeight * 0.85,
-          ),
-          decoration: BoxDecoration(
-            // 在暗色主题下使用稍亮的背景色以区分弹窗
-            color: isDark 
-                ? Theme.of(context).colorScheme.surfaceContainerHighest
-                : Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(24),
-            // 添加明显的边框
-            border: Border.all(
-              color: isDark
-                  ? Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)
-                  : Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
-              width: isDark ? 1.5 : 1,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: screenWidth > 600 ? 600 : double.infinity,
+                maxHeight: screenHeight * 0.85,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [
+                          // 使用统一的背景色
+                          AppColors.gradientColor1,
+                          AppColors.gradientColor3,
+                          AppColors.gradientColor4,
+                        ]
+                      : [
+                          Colors.white.withValues(alpha: 0.2),
+                          Colors.blue.withValues(alpha: 0.1),
+                        ],
+                  stops: isDark ? [0.0, 0.5, 1.0] : null,
+                ),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isDark
+                      ? AppColors.gradientColor1.withValues(alpha: 0.8)
+                      : Colors.white.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark
+                        ? AppColors.gradientColor1.withValues(alpha: 0.6)
+                        : Colors.blue.withValues(alpha: 0.15),
+                    blurRadius: 30,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 10),
+                  ),
+                  BoxShadow(
+                    color: isDark
+                        ? Colors.black.withValues(alpha: 0.6)
+                        : Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildHeader(),
+                  Flexible(
+                    child: widget.notices.length == 1
+                        ? _buildSingleNotice()
+                        : _buildMultipleNotices(),
+                  ),
+                ],
+              ),
             ),
-            boxShadow: [
-              // 增强暗色主题下的阴影
-              BoxShadow(
-                color: isDark 
-                    ? Colors.black.withValues(alpha: 0.5)
-                    : Colors.black.withValues(alpha: 0.1),
-                blurRadius: isDark ? 30 : 20,
-                spreadRadius: isDark ? 2 : 0,
-                offset: const Offset(0, 10),
-              ),
-              BoxShadow(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.05),
-                blurRadius: 40,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildHeader(),
-              Flexible(
-                child: widget.notices.length == 1
-                    ? _buildSingleNotice()
-                    : _buildMultipleNotices(),
-              ),
-            ],
           ),
         ),
         ),

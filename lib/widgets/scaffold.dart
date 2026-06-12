@@ -7,6 +7,7 @@ import 'package:fl_clash/widgets/pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'app_colors.dart';
 import 'chip.dart';
 
 class CommonScaffold extends StatefulWidget {
@@ -344,19 +345,22 @@ class CommonScaffoldState extends State<CommonScaffold> {
       child: Theme(
         data: Theme.of(context).copyWith(
           appBarTheme: AppBarTheme(
-            systemOverlayStyle: SystemUiOverlayStyle(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            surfaceTintColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            iconTheme: const IconThemeData(color: Colors.white),
+            actionsIconTheme: const IconThemeData(color: Colors.white),
+            titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+            systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
-              statusBarIconBrightness:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-              systemNavigationBarIconBrightness:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Brightness.light
-                      : Brightness.dark,
-              systemNavigationBarColor: widget.bottomNavigationBar != null
-                  ? context.colorScheme.surfaceContainer
-                  : context.colorScheme.surface,
+              statusBarIconBrightness: Brightness.light,
+              systemNavigationBarIconBrightness: Brightness.light,
               systemNavigationBarDividerColor: Colors.transparent,
             ),
           ),
@@ -403,7 +407,10 @@ class CommonScaffoldState extends State<CommonScaffold> {
   @override
   Widget build(BuildContext context) {
     assert(widget.appBar != null || widget.title != null);
-    final body = SafeArea(
+    
+    final bodyContent = SafeArea(
+      top: false, // AppBar 已经处理了
+      bottom: false, // extendBody 会处理
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -446,11 +453,21 @@ class CommonScaffoldState extends State<CommonScaffold> {
         ],
       ),
     );
+    
+    // 将渐变背景直接应用到 body - 深色模式紫色和海军蓝渐变
+    final body = Container(
+      decoration: AppColors.getBackgroundDecoration(),
+      child: bodyContent,
+    );
+    
     final scaffold = Scaffold(
       appBar: _buildAppBar(),
       body: body,
+      bottomNavigationBar: widget.bottomNavigationBar,
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
-      backgroundColor: widget.backgroundColor,
+      backgroundColor: const Color(0xFF0F0E1D), // 深紫色基调
       floatingActionButton: widget.floatingActionButton ??
           ValueListenableBuilder<Widget?>(
             valueListenable: _floatingActionButton,
@@ -464,7 +481,6 @@ class CommonScaffoldState extends State<CommonScaffold> {
               );
             },
           ),
-      bottomNavigationBar: widget.bottomNavigationBar,
     );
     return _sideNavigationBar != null
         ? Row(

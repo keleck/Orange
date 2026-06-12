@@ -1,8 +1,8 @@
-package com.follow.clash
+package com.follow.DreamCloud
 
-import com.follow.clash.plugins.AppPlugin
-import com.follow.clash.plugins.ServicePlugin
-import com.follow.clash.plugins.TilePlugin
+import com.follow.DreamCloud.plugins.AppPlugin
+import com.follow.DreamCloud.plugins.ServicePlugin
+import com.follow.DreamCloud.plugins.TilePlugin
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/xboard/utils/url_masker.dart';
 
 class FlClashHttpOverrides extends HttpOverrides {
   static String handleFindProxy(Uri url) {
@@ -10,7 +11,7 @@ class FlClashHttpOverrides extends HttpOverrides {
     }
     final port = globalState.config.patchClashConfig.mixedPort;
     final isStart = globalState.appState.runTime != null;
-    commonPrint.log("find $url proxy:$isStart");
+    commonPrint.log("find ${UrlMasker.mask(url.toString())} proxy:$isStart");
     if (!isStart) return "DIRECT";
     return "PROXY localhost:$port";
   }

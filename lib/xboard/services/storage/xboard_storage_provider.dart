@@ -7,10 +7,12 @@ import 'package:fl_clash/xboard/core/core.dart';
 import 'xboard_storage_service.dart';
 
 /// Storage 接口 FutureProvider
-/// 提供默认的 SharedPreferences 实现
+/// 提供默认的 SharedPreferences 实现，并使用加密存储包装敏感数据
 /// 如需自定义实现，可在应用初始化时使用ProviderScope.overrides覆盖此provider
 final storageProvider = FutureProvider<StorageInterface>((ref) async {
-  return await SharedPrefsStorage.create();
+  final baseStorage = await SharedPrefsStorage.create();
+  // 使用加密存储装饰器，保护敏感数据（如订阅 URL、密码等）
+  return EncryptedStorage(baseStorage);
 });
 
 /// XBoard Storage Service Provider

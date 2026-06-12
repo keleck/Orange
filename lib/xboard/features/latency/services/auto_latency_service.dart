@@ -164,7 +164,7 @@ class AutoLatencyService {
       _logger.error('指定节点延迟测试失败', e);
     }
   }
-  Future<void> testCurrentGroupNodes({int maxNodes = 5}) async {
+  Future<void> testCurrentGroupNodes({int? maxNodes}) async {
     if (!_ensureServiceActive()) {
       return;
     }
@@ -178,7 +178,9 @@ class AutoLatencyService {
         _logger.debug('未找到当前组或组为空，跳过批量测试');
         return;
       }
-      final nodesToTest = currentGroup.all.take(maxNodes).toList();
+      final nodesToTest = maxNodes != null 
+          ? currentGroup.all.take(maxNodes).toList() 
+          : currentGroup.all;
       _logger.info('AutoLatencyService', '开始批量测试当前组 ${currentGroup.name} 的节点，数量: ${nodesToTest.length}');
       _logger.debug('AutoLatencyService', '测试节点列表: ${nodesToTest.map((p) => p.name).join(', ')}');
       final testUrl = _ref!.read(appSettingProvider).testUrl;

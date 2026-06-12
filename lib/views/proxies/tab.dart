@@ -52,6 +52,17 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     );
   }
 
+  _buildDelayTestButton() {
+    return IconButton(
+      onPressed: delayTestCurrentGroup,
+      tooltip: appLocalizations.delay,
+      icon: const Icon(
+        Icons.network_ping,
+        size: 20,
+      ),
+    );
+  }
+
   _buildMoreButton() {
     return Consumer(
       builder: (_, ref, ___) {
@@ -221,13 +232,27 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                     controller: _tabController,
                     padding: EdgeInsets.only(
                       left: 16,
-                      right: 16 + (value ? 16 : 0),
+                      right: 16 + (value ? 48 : 0),
                     ),
                     dividerColor: Colors.transparent,
                     isScrollable: true,
                     tabAlignment: TabAlignment.start,
                     overlayColor:
                         const WidgetStatePropertyAll(Colors.transparent),
+                    labelStyle: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    unselectedLabelStyle: context.textTheme.titleSmall,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color:
+                          context.colorScheme.primaryContainer.withOpacity(0.6),
+                    ),
+                    indicatorPadding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 4,
+                    ),
                     tabs: [
                       for (final groupName in groupNames)
                         Tab(
@@ -254,10 +279,16 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                     ],
                     stops: const [
                       0.0,
-                      0.1
+                      0.15
                     ]),
               ),
-              child: _buildMoreButton(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildDelayTestButton(),
+                  _buildMoreButton(),
+                ],
+              ),
             ),
           ),
         ),
@@ -339,7 +370,7 @@ class ProxyGroupViewState extends ConsumerState<ProxyGroupView> {
             top: 16,
             left: 16,
             right: 16,
-            bottom: 96,
+            bottom: 32,
           ),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: columns,

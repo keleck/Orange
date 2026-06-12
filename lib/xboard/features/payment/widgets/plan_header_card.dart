@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
@@ -28,70 +29,106 @@ class PlanHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade600,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // 左边：大图标（占两行高度）
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(10),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.blue.shade400.withValues(alpha: 0.3),
+                Colors.blue.shade600.withValues(alpha: 0.15),
+              ],
             ),
-            child: const Icon(
-              Icons.workspace_premium,
-              color: Colors.white,
-              size: 28,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.blue.withValues(alpha: 0.4),
+              width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withValues(alpha: 0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: Colors.blue.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          // 右边：上下两行
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 第一行：套餐名字（稍大，居中）
-                Text(
-                  plan.name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          child: Row(
+            children: [
+              // 左边：大图标（占两行高度）
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue.shade300.withValues(alpha: 0.3),
+                      Colors.blue.shade500.withValues(alpha: 0.2),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                // 第二行：流量 + 速率（居中）
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildCompactInfo(
-                      Icons.cloud_download_outlined,
-                      _getTrafficDisplay(context),
-                    ),
-                    const SizedBox(width: 10),
-                    _buildCompactInfo(
-                      Icons.speed,
-                      _getSpeedLimitDisplay(context),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.blue.withValues(alpha: 0.3),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withValues(alpha: 0.15),
+                      blurRadius: 8,
                     ),
                   ],
                 ),
-              ],
-            ),
+                child: const Icon(
+                  Icons.workspace_premium,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 14),
+              // 右边：上下两行
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 第一行：套餐名字（稍大，居中）
+                    Text(
+                      plan.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    // 第二行：流量 + 速率（居中）
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildCompactInfo(
+                          Icons.cloud_download_outlined,
+                          _getTrafficDisplay(context),
+                        ),
+                        const SizedBox(width: 10),
+                        _buildCompactInfo(
+                          Icons.speed,
+                          _getSpeedLimitDisplay(context),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

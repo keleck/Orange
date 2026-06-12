@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' show Pointer;
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:animations/animations.dart';
 import 'package:dio/dio.dart';
@@ -28,6 +30,8 @@ class GlobalState {
   static GlobalState? _instance;
   Map<CacheTag, double> cacheScrollPosition = {};
   Map<CacheTag, FixedMap<String, double>> cacheHeightMap = {};
+  /// 内存中的配置缓存，key 为 profileId，value 为配置内容
+  Map<String, Uint8List> profileConfigCache = {};
   bool isService = false;
   Timer? timer;
   Timer? groupsUpdateTimer;
@@ -93,6 +97,14 @@ class GlobalState {
         Config(
           themeProps: defaultThemeProps,
         );
+    
+    // 强制使用新的默认主题色
+    config = config.copyWith(
+      themeProps: config.themeProps.copyWith(
+        primaryColor: defaultPrimaryColor,
+      ),
+    );
+    
     await globalState.migrateOldData(config);
     await AppLocalizations.load(
       utils.getLocaleForString(config.appSetting.locale) ??
@@ -316,7 +328,9 @@ class GlobalState {
     final configMap = await getProfileConfig(profileId);
     final rawConfig = await handleEvaluate(configMap);
     final realPatchConfig = patchConfig.copyWith(
-      tun: patchConfig.tun.getRealTun(config.networkProps.routeMode),
+      tun: patchConfig.tun.getRealTun(
+        config.networkProps.routeMode,
+      ),
     );
     rawConfig["external-controller"] = realPatchConfig.externalController.value;
     rawConfig["external-ui"] = "";
@@ -418,6 +432,13 @@ class GlobalState {
         rawConfig["dns"]["nameserver-policy"][entry.key] =
             entry.value.splitByMultipleSeparators;
       }
+  } else {
+      // 即使不覆盖DNS，也要确保fake-ip-filter包含必要的国内域名过滤
+      // 这样GEOIP,CN,DIRECT规则才能在fake-ip模式下正常工作
+      final existingFilter = (rawConfig["dns"]["fake-ip-filter"] as List?)?.cast<String>() ?? [];
+      final defaultFilter = realPatchConfig.dns.fakeIpFilter;
+      final mergedFilter = {...existingFilter, ...defaultFilter}.toList();
+      rawConfig["dns"]["fake-ip-filter"] = mergedFilter;
     }
     var rules = [];
     if (rawConfig["rules"] != null) {
@@ -433,15 +454,63 @@ class GlobalState {
         rules = [...overrideData.runningRule, ...rules];
       }
     }
+    
+    // 合并自定义规则到规则列表（优先级：自定义规则 > 原有规则）
+    if (realPatchConfig.customRules.isNotEmpty) {
+      rules = [...realPatchConfig.customRules, ...rules];
+    }
+    
     rawConfig["rule"] = rules;
     return rawConfig;
   }
 
   Future<Map<String, dynamic>> getProfileConfig(String profileId) async {
-    final configMap = await switch (clashLibHandler != null) {
-      true => clashLibHandler!.getConfig(profileId),
-      false => clashCore.getConfig(profileId),
-    };
+    Map<String, dynamic> configMap;
+    
+    // 优先从内存缓存读取配置
+    if (profileConfigCache.containsKey(profileId)) {
+      final bytes = profileConfigCache[profileId]!;
+      // 使用 Go 核心解析 YAML（需要先写入临时文件）
+      final tempPath = await appPath.getProfilePath(profileId);
+      final tempFile = File(tempPath);
+      await tempFile.parent.create(recursive: true);
+      await tempFile.writeAsBytes(bytes);
+      
+      configMap = await switch (clashLibHandler != null) {
+        true => clashLibHandler!.getConfig(profileId),
+        false => clashCore.getConfig(profileId),
+      };
+      
+      // 读取后立即删除临时文件
+      try {
+        await tempFile.delete();
+        commonPrint.log('已删除临时配置文件: $tempPath');
+      } catch (e) {
+        commonPrint.log('删除临时配置文件失败: $e');
+      }
+      
+      // 清除内存缓存（配置已加载到核心）
+      profileConfigCache.remove(profileId);
+    } else {
+      // 从文件读取
+      configMap = await switch (clashLibHandler != null) {
+        true => clashLibHandler!.getConfig(profileId),
+        false => clashCore.getConfig(profileId),
+      };
+      
+      // 配置读取成功后删除本地 yaml 文件
+      try {
+        final profilePath = await appPath.getProfilePath(profileId);
+        final profileFile = File(profilePath);
+        if (await profileFile.exists()) {
+          await profileFile.delete();
+          commonPrint.log('已删除本地配置文件: $profilePath');
+        }
+      } catch (e) {
+        commonPrint.log('删除本地配置文件失败: $e');
+      }
+    }
+    
     configMap["rules"] = configMap["rule"];
     configMap.remove("rule");
     return configMap;

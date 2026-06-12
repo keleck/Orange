@@ -55,6 +55,10 @@ func handleAction(action *Action, result ActionResult) {
 		data := []byte(action.Data.(string))
 		result.success(handleValidateConfig(data))
 		return
+	case convertSubscriptionMethod:
+		data := []byte(action.Data.(string))
+		result.success(handleConvertSubscription(data))
+		return
 	case updateConfigMethod:
 		data := []byte(action.Data.(string))
 		result.success(handleUpdateConfig(data))

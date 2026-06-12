@@ -142,6 +142,8 @@ class RemoteSourceConfig {
   final Map<String, String>? headers;
   final Duration? timeout;
   final String? encryptionKey; // 加密密钥（用于gitee源）
+  final int? priority; // 优先级（可选）
+  final bool isEncrypted; // 该 URL 是否已加密
 
   const RemoteSourceConfig({
     required this.name,
@@ -149,7 +151,30 @@ class RemoteSourceConfig {
     this.headers,
     this.timeout,
     this.encryptionKey,
+    this.priority,
+    this.isEncrypted = false,
   });
+
+  /// 复制对象并更新部分字段
+  RemoteSourceConfig copyWith({
+    String? name,
+    String? url,
+    Map<String, String>? headers,
+    Duration? timeout,
+    String? encryptionKey,
+    int? priority,
+    bool? isEncrypted,
+  }) {
+    return RemoteSourceConfig(
+      name: name ?? this.name,
+      url: url ?? this.url,
+      headers: headers ?? this.headers,
+      timeout: timeout ?? this.timeout,
+      encryptionKey: encryptionKey ?? this.encryptionKey,
+      priority: priority ?? this.priority,
+      isEncrypted: isEncrypted ?? this.isEncrypted,
+    );
+  }
 
   factory RemoteSourceConfig.fromJson(Map<String, dynamic> json) {
     final headersData = json['headers'] as Map<String, dynamic>?;
@@ -161,6 +186,8 @@ class RemoteSourceConfig {
       headers: headersData?.cast<String, String>(),
       timeout: timeoutSeconds != null ? Duration(seconds: timeoutSeconds) : null,
       encryptionKey: json['encryptionKey'] as String?,
+      priority: json['priority'] as int?,
+      isEncrypted: json['isEncrypted'] as bool? ?? false,
     );
   }
 
@@ -171,6 +198,8 @@ class RemoteSourceConfig {
       if (headers != null) 'headers': headers,
       if (timeout != null) 'timeoutSeconds': timeout!.inSeconds,
       if (encryptionKey != null) 'encryptionKey': encryptionKey,
+      if (priority != null) 'priority': priority,
+      'isEncrypted': isEncrypted,
     };
   }
 
@@ -183,7 +212,8 @@ class RemoteSourceConfig {
 
     if (url.isEmpty) {
       errors.add('Source URL cannot be empty');
-    } else {
+    } else if (!isEncrypted) {
+      // 仅在 URL 未加密时验证 URL 格式
       try {
         final uri = Uri.parse(url);
         if (!uri.hasScheme || !uri.host.isNotEmpty) {

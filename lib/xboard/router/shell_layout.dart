@@ -90,23 +90,16 @@ class AdaptiveShellLayout extends ConsumerWidget {
       // Support 页面不显示底部导航栏
       final location = GoRouterState.of(context).uri.path;
       final hideBottomNav = location.startsWith('/support');
-
-      // 为悬浮导航栏预留空间（56px 导航栏高度 + 12px padding）
-      final navBarHeight = hideBottomNav ? 0.0 : 68.0;
-
+      
       return Scaffold(
-        body: Padding(
-          padding: EdgeInsets.only(bottom: navBarHeight),
-          child: child,
-        ),
-        bottomNavigationBar: hideBottomNav
-            ? null
+        extendBody: true, // 让内容延伸到底部导航栏下方，实现悬浮效果
+        body: child,
+        bottomNavigationBar: hideBottomNav 
+            ? null 
             : MobileNavigationBar(
                 selectedIndex: currentIndex,
                 onDestinationSelected: (index) => _onDestinationSelected(context, index, false),
               ),
-        // 为悬浮导航栏预留空间
-        extendBody: true,
       );
     }
   }

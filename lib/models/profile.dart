@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:fl_clash/clash/core.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/state.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'clash_config.dart';
@@ -14,6 +15,10 @@ part 'generated/profile.freezed.dart';
 part 'generated/profile.g.dart';
 
 typedef SelectedMap = Map<String, String>;
+
+/// URL 加密转换器 - 保存时加密，读取时解密
+String _encryptUrl(String url) => SensitiveDataEncryptor.encryptUrl(url);
+String _decryptUrl(dynamic url) => SensitiveDataEncryptor.decryptUrl(url as String? ?? '');
 
 @freezed
 class SubscriptionInfo with _$SubscriptionInfo {
@@ -50,6 +55,7 @@ class Profile with _$Profile {
     required String id,
     String? label,
     String? currentGroupName,
+    @JsonKey(fromJson: _decryptUrl, toJson: _encryptUrl)
     @Default("") String url,
     DateTime? lastUpdateDate,
     required Duration autoUpdateDuration,
@@ -147,7 +153,13 @@ extension ProfileExtension on Profile {
     }
   }
 
+  /// 检查配置是否存在（优先检查内存缓存，再检查文件）
   Future<bool> check() async {
+    // 优先检查内存缓存
+    if (globalState.profileConfigCache.containsKey(id)) {
+      return true;
+    }
+    // 再检查文件
     final profilePath = await appPath.getProfilePath(id);
     return await File(profilePath).exists();
   }
@@ -163,8 +175,16 @@ extension ProfileExtension on Profile {
   }
 
   Future<int> get profileLastModified async {
-    final file = await getFile();
-    return (await file.lastModified()).microsecondsSinceEpoch;
+    // 如果配置在内存缓存中，返回当前时间
+    if (globalState.profileConfigCache.containsKey(id)) {
+      return DateTime.now().microsecondsSinceEpoch;
+    }
+    final path = await appPath.getProfilePath(id);
+    final file = File(path);
+    if (await file.exists()) {
+      return (await file.lastModified()).microsecondsSinceEpoch;
+    }
+    return 0;
   }
 
   Future<Profile> update() async {
@@ -177,23 +197,27 @@ extension ProfileExtension on Profile {
     ).saveFile(response.data);
   }
 
+  /// 保存配置到内存缓存（不写入文件）
   Future<Profile> saveFile(Uint8List bytes) async {
     final message = await clashCore.validateConfig(utf8.decode(bytes));
     if (message.isNotEmpty) {
       throw message;
     }
-    final file = await getFile();
-    await file.writeAsBytes(bytes);
+    // 保存到内存缓存，不写入文件
+    globalState.profileConfigCache[id] = bytes;
+    commonPrint.log('配置已保存到内存缓存: $id');
     return copyWith(lastUpdateDate: DateTime.now());
   }
 
+  /// 保存配置到内存缓存（不写入文件）
   Future<Profile> saveFileWithString(String value) async {
     final message = await clashCore.validateConfig(value);
     if (message.isNotEmpty) {
       throw message;
     }
-    final file = await getFile();
-    await file.writeAsString(value);
+    // 保存到内存缓存，不写入文件
+    globalState.profileConfigCache[id] = Uint8List.fromList(utf8.encode(value));
+    commonPrint.log('配置已保存到内存缓存: $id');
     return copyWith(lastUpdateDate: DateTime.now());
   }
 }

@@ -23,36 +23,36 @@ class LanguageSelector extends ConsumerWidget {
     );
 
     return PopupMenuButton<String>(
+      offset: const Offset(0, 40),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       icon: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+          color: const Color(0xFFE6F2FF),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: colorScheme.outline.withValues(alpha: 0.2),
-            width: 1,
-          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               currentLanguage['flag']!,
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             Text(
-              currentLanguage['code'] == 'zh_CN' ? '中' : 'EN',
-              style: TextStyle(
-                fontSize: 12,
+              currentLanguage['name']!,
+              style: const TextStyle(
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: colorScheme.onSurfaceVariant,
+                color: Color(0xFF409EFF),
               ),
             ),
             const SizedBox(width: 4),
-            Icon(
-              Icons.expand_more,
-              color: colorScheme.onSurfaceVariant,
+            const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: Color(0xFF409EFF),
               size: 18,
             ),
           ],

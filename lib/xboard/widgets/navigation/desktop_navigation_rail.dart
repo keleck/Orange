@@ -1,5 +1,6 @@
+import 'dart:ui';
+
 import 'package:fl_clash/l10n/l10n.dart';
-import 'package:fl_clash/xboard/features/online_support/providers/chat_provider.dart';
 import 'package:fl_clash/xboard/features/shared/shared.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/user_menu_widget.dart';
 import 'package:flutter/material.dart';
@@ -18,45 +19,52 @@ class DesktopNavigationRail extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chatState = ref.watch(chatProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = colorScheme.brightness == Brightness.dark;
 
-    return Container(
-      width: 88,
-      decoration: BoxDecoration(
-        // 浅色模式使用纯色，深色模式使用渐变色
-        gradient: isDark
-            ? LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  colorScheme.surfaceContainer,
-                  colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                ],
-              )
-            : null,
-        color: isDark ? null : colorScheme.surfaceContainer,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(2, 0),
-          ),
-        ],
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topRight: Radius.circular(20),
+        bottomRight: Radius.circular(20),
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 24),
-          
-          // 导航项
-          Expanded(
-            child: _buildNavigationItems(context, colorScheme, chatState),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          width: 88,
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+              top: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+              bottom: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
+                blurRadius: 12,
+                offset: const Offset(4, 0),
+              ),
+            ],
           ),
-          
-          // 底部功能区
-          _buildBottomActions(colorScheme),
-        ],
+          child: Column(
+            children: [
+              const SizedBox(height: 24),
+              
+              // 导航项
+              Expanded(
+                child: _buildNavigationItems(context, colorScheme),
+              ),
+              
+              // 底部功能区
+              _buildBottomActions(colorScheme),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -82,7 +90,6 @@ class DesktopNavigationRail extends ConsumerWidget {
   Widget _buildNavigationItems(
     BuildContext context,
     ColorScheme colorScheme,
-    ChatState chatState,
   ) {
     final appLocalizations = AppLocalizations.of(context);
     
@@ -123,20 +130,9 @@ class DesktopNavigationRail extends ConsumerWidget {
           label: Text(appLocalizations.xboardPlans),
         ),
         NavigationRailDestination(
-          icon: _buildIconWithBadge(
-            const Icon(Icons.support_agent_outlined),
-            chatState.unreadCount,
-          ),
-          selectedIcon: _buildIconWithBadge(
-            const Icon(Icons.support_agent),
-            chatState.unreadCount,
-          ),
-          label: Text(appLocalizations.onlineSupport),
-        ),
-        NavigationRailDestination(
-          icon: const Icon(Icons.people_outline),
-          selectedIcon: const Icon(Icons.people),
-          label: Text(appLocalizations.invite),
+          icon: const Icon(Icons.person_outline),
+          selectedIcon: const Icon(Icons.person),
+          label: const Text('我的'),
         ),
       ],
       onDestinationSelected: onDestinationSelected,
@@ -145,25 +141,7 @@ class DesktopNavigationRail extends ConsumerWidget {
 
   /// 底部功能区
   Widget _buildBottomActions(ColorScheme colorScheme) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        _buildDivider(colorScheme),
-        const SizedBox(height: 16),
-        const UserMenuWidget(),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  /// 带未读标记的图标
-  Widget _buildIconWithBadge(Widget icon, int count) {
-    if (count == 0) return icon;
-
-    return BadgeIcon(
-      icon: icon,
-      count: count,
-    );
+    return const SizedBox(height: 16);
   }
 }
 

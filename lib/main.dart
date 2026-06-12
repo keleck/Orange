@@ -31,6 +31,20 @@ Future<void> main() async {
   globalState.isService = false;
   WidgetsFlutterBinding.ensureInitialized(); // 确保 Flutter 绑定已初始化
 
+  // Windows 平台 WebView 初始化
+  if (Platform.isWindows) {
+    // webview_flutter 在 Windows 上需要手动初始化
+    print('[Main] 初始化 Windows WebView...');
+  }
+
+  // 设置 URL 加密密钥（从环境变量读取，用于解密敏感配置源 URL）
+  final encryptionKey = String.fromEnvironment(
+    'URL_ENCRYPTION_KEY',
+    defaultValue: 'CAoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJyg=',
+  );
+  ConfigFileLoader.setEncryptionKey(encryptionKey);
+  print('✓ URL 加密密钥已设置');
+
   // 首先初始化XBoard配置模块和域名服务（必须在RemoteTaskManager之前）
   await _initializeXBoardServices();
 

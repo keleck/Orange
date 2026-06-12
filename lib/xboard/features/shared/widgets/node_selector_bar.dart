@@ -1,10 +1,11 @@
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/views/proxies/proxies.dart';
+import 'package:fl_clash/xboard/features/shared/pages/node_selector_page.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/xboard/features/shared/widgets/glass_container.dart';
 import 'package:fl_clash/xboard/features/latency/services/auto_latency_service.dart';
 import 'package:fl_clash/xboard/features/latency/widgets/latency_indicator.dart';
 import 'package:fl_clash/l10n/l10n.dart';
@@ -124,23 +125,19 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
     );
   }
   Widget _buildProxyDisplay(BuildContext context, Group group, Proxy proxy) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return GlassContainer(
+      borderRadius: BorderRadius.circular(16),
+      opacity: 0.05,
+      blur: 10,
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => CommonScaffold(
-                title: AppLocalizations.of(context).xboardProxy,
-                body: const ProxiesView(),
-              ),
+              builder: (context) => const NodeSelectorPage(),
             ),
           );
         },
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -182,10 +179,7 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => CommonScaffold(
-                        title: AppLocalizations.of(context).xboardProxy,
-                        body: const ProxiesView(),
-                      ),
+                      builder: (context) => const NodeSelectorPage(),
                     ),
                   );
                 },
@@ -272,10 +266,7 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CommonScaffold(
-                      title: AppLocalizations.of(context).xboardProxy,
-                      body: const ProxiesView(),
-                    ),
+                    builder: (context) => const NodeSelectorPage(),
                   ),
                 );
               },

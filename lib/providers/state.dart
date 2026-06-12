@@ -334,6 +334,7 @@ ProxyGroupSelectorState proxyGroupSelectorState(Ref ref, String groupName) {
   final columns = ref.watch(getProxiesColumnsProvider);
   final query =
       ref.watch(proxiesQueryProvider.select((state) => state.toLowerCase()));
+  
   final proxies = group?.all.where((item) {
         return item.name.toLowerCase().contains(query);
       }).toList() ??

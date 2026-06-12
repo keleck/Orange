@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
@@ -11,6 +11,8 @@ import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, Coup
 import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'package:fl_clash/xboard/features/payment/providers/xboard_payment_provider.dart';
+import 'package:go_router/go_router.dart';
+import '../pages/qrcode_payment_page.dart';
 import '../widgets/payment_waiting_overlay.dart';
 import '../widgets/payment_method_selector_dialog.dart';
 import '../widgets/plan_header_card.dart';
@@ -19,6 +21,7 @@ import '../widgets/coupon_input_section.dart';
 import '../widgets/price_summary_card.dart';
 import '../models/payment_step.dart';
 import '../utils/price_calculator.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('plan_purchase_page.dart');
@@ -297,6 +300,9 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
       String? tradeNo;
       _logger.debug('[购买] 开始购买流程，套餐ID: ${widget.plan.id}, 周期: $_selectedPeriod');
 
+      // 在购买前刷新用户余额，确保金额显示最新
+      await _loadUserBalance();
+
       // 显示支付等待页面
       if (mounted) {
         _showPaymentWaiting(null);
@@ -324,12 +330,15 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
       // 计算实付金额
       final displayFinalPrice = _finalPrice ?? _getCurrentPrice();
-      final balanceToUse = _userBalance != null && _userBalance! > 0
-          ? (_userBalance! > displayFinalPrice ? displayFinalPrice : _userBalance!)
+      // 使用 ref 获取最新的用户信息中的余额
+      final userInfo = ref.read(userInfoProvider);
+      final latestBalance = userInfo?.balanceInYuan ?? _userBalance ?? 0.0;
+      final balanceToUse = latestBalance > 0
+          ? (latestBalance > displayFinalPrice ? displayFinalPrice : latestBalance)
           : 0.0;
       final actualPayAmount = displayFinalPrice - balanceToUse;
 
-      _logger.debug('[购买] 实付金额: $actualPayAmount (优惠后价格: $displayFinalPrice, 余额抵扣: $balanceToUse)');
+      _logger.debug('[购买] 实付金额: $actualPayAmount (优惠后价格: $displayFinalPrice, 余额抵扣: $balanceToUse, 当前余额: $latestBalance)');
 
       // 使用 xboardAvailablePaymentMethodsProvider 获取支付方式
       final paymentMethods = ref.read(xboardAvailablePaymentMethodsProvider);
@@ -441,43 +450,110 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
   }
 
   Future<void> _submitPayment(String tradeNo, DomainPaymentMethod method) async {
-    _logger.debug('[支付] 提交支付: $tradeNo, 方式: ${method.id}');
+    try {
+      _logger.debug('[支付] 提交支付: $tradeNo, 方式: ${method.id}');
       PaymentWaitingManager.updateStep(PaymentStep.loadingPayment);
       PaymentWaitingManager.updateStep(PaymentStep.verifyPayment);
 
-    final paymentNotifier = ref.read(xboardPaymentProvider.notifier);
+      final paymentNotifier = ref.read(xboardPaymentProvider.notifier);
       final paymentResult = await paymentNotifier.submitPayment(
         tradeNo: tradeNo,
-      method: method.id.toString(),
+        method: method.id.toString(),
       );
-      
-    if (paymentResult == null) {
-      throw Exception('支付失败: 支付请求返回空结果');
-    }
-      
-    if (!mounted) return;
-        
-    final paymentType = paymentResult['type'] as int? ?? 0;
-    final paymentData = paymentResult['data'];
-        
-    _logger.debug('[支付] type=$paymentType, data=$paymentData (${paymentData.runtimeType})');
-        
-    // type: -1 余额支付成功（data 是 bool）
-    // type: 0 跳转支付（data 是 String）
-    // type: 1 二维码支付（data 是 String）
-    if (paymentType == -1) {
-      // 免费订单/余额支付，data 是 bool
-      if (paymentData == true) {
-        await _handleBalancePaymentSuccess();
-      } else {
-        throw Exception('支付失败: 余额支付未成功 (data=$paymentData)');
+
+      if (paymentResult == null) {
+        throw Exception('支付失败: 支付请求返回空结果');
       }
-    } else if (paymentData != null && paymentData is String && paymentData.isNotEmpty) {
-      // 付费订单，data 是支付URL（String）
-      PaymentWaitingManager.updateStep(PaymentStep.waitingPayment);
-      await _launchPaymentUrl(paymentData, tradeNo);
-    } else {
-      throw Exception('支付失败: 未获取到有效的支付数据 (type=$paymentType, data=$paymentData)');
+
+      if (!mounted) return;
+
+      paymentResult.when(
+        success: (transactionId, message, extra) async {
+          await _handleBalancePaymentSuccess();
+        },
+        redirect: (url, method, headers) async {
+          _logger.info('[支付] 支付重定向 - TradeNo: $tradeNo, URL: $url');
+          PaymentWaitingManager.updateStep(PaymentStep.waitingPayment);
+          // 检查是否是二维码支付（URL 包含 qr 或 二维码相关标识）
+          if (_isQRCodePayment(url)) {
+            _logger.info('[支付] 检测到二维码支付 - TradeNo: $tradeNo');
+            await _showQRCodePayment(url, tradeNo);
+          } else {
+            _logger.info('[支付] 使用网页支付 - TradeNo: $tradeNo');
+            await _launchPaymentUrl(url, tradeNo);
+          }
+        },
+        failed: (message, errorCode, extra) {
+          _logger.error('[支付] 支付失败: $message (code: $errorCode)');
+          throw Exception(message);
+        },
+        canceled: (message) {
+          _logger.debug('[支付] 支付已取消: $message');
+          if (mounted) {
+            PaymentWaitingManager.hide();
+            XBoardNotification.showInfo('支付已取消');
+          }
+        },
+      );
+    } catch (e) {
+      _logger.error('[支付] 支付过程出错: $e');
+      if (mounted) {
+        PaymentWaitingManager.hide();
+        XBoardNotification.showError('支付失败: ${e.toString()}');
+      }
+    }
+  }
+
+  /// 判断是否是二维码支付
+  bool _isQRCodePayment(String url) {
+    // 检查 URL 中是否包含二维码标识
+    // 常见的支付宝/微信二维码 URL 格式：
+    // - https://qr.alipay.com/xxx (支付宝二维码)
+    // - https://mclient.alipay.com/xxx (支付宝移动端，会唤起客户端)
+    // - https://pay.weixin.qq.com/xxx (微信扫码)
+    // - 包含 qr, qrcode, 二维码 等关键字
+    final lowerUrl = url.toLowerCase();
+    
+    return lowerUrl.contains('qr.alipay.com') ||  // 支付宝二维码链接
+        lowerUrl.contains('mclient.alipay.com') ||  // 支付宝移动端（会唤起客户端）
+        lowerUrl.contains('pay.weixin.qq.com') ||  // 微信支付链接
+        lowerUrl.contains('qr') ||                  // 通用二维码标识
+        lowerUrl.contains('qrcode') ||              // 二维码代码
+        lowerUrl.contains('二维码') ||              // 中文二维码
+        lowerUrl.contains('alipay_qr') ||           // 支付宝二维码
+        lowerUrl.contains('wechat_qr') ||           // 微信二维码
+        lowerUrl.startsWith('data:image');          // Base64 图像数据
+  }
+
+  /// 显示二维码支付页面
+  Future<void> _showQRCodePayment(String qrData, String tradeNo) async {
+    try {
+      _logger.info('[支付] 准备显示二维码支付页面 - TradeNo: $tradeNo');
+      PaymentWaitingManager.hide();
+      if (!mounted) {
+        _logger.warning('[支付] 页面已销毁，取消显示二维码 - TradeNo: $tradeNo');
+        return;
+      }
+
+      // 导航到二维码支付页面
+      _logger.info('[支付] 导航到二维码支付页面 - TradeNo: $tradeNo');
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => QRCodePaymentPage(
+            qrCodeData: qrData,
+            tradeNo: tradeNo,
+          ),
+        ),
+      ).then((_) {
+        _logger.info('[支付] 二维码支付页面返回 - TradeNo: $tradeNo');
+      });
+
+      _logger.debug('[支付] 显示二维码支付页面: $tradeNo');
+    } catch (e) {
+      if (mounted) {
+        PaymentWaitingManager.hide();
+        XBoardNotification.showError('打开二维码支付失败: ${e.toString()}');
+      }
     }
   }
 
@@ -509,26 +585,53 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
   Future<void> _launchPaymentUrl(String url, String tradeNo) async {
     try {
-      if (!mounted) return;
-
-        await Clipboard.setData(ClipboardData(text: url));
-        final uri = Uri.parse(url);
-
-        if (!await canLaunchUrl(uri)) {
-          throw Exception('无法打开支付链接');
-        }
-
-        final launched = await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
-
-        if (!launched) {
-          throw Exception('无法启动外部浏览器');
+      _logger.info('[支付] 准备启动支付网页 - TradeNo: $tradeNo, URL: $url');
+      if (!mounted) {
+        _logger.warning('[支付] 页面已销毁，取消启动 - TradeNo: $tradeNo');
+        return;
+      }
+      
+      // 验证 URL 有效性
+      if (url.isEmpty) {
+        _logger.error('[支付] 支付 URL 为空 - TradeNo: $tradeNo');
+        PaymentWaitingManager.hide();
+        XBoardNotification.showError('支付 URL 无效，请联系客服');
+        return;
       }
 
-      _logger.debug('[支付] 支付页面已在浏览器中打开: $tradeNo');
+      _logger.debug('[支付] 准备导航到支付页面 - TradeNo: $tradeNo, URL: $url');
+
+      // 复制支付链接到剪贴板
+      await Clipboard.setData(ClipboardData(text: url));
+      
+      // 隐藏支付等待窗口
+      PaymentWaitingManager.hide();
+      
+      if (!mounted) {
+        _logger.warning('[支付] 隐藏等待窗口后页面已销毁 - TradeNo: $tradeNo');
+        return;
+      }
+      
+      // 使用 go_router 导航到支付网关页面
+      if (context.mounted) {
+        _logger.info('[支付] 开始导航到客户端支付页面 - TradeNo: $tradeNo');
+        context.push(
+          '/payment/gateway',
+          extra: {
+            'paymentUrl': url,
+            'tradeNo': tradeNo,
+          },
+        ).then((_) {
+          _logger.info('[支付] 支付页面返回 - TradeNo: $tradeNo');
+        });
+      } else {
+        _logger.error('[支付] Context 已销毁 - TradeNo: $tradeNo');
+        XBoardNotification.showError('页面已关闭，请重试');
+      }
+      
+      _logger.debug('[支付] 导航到客户端支付页面成功 - TradeNo: $tradeNo');
     } catch (e) {
+      _logger.error('[支付] 打开支付页面异常: $e');
       if (mounted) {
         PaymentWaitingManager.hide();
         XBoardNotification.showError('打开支付页面失败: ${e.toString()}');
@@ -544,6 +647,11 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
     final currentPrice = _getCurrentPrice();
     // 用于判断平台类型
     final isPlatformDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // 从 Provider 中实时获取用户余额
+    final userInfo = ref.watch(userInfoProvider);
+    final displayBalance = userInfo?.balanceInYuan ?? _userBalance;
 
     final content = Align(
       alignment: Alignment.topCenter,
@@ -552,13 +660,13 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
           maxWidth: 700,
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
               // 套餐信息卡片
               PlanHeaderCard(plan: widget.plan),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // 周期选择器
               PeriodSelector(
@@ -595,7 +703,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
                   originalPrice: currentPrice,
                   finalPrice: _finalPrice,
                   discountAmount: _discountAmount,
-                  userBalance: _userBalance,
+                  userBalance: displayBalance,
                 ),
               const SizedBox(height: 20),
 
@@ -661,10 +769,25 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
     // 移动端全屏或独立页面：带 AppBar 的 Scaffold
     return Scaffold(
-      appBar: isPlatformDesktop ? null : AppBar(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text(AppLocalizations.of(context).xboardPurchaseSubscription),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
       ),
-      body: content,
+      body: Container(
+        decoration: AppColors.getBackgroundDecoration(),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: content,
+        ),
+      ),
     );
   }
 } 

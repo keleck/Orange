@@ -31,6 +31,7 @@ export 'proxy.dart';
 export 'render.dart';
 export 'request.dart';
 export 'scroll.dart';
+export 'sensitive_data_encryptor.dart';
 export 'string.dart';
 export 'system.dart';
 export 'text.dart';

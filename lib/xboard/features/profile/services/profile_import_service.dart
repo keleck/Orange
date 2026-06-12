@@ -10,6 +10,7 @@ import 'package:fl_clash/xboard/features/subscription/services/encrypted_subscri
 import 'package:fl_clash/xboard/features/subscription/services/subscription_downloader.dart';
 import 'package:fl_clash/xboard/features/subscription/utils/utils.dart';
 import 'package:fl_clash/xboard/core/core.dart';
+import 'package:fl_clash/xboard/utils/url_masker.dart';
 import 'package:fl_clash/xboard/config/utils/config_file_loader.dart';
 
 // 初始化文件级日志器
@@ -38,7 +39,7 @@ class XBoardProfileImportService {
     _isImporting = true;
     final stopwatch = Stopwatch()..start();
     try {
-      _logger.info('开始导入订阅配置: $url');
+      _logger.info('开始导入订阅配置: ${UrlMasker.mask(url)}');
       
       // 1. 先下载并验证新配置（不删除旧配置）
       onProgress?.call(ImportStatus.downloading, 0.3, '下载配置文件');
@@ -62,7 +63,7 @@ class XBoardProfileImportService {
       );
     } catch (e) {
       stopwatch.stop();
-      _logger.error('订阅配置导入失败', e);
+      _logger.error('订阅配置导入失败: $e', e);
       final errorType = _classifyError(e);
       final userMessage = _getUserFriendlyErrorMessage(e, errorType);
       onProgress?.call(ImportStatus.failed, 0.0, userMessage);
@@ -79,10 +80,12 @@ class XBoardProfileImportService {
     String url, {
     Function(ImportStatus, double, String?)? onProgress,
     int retries = maxRetries,
+    Future<String?> Function()? refreshUrl,
   }) async {
+    String currentUrl = url;
     for (int attempt = 1; attempt <= retries; attempt++) {
-      _logger.debug('导入尝试 $attempt/$retries');
-      final result = await importSubscription(url, onProgress: onProgress);
+      _logger.info('导入尝试 $attempt/$retries，当前URL: ${UrlMasker.mask(currentUrl)}');
+      final result = await importSubscription(currentUrl, onProgress: onProgress);
       if (result.isSuccess) {
         return result;
       }
@@ -93,7 +96,33 @@ class XBoardProfileImportService {
       if (attempt == retries) {
         return result;
       }
-      _logger.debug('等待 ${retryDelay.inSeconds} 秒后重试');
+      
+      // 每次重试前都强制刷新订阅URL（无论是否提供了refreshUrl回调）
+      if (refreshUrl != null) {
+        try {
+          _logger.info('🔄 强制刷新订阅URL（第 $attempt 次重试前）...');
+          onProgress?.call(ImportStatus.downloading, 0.0, '正在强制刷新订阅链接...');
+          
+          final newUrl = await refreshUrl();
+          if (newUrl != null && newUrl.isNotEmpty) {
+            if (newUrl != currentUrl) {
+              _logger.info('✅ 获取到新的订阅URL: ${UrlMasker.mask(newUrl)}');
+              currentUrl = newUrl;
+            } else {
+              _logger.info('⚠️ 获取的URL与当前URL相同，可能服务器未更新');
+            }
+          } else {
+            _logger.warning('⚠️ 未获取到有效的新订阅URL，继续使用当前URL');
+          }
+        } catch (e) {
+          _logger.error('❌ 强制刷新订阅URL失败: $e');
+          onProgress?.call(ImportStatus.downloading, 0.0, '刷新订阅链接失败，将使用旧链接重试...');
+        }
+      } else {
+        _logger.warning('⚠️ 未提供refreshUrl回调，无法强制刷新订阅URL');
+      }
+      
+      _logger.info('等待 ${retryDelay.inSeconds} 秒后重试');
       onProgress?.call(ImportStatus.downloading, 0.0, '第 $attempt 次尝试失败，等待重试...');
       await Future.delayed(retryDelay);
     }
@@ -121,7 +150,7 @@ class XBoardProfileImportService {
   }
   Future<Profile> _downloadAndValidateProfile(String url) async {
     try {
-      _logger.info('开始下载配置: $url');
+      _logger.info('开始下载配置: ${UrlMasker.mask(url)}');
       
       // 先检查用户配置是否禁用了加密订阅
       final preferEncrypt = await ConfigFileLoaderHelper.getPreferEncrypt();

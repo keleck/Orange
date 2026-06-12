@@ -265,6 +265,24 @@ class XBoardConfig {
   /// 获取更新配置列表
   static List<UpdateInfo> get updateList => _accessor.getUpdateConfigList();
 
+  /// 获取 Crisp 客服系统网站 ID
+  static String? get crispWebsiteId => _accessor.getCrispWebsiteId();
+
+  /// 检查是否配置了 Crisp 客服系统
+  static bool get hasCrispSupport => _accessor.hasCrispSupport();
+
+  /// 获取 Telegram 讨论组链接
+  static String? get telegramDiscussLink => _accessor.getTelegramDiscussLink();
+
+  /// 是否显示"我的钱包"按钮
+  static bool get showWallet => _accessor.getShowWallet();
+
+  /// 是否显示"礼品卡兑换"按钮
+  static bool get showGiftCard => _accessor.getShowGiftCard();
+
+  /// 获取官网地址
+  static String? get websiteUrl => _accessor.getWebsiteUrl();
+
   /// 获取订阅配置信息
   static SubscriptionInfo? get subscriptionInfo => _accessor.getSubscriptionInfo();
 

@@ -123,6 +123,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "allowBypassDesc": MessageLookupByLibrary.simpleMessage("开启后部分应用可绕过VPN"),
     "allowLan": MessageLookupByLibrary.simpleMessage("局域网代理"),
     "allowLanDesc": MessageLookupByLibrary.simpleMessage("允许通过局域网访问代理"),
+    "campusHosts": MessageLookupByLibrary.simpleMessage("校园网 Hosts"),
+    "campusHostsDesc": MessageLookupByLibrary.simpleMessage("从远程配置获取校园网穿透规则"),
+    "applyCampusHosts": MessageLookupByLibrary.simpleMessage("应用校园网穿透"),
+    "campusHostsApplied": MessageLookupByLibrary.simpleMessage("校园网 hosts 已应用"),
+    "loadingCampusHosts": MessageLookupByLibrary.simpleMessage("加载校园网配置中..."),
+    "failedToLoadCampusHosts": MessageLookupByLibrary.simpleMessage("加载校园网配置失败"),
+    "campusHostsTip": MessageLookupByLibrary.simpleMessage("不使用或者不需要突破时请关闭校园网穿透"),
     "alreadyHaveAccount": MessageLookupByLibrary.simpleMessage("已有账号？"),
     "app": MessageLookupByLibrary.simpleMessage("应用"),
     "appAccessControl": MessageLookupByLibrary.simpleMessage("应用访问控制"),
@@ -335,8 +342,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "invite": MessageLookupByLibrary.simpleMessage("邀请"),
     "inviteCode": MessageLookupByLibrary.simpleMessage("邀请码"),
     "inviteCodeGenFailed": MessageLookupByLibrary.simpleMessage("邀请码生成失败"),
+    "inviteCodeIncorrect": MessageLookupByLibrary.simpleMessage(
+      "邀请码可能不正确，请检查后重新输入",
+    ),
     "inviteCodeOptional": MessageLookupByLibrary.simpleMessage("邀请码（可选）"),
-    "inviteCodeIncorrect": MessageLookupByLibrary.simpleMessage("邀请码可能不正确，请检查后重新输入"),
     "inviteCodeRequired": MessageLookupByLibrary.simpleMessage("需要邀请码"),
     "inviteCodeRequiredMessage": MessageLookupByLibrary.simpleMessage(
       "注册需要邀请码，请联系已注册用户获取邀请码后再进行注册。",
@@ -794,6 +803,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "walletBalance": MessageLookupByLibrary.simpleMessage("钱包余额"),
     "walletDetails": MessageLookupByLibrary.simpleMessage("钱包详情"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV配置"),
+    "welcomeBack": MessageLookupByLibrary.simpleMessage("欢迎回来"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("白名单模式"),
     "withdraw": MessageLookupByLibrary.simpleMessage("提现"),
     "withdrawCommission": MessageLookupByLibrary.simpleMessage("提现佣金"),
@@ -940,6 +950,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "xboardLater": MessageLookupByLibrary.simpleMessage("稍后处理"),
     "xboardLoadingFailed": MessageLookupByLibrary.simpleMessage("加载失败"),
+    "xboardLoadingNodes": MessageLookupByLibrary.simpleMessage("正在加载节点..."),
     "xboardLoadingPaymentPage": MessageLookupByLibrary.simpleMessage(
       "正在加载支付页面",
     ),
@@ -975,6 +986,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardNoAvailableSubscription": MessageLookupByLibrary.simpleMessage(
       "无可用套餐",
     ),
+    "xboardNoExpiration": MessageLookupByLibrary.simpleMessage("长期有效"),
     "xboardNoInternetConnection": MessageLookupByLibrary.simpleMessage(
       "无网络连接，请检查网络设置",
     ),

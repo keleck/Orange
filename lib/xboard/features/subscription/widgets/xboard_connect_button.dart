@@ -4,6 +4,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/xboard/features/shared/widgets/glass_container.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 class XBoardConnectButton extends ConsumerStatefulWidget {
   final bool isFloating; // 是否为浮动按钮模式
@@ -159,10 +160,14 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
       child: AnimatedBuilder(
         animation: _controller.view,
         builder: (_, child) {
-          return Container(
-            decoration: BoxDecoration(
-              color: isStart ? startColor : stopColor,
-              borderRadius: BorderRadius.circular(12),
+          return GlassContainer(
+            borderRadius: BorderRadius.circular(16),
+            opacity: 0.8,
+            blur: 10,
+            color: isStart ? startColor : stopColor,
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: 1,
             ),
             child: Material(
               color: Colors.transparent,
@@ -170,7 +175,7 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
                 onTap: () {
                   handleSwitchStart();
                 },
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                   child: Row(

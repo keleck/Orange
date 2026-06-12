@@ -148,6 +148,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "allowLanDesc": MessageLookupByLibrary.simpleMessage(
       "Allow access proxy through the LAN",
     ),
+    "applyCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "Apply Campus Hosts",
+    ),
     "alreadyHaveAccount": MessageLookupByLibrary.simpleMessage(
       "Already have an account?",
     ),
@@ -212,6 +215,22 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "cacheCorrupt": MessageLookupByLibrary.simpleMessage(
       "The cache is corrupt. Do you want to clear it?",
+    ),
+    "campusHosts": MessageLookupByLibrary.simpleMessage("Campus Hosts"),
+    "campusHostsDesc": MessageLookupByLibrary.simpleMessage(
+      "Get campus network bypass rules from remote config",
+    ),
+    "campusHostsApplied": MessageLookupByLibrary.simpleMessage(
+      "Campus hosts applied",
+    ),
+    "failedToLoadCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "Failed to load campus hosts",
+    ),
+    "campusHostsTip": MessageLookupByLibrary.simpleMessage(
+      "Please close campus bypass when not in use or not needed",
+    ),
+    "loadingCampusHosts": MessageLookupByLibrary.simpleMessage(
+      "Loading campus hosts...",
     ),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFilterSystemApp": MessageLookupByLibrary.simpleMessage(
@@ -482,11 +501,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "inviteCodeGenFailed": MessageLookupByLibrary.simpleMessage(
       "Invite code generation failed",
     ),
-    "inviteCodeOptional": MessageLookupByLibrary.simpleMessage(
-      "Invite Code (optional)",
-    ),
     "inviteCodeIncorrect": MessageLookupByLibrary.simpleMessage(
       "Invite code may be incorrect, please check and re-enter",
+    ),
+    "inviteCodeOptional": MessageLookupByLibrary.simpleMessage(
+      "Invite Code (optional)",
     ),
     "inviteCodeRequired": MessageLookupByLibrary.simpleMessage(
       "Invite Code Required",
@@ -1156,6 +1175,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage(
       "WebDAV configuration",
     ),
+    "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome Back"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("Whitelist mode"),
     "withdraw": MessageLookupByLibrary.simpleMessage("Withdraw"),
     "withdrawCommission": MessageLookupByLibrary.simpleMessage(
@@ -1350,6 +1370,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardLoadingFailed": MessageLookupByLibrary.simpleMessage(
       "Loading failed",
     ),
+    "xboardLoadingNodes": MessageLookupByLibrary.simpleMessage(
+      "Loading nodes...",
+    ),
     "xboardLoadingPaymentPage": MessageLookupByLibrary.simpleMessage(
       "Loading payment page",
     ),
@@ -1401,6 +1424,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardNoAvailableSubscription": MessageLookupByLibrary.simpleMessage(
       "No available subscription",
     ),
+    "xboardNoExpiration": MessageLookupByLibrary.simpleMessage("No Expiration"),
     "xboardNoInternetConnection": MessageLookupByLibrary.simpleMessage(
       "No internet connection, please check network settings",
     ),

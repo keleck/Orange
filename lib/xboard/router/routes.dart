@@ -1,11 +1,20 @@
+import 'package:fl_clash/xboard/features/user/pages/user_center_page.dart';
+import 'package:fl_clash/xboard/features/user/pages/wallet_page.dart';
+import 'package:fl_clash/xboard/features/user/pages/settings_page.dart';
 import 'package:fl_clash/xboard/features/subscription/pages/xboard_home_page.dart';
 import 'package:fl_clash/xboard/features/subscription/pages/subscription_page.dart';
 import 'package:fl_clash/xboard/features/payment/pages/plans.dart';
 import 'package:fl_clash/xboard/features/payment/pages/plan_purchase_page.dart';
 import 'package:fl_clash/xboard/features/payment/pages/payment_gateway_page.dart';
-import 'package:fl_clash/xboard/features/online_support/pages/online_support_page.dart';
 import 'package:fl_clash/xboard/features/invite/pages/invite_page.dart';
+import 'package:fl_clash/xboard/features/order/pages/order_page.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/xboard/features/traffic/pages/traffic_log_page.dart';
 import 'package:fl_clash/xboard/features/auth/pages/login_page.dart';
+import 'package:fl_clash/xboard/features/ticket/pages/tickets_page.dart';
+import 'package:fl_clash/xboard/features/ticket/pages/create_ticket_page.dart';
+import 'package:fl_clash/xboard/features/ticket/pages/ticket_detail_page.dart';
+import 'package:fl_clash/xboard/features/crisp_support/pages/crisp_support_page.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -48,29 +57,138 @@ final List<RouteBase> routes = [
             ),
           ],
         ),
+
+        // 订单列表分支
+        // StatefulShellBranch(
+        //   routes: [
+        //     GoRoute(
+        //       path: '/orders',
+        //       name: 'orders',
+        //       pageBuilder: (context, state) => const NoTransitionPage(
+        //         child: OrderPage(),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+
+        // // 流量明细分支
+        // StatefulShellBranch(
+        //   routes: [
+        //     GoRoute(
+        //       path: '/traffic-log',
+        //       name: 'traffic_log',
+        //       pageBuilder: (context, state) => const NoTransitionPage(
+        //         child: TrafficLogPage(),
+        //       ),
+        //     ),
+        //   ],
+        // ),
         
-        // 在线客服分支
+        // // 在线客服分支
+        // StatefulShellBranch(
+        //   routes: [
+        //     GoRoute(
+        //       path: '/support',
+        //       name: 'support',
+        //       pageBuilder: (context, state) => const NoTransitionPage(
+        //         child: OnlineSupportPage(),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        
+        // // 邀请页面分支
+        // StatefulShellBranch(
+        //   routes: [
+        //     GoRoute(
+        //       path: '/invite',
+        //       name: 'invite',
+        //       pageBuilder: (context, state) => const NoTransitionPage(
+        //         child: InvitePage(),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+
+        // 用户中心分支
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/support',
-              name: 'support',
+              path: '/user',
+              name: 'user',
               pageBuilder: (context, state) => const NoTransitionPage(
-                child: OnlineSupportPage(),
+                child: UserCenterPage(),
               ),
-            ),
-          ],
-        ),
-        
-        // 邀请页面分支
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/invite',
-              name: 'invite',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: InvitePage(),
-              ),
+              routes: [
+                GoRoute(
+                  path: 'orders',
+                  name: 'orders',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: OrderPage(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'traffic-log',
+                  name: 'traffic_log',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: TrafficLogPage(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'support',
+                  name: 'support',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: CrispSupportPage(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'invite',
+                  name: 'invite',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: InvitePage(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'wallet',
+                  name: 'wallet',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: WalletPage(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'settings',
+                  name: 'settings',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: SettingsPage(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'tickets',
+                  name: 'tickets',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: TicketsPage(),
+                  ),
+                  routes: [
+                    GoRoute(
+                      path: 'create',
+                      name: 'create_ticket',
+                      pageBuilder: (context, state) => const MaterialPage(
+                        child: CreateTicketPage(),
+                      ),
+                    ),
+                    GoRoute(
+                      path: ':id',
+                      name: 'ticket_detail',
+                      pageBuilder: (context, state) {
+                        final id = int.parse(state.pathParameters['id']!);
+                        return MaterialPage(
+                          child: TicketDetailPage(ticketId: id),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
@@ -103,7 +221,6 @@ final List<RouteBase> routes = [
         );
       },
     ),
-    
     // 订阅详情页面
     GoRoute(
       path: '/subscription',
@@ -126,10 +243,14 @@ final List<RouteBase> routes = [
     GoRoute(
       path: '/loading',
       name: 'loading',
-      pageBuilder: (context, state) => const MaterialPage(
-        child: Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
+      pageBuilder: (context, state) => MaterialPage(
+        child: Container(
+          decoration: AppColors.getBackgroundDecoration(),
+          child: const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+            backgroundColor: Colors.transparent,
           ),
         ),
       ),

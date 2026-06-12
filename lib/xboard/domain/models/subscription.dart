@@ -94,7 +94,7 @@ extension DomainSubscriptionX on DomainSubscription {
   /// 是否即将过期（7天内）
   bool get isExpiringSoon {
     final days = daysRemaining;
-    return days != null && days <= 7 && days > 0;
+    return days != null && days <= 7 && days >= 0;
   }
 
   /// 格式化流量显示

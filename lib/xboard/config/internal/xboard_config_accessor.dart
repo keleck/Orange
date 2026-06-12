@@ -208,9 +208,39 @@ class XBoardConfigAccessor {
     return _onlineSupportService?.getAllConfigs() ?? [];
   }
 
+  /// 获取 Crisp 客服系统网站 ID
+  String? getCrispWebsiteId() {
+    return _currentConfig?.crispWebsiteId;
+  }
+
+  /// 检查是否配置了 Crisp 客服系统
+  bool hasCrispSupport() {
+    return _currentConfig?.hasCrispSupport ?? false;
+  }
+
   /// 获取订阅配置信息
   SubscriptionInfo? getSubscriptionInfo() {
     return _currentConfig?.subscription;
+  }
+
+  /// 获取 Telegram 讨论组链接
+  String? getTelegramDiscussLink() {
+    return _currentConfig?.telegramDiscussLink;
+  }
+
+  /// 获取官网地址
+  String? getWebsiteUrl() {
+    return _currentConfig?.websiteUrl;
+  }
+
+  /// 是否显示"我的钱包"按钮
+  bool getShowWallet() {
+    return _currentConfig?.showWallet ?? true;
+  }
+
+  /// 是否显示"礼品卡兑换"按钮
+  bool getShowGiftCard() {
+    return _currentConfig?.showGiftCard ?? true;
   }
 
   // ========== 便捷访问方法 ==========

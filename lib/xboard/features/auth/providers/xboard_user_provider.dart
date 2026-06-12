@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/xboard/features/auth/auth.dart';
 import 'package:fl_clash/xboard/services/services.dart';
 import 'package:fl_clash/xboard/features/profile/providers/profile_import_provider.dart';
+import 'package:fl_clash/xboard/utils/url_masker.dart';
 import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' hide XBoardException;
@@ -71,7 +72,21 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         // 启动时自动导入订阅
         if (subscriptionInfo?.subscribeUrl?.isNotEmpty == true) {
           _logger.info('启动时自动导入订阅: ${subscriptionInfo!.subscribeUrl}');
-          ref.read(profileImportProvider.notifier).importSubscription(subscriptionInfo.subscribeUrl);
+          ref.read(profileImportProvider.notifier).importSubscription(
+            subscriptionInfo.subscribeUrl,
+            refreshUrl: () async {
+              try {
+                _logger.info('[启动导入重试] 重新获取订阅信息...');
+                final newSubModel = await ref.read(getSubscriptionProvider.future);
+                final newSubData = _mapSubscription(newSubModel);
+                _logger.info('[启动导入重试] 获取到新的subscribeUrl: ${UrlMasker.mask(newSubData.subscribeUrl)}');
+                return newSubData.subscribeUrl;
+              } catch (e) {
+                _logger.error('[启动导入重试] 重新获取失败: $e');
+                return null;
+              }
+            },
+          );
         }
         
         return true;
@@ -125,14 +140,29 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         ref.read(userInfoProvider.notifier).state = userInfoData;
       } catch (e) {
         _logger.info('静默更新用户信息失败: $e');
+        _checkAndHandleAuthError(e);
       }
 
       await _storageService.saveDomainSubscription(subscriptionData);
       ref.read(subscriptionInfoProvider.notifier).state = subscriptionData;
 
       if (subscriptionData.subscribeUrl.isNotEmpty) {
-        _logger.info('[后台验证] 开始自动导入订阅配置: ${subscriptionData.subscribeUrl}');
-        ref.read(profileImportProvider.notifier).importSubscription(subscriptionData.subscribeUrl);
+        _logger.info('[后台验证] 开始自动导入订阅配置: ${UrlMasker.mask(subscriptionData.subscribeUrl)}');
+        ref.read(profileImportProvider.notifier).importSubscription(
+          subscriptionData.subscribeUrl,
+          refreshUrl: () async {
+            try {
+              _logger.info('[后台验证重试] 重新获取订阅信息...');
+              final newSubModel = await ref.read(getSubscriptionProvider.future);
+              final newSubData = _mapSubscription(newSubModel);
+              _logger.info('[后台验证重试] 获取到新的subscribeUrl: ${UrlMasker.mask(newSubData.subscribeUrl)}');
+              return newSubData.subscribeUrl;
+            } catch (e) {
+              _logger.error('[后台验证重试] 重新获取失败: $e');
+              return null;
+            }
+          },
+        );
       } else {
         _logger.info('[后台验证] 订阅URL为空，跳过配置导入');
       }
@@ -140,6 +170,7 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
       _logger.info('静默更新用户数据完成');
     } catch (e) {
       _logger.info('静默更新用户数据失败: $e');
+      _checkAndHandleAuthError(e);
     }
   }
   void _showTokenExpiredDialog() {
@@ -147,6 +178,30 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
       errorMessage: 'TOKEN_EXPIRED', // 特殊标记，UI层检测到后显示对话框
     );
   }
+  
+  /// 检测错误是否为认证相关错误（登录过期/失效）
+  bool _isAuthError(dynamic error) {
+    if (error is XBoardException) {
+      final message = error.message.toLowerCase();
+      return message.contains('未登录') || 
+             message.contains('已过期') || 
+             message.contains('登陆已过期') ||
+             message.contains('unauthorized') ||
+             message.contains('token');
+    }
+    return error.toString().toLowerCase().contains('未登录') ||
+           error.toString().toLowerCase().contains('已过期') ||
+           error.toString().toLowerCase().contains('登陆已过期');
+  }
+  
+  /// 检测并处理认证错误
+  void _checkAndHandleAuthError(dynamic error) {
+    if (_isAuthError(error)) {
+      _logger.info('检测到认证错误: $error，触发TOKEN_EXPIRED');
+      _showTokenExpiredDialog();
+    }
+  }
+  
   void clearTokenExpiredError() {
     if (state.errorMessage == 'TOKEN_EXPIRED') {
       state = state.copyWith(errorMessage: null);
@@ -200,8 +255,22 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         
         // 登录成功后自动导入订阅配置
         if (subscriptionInfo.subscribeUrl.isNotEmpty) {
-          _logger.info('[登录成功] 开始自动导入订阅配置: ${subscriptionInfo.subscribeUrl}');
-          ref.read(profileImportProvider.notifier).importSubscription(subscriptionInfo.subscribeUrl);
+          _logger.info('[登录成功] 开始自动导入订阅配置: ${UrlMasker.mask(subscriptionInfo.subscribeUrl)}');
+          ref.read(profileImportProvider.notifier).importSubscription(
+            subscriptionInfo.subscribeUrl,
+            refreshUrl: () async {
+              try {
+                _logger.info('[登录重试] 重新获取订阅信息...');
+                final newSubModel = await ref.read(getSubscriptionProvider.future);
+                final newSubData = _mapSubscription(newSubModel);
+                _logger.info('[登录重试] 获取到新的subscribeUrl: ${UrlMasker.mask(newSubData.subscribeUrl)}');
+                return newSubData.subscribeUrl;
+              } catch (e) {
+                _logger.error('[登录重试] 重新获取失败: $e');
+                return null;
+              }
+            },
+          );
         } else {
           _logger.info('[登录成功] 订阅URL为空，跳过配置导入');
         }
@@ -279,13 +348,22 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       _logger.info('发送验证码到: $email');
-      // 域名服务暂时不支持发送验证码功能
-      throw UnimplementedError('发送验证码功能暂时不可用');
+      
+      await XBoardSDK.instance.auth.sendEmailVerifyCode(email);
+      
+      state = state.copyWith(isLoading: false);
+      return true;
     } catch (e) {
       _logger.info('发送验证码出错: $e');
+      String errorMessage = '发送验证码失败';
+      if (e is XBoardException) {
+        errorMessage = e.message;
+      } else {
+        errorMessage = e.toString();
+      }
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: errorMessage,
       );
       return false;
     }
@@ -339,6 +417,7 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         ref.read(userInfoProvider.notifier).state = userInfo;
       } catch (e) {
         _logger.info('获取用户详细信息失败: $e');
+        _checkAndHandleAuthError(e);
       }
 
       try {
@@ -348,6 +427,7 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         ref.read(subscriptionInfoProvider.notifier).state = subscriptionData;
       } catch (e) {
         _logger.info('获取订阅信息失败: $e');
+        _checkAndHandleAuthError(e);
       }
 
       state = state.copyWith(
@@ -363,6 +443,18 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         ref.read(profileImportProvider.notifier).importSubscription(
           subscriptionData.subscribeUrl,
           forceRefresh: true,
+          refreshUrl: () async {
+            try {
+              _logger.info('[支付成功重试] 重新获取订阅信息...');
+              final newSubModel = await ref.read(getSubscriptionProvider.future);
+              final newSubData = _mapSubscription(newSubModel);
+              _logger.info('[支付成功重试] 获取到新的subscribeUrl: ${UrlMasker.mask(newSubData.subscribeUrl)}');
+              return newSubData.subscribeUrl;
+            } catch (e) {
+              _logger.error('[支付成功重试] 重新获取失败: $e');
+              return null;
+            }
+          },
         );
       } else {
         _logger.info('[支付成功] 订阅链接为空，跳过重新导入');
@@ -394,6 +486,7 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         ref.read(userInfoProvider.notifier).state = userInfo;
       } catch (e) {
         _logger.info('获取用户详细信息失败: $e');
+        _checkAndHandleAuthError(e);
       }
 
       try {
@@ -403,6 +496,7 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
         ref.read(subscriptionInfoProvider.notifier).state = subscriptionData;
       } catch (e) {
         _logger.info('获取订阅信息失败: $e');
+        _checkAndHandleAuthError(e);
       }
 
       state = state.copyWith(
@@ -414,11 +508,23 @@ class XBoardUserAuthNotifier extends Notifier<UserAuthState> {
 
       // 触发订阅导入流程
       if (subscriptionData?.subscribeUrl.isNotEmpty == true) {
-        _logger.info('[手动刷新] 开始导入订阅配置: ${subscriptionData!.subscribeUrl}');
+        _logger.info('[手动刷新] 开始导入订阅配置: ${UrlMasker.mask(subscriptionData!.subscribeUrl)}');
         _logger.info('[手动刷新] 使用强制刷新模式，跳过重复检测');
         ref.read(profileImportProvider.notifier).importSubscription(
           subscriptionData.subscribeUrl,
           forceRefresh: true,
+          refreshUrl: () async {
+            try {
+              _logger.info('[手动刷新重试] 重新获取订阅信息...');
+              final newSubModel = await ref.read(getSubscriptionProvider.future);
+              final newSubData = _mapSubscription(newSubModel);
+              _logger.info('[手动刷新重试] 获取到新的subscribeUrl: ${UrlMasker.mask(newSubData.subscribeUrl)}');
+              return newSubData.subscribeUrl;
+            } catch (e) {
+              _logger.error('[手动刷新重试] 重新获取失败: $e');
+              return null;
+            }
+          },
         );
       } else {
         _logger.info('[手动刷新] 订阅链接为空，跳过导入');
@@ -472,10 +578,10 @@ final xboardUserAuthProvider = NotifierProvider<XBoardUserAuthNotifier, UserAuth
 );
 final xboardUserProvider = xboardUserAuthProvider;
 extension UserInfoHelpers on WidgetRef {
-  DomainUser? get userInfo => read(userInfoProvider);
-  DomainSubscription? get subscriptionInfo => read(subscriptionInfoProvider);
-  UserAuthState get userAuthState => read(xboardUserAuthProvider);
-  bool get isAuthenticated => read(xboardUserAuthProvider).isAuthenticated;
+  DomainUser? get userInfo => watch(userInfoProvider);
+  DomainSubscription? get subscriptionInfo => watch(subscriptionInfoProvider);
+  UserAuthState get userAuthState => watch(xboardUserAuthProvider);
+  bool get isAuthenticated => watch(xboardUserAuthProvider).isAuthenticated;
 }
 
 DomainUser _mapUser(UserModel user) {
@@ -487,12 +593,13 @@ DomainUser _mapUser(UserModel user) {
     transferLimit: user.transferEnable.toInt(),
     uploadedBytes: 0,
     downloadedBytes: 0,
-    balanceInCents: (user.balance * 100).toInt(),
-    commissionBalanceInCents: (user.commissionBalance * 100).toInt(),
+    balanceInCents: user.balance.toInt(),
+    commissionBalanceInCents: user.commissionBalance.toInt(),
     expiredAt: user.expiredAt,
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,
     banned: user.banned,
+    autoRenewal: user.autoRenewal,
     remindExpire: user.remindExpire,
     remindTraffic: user.remindTraffic,
     discount: user.discount,
