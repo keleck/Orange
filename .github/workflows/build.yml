@@ -133,7 +133,9 @@ jobs:
   # ---------------------------------------------------------------- Windows
   windows:
     name: Windows
-    runs-on: windows-latest
+    # windows-latest 已升级到 VS 2026，其 STL 移除了 /await 实验性协程支持，
+    # 而 webview_windows 0.4.0（无更新版本）仍依赖它，故固定使用 VS 2022 镜像
+    runs-on: windows-2022
     if: github.event_name != 'workflow_dispatch' || contains(github.event.inputs.platforms, 'windows')
     steps:
       - name: Checkout
