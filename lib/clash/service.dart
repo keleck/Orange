@@ -141,7 +141,11 @@ class ClashService extends ClashHandlerInterface {
 
   @override
   sendMessage(String message) async {
-    final socket = await socketCompleter.future;
+    // 核心未连接时最多等待 30 秒，避免界面无限转圈
+    final socket = await socketCompleter.future.timeout(
+      const Duration(seconds: 30),
+      onTimeout: () => throw TimeoutException("核心未响应（30 秒超时）"),
+    );
     socket.writeln(message);
   }
 

@@ -582,14 +582,48 @@ class AppController {
   }
 
   Future<void> _initCore() async {
-    final isInit = await clashCore.isInit;
-    if (!isInit) {
-      await clashCore.init();
-      await clashCore.setState(
-        globalState.getCoreState(),
-      );
+    try {
+      final isInit = await Future<bool>.value(
+        clashCore.isInit,
+      ).timeout(const Duration(seconds: 20));
+      if (!isInit) {
+        await clashCore.init().timeout(const Duration(seconds: 40));
+        await clashCore
+            .setState(globalState.getCoreState())
+            .timeout(const Duration(seconds: 20));
+      }
+      // 启动阶段 homeScaffoldKey 尚未挂载（go_router 下失效），
+      // 必须用 silence 模式直接下发配置，否则会静默 return 导致节点不显示
+      await applyProfile(silence: true);
+    } on TimeoutException {
+      // 核心进程没起来或没回连：重启一次核心后重试
+      commonPrint.log("核心初始化超时，尝试重启核心: ${appPath.corePath}");
+      try {
+        await clashService?.reStart();
+        final isInit = await Future<bool>.value(
+          clashCore.isInit,
+        ).timeout(const Duration(seconds: 20));
+        if (!isInit) {
+          await clashCore.init().timeout(const Duration(seconds: 40));
+          await clashCore
+              .setState(globalState.getCoreState())
+              .timeout(const Duration(seconds: 20));
+        }
+        await applyProfile(silence: true);
+        return;
+      } on TimeoutException {
+        commonPrint.log("核心重启后仍无响应，请检查 FlClashCore.exe 是否被安全软件拦截");
+        globalState.showNotifier("核心启动失败：请检查安全软件是否拦截 FlClashCore.exe");
+        return;
+      } catch (e) {
+        commonPrint.log("核心重启失败: $e");
+        globalState.showNotifier("核心启动失败: $e");
+        return;
+      }
+    } catch (e) {
+      commonPrint.log("核心初始化失败: $e");
+      globalState.showNotifier("核心初始化失败: $e");
     }
-    await applyProfile();
   }
 
   init() async {
