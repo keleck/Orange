@@ -89,23 +89,46 @@ class ClashService extends ClashHandlerInterface {
     if (Platform.isWindows && await system.checkIsAdmin()) {
       final isSuccess = await request.startCoreByHelper(arg);
       if (isSuccess) {
+        _watchCoreStart();
         return;
       }
     }
-    process = await Process.start(
-      appPath.corePath,
-      [
-        arg,
-      ],
-    );
-    process?.stdout.listen((_) {});
-    process?.stderr.listen((e) {
-      final error = utf8.decode(e);
-      if (error.isNotEmpty) {
-        commonPrint.log(error);
+    try {
+      process = await Process.start(
+        appPath.corePath,
+        [
+          arg,
+        ],
+      );
+      process?.stdout.listen((_) {});
+      process?.stderr.listen((e) {
+        final error = utf8.decode(e);
+        if (error.isNotEmpty) {
+          commonPrint.log(error);
+        }
+      });
+      _watchCoreStart();
+    } catch (e, s) {
+      commonPrint.log("core start failed: ${appPath.corePath} -> $e");
+      globalState.showNotifier("核心启动失败: $e");
+      commonPrint.log(s.toString());
+    } finally {
+      isStarting = false;
+    }
+  }
+
+  /// 核心启动看门狗：超时未建立连接时给出可诊断的提示
+  void _watchCoreStart() {
+    Future.delayed(const Duration(seconds: 15), () {
+      if (socketCompleter.isCompleted) {
+        return;
       }
+      commonPrint.log(
+        "核心未在 15 秒内建立连接，可能被安全软件拦截、端口被占用或缺少运行库。"
+        "路径: ${appPath.corePath}",
+      );
+      globalState.showNotifier("核心启动失败：请检查是否被安全软件拦截");
     });
-    isStarting = false;
   }
 
   @override
