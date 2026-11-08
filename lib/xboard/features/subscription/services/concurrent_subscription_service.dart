@@ -32,9 +32,6 @@ class ConcurrentSubscriptionService {
 
       // 1. 获取订阅信息和token
       final subscriptionData = await XBoardSDK.instance.subscription.getSubscription();
-      if (subscriptionData == null) {
-        return SubscriptionResult.failure('未获取到订阅信息');
-      }
       
       final token = subscriptionData.token;
       if (token == null || token.isEmpty) {
@@ -150,7 +147,15 @@ class ConcurrentSubscriptionService {
       final cancelToken = CancelToken();
       cancelTokens.add(cancelToken);
       
-      futures.add(_fetchSingleSubscriptionWithCancel(url, originalToken, cancelToken, i));
+      // 添加错开延迟，避免所有请求同时发起导致服务器限流
+      // 每个请求延迟 50-100ms，既不影响竞速效果，又能避免瞬间流量峰值
+      final staggerDelay = Duration(milliseconds: i * 80);
+      
+      futures.add(
+        Future.delayed(staggerDelay).then((_) => 
+          _fetchSingleSubscriptionWithCancel(url, originalToken, cancelToken, i)
+        )
+      );
     }
 
     try {
@@ -307,9 +312,15 @@ class ConcurrentSubscriptionService {
 
   /// 发起HTTP请求获取数据（复用EncryptedSubscriptionService的逻辑）
   static Future<DataResult> _fetchEncryptedData(String url) async {
+    HttpClient? client;
     try {
-      final client = HttpClient();
+      // 每次请求使用新的client实例，避免连接池问题
+      client = HttpClient();
       client.connectionTimeout = requestTimeout;
+      // 添加 idle timeout 防止连接泄漏
+      client.idleTimeout = const Duration(seconds: 15);
+      // 并发竞速时限制每个host的连接数
+      client.maxConnectionsPerHost = 1;
       
       final uri = Uri.parse(url);
       final request = await client.getUrl(uri);
@@ -318,13 +329,15 @@ class ConcurrentSubscriptionService {
       final userAgent = await UserAgentConfig.get(UserAgentScenario.subscriptionRacing);
       request.headers.set(HttpHeaders.userAgentHeader, userAgent);
       request.headers.set(HttpHeaders.acceptHeader, '*/*');
+      // 添加 Connection: close 避免 keep-alive 导致的连接复用问题
+      request.headers.set(HttpHeaders.connectionHeader, 'close');
       
       final response = await request.close().timeout(requestTimeout);
       
       if (response.statusCode == 200) {
         final responseBody = await response.transform(utf8.decoder).join();
         final subscriptionUserInfo = response.headers.value('subscription-userinfo');
-        client.close();
+        client.close(force: false);
         
         // 尝试解析JSON响应
         try {
@@ -339,13 +352,22 @@ class ConcurrentSubscriptionService {
         return DataResult.success(responseBody, subscriptionUserInfo: subscriptionUserInfo);
         
       } else {
-        client.close();
+        // 读取错误响应体
+        String errorBody = '';
+        try {
+          errorBody = await response.transform(utf8.decoder).join();
+        } catch (_) {}
+        
+        client.close(force: true);
+        _logger.warning('[竞速订阅] HTTP请求失败: ${response.statusCode}${errorBody.isNotEmpty ? ' - $errorBody' : ''}');
         return DataResult.failure('HTTP请求失败: ${response.statusCode}');
       }
       
     } on TimeoutException {
+      client?.close(force: true);
       return DataResult.failure('请求超时');
     } catch (e) {
+      client?.close(force: true);
       return DataResult.failure('请求异常: $e');
     }
   }

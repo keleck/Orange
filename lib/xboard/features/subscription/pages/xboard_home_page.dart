@@ -396,16 +396,24 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     
     // 检查订阅状态
     final domainSubscription = ref.watch(subscriptionInfoProvider);
+    final userState = ref.watch(xboardUserProvider);
     final isExpired = domainSubscription?.isExpired ?? false;
     final isTrafficExhausted = domainSubscription?.isTrafficExhausted ?? false;
     
     // 检查节点加载状态
     final isNodeLoading = _calculateIsNodeLoading(ref);
     
-    // 如果账号过期、流量耗尽或节点正在加载，禁用连接按钮
-    final isDisabled = isExpired || isTrafficExhausted || isNodeLoading;
+    // 刷新订阅过程中不检查流量和过期状态，避免误导用户
+    final isRefreshing = userState.isLoading;
     
-    if (!state.isInit || !state.hasProfile) {
+    // 如果账号过期、流量耗尽或节点正在加载，禁用连接按钮
+    // 但刷新过程中不因为流量或过期状态禁用
+    final isDisabled = isRefreshing 
+        ? isNodeLoading 
+        : (isExpired || isTrafficExhausted || isNodeLoading);
+    
+    // 节点加载失败时不隐藏按钮，而是显示加载状态
+    if (!state.isInit) {
       return Container();
     }
 
@@ -496,9 +504,13 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      isDisabled 
-                          ? (isExpired ? '账号已过期' : '流量已耗尽')
-                          : (isStart ? '已连接' : '未连接'),
+                      isRefreshing
+                          ? '刷新中...'
+                          : isNodeLoading
+                              ? '加载中...'
+                              : isDisabled 
+                                  ? (isExpired ? '账号已过期' : '流量已耗尽')
+                                  : (isStart ? '已连接' : '未连接'),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,

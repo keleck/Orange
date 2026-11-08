@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
@@ -126,8 +125,128 @@ class WindowHeaderContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 完全隐藏标题栏，直接返回子组件
+    // 桌面平台在左上角显示窗口控制按钮和拖拽区域
+    if (system.isDesktop) {
+      return Stack(
+        children: [
+          child,
+          // 顶部拖拽区域
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: GestureDetector(
+              onPanStart: (_) {
+                windowManager.startDragging();
+              },
+              child: Container(
+                height: 30,
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          // 窗口控制按钮
+          const Positioned(
+            top: 0,
+            left: 0,
+            child: WindowControlButtons(),
+          ),
+        ],
+      );
+    }
     return child;
+  }
+}
+
+class WindowControlButtons extends StatelessWidget {
+  const WindowControlButtons({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 仅在 Windows 平台显示窗口控制按钮
+    if (!Platform.isWindows) {
+      return const SizedBox.shrink();
+    }
+    
+    return Container(
+      margin: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _WindowButton(
+            icon: Icons.remove,
+            tooltip: '最小化',
+            onTap: () async {
+              await windowManager.minimize();
+            },
+          ),
+          _WindowButton(
+            icon: Icons.close,
+            tooltip: '关闭',
+            onTap: () async {
+              await globalState.appController.handleBackOrExit();
+            },
+            isClose: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WindowButton extends StatefulWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  final bool isClose;
+
+  const _WindowButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+    this.isClose = false,
+  });
+
+  @override
+  State<_WindowButton> createState() => _WindowButtonState();
+}
+
+class _WindowButtonState extends State<_WindowButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? (widget.isClose
+                    ? Colors.red.withOpacity(0.6)
+                    : Colors.white.withOpacity(0.15))
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: Icon(
+              widget.icon,
+              size: 14,
+              color: Colors.white.withOpacity(0.95),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -180,6 +299,11 @@ class _WindowHeaderState extends State<WindowHeader> {
   }
 
   _buildActions() {
+    // 仅在 Windows 平台显示窗口控制按钮
+    if (!Platform.isWindows) {
+      return const SizedBox.shrink();
+    }
+    
     return Row(
       children: [
         IconButton(

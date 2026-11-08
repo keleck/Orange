@@ -115,3 +115,35 @@ Future<void> clearCampusHosts(WidgetRef ref, List<String> campusHosts) async {
     _logger.error('Failed to clear campus hosts', e);
   }
 }
+
+/// 检查校园网 hosts 是否已启用
+/// 通过检查当前 Clash 配置中是否包含校园网 hosts 来判断
+bool isCampusHostsEnabled(WidgetRef ref, List<String> campusHosts) {
+  try {
+    if (campusHosts.isEmpty) {
+      return false;
+    }
+
+    // 获取当前 hosts 映射
+    final currentHosts = ref.read(patchClashConfigProvider).hosts;
+
+    // 检查至少一个校园网 host 是否存在
+    for (final hostEntry in campusHosts) {
+      final parts = hostEntry.trim().split(RegExp(r'\s+'));
+      if (parts.length >= 2) {
+        final hostname = parts[1];
+        final ip = parts[0];
+        
+        // 如果找到匹配的 hostname 和 IP，说明已启用
+        if (currentHosts[hostname] == ip) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  } catch (e) {
+    _logger.error('Failed to check campus hosts status', e);
+    return false;
+  }
+}

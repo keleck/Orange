@@ -101,15 +101,25 @@ class SubscriptionUrlInfo extends ConfigEntry {
   /// 构建完整的订阅URL
   String buildSubscriptionUrl(String token, {bool preferEncrypt = true}) {
     final endpoint = preferEncrypt ? encryptEndpoint : normalEndpoint;
-    if (endpoint == null) return url;
+    if (endpoint == null) return _ensureProtocol(url);
 
     final path = endpoint.path.replaceAll('{token}', token);
-    final baseUrl = url.endsWith('/') ? '$url${path.startsWith('/') ? path.substring(1) : path}'
-                                      : '$url${path.startsWith('/') ? path : '/$path'}';
+    final normalizedUrl = _ensureProtocol(url);
+    final baseUrl = normalizedUrl.endsWith('/') ? '$normalizedUrl${path.startsWith('/') ? path.substring(1) : path}'
+                                      : '$normalizedUrl${path.startsWith('/') ? path : '/$path'}';
 
     // 添加 FlClash 标识参数
     final separator = baseUrl.contains('?') ? '&' : '?';
     return '$baseUrl${separator}flag=flclash';
+  }
+
+  /// 确保URL包含协议前缀
+  String _ensureProtocol(String url) {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // 默认使用 https://
+    return 'https://$url';
   }
 
   @override

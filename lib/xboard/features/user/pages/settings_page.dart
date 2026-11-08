@@ -21,7 +21,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _ipv6Loading = false;
   bool _lanProxyLoading = false;
   bool _isInitialized = false;
-  bool _campusHostsEnabled = false;
   bool _campusHostsLoading = false;
   late TextEditingController _importRulesController;
 
@@ -815,6 +814,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               return const SizedBox.shrink();
             }
             
+            // 直接从当前配置中检查是否已启用
+            final isEnabled = isCampusHostsEnabled(ref, hosts);
+            
             return ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: BackdropFilter(
@@ -858,7 +860,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             ),
                           ),
                           Switch(
-                            value: _campusHostsEnabled,
+                            value: isEnabled,
                             onChanged: _campusHostsLoading
                                 ? null
                                 : (value) async {
@@ -871,8 +873,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                         await clearCampusHosts(ref, hosts);
                                         XBoardNotification.showSuccess('校园网 Hosts 已禁用');
                                       }
+                                      // 触发重建以更新开关状态
                                       if (mounted) {
-                                        setState(() => _campusHostsEnabled = value);
+                                        setState(() {});
                                       }
                                     } catch (e) {
                                       XBoardNotification.showError('操作失败');

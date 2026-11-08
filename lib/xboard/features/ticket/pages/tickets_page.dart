@@ -96,9 +96,12 @@ class TicketsPage extends ConsumerWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/user/tickets/create'),
-        child: const Icon(Icons.add),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 70),
+        child: FloatingActionButton(
+          onPressed: () => context.push('/user/tickets/create'),
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

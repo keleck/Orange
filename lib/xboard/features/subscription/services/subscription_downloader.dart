@@ -31,20 +31,23 @@ class SubscriptionDownloader {
     bool autoSwitchApi = true,
   }) async {
     try {
-      _logger.info('开始下载订阅: ${UrlMasker.mask(url)}');
-      
+      // 确保 URL 有协议前缀
+      final normalizedUrl = _ensureProtocol(url);
+      _logger.info('原始URL: ${UrlMasker.mask(url)}');
+      _logger.info('规范化URL: ${UrlMasker.mask(normalizedUrl)}');
+      _logger.info('开始下载订阅: ${UrlMasker.mask(normalizedUrl)}');      
       // 尝试使用当前 URL 下载
       try {
-        return await _downloadWithUrl(url, enableRacing: enableRacing);
+        return await _downloadWithUrl(normalizedUrl, enableRacing: enableRacing);
       } catch (e) {
         _logger.warning('使用当前URL下载失败: $e');
         
         // 如果启用了自动切换API且当前URL失败，尝试切换到其他API
         if (autoSwitchApi) {
           _logger.info('🔄 开始尝试切换到其他API链接...');
-          final alternativeUrl = await _getAlternativeSubscriptionUrl(url);
+          final alternativeUrl = await _getAlternativeSubscriptionUrl(normalizedUrl);
           
-          if (alternativeUrl != null && alternativeUrl != url) {
+          if (alternativeUrl != null && alternativeUrl != normalizedUrl) {
             _logger.info('✅ 找到备用API链接: ${UrlMasker.mask(alternativeUrl)}');
             _logger.info('🔄 使用备用API重新下载订阅...');
             
@@ -211,7 +214,7 @@ class SubscriptionDownloader {
       
       // 查找不同的API链接
       for (final config in subscriptionConfigs) {
-        final configBase = config.url;
+        final configBase = _ensureProtocol(config.url);
         
         // 跳过与当前URL相同的API
         if (configBase == currentBase || currentUrl.startsWith(configBase)) {
@@ -224,7 +227,9 @@ class SubscriptionDownloader {
         if (config.endpoints.containsKey('v2')) {
           final endpoint = config.endpoints['v2']!;
           final path = endpoint.path.replaceAll('{token}', token);
-          final newUrl = '$configBase$path';
+          final normalizedConfigBase = configBase.endsWith('/') ? configBase.substring(0, configBase.length - 1) : configBase;
+          final normalizedPath = path.startsWith('/') ? path : '/$path';
+          final newUrl = '$normalizedConfigBase$normalizedPath';
           
           _logger.info('✅ 选择备用API: ${config.description} - ${UrlMasker.mask(newUrl)}');
           return newUrl;
@@ -238,6 +243,15 @@ class SubscriptionDownloader {
       _logger.error('获取备用订阅URL失败', e);
       return null;
     }
+  }
+  
+  /// 确保URL包含协议前缀
+  static String _ensureProtocol(String url) {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // 默认使用 https://
+    return 'https://$url';
   }
   
   /// 等待第一个成功的任务（忽略失败的）

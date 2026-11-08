@@ -18,9 +18,12 @@ class SubscriptionUrlHelper {
   /// - https://domain.com/api/v1/client/subscribe?token=xxx
   /// - https://domain.com/api/v2/subscription-encrypt/xxx
   /// - https://domain.com/subscription/xxx
+  /// - domain.com/api/v1/client/subscribe?token=xxx (自动补充协议)
   static String? extractTokenFromUrl(String url) {
     try {
-      final uri = Uri.parse(url);
+      // 确保URL有协议前缀
+      final normalizedUrl = _ensureProtocol(url);
+      final uri = Uri.parse(normalizedUrl);
       
       // 方式1: 查询参数中的token
       if (uri.queryParameters.containsKey('token')) {
@@ -42,13 +45,23 @@ class SubscriptionUrlHelper {
       return null;
     }
   }
+  
+  /// 确保URL包含协议前缀
+  static String _ensureProtocol(String url) {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // 默认使用 https://
+    return 'https://$url';
+  }
 
   /// 检查URL是否为加密订阅URL
   /// 
   /// 通过路径中是否包含 encrypt 关键字判断
   static bool isEncryptedSubscriptionUrl(String url) {
     try {
-      final uri = Uri.parse(url);
+      final normalizedUrl = _ensureProtocol(url);
+      final uri = Uri.parse(normalizedUrl);
       final path = uri.path.toLowerCase();
       
       return path.contains('encrypt');

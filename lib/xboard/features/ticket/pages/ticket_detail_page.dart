@@ -1,10 +1,10 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:intl/intl.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class TicketDetailPage extends ConsumerStatefulWidget {
   final int ticketId;
@@ -97,15 +97,17 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
   Widget build(BuildContext context) {
     final ticketAsync = ref.watch(getTicketProvider(widget.ticketId));
     final isLoading = ref.watch(ticketControllerProvider).isLoading;
+    // 获取底部安全区域和底部导航栏的高度
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('工单详情'),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
         actions: [
           ticketAsync.when(
             data: (ticket) {
@@ -124,7 +126,11 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
           ),
         ],
       ),
-      body: ticketAsync.when(
+      body: Container(
+        decoration: AppColors.getBackgroundDecoration(),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: ticketAsync.when(
         data: (ticket) {
           // 调试：打印消息列表长度
           debugPrint('Ticket ID: ${ticket.id}, Messages count: ${ticket.messages.length}');
@@ -133,6 +139,9 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
               debugPrint('Message $i: ${ticket.messages[i].message}');
             }
           }
+          
+          // 计算回复框的实际高度（输入框 + padding + 底部导航栏 + 安全区域）
+          final replyBoxHeight = ticket.status != 1 ? 72.0 + bottomPadding + 56.0 : bottomPadding + 56.0;
           
           return Column(
             children: [
@@ -143,7 +152,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
                   child: ticket.messages.isEmpty
                       ? ListView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(left: 16, right: 16, top: 86, bottom: 16),
+                          padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: replyBoxHeight + 16),
                           children: [
                             _TicketHeader(ticket: ticket),
                             const SizedBox(height: 32),
@@ -159,7 +168,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
                         )
                       : ListView.builder(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(left: 16, right: 16, top: 86, bottom: 16),
+                          padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: replyBoxHeight + 16),
                           itemCount: ticket.messages.length + 1, // +1 for header
                           itemBuilder: (context, index) {
                             if (index == 0) {
@@ -173,7 +182,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
               ),
               if (ticket.status != 1) // Not closed
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0 + bottomPadding + 56.0),
                   child: Row(
                     children: [
                       Expanded(
@@ -204,6 +213,8 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text('加载失败: $error')),
+          ),
+        ),
       ),
     );
   }
@@ -264,7 +275,7 @@ class _TicketHeader extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: levelMeta.background,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: levelMeta.color.withOpacity(0.3)),
+                            border: Border.all(color: levelMeta.color.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             '优先级: ${levelMeta.label}',
@@ -279,7 +290,7 @@ class _TicketHeader extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: replyMeta.background,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: replyMeta.color.withOpacity(0.3)),
+                            border: Border.all(color: replyMeta.color.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             replyMeta.label,
@@ -338,7 +349,7 @@ class _TicketHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: meta.background,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: meta.color.withOpacity(0.3)),
+        border: Border.all(color: meta.color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -457,21 +468,21 @@ _ChipMeta _statusMeta(int status, ThemeData theme) {
       return _ChipMeta(
         label: '处理中',
         color: Colors.green.shade700,
-        background: Colors.green.withOpacity(0.08),
+        background: Colors.green.withValues(alpha: 0.08),
         icon: Icons.autorenew,
       );
     case 1:
       return _ChipMeta(
         label: '已关闭',
         color: theme.colorScheme.outline,
-        background: theme.colorScheme.outline.withOpacity(0.12),
+        background: theme.colorScheme.outline.withValues(alpha: 0.12),
         icon: Icons.check_circle,
       );
     default:
       return _ChipMeta(
         label: '未知',
         color: theme.colorScheme.primary,
-        background: theme.colorScheme.primary.withOpacity(0.12),
+        background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
       );
   }
@@ -483,28 +494,28 @@ _ChipMeta _levelMeta(int level, ThemeData theme) {
       return _ChipMeta(
         label: '低优先级',
         color: Colors.blueGrey.shade600,
-        background: Colors.blueGrey.withOpacity(0.12),
+        background: Colors.blueGrey.withValues(alpha: 0.12),
         icon: Icons.low_priority,
       );
     case 1:
       return _ChipMeta(
         label: '中优先级',
         color: Colors.orange.shade700,
-        background: Colors.orange.withOpacity(0.12),
+        background: Colors.orange.withValues(alpha: 0.12),
         icon: Icons.trending_up,
       );
     case 2:
       return _ChipMeta(
         label: '高优先级',
         color: Colors.red.shade700,
-        background: Colors.red.withOpacity(0.12),
+        background: Colors.red.withValues(alpha: 0.12),
         icon: Icons.priority_high,
       );
     default:
       return _ChipMeta(
         label: '未知优先级',
         color: theme.colorScheme.primary,
-        background: theme.colorScheme.primary.withOpacity(0.12),
+        background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
       );
   }
@@ -516,21 +527,21 @@ _ChipMeta _replyStatusMeta(int replyStatus, ThemeData theme) {
       return _ChipMeta(
         label: '已回复',
         color: Colors.green.shade700,
-        background: Colors.green.withOpacity(0.12),
+        background: Colors.green.withValues(alpha: 0.12),
         icon: Icons.mark_chat_read,
       );
     case 1:
       return _ChipMeta(
         label: '等待回复',
         color: Colors.amber.shade800,
-        background: Colors.amber.withOpacity(0.12),
+        background: Colors.amber.withValues(alpha: 0.12),
         icon: Icons.mark_chat_unread,
       );
     default:
       return _ChipMeta(
         label: '未知回复状态',
         color: theme.colorScheme.primary,
-        background: theme.colorScheme.primary.withOpacity(0.12),
+        background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
       );
   }

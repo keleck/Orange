@@ -9,16 +9,20 @@ import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/xboard/infrastructure/infrastructure.dart';
 import 'package:fl_clash/xboard/infrastructure/http/user_agent_config.dart';
 import 'concurrent_subscription_service.dart';
+import 'subscription_request_manager.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('encrypted_subscription_service.dart');
+
+// 请求管理器单例
+final _requestManager = SubscriptionRequestManager();
 
 /// 加密订阅获取服务
 /// 
 /// 负责从XBoard加密端点获取订阅数据并解密
 class EncryptedSubscriptionService {
   static const Duration requestTimeout = Duration(seconds: 30);
-  static const int maxRetries = 3;
+  static const int maxRetries = 5; // 增加到5次重试，确保只要API没问题就不会失败
 
   /// 从登录数据中获取加密订阅（推荐方法）
   /// 
@@ -30,15 +34,26 @@ class EncryptedSubscriptionService {
     bool preferEncrypt = true,
     bool enableRace = true,
   }) async {
+    // 使用请求管理器包装，实现去重和速率限制
+    return await _requestManager.executeRequest(
+      'getEncryptedSubscriptionFromLogin:$preferEncrypt:$enableRace',
+      () => _getEncryptedSubscriptionFromLoginInternal(
+        preferEncrypt: preferEncrypt,
+        enableRace: enableRace,
+      ),
+    );
+  }
+
+  /// 内部实现（不带请求管理）
+  static Future<SubscriptionResult> _getEncryptedSubscriptionFromLoginInternal({
+    bool preferEncrypt = true,
+    bool enableRace = true,
+  }) async {
     try {
       _logger.info('从登录数据获取加密订阅');
 
       // 1. 获取订阅信息（注意：这里获取的是订阅数据，不是Auth Token）
       final subscriptionData = await XBoardSDK.instance.subscription.getSubscription();
-      
-      if (subscriptionData == null) {
-        return SubscriptionResult.failure('未获取到订阅信息');
-      }
 
       final subscribeUrl = subscriptionData.subscribeUrl;
       if (subscribeUrl == null || subscribeUrl.isEmpty) {
@@ -108,6 +123,23 @@ class EncryptedSubscriptionService {
   /// 
   /// 返回解密后的Clash配置内容
   static Future<SubscriptionResult> getEncryptedSubscription(
+    String token, {
+    bool preferEncrypt = true,
+    bool enableRace = true,
+  }) async {
+    // 使用请求管理器包装
+    return await _requestManager.executeRequest(
+      'getEncryptedSubscription:$token:$preferEncrypt:$enableRace',
+      () => _getEncryptedSubscriptionInternal(
+        token,
+        preferEncrypt: preferEncrypt,
+        enableRace: enableRace,
+      ),
+    );
+  }
+
+  /// 内部实现（不带请求管理）
+  static Future<SubscriptionResult> _getEncryptedSubscriptionInternal(
     String token, {
     bool preferEncrypt = true,
     bool enableRace = true,
@@ -194,12 +226,19 @@ class EncryptedSubscriptionService {
   static Future<DataResult> _fetchEncryptedData(String url) async {
     _logger.info('[数据获取] 开始获取加密数据，最大重试次数: $maxRetries');
 
+    HttpClient? client;
+    
     for (int attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         _logger.debug('[数据获取] 第 $attempt/$maxRetries 次请求: $url');
 
-        final client = HttpClient();
+        // 确保每次都使用新的client实例，避免连接池问题
+        client = HttpClient();
         client.connectionTimeout = requestTimeout;
+        // 添加 idle timeout 防止连接泄漏
+        client.idleTimeout = const Duration(seconds: 15);
+        // 设置最大连接数，避免并发问题
+        client.maxConnectionsPerHost = 1;
         
         final uri = Uri.parse(url);
         final request = await client.getUrl(uri);
@@ -208,15 +247,34 @@ class EncryptedSubscriptionService {
         final userAgent = await UserAgentConfig.get(UserAgentScenario.subscription);
         request.headers.set(HttpHeaders.userAgentHeader, userAgent);
         request.headers.set(HttpHeaders.acceptHeader, '*/*');
+        // 添加 Connection: close 避免 keep-alive 导致的连接复用问题
+        request.headers.set(HttpHeaders.connectionHeader, 'close');
+        // 添加随机query参数，避免CDN/代理缓存导致的404
+        // 某些情况下，缓存的404响应会持续返回
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final requestUrl = uri.hasQuery 
+            ? '$url&_t=$timestamp&_r=$attempt'
+            : '$url?_t=$timestamp&_r=$attempt';
+        final finalUri = Uri.parse(requestUrl);
         
-        final response = await request.close().timeout(requestTimeout);
+        _logger.debug('[数据获取] 实际请求URL（带缓存破坏参数）: $requestUrl');
+        
+        final actualRequest = await client.getUrl(finalUri);
+        actualRequest.headers.set(HttpHeaders.userAgentHeader, userAgent);
+        actualRequest.headers.set(HttpHeaders.acceptHeader, '*/*');
+        actualRequest.headers.set(HttpHeaders.connectionHeader, 'close');
+        // 添加 Cache-Control 头，强制不使用缓存
+        actualRequest.headers.set(HttpHeaders.cacheControlHeader, 'no-cache, no-store, must-revalidate');
+        actualRequest.headers.set(HttpHeaders.pragmaHeader, 'no-cache');
+        
+        final response = await actualRequest.close().timeout(requestTimeout);
         
         _logger.debug('[数据获取] HTTP状态码: ${response.statusCode}');
 
         if (response.statusCode == 200) {
           final responseBody = await response.transform(utf8.decoder).join();
           final subscriptionUserInfo = response.headers.value('subscription-userinfo');
-          client.close();
+          client.close(force: false);
 
           _logger.debug('[数据获取] ✅ 响应成功，数据长度: ${responseBody.length}');
           if (subscriptionUserInfo != null) {
@@ -241,41 +299,88 @@ class EncryptedSubscriptionService {
           return DataResult.success(responseBody, subscriptionUserInfo: subscriptionUserInfo);
           
         } else {
-          client.close();
+          // 读取错误响应体以获取更多信息
+          String errorBody = '';
+          try {
+            errorBody = await response.transform(utf8.decoder).join();
+            _logger.debug('[数据获取] 错误响应内容: $errorBody');
+          } catch (e) {
+            _logger.debug('[数据获取] 无法读取错误响应体: $e');
+          }
+          
+          client.close(force: true);
           
           if (attempt < maxRetries) {
-            _logger.warning('[数据获取] ⚠️ 请求失败，状态码: ${response.statusCode}，${attempt * 2}秒后进行第${attempt + 1}次重试...');
-            await Future.delayed(Duration(seconds: attempt * 2));
+            // 对于404等客户端错误，采用指数退避策略
+            // 404很可能是临时的缓存或路由问题，需要足够的时间让服务器状态恢复
+            final delaySeconds = _calculateRetryDelay(response.statusCode, attempt);
+            
+            _logger.warning(
+              '[数据获取] ⚠️  请求失败，状态码: ${response.statusCode}，'
+              '这是第 $attempt 次尝试，将在 ${delaySeconds}秒后进行第 ${attempt + 1} 次重试...'
+            );
+            await Future.delayed(Duration(seconds: delaySeconds));
             continue;
           } else {
-            _logger.error('[数据获取] 💥 请求最终失败，状态码: ${response.statusCode}，已达到最大重试次数');
-            return DataResult.failure('HTTP请求失败: ${response.statusCode}');
+            _logger.error('[数据获取] 💥 请求最终失败，状态码: ${response.statusCode}，已达到最大重试次数 $maxRetries');
+            return DataResult.failure('HTTP请求失败: ${response.statusCode}${errorBody.isNotEmpty ? ' - $errorBody' : ''}');
           }
         }
         
       } on TimeoutException {
+        client?.close(force: true);
         if (attempt < maxRetries) {
-          _logger.warning('[数据获取] ⏰ 请求超时，${attempt * 2}秒后进行第${attempt + 1}次重试...');
-          await Future.delayed(Duration(seconds: attempt * 2));
+          final delaySeconds = _calculateRetryDelay(0, attempt); // 0表示超时
+          _logger.warning('[数据获取] ⏰ 请求超时，这是第 $attempt 次尝试，${delaySeconds}秒后进行第${attempt + 1}次重试...');
+          await Future.delayed(Duration(seconds: delaySeconds));
           continue;
         } else {
-          _logger.error('[数据获取] 💥 请求最终超时，已达到最大重试次数');
-          return DataResult.failure('请求超时');
+          _logger.error('[数据获取] 💥 请求最终超时，已达到最大重试次数 $maxRetries');
+          return DataResult.failure('请求超时（已重试 $maxRetries 次）');
         }
       } catch (e) {
+        client?.close(force: true);
         if (attempt < maxRetries) {
-          _logger.warning('[数据获取] ⚠️ 请求异常: $e，${attempt * 2}秒后进行第${attempt + 1}次重试...');
-          await Future.delayed(Duration(seconds: attempt * 2));
+          final delaySeconds = _calculateRetryDelay(-1, attempt); // -1表示异常
+          _logger.warning('[数据获取] ⚠️  请求异常: $e，这是第 $attempt 次尝试，${delaySeconds}秒后进行第${attempt + 1}次重试...');
+          await Future.delayed(Duration(seconds: delaySeconds));
           continue;
         } else {
-          _logger.error('[数据获取] 💥 请求最终异常: $e，已达到最大重试次数');
-          return DataResult.failure('请求异常: $e');
+          _logger.error('[数据获取] 💥 请求最终异常: $e，已达到最大重试次数 $maxRetries');
+          return DataResult.failure('请求异常: $e（已重试 $maxRetries 次）');
         }
       }
     }
 
     _logger.error('[数据获取] 💥 所有重试都失败了，已尝试 $maxRetries 次');
-    return DataResult.failure('所有重试都失败了');
+    return DataResult.failure('所有 $maxRetries 次重试都失败了');
+  }
+
+  /// 计算重试延迟（指数退避策略）
+  /// 
+  /// [statusCode] HTTP状态码（0=超时，-1=异常）
+  /// [attempt] 当前是第几次尝试
+  /// 
+  /// 返回延迟秒数
+  static int _calculateRetryDelay(int statusCode, int attempt) {
+    // 基础延迟：随尝试次数指数增长
+    // 第1次: 2秒, 第2次: 4秒, 第3次: 8秒, 第4次: 16秒, 第5次: 32秒
+    int baseDelay = 2 * (1 << (attempt - 1)); // 2^attempt
+    
+    // 根据错误类型调整
+    if (statusCode == 404) {
+      // 404可能是CDN缓存问题，需要更长延迟
+      baseDelay = (baseDelay * 1.5).toInt();
+    } else if (statusCode == 429 || statusCode == 503) {
+      // 限流或服务不可用，延迟更长
+      baseDelay = baseDelay * 2;
+    } else if (statusCode == 0) {
+      // 超时，可能是网络问题
+      baseDelay = (baseDelay * 1.2).toInt();
+    }
+    
+    // 限制最大延迟为60秒
+    return baseDelay > 60 ? 60 : baseDelay;
   }
 
   /// 回退到普通订阅获取
