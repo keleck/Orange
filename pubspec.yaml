@@ -127,3 +127,6 @@ flutter_intl:
   class_name: AppLocalizations
   arb_dir: arb
   output_dir: lib/l10n
+dependency_overrides:
+  # analyzer_plugin 0.12.0 与 analyzer 7.6.0 不兼容（Element2 API 变更），导致 build_runner 无法编译
+  analyzer_plugin: 0.13.4
