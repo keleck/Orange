@@ -1,0 +1,286 @@
+name: Build Three Platforms
+
+# 三端打包：Android / Windows / macOS
+# - 手动触发：Actions 页面 Run workflow，可选平台、可选是否发 Release
+# - 打 tag：推 v1.0.0 这类 tag 时自动构建并发布 Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: '要构建的平台，逗号分隔（android,windows,macos）'
+        type: string
+        default: 'android,windows,macos'
+      release:
+        description: '构建完成后创建 GitHub Release'
+        type: boolean
+        default: false
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: '3.38.5'
+  GO_VERSION: '1.25.x'
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------- Android
+  android:
+    name: Android
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || contains(github.event.inputs.platforms, 'android')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - name: Install Android NDK and SDK 36
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" --install \
+            "ndk;28.0.13004108" "platforms;android-36" "build-tools;36.0.0" > /dev/null
+          echo "ANDROID_NDK=$SDK/ndk/28.0.13004108" >> "$GITHUB_ENV"
+          ls "$SDK/ndk"
+
+      - name: Configure Android signing
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          : > android/local.properties
+          echo "sdk.dir=${ANDROID_SDK_ROOT}" >> android/local.properties
+          echo "ndk.dir=${ANDROID_NDK}" >> android/local.properties
+          if [ -n "$KEYSTORE" ]; then
+            echo "$KEYSTORE" | base64 --decode > android/app/keystore.jks
+            echo "keyAlias=$KEY_ALIAS" >> android/local.properties
+            echo "storePassword=$STORE_PASSWORD" >> android/local.properties
+            echo "keyPassword=$KEY_PASSWORD" >> android/local.properties
+            echo "==> 已配置 release 签名"
+          else
+            echo "==> 未配置 KEYSTORE，将产出 debug 签名 APK"
+          fi
+
+      - name: Add pub cache to PATH
+        run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate SDK code
+        run: |
+          cd lib/sdk/flutter_xboard_sdk
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+          cd ../../..
+
+      - name: Generate project code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build APK
+        run: dart setup.dart android
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: dist/*.apk
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------- Windows
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    if: github.event_name != 'workflow_dispatch' || contains(github.event.inputs.platforms, 'windows')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - name: Check Rust toolchain
+        shell: bash
+        run: |
+          if ! command -v cargo &> /dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+            echo "$USERPROFILE/.cargo/bin" >> "$GITHUB_PATH"
+          fi
+          cargo --version
+
+      - name: Install Inno Setup
+        shell: bash
+        run: |
+          choco install innosetup -y --no-progress
+          echo "C:/Program Files (x86)/Inno Setup 6" >> "$GITHUB_PATH"
+
+      - name: Add pub cache to PATH
+        shell: bash
+        run: echo "$LOCALAPPDATA/Pub/Cache/bin" >> "$GITHUB_PATH"
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate SDK code
+        shell: bash
+        run: |
+          cd lib/sdk/flutter_xboard_sdk
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+          cd ../../..
+
+      - name: Generate project code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build EXE
+        run: dart setup.dart windows --arch amd64
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            dist/*.exe
+            dist/*.zip
+          if-no-files-found: error
+
+  # ------------------------------------------------------------------ macOS
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    if: github.event_name != 'workflow_dispatch' || contains(github.event.inputs.platforms, 'macos')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - name: Install appdmg
+        run: npm install -g appdmg
+
+      - name: Clean Swift Package Manager cache
+        run: |
+          find macos -name "Package.resolved" -delete || true
+          rm -rf macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/ || true
+          rm -rf macos/Runner.xcworkspace/xcshareddata/swiftpm/ || true
+
+      - name: Add pub cache to PATH
+        run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate SDK code
+        run: |
+          cd lib/sdk/flutter_xboard_sdk
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+          cd ../../..
+
+      - name: Generate project code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build universal DMG
+        run: dart setup.dart macos --universal
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/*.dmg
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------- Release
+  release:
+    name: Release
+    needs: [android, windows, macos]
+    if: always() && !cancelled() && (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: ver
+        run: |
+          v=$(grep -m1 '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//' | cut -d+ -f1)
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "版本：$v"
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist
+          merge-multiple: true
+
+      - name: Generate sha256
+        run: |
+          cd dist
+          for f in $(find . -maxdepth 1 -type f); do
+            sha256sum "$f" > "$f.sha256"
+          done
+          ls -lh
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', steps.ver.outputs.version) }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', steps.ver.outputs.version) }}
+          files: dist/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false

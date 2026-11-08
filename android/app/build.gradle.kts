@@ -65,8 +65,12 @@ android {
             isMinifyEnabled = true
             isDebuggable = false
 
-            // 强制使用 debug 签名，不使用 release 签名
-            signingConfig = signingConfigs.getByName("debug")
+            // 有 keystore 时使用 release 签名，否则回退 debug 签名
+            signingConfig = if (isRelease) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
