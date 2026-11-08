@@ -249,7 +249,7 @@ jobs:
   release:
     name: Release
     needs: [android, windows, macos]
-    if: always() && !cancelled() && (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release == 'true')
+    if: always() && !cancelled() && (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release == 'true') && needs.android.result != 'failure' && needs.windows.result != 'failure' && needs.macos.result != 'failure'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
