@@ -67,5 +67,6 @@ app.*.map.json
 /xboard.config.yml
 assets/config/xboard.config.yaml
 
-# 忽略证书文件
-assets/cer/
+# 忽略证书文件（保留目录本身，pubspec 声明了该资源目录，缺失会导致构建失败）
+assets/cer/*
+!assets/cer/.gitkeep
