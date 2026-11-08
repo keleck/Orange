@@ -201,7 +201,7 @@ curl -x socks5://127.0.0.1:7891 -o /dev/null https://speed.cloudflare.com/__down
 ## 🤝 贡献
 
 如果你在使用过程中发现问题或有改进建议：
-- 提交 [Issue](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+- 提交 [Issue](https://github.com/keleck/Orange/issues)
 - 加入 [Telegram 群组](https://t.me/V2Hiidify)
 
 ---

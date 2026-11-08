@@ -47,7 +47,7 @@ go version
 ### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/hakimi-x/Xboard-Mihomo.git
+git clone https://github.com/keleck/Orange.git
 cd Xboard-Mihomo
 ```
 
@@ -249,5 +249,5 @@ flutter run
 
 ---
 
-**遇到问题？** 提交 [Issue](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+**遇到问题？** 提交 [Issue](https://github.com/keleck/Orange/issues)
 

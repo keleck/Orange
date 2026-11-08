@@ -246,7 +246,7 @@ dart ./setup.dart linux
 - 阅读详细文档
 
 ### 社区支持
-- [GitHub Issues](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+- [GitHub Issues](https://github.com/keleck/Orange/issues)
 - [Telegram 群组](https://t.me/V2Hiidify)
 
 ---

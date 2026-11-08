@@ -296,5 +296,5 @@ update:
 
 ---
 
-**需要帮助？** 提交 [Issue](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+**需要帮助？** 提交 [Issue](https://github.com/keleck/Orange/issues)
 

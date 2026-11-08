@@ -287,7 +287,7 @@ cd ../..
 
 如果遇到问题：
 
-1. 查看 [Issues](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+1. 查看 [Issues](https://github.com/keleck/Orange/issues)
 2. 加入 [Telegram 群组](https://t.me/V2Hiidify)
 3. 查看 Mihomo 官方文档
 

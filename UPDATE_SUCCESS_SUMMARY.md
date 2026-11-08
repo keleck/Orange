@@ -272,7 +272,7 @@ git checkout backup-before-v1.19.24-YYYYMMDD-HHMMSS
 3. 查看文档: `VLESS_REALITY_XHTTP_TIMEOUT_FIX.md`
 
 ### 社区支持
-- [GitHub Issues](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+- [GitHub Issues](https://github.com/keleck/Orange/issues)
 - [Telegram 群组](https://t.me/V2Hiidify)
 
 ---

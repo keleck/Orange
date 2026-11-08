@@ -150,7 +150,7 @@ xboard:
 如果遇到问题：
 1. 查看 [常见问题](./faq.md)
 2. 检查 [故障排查指南](./troubleshooting.md)
-3. 提交 [Issue](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+3. 提交 [Issue](https://github.com/keleck/Orange/issues)
 
 ---
 

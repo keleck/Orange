@@ -1,0 +1,193 @@
+name: 构建测试（快速验证）
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: '选择测试平台'
+        required: true
+        type: choice
+        options:
+          - windows
+          - android
+          - macos
+          - all
+
+jobs:
+  test-windows:
+    name: 测试 Windows 构建
+    runs-on: windows-latest
+    if: github.event.inputs.platform == 'windows' || github.event.inputs.platform == 'all'
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+          cache: true
+      
+      - name: Flutter 信息
+        run: flutter --version
+      
+      - name: 检查 Windows 桌面支持
+        run: flutter config --enable-windows-desktop
+      
+      - name: 获取依赖
+        run: flutter pub get
+      
+      - name: 检查依赖
+        run: flutter pub outdated
+      
+      - name: 分析代码
+        run: flutter analyze
+        continue-on-error: true
+      
+      - name: 测试构建（Debug 模式 - 更快）
+        run: flutter build windows --debug
+      
+      - name: 验证产物
+        run: |
+          if (Test-Path "build/windows/x64/runner/Debug/fl_clash.exe") {
+            Write-Host "✅ Windows 构建成功！"
+            Get-ChildItem build/windows/x64/runner/Debug -Recurse | Select-Object FullName, Length
+          } else {
+            Write-Host "❌ Windows 构建失败！"
+            exit 1
+          }
+
+  test-android:
+    name: 测试 Android 构建
+    runs-on: ubuntu-latest
+    if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all'
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
+      - name: 设置 Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+          cache: true
+      
+      - name: Flutter 信息
+        run: flutter --version
+      
+      - name: 获取依赖
+        run: flutter pub get
+      
+      - name: 检查依赖
+        run: flutter pub outdated
+      
+      - name: 分析代码
+        run: flutter analyze
+        continue-on-error: true
+      
+      - name: 测试构建（Debug 模式 - 更快）
+        run: flutter build apk --debug
+      
+      - name: 验证产物
+        run: |
+          if [ -f "build/app/outputs/flutter-apk/app-debug.apk" ]; then
+            echo "✅ Android 构建成功！"
+            ls -lh build/app/outputs/flutter-apk/
+          else
+            echo "❌ Android 构建失败！"
+            exit 1
+          fi
+
+  test-macos:
+    name: 测试 macOS 构建
+    runs-on: macos-latest
+    if: github.event.inputs.platform == 'macos' || github.event.inputs.platform == 'all'
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+          cache: true
+      
+      - name: Flutter 信息
+        run: flutter --version
+      
+      - name: 检查 macOS 桌面支持
+        run: flutter config --enable-macos-desktop
+      
+      - name: 获取依赖
+        run: flutter pub get
+      
+      - name: 检查依赖
+        run: flutter pub outdated
+      
+      - name: 分析代码
+        run: flutter analyze
+        continue-on-error: true
+      
+      - name: 测试构建（Debug 模式 - 更快）
+        run: flutter build macos --debug
+      
+      - name: 验证产物
+        run: |
+          if [ -d "build/macos/Build/Products/Debug/fl_clash.app" ]; then
+            echo "✅ macOS 构建成功！"
+            ls -lh build/macos/Build/Products/Debug/
+          else
+            echo "❌ macOS 构建失败！"
+            exit 1
+          fi
+
+  summary:
+    name: 测试总结
+    needs: [test-windows, test-android, test-macos]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: 检查测试结果
+        run: |
+          echo "🎯 构建测试完成！"
+          echo ""
+          echo "测试结果："
+          
+          if [ "${{ needs.test-windows.result }}" == "success" ]; then
+            echo "✅ Windows: 通过"
+          elif [ "${{ needs.test-windows.result }}" == "skipped" ]; then
+            echo "⏭️  Windows: 已跳过"
+          else
+            echo "❌ Windows: 失败"
+          fi
+          
+          if [ "${{ needs.test-android.result }}" == "success" ]; then
+            echo "✅ Android: 通过"
+          elif [ "${{ needs.test-android.result }}" == "skipped" ]; then
+            echo "⏭️  Android: 已跳过"
+          else
+            echo "❌ Android: 失败"
+          fi
+          
+          if [ "${{ needs.test-macos.result }}" == "success" ]; then
+            echo "✅ macOS: 通过"
+          elif [ "${{ needs.test-macos.result }}" == "skipped" ]; then
+            echo "⏭️  macOS: 已跳过"
+          else
+            echo "❌ macOS: 失败"
+          fi
+          
+          echo ""
+          echo "💡 如果所有测试都通过，您可以使用正式的构建工作流来创建发布版本。"

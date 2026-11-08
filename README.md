@@ -178,7 +178,7 @@ Orange 是基于 [FlClash v0.8.85](https://github.com/chen08209/FlClash) 的增�
 ### 问题反馈
 
 如果您在使用过程中遇到问题或有改进建议：
-- 提交 [Issue](https://github.com/hakimi-x/Xboard-Mihomo/issues)
+- 提交 [Issue](https://github.com/keleck/Orange/issues)
 - 加入 [Telegram 群组](https://t.me/V2Hiidify)
 
 ### Star 支持
