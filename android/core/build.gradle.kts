@@ -6,7 +6,7 @@ plugins {
 android {
     namespace = "com.follow.DreamCloud.core"
     compileSdk = 35
-    ndkVersion = "28.0.13004108"
+    ndkVersion = "28.2.13676358"
 
     defaultConfig {
         minSdk = 21

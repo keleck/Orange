@@ -90,6 +90,20 @@ jobs:
             echo "==> 未配置 KEYSTORE，将产出 debug 签名 APK"
           fi
 
+      - name: Prepare app config
+        shell: bash
+        env:
+          XBOARD_CONFIG: ${{ secrets.XBOARD_CONFIG }}
+        run: |
+          mkdir -p assets/config
+          if [ -n "$XBOARD_CONFIG" ]; then
+            echo "$XBOARD_CONFIG" | base64 --decode > assets/config/xboard.config.yaml
+            echo "==> 使用 XBOARD_CONFIG 密钥注入配置"
+          elif [ ! -f assets/config/xboard.config.yaml ]; then
+            cp assets/config/xboard.config.example.yaml assets/config/xboard.config.yaml
+            echo "==> 未配置 XBOARD_CONFIG，使用示例配置占位"
+          fi
+
       - name: Add pub cache to PATH
         run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
 
@@ -159,6 +173,20 @@ jobs:
         shell: bash
         run: echo "$LOCALAPPDATA/Pub/Cache/bin" >> "$GITHUB_PATH"
 
+      - name: Prepare app config
+        shell: bash
+        env:
+          XBOARD_CONFIG: ${{ secrets.XBOARD_CONFIG }}
+        run: |
+          mkdir -p assets/config
+          if [ -n "$XBOARD_CONFIG" ]; then
+            echo "$XBOARD_CONFIG" | base64 --decode > assets/config/xboard.config.yaml
+            echo "==> 使用 XBOARD_CONFIG 密钥注入配置"
+          elif [ ! -f assets/config/xboard.config.yaml ]; then
+            cp assets/config/xboard.config.example.yaml assets/config/xboard.config.yaml
+            echo "==> 未配置 XBOARD_CONFIG，使用示例配置占位"
+          fi
+
       - name: Get dependencies
         run: flutter pub get
 
@@ -217,6 +245,20 @@ jobs:
           find macos -name "Package.resolved" -delete || true
           rm -rf macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/ || true
           rm -rf macos/Runner.xcworkspace/xcshareddata/swiftpm/ || true
+
+      - name: Prepare app config
+        shell: bash
+        env:
+          XBOARD_CONFIG: ${{ secrets.XBOARD_CONFIG }}
+        run: |
+          mkdir -p assets/config
+          if [ -n "$XBOARD_CONFIG" ]; then
+            echo "$XBOARD_CONFIG" | base64 --decode > assets/config/xboard.config.yaml
+            echo "==> 使用 XBOARD_CONFIG 密钥注入配置"
+          elif [ ! -f assets/config/xboard.config.yaml ]; then
+            cp assets/config/xboard.config.example.yaml assets/config/xboard.config.yaml
+            echo "==> 未配置 XBOARD_CONFIG，使用示例配置占位"
+          fi
 
       - name: Add pub cache to PATH
         run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
