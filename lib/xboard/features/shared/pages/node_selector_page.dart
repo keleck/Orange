@@ -38,15 +38,18 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
         decoration: AppColors.getBackgroundDecoration(),
         child: Padding(
           // AppBar 悬浮在 body 之上，顶部留白必须等于「状态栏 + 工具栏」，
-          // 写死 70 会在状态栏较高的机型上让内容压到标题上
+          // 写死 70 会在状态栏较高的机型上让内容压到标题上。
+          // 底部同理：外层 shell 用了 extendBody，导航栏高度会体现在
+          // MediaQuery.padding.bottom 里，需要让列表停在导航栏上方。
           padding: EdgeInsets.only(
             top: MediaQuery.of(context).padding.top + kToolbarHeight,
+            bottom: MediaQuery.of(context).padding.bottom + 8,
           ),
           child: Column(
           children: [
             _buildCurrentNodeCard(context, currentGroup, selectedMap),
-            SizedBox(
-              height: 560, // 固定高度为 560px
+            // 用剩余空间自适应，写死高度会在不同屏幕上溢出到导航栏下面
+            Expanded(
               child: _buildNodeList(context, currentGroup, selectedMap),
             ),
           ],
