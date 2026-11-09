@@ -37,7 +37,11 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
       body: Container(
         decoration: AppColors.getBackgroundDecoration(),
         child: Padding(
-          padding: const EdgeInsets.only(top: 70),
+          // AppBar 悬浮在 body 之上，顶部留白必须等于「状态栏 + 工具栏」，
+          // 写死 70 会在状态栏较高的机型上让内容压到标题上
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + kToolbarHeight,
+          ),
           child: Column(
           children: [
             _buildCurrentNodeCard(context, currentGroup, selectedMap),
@@ -69,6 +73,8 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
     return AppBar(
       title: Text(
         title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.w600,

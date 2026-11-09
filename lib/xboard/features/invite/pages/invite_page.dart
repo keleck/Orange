@@ -57,7 +57,10 @@ class _InvitePageState extends ConsumerState<InvitePage>
       body: Container(
         decoration: AppColors.getBackgroundDecoration(),
         child: Padding(
-          padding: const EdgeInsets.only(top: 70),
+          // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + kToolbarHeight,
+          ),
           child: Consumer(
             builder: (_, ref, __) {
               return RefreshIndicator(

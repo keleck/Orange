@@ -129,7 +129,10 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
       body: Container(
         decoration: AppColors.getBackgroundDecoration(),
         child: Padding(
-          padding: const EdgeInsets.only(top: 70),
+          // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + kToolbarHeight,
+          ),
           child: ticketAsync.when(
         data: (ticket) {
           // 调试：打印消息列表长度
