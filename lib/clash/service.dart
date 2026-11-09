@@ -89,46 +89,23 @@ class ClashService extends ClashHandlerInterface {
     if (Platform.isWindows && await system.checkIsAdmin()) {
       final isSuccess = await request.startCoreByHelper(arg);
       if (isSuccess) {
-        _watchCoreStart();
         return;
       }
     }
-    try {
-      process = await Process.start(
-        appPath.corePath,
-        [
-          arg,
-        ],
-      );
-      process?.stdout.listen((_) {});
-      process?.stderr.listen((e) {
-        final error = utf8.decode(e);
-        if (error.isNotEmpty) {
-          commonPrint.log(error);
-        }
-      });
-      _watchCoreStart();
-    } catch (e, s) {
-      commonPrint.log("core start failed: ${appPath.corePath} -> $e");
-      globalState.showNotifier("核心启动失败: $e");
-      commonPrint.log(s.toString());
-    } finally {
-      isStarting = false;
-    }
-  }
-
-  /// 核心启动看门狗：超时未建立连接时给出可诊断的提示
-  void _watchCoreStart() {
-    Future.delayed(const Duration(seconds: 15), () {
-      if (socketCompleter.isCompleted) {
-        return;
+    process = await Process.start(
+      appPath.corePath,
+      [
+        arg,
+      ],
+    );
+    process?.stdout.listen((_) {});
+    process?.stderr.listen((e) {
+      final error = utf8.decode(e);
+      if (error.isNotEmpty) {
+        commonPrint.log(error);
       }
-      commonPrint.log(
-        "核心未在 15 秒内建立连接，可能被安全软件拦截、端口被占用或缺少运行库。"
-        "路径: ${appPath.corePath}",
-      );
-      globalState.showNotifier("核心启动失败：请检查是否被安全软件拦截");
     });
+    isStarting = false;
   }
 
   @override
@@ -141,11 +118,7 @@ class ClashService extends ClashHandlerInterface {
 
   @override
   sendMessage(String message) async {
-    // 核心未连接时最多等待 30 秒，避免界面无限转圈
-    final socket = await socketCompleter.future.timeout(
-      const Duration(seconds: 30),
-      onTimeout: () => throw TimeoutException("核心未响应（30 秒超时）"),
-    );
+    final socket = await socketCompleter.future;
     socket.writeln(message);
   }
 
