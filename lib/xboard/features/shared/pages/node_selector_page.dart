@@ -4,6 +4,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/xboard/features/latency/widgets/latency_indicator.dart';
+import 'package:fl_clash/xboard/features/shared/widgets/service_status_card.dart';
 import 'package:fl_clash/views/proxies/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +48,9 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
           ),
           child: Column(
           children: [
-            _buildCurrentNodeCard(context, currentGroup, selectedMap),
+            // 服务状态卡片（替代原来的「当前节点」卡片）
+            if (currentGroup != null && currentGroup.all.isNotEmpty)
+              ServiceStatusCard(proxyName: currentGroup.name),
             // 用剩余空间自适应，写死高度会在不同屏幕上溢出到导航栏下面
             Expanded(
               child: _buildNodeList(context, currentGroup, selectedMap),
@@ -121,105 +124,6 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
   }
 
 
-
-  Widget _buildCurrentNodeCard(BuildContext context, Group? currentGroup, Map<String, String> selectedMap) {
-    if (currentGroup == null || currentGroup.all.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    
-    final theme = Theme.of(context);
-    final selectedProxyName = selectedMap[currentGroup.name] ?? "";
-    String realNodeName = currentGroup.getCurrentSelectedName(selectedProxyName);
-    
-    Proxy? currentProxy;
-    if (realNodeName.isNotEmpty) {
-      currentProxy = currentGroup.all.firstWhere(
-        (proxy) => proxy.name == realNodeName,
-        orElse: () => currentGroup.all.first,
-      );
-    } else {
-      currentProxy = currentGroup.all.first;
-    }
-    
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.blue.withValues(alpha: 0.2),
-                Colors.blue.withValues(alpha: 0.08),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: Colors.blue.withValues(alpha: 0.4),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.blue.withValues(alpha: 0.15),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: Colors.blue.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blue.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.auto_awesome,
-                  size: 20,
-                  color: Colors.blue.shade300,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  '${currentGroup.name} -> ${currentProxy.name}',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.check_circle,
-                size: 22,
-                color: Colors.green.shade400,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildNodeList(BuildContext context, Group? currentGroup, Map<String, String> selectedMap) {
     if (currentGroup == null || currentGroup.all.isEmpty) {
