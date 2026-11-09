@@ -11,6 +11,7 @@ import 'package:fl_clash/xboard/features/subscription/services/subscription_down
 import 'package:fl_clash/xboard/features/subscription/utils/utils.dart';
 import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/xboard/utils/url_masker.dart';
+import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:fl_clash/xboard/config/utils/config_file_loader.dart';
 
 // 初始化文件级日志器
@@ -317,6 +318,8 @@ class XBoardProfileImportService {
         _logger.info('✅ 配置应用成功');
       } catch (e) {
         _logger.error('❌ 配置应用失败', e);
+        // 配置下发失败时明确提示，避免节点列表为空却看不出原因
+        XBoardNotification.showError('配置应用失败: $e');
         // 不抛出异常，因为配置已经保存了
       }
       

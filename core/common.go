@@ -254,10 +254,18 @@ func setupConfig(params *SetupParams) error {
 	defer runLock.Unlock()
 	var err error
 	constant.DefaultTestURL = params.TestURL
-	currentConfig, err = config.ParseRawConfig(params.Config)
+	parsedConfig, err := config.ParseRawConfig(params.Config)
 	if err != nil {
-		currentConfig, _ = config.ParseRawConfig(config.DefaultRawConfig())
+		// 配置解析失败时不再静默换成空配置：打印具体原因（会出现在 App 日志页），
+		// 并尽量保留上一份可用配置，避免节点列表直接变空且无从排查
+		log.Errorln("配置解析失败: %v", err)
+		if currentConfig != nil {
+			parsedConfig = currentConfig
+		} else {
+			parsedConfig, _ = config.ParseRawConfig(config.DefaultRawConfig())
+		}
 	}
+	currentConfig = parsedConfig
 	hub.ApplyConfig(currentConfig)
 	patchSelectGroup(params.SelectedMap)
 	updateListeners()
