@@ -244,6 +244,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   void _openSheet() {
     showModalBottomSheet<void>(
       context: context,
+      // 用根导航器，避免弹层被外层 shell 的底部导航栏遮住
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => ServiceStatusSheet(proxyName: widget.proxyName),
