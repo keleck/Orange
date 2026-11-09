@@ -27,6 +27,7 @@ import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, Noti
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fl_clash/xboard/core/core.dart';
 import '../../shared/widgets/glass_container.dart';
+import '../widgets/core_status_button.dart';
 import '../widgets/subscription_usage_card.dart';
 import '../widgets/xboard_connect_button.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
@@ -623,6 +624,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // 内核状态指示灯：紧挨「规则」按钮，单击重启内核
+                      CoreStatusButton(
+                        compact: MediaQuery.sizeOf(context).width < 420,
+                      ),
+                      const SizedBox(width: 6),
                       Container(
                         width: 120,
                         height: 32,
