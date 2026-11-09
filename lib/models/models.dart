@@ -5,4 +5,5 @@ export 'config.dart';
 export 'core.dart';
 export 'profile.dart';
 export 'selector.dart';
+export 'service_check.dart';
 export 'widget.dart';

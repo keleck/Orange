@@ -107,6 +107,8 @@ const (
 	crashMethod                    Method = "crash"
 	setupConfigMethod              Method = "setupConfig"
 	getConfigMethod                Method = "getConfig"
+	serviceCheckMethod             Method = "serviceCheck"
+	outboundIpMethod               Method = "getOutboundIp"
 )
 
 type Method string

@@ -322,6 +322,62 @@ class ClashCore {
     return int.parse(value);
   }
 
+  /// 走 [proxyName] 探测服务可用性。
+  ///
+  /// [names] 为空表示全部检测；[proxyName] 为空则由内核按规则路由。
+  Future<List<ServiceCheckItem>> serviceCheck({
+    String proxyName = '',
+    List<String> names = const [],
+    Duration timeout = const Duration(seconds: 10),
+  }) async {
+    final data = await clashInterface.serviceCheck(
+      json.encode({
+        'proxy-name': proxyName,
+        'names': names,
+        'timeout': timeout.inMilliseconds,
+      }),
+    );
+    if (data.isEmpty) {
+      return const [];
+    }
+    try {
+      final list = json.decode(data) as List;
+      return list
+          .whereType<Map>()
+          .map((e) => ServiceCheckItem.fromJson(e.cast<String, dynamic>()))
+          .toList();
+    } catch (e) {
+      commonPrint.log('serviceCheck 解析失败: $e');
+      return const [];
+    }
+  }
+
+  /// 走 [proxyName] 请求出口 IP 源，返回第一个可用应答的原始内容。
+  Future<OutboundIpResult?> outboundIp({
+    String proxyName = '',
+    List<String> urls = const [],
+    Duration timeout = const Duration(seconds: 10),
+  }) async {
+    final data = await clashInterface.outboundIp(
+      json.encode({
+        'proxy-name': proxyName,
+        'urls': urls,
+        'timeout': timeout.inMilliseconds,
+      }),
+    );
+    if (data.isEmpty) {
+      return null;
+    }
+    try {
+      return OutboundIpResult.fromJson(
+        (json.decode(data) as Map).cast<String, dynamic>(),
+      );
+    } catch (e) {
+      commonPrint.log('outboundIp 解析失败: $e');
+      return null;
+    }
+  }
+
   resetTraffic() {
     clashInterface.resetTraffic();
   }

@@ -186,6 +186,24 @@ func handleAction(action *Action, result ActionResult) {
 	case crashMethod:
 		result.success(true)
 		handleCrash()
+	case serviceCheckMethod:
+		paramsString := action.Data.(string)
+		var params = &ServiceCheckParams{}
+		if err := json.Unmarshal([]byte(paramsString), params); err != nil {
+			result.error(err.Error())
+			return
+		}
+		result.success(handleServiceCheck(params))
+		return
+	case outboundIpMethod:
+		paramsString := action.Data.(string)
+		var params = &OutboundIpParams{}
+		if err := json.Unmarshal([]byte(paramsString), params); err != nil {
+			result.error(err.Error())
+			return
+		}
+		result.success(handleOutboundIp(params))
+		return
 	default:
 		nextHandle(action, result)
 	}

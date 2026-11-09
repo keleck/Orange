@@ -1,164 +1,61 @@
 import 'dart:async';
 
-import 'package:fl_clash/clash/clash.dart';
+import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/xboard/features/shared/services/service_probe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
-
-/// 服务状态检测项
-class ServiceTarget {
-  const ServiceTarget({
-    required this.id,
-    required this.label,
-    required this.icon,
-    required this.url,
-  });
-
-  final String id;
-  final String label;
-  final String icon;
-  final String url;
-}
-
-/// 全部检测项（顺序与上游 FlClash 一致）
-const serviceTargets = <ServiceTarget>[
-  ServiceTarget(
-    id: 'google',
-    label: 'Google',
-    icon: 'google',
-    url: 'https://www.google.com/generate_204',
-  ),
-  ServiceTarget(
-    id: 'github',
-    label: 'GitHub',
-    icon: 'github',
-    url: 'https://github.com',
-  ),
-  ServiceTarget(
-    id: 'youtube',
-    label: 'YouTube',
-    icon: 'youtube',
-    url: 'https://www.youtube.com/generate_204',
-  ),
-  ServiceTarget(
-    id: 'chatgpt',
-    label: 'ChatGPT',
-    icon: 'openai',
-    url: 'https://chatgpt.com',
-  ),
-  ServiceTarget(
-    id: 'claude',
-    label: 'Claude',
-    icon: 'claude',
-    url: 'https://claude.ai',
-  ),
-  ServiceTarget(
-    id: 'gemini',
-    label: 'Gemini',
-    icon: 'gemini',
-    url: 'https://gemini.google.com',
-  ),
-  ServiceTarget(
-    id: 'netflix',
-    label: 'Netflix',
-    icon: 'netflix',
-    url: 'https://www.netflix.com',
-  ),
-  ServiceTarget(
-    id: 'disney-plus',
-    label: 'Disney+',
-    icon: 'disneyplus',
-    url: 'https://www.disneyplus.com',
-  ),
-  ServiceTarget(
-    id: 'prime-video',
-    label: 'Prime Video',
-    icon: 'primevideo',
-    url: 'https://www.primevideo.com',
-  ),
-  ServiceTarget(
-    id: 'spotify',
-    label: 'Spotify',
-    icon: 'spotify',
-    url: 'https://www.spotify.com',
-  ),
-  ServiceTarget(
-    id: 'tiktok',
-    label: 'TikTok',
-    icon: 'tiktok',
-    url: 'https://www.tiktok.com',
-  ),
-  ServiceTarget(
-    id: 'discord',
-    label: 'Discord',
-    icon: 'discord',
-    url: 'https://discord.com',
-  ),
-  ServiceTarget(
-    id: 'bilibili',
-    label: 'Bilibili',
-    icon: 'bilibili',
-    url: 'https://www.bilibili.com',
-  ),
-];
-
-/// 卡片上展示的数量
-const _cardServiceCount = 2;
 
 const _amber = Color(0xFFF59E0B);
 const _green = Color(0xFF22C55E);
 const _red = Color(0xFFEF4444);
 const _cardSurface = Color(0xFF141226);
+const _sheetSurface = Color(0xFF0F0E1D);
 
-/// 逐个探测服务，返回 id -> 延迟（<=0 表示失败）
-Future<Map<String, int>> probeServices(
-  List<ServiceTarget> targets,
-  String proxyName, {
-  void Function(String id, int delay)? onResult,
-}) async {
-  final result = <String, int>{};
-  await Future.wait(
-    targets.map((target) async {
-      var value = -1;
-      try {
-        final delay = await clashCore
-            .getDelay(target.url, proxyName)
-            .timeout(const Duration(seconds: 8));
-        value = delay.value ?? -1;
-      } catch (_) {
-        value = -1;
-      }
-      result[target.id] = value;
-      onResult?.call(target.id, value);
-    }),
-  );
-  return result;
+/// 卡片上展示的数量
+const _cardServiceCount = 2;
+
+Color _statusColor(ServiceProbeStatus status) {
+  switch (status) {
+    case ServiceProbeStatus.available:
+      return _green;
+    case ServiceProbeStatus.restricted:
+    case ServiceProbeStatus.disallowedIsp:
+    case ServiceProbeStatus.blocked:
+    case ServiceProbeStatus.unsupportedRegion:
+    case ServiceProbeStatus.originalsOnly:
+    case ServiceProbeStatus.comingSoon:
+      return _amber;
+    case ServiceProbeStatus.unavailable:
+    case ServiceProbeStatus.timeout:
+    case ServiceProbeStatus.failed:
+      return _red;
+  }
 }
 
-/// 获取当前出口 IP 与归属国家代码
-Future<(String?, String?)> fetchEgressIp() async {
-  for (final endpoint in const [
-    'https://api.ipify.org',
-    'https://ifconfig.me/ip',
-  ]) {
-    try {
-      final res = await http
-          .get(Uri.parse(endpoint))
-          .timeout(const Duration(seconds: 6));
-      if (res.statusCode != 200) continue;
-      final ip = res.body.trim();
-      if (!RegExp(r'^\d{1,3}(\.\d{1,3}){3}$').hasMatch(ip)) continue;
-      String? code;
-      try {
-        final info = await clashCore.getCountryCode(ip);
-        code = info?.countryCode;
-      } catch (_) {}
-      return (ip, code);
-    } catch (_) {
-      continue;
-    }
+String _statusText(ServiceCheck? check, {required bool loading}) {
+  if (loading) {
+    return '检测中';
   }
-  return (null, null);
+  if (check == null) {
+    return '待检测';
+  }
+  if (check.isOk) {
+    return check.delay != null ? '${check.delay} ms' : check.status.label;
+  }
+  return check.status.label;
+}
+
+Color _statusTextColor(ServiceCheck? check, {required bool loading}) {
+  if (loading) {
+    return Colors.white.withValues(alpha: 0.5);
+  }
+  if (check == null) {
+    return Colors.white.withValues(alpha: 0.4);
+  }
+  if (check.isOk) {
+    return Colors.white.withValues(alpha: 0.85);
+  }
+  return _statusColor(check.status);
 }
 
 String countryFlagEmoji(String? code) {
@@ -170,14 +67,14 @@ String countryFlagEmoji(String? code) {
   return String.fromCharCode(first) + String.fromCharCode(second);
 }
 
-/// 服务状态卡片：展示前两项，点击打开完整列表
+/// 服务状态卡片：展示已启用服务的前两项，点击打开完整列表
 class ServiceStatusCard extends StatefulWidget {
   const ServiceStatusCard({
     super.key,
     required this.proxyName,
   });
 
-  /// 用于测速的节点 / 策略组名称
+  /// 用于探测的节点 / 策略组名称
   final String proxyName;
 
   @override
@@ -185,17 +82,21 @@ class ServiceStatusCard extends StatefulWidget {
 }
 
 class _ServiceStatusCardState extends State<ServiceStatusCard> {
-  final Map<String, int?> _delays = {};
+  Map<ServiceTarget, ServiceCheck> _checks = {};
+  List<ServiceTarget> _enabled = ServiceTarget.values;
   bool _probing = false;
 
   List<ServiceTarget> get _targets =>
-      serviceTargets.take(_cardServiceCount).toList();
+      _enabled.take(_cardServiceCount).toList();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _probe();
+      if (mounted) {
+        _loadEnabled();
+        _probe();
+      }
     });
   }
 
@@ -207,27 +108,52 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     }
   }
 
-  Future<void> _probe() async {
-    if (_probing || widget.proxyName.isEmpty) return;
+  Future<void> _loadEnabled() async {
+    final ids = await ServiceStatusPrefs.load();
+    if (!mounted) return;
     setState(() {
-      _probing = true;
-      for (final target in _targets) {
-        _delays[target.id] = null;
-      }
+      _enabled = ServiceTarget.values
+          .where((target) => ids.contains(target.id))
+          .toList();
     });
-    await probeServices(_targets, widget.proxyName, onResult: (id, value) {
-      if (mounted) setState(() => _delays[id] = value);
-    });
-    if (mounted) setState(() => _probing = false);
+    _probe();
   }
 
-  bool get _isDone =>
-      _targets.every((t) => _delays[t.id] != null);
+  Future<void> _probe() async {
+    if (_probing) return;
+    final targets = _targets;
+    if (targets.isEmpty) {
+      setState(() => _checks = {});
+      return;
+    }
+    setState(() {
+      _probing = true;
+      _checks = {};
+    });
+    final result = await checkServices(
+      proxyName: widget.proxyName,
+      targets: targets,
+    );
+    if (!mounted) return;
+    setState(() {
+      _checks = result;
+      _probing = false;
+    });
+  }
 
   int get _abnormalCount =>
-      _targets.where((t) => (_delays[t.id] ?? 0) <= 0).length;
+      _targets.where((t) => _checks[t]?.isOk != true).length;
+
+  bool get _isDone =>
+      _targets.isNotEmpty && _targets.every((t) => _checks.containsKey(t));
 
   Widget _buildVerdict() {
+    if (_targets.isEmpty) {
+      return _Verdict(
+        label: '未启用',
+        color: Colors.white.withValues(alpha: 0.55),
+      );
+    }
     if (!_isDone) {
       return _Verdict(
         label: '检测中',
@@ -241,8 +167,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     return const _Verdict(label: '全部正常', color: _green);
   }
 
-  void _openSheet() {
-    showModalBottomSheet<void>(
+  Future<void> _openSheet() async {
+    await showModalBottomSheet<void>(
       context: context,
       // 用根导航器，避免弹层被外层 shell 的底部导航栏遮住
       useRootNavigator: true,
@@ -250,6 +176,10 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
       backgroundColor: Colors.transparent,
       builder: (_) => ServiceStatusSheet(proxyName: widget.proxyName),
     );
+    // 详情页里可能改过启用项或重新测过，回来同步一次
+    if (mounted) {
+      await _loadEnabled();
+    }
   }
 
   @override
@@ -298,14 +228,26 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
               ],
             ),
             const SizedBox(height: 10),
-            Row(
-              children: [
-                for (var i = 0; i < _targets.length; i++) ...[
-                  if (i > 0) const SizedBox(width: 8),
-                  Expanded(child: _buildCell(_targets[i])),
+            if (_targets.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  '未选择需要检测的服务，点击此处配置',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                ),
+              )
+            else
+              Row(
+                children: [
+                  for (var i = 0; i < _targets.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 8),
+                    Expanded(child: _buildCell(_targets[i])),
+                  ],
                 ],
-              ],
-            ),
+              ),
           ],
         ),
       ),
@@ -313,19 +255,15 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   }
 
   Widget _buildCell(ServiceTarget target) {
-    final delay = _delays[target.id];
-    final loading = delay == null;
-    final failed = !loading && delay <= 0;
-    final color = loading
-        ? Colors.white.withValues(alpha: 0.55)
-        : failed
-            ? _red
-            : Colors.white.withValues(alpha: 0.85);
-    final label = loading
-        ? '检测中'
-        : failed
-            ? '检测失败'
-            : '$delay ms';
+    final check = _checks[target];
+    final loading = _probing && check == null;
+    final label = _statusText(check, loading: loading);
+    final color = _statusTextColor(check, loading: loading);
+    final dotColor = loading
+        ? null
+        : (check == null
+              ? Colors.white.withValues(alpha: 0.3)
+              : (check.isOk ? _green : _red));
 
     return Container(
       height: 44,
@@ -340,7 +278,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
             icon: target.icon,
             size: 26,
             radius: 8,
-            dotColor: loading ? null : (failed ? _red : _green),
+            dotColor: dotColor,
           ),
           const SizedBox(width: 7),
           Expanded(
@@ -375,14 +313,26 @@ class ServiceStatusSheet extends StatefulWidget {
 }
 
 class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
-  final Map<String, int?> _delays = {};
-  String? _ip;
-  String? _countryCode;
+  Map<ServiceTarget, ServiceCheck> _checks = {};
+  List<ServiceTarget> _enabled = ServiceTarget.values;
+  IpInfo? _ipInfo;
   bool _probing = false;
+  bool _ipLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _bootstrap();
+  }
+
+  Future<void> _bootstrap() async {
+    final ids = await ServiceStatusPrefs.load();
+    if (!mounted) return;
+    setState(() {
+      _enabled = ServiceTarget.values
+          .where((target) => ids.contains(target.id))
+          .toList();
+    });
     _refresh();
   }
 
@@ -390,25 +340,50 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
     if (_probing) return;
     setState(() {
       _probing = true;
-      for (final target in serviceTargets) {
-        _delays[target.id] = null;
-      }
+      _checks = {};
     });
     unawaited(_loadIp());
-    await probeServices(serviceTargets, widget.proxyName, onResult: (id, v) {
-      if (mounted) setState(() => _delays[id] = v);
+    final result = await checkServices(
+      proxyName: widget.proxyName,
+      targets: _enabled,
+    );
+    if (!mounted) return;
+    setState(() {
+      _checks = result;
+      _probing = false;
     });
-    if (mounted) setState(() => _probing = false);
   }
 
+  /// 出口 IP 由内核走当前节点取，因此国旗来自节点落地归属地而不是本机。
   Future<void> _loadIp() async {
-    final (ip, code) = await fetchEgressIp();
-    if (mounted) {
-      setState(() {
-        _ip = ip;
-        _countryCode = code;
-      });
-    }
+    if (_ipLoading) return;
+    setState(() => _ipLoading = true);
+    final info = await lookupOutboundIp(proxyName: widget.proxyName);
+    if (!mounted) return;
+    setState(() {
+      _ipInfo = info;
+      _ipLoading = false;
+    });
+  }
+
+  Future<void> _openManager() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ServiceManagerSheet(enabled: _enabled),
+    );
+    if (!mounted) return;
+    final ids = await ServiceStatusPrefs.load();
+    if (!mounted) return;
+    setState(() {
+      _enabled = ServiceTarget.values
+          .where((target) => ids.contains(target.id))
+          .toList();
+      _checks = {};
+    });
+    _refresh();
   }
 
   @override
@@ -417,7 +392,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
     return Container(
       height: media.size.height * 0.85,
       decoration: const BoxDecoration(
-        color: Color(0xFF0F0E1D),
+        color: _sheetSurface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -455,6 +430,14 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                   ),
                 ),
                 IconButton(
+                  onPressed: _openManager,
+                  tooltip: '管理服务',
+                  icon: Icon(
+                    Icons.tune,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+                IconButton(
                   onPressed: _probing ? null : _refresh,
                   tooltip: '重新检测',
                   icon: _probing
@@ -464,29 +447,112 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Icon(
-                          Icons.bolt,
+                          Icons.refresh,
                           color: Colors.white.withValues(alpha: 0.9),
                         ),
                 ),
               ],
             ),
           ),
+          _buildIpHeader(media),
           Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.only(
-                left: 12,
-                right: 12,
-                bottom: 12 + media.padding.bottom,
-              ),
-              itemCount: serviceTargets.length,
-              separatorBuilder: (_, __) => Divider(
-                height: 1,
-                indent: 60,
-                color: Colors.white.withValues(alpha: 0.07),
-              ),
-              itemBuilder: (_, index) =>
-                  _buildRow(serviceTargets[index]),
+            child: _enabled.isEmpty
+                ? _buildEmpty()
+                : RefreshIndicator(
+                    onRefresh: _refresh,
+                    child: ListView.separated(
+                      padding: EdgeInsets.only(
+                        left: 12,
+                        right: 12,
+                        bottom: 12 + media.padding.bottom,
+                      ),
+                      itemCount: _enabled.length,
+                      separatorBuilder: (_, __) => Divider(
+                        height: 1,
+                        indent: 60,
+                        color: Colors.white.withValues(alpha: 0.07),
+                      ),
+                      itemBuilder: (_, index) => _buildRow(_enabled[index]),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIpHeader(MediaQueryData media) {
+    final info = _ipInfo;
+    final flag = countryFlagEmoji(info?.countryCode);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.public,
+            size: 16,
+            color: Colors.white.withValues(alpha: 0.55),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '出口 IP',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.white.withValues(alpha: 0.55),
             ),
+          ),
+          const Spacer(),
+          if (_ipLoading && info == null)
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(
+                strokeWidth: 1.6,
+                color: Colors.white.withValues(alpha: 0.4),
+              ),
+            )
+          else ...[
+            if (flag.isNotEmpty) ...[
+              Text(flag, style: const TextStyle(fontSize: 13)),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              info?.ip ?? '—',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: info == null
+                    ? Colors.white.withValues(alpha: 0.4)
+                    : _green,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmpty() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '未启用任何服务',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white.withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextButton(
+            onPressed: _openManager,
+            child: const Text('去配置'),
           ),
         ],
       ),
@@ -494,10 +560,17 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
   }
 
   Widget _buildRow(ServiceTarget target) {
-    final delay = _delays[target.id];
-    final loading = delay == null;
-    final failed = !loading && delay <= 0;
-    final flag = countryFlagEmoji(_countryCode);
+    final check = _checks[target];
+    final loading = _probing && check == null;
+    final label = _statusText(check, loading: loading);
+    final color = _statusTextColor(check, loading: loading);
+    final dotColor = loading
+        ? null
+        : (check == null
+              ? Colors.white.withValues(alpha: 0.3)
+              : (check.isOk ? _green : _red));
+    final region = check?.region;
+    final flag = countryFlagEmoji(region);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
@@ -507,7 +580,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
             icon: target.icon,
             size: 42,
             radius: 12,
-            dotColor: loading ? null : (failed ? _red : _green),
+            dotColor: dotColor,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -528,25 +601,33 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                 Row(
                   children: [
                     if (flag.isNotEmpty) ...[
-                      Text(
-                        flag,
-                        style: const TextStyle(fontSize: 13),
-                      ),
+                      Text(flag, style: const TextStyle(fontSize: 13)),
                       const SizedBox(width: 5),
-                    ],
-                    Flexible(
-                      child: Text(
-                        _ip ?? '—',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: _ip == null
-                              ? Colors.white.withValues(alpha: 0.4)
-                              : _green,
+                      Flexible(
+                        child: Text(
+                          region!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.45),
+                          ),
                         ),
                       ),
-                    ),
+                    ] else
+                      Flexible(
+                        child: Text(
+                          _ipInfo?.ip ?? '—',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: _ipInfo == null
+                                ? Colors.white.withValues(alpha: 0.4)
+                                : Colors.white.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],
@@ -554,19 +635,164 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
           ),
           const SizedBox(width: 12),
           Text(
-            loading
-                ? '检测中'
-                : failed
-                    ? '检测失败'
-                    : '$delay ms',
+            label,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: loading
-                  ? Colors.white.withValues(alpha: 0.5)
-                  : failed
-                      ? _red
-                      : Colors.white.withValues(alpha: 0.85),
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 管理服务：勾选需要检测/显示的服务
+class ServiceManagerSheet extends StatefulWidget {
+  const ServiceManagerSheet({
+    super.key,
+    required this.enabled,
+  });
+
+  final List<ServiceTarget> enabled;
+
+  @override
+  State<ServiceManagerSheet> createState() => _ServiceManagerSheetState();
+}
+
+class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
+  late Set<String> _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.enabled.map((target) => target.id).toSet();
+  }
+
+  void _toggle(String id, bool value) {
+    setState(() {
+      if (value) {
+        _selected.add(id);
+      } else {
+        _selected.remove(id);
+      }
+    });
+  }
+
+  void _toggleAll(bool value) {
+    setState(() {
+      _selected = value
+          ? ServiceTarget.values.map((target) => target.id).toSet()
+          : <String>{};
+    });
+  }
+
+  Future<void> _save() async {
+    await ServiceStatusPrefs.save(_selected);
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final allSelected = _selected.length == ServiceTarget.values.length;
+    return Container(
+      height: media.size.height * 0.75,
+      decoration: const BoxDecoration(
+        color: _sheetSurface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+          Container(
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 8, 4),
+            child: Row(
+              children: [
+                const Text(
+                  '管理服务',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${_selected.length}/${ServiceTarget.values.length}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white.withValues(alpha: 0.45),
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => _toggleAll(!allSelected),
+                  child: Text(allSelected ? '全不选' : '全选'),
+                ),
+                TextButton(
+                  onPressed: _save,
+                  child: const Text('完成'),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.separated(
+              padding: EdgeInsets.only(bottom: 12 + media.padding.bottom),
+              itemCount: ServiceTarget.values.length,
+              separatorBuilder: (_, __) => Divider(
+                height: 1,
+                indent: 60,
+                color: Colors.white.withValues(alpha: 0.07),
+              ),
+              itemBuilder: (_, index) {
+                final target = ServiceTarget.values[index];
+                final checked = _selected.contains(target.id);
+                return InkWell(
+                  onTap: () => _toggle(target.id, !checked),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      children: [
+                        ServiceIconBadge(
+                          icon: target.icon,
+                          size: 34,
+                          radius: 10,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            target.label,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Checkbox(
+                          value: checked,
+                          onChanged: (value) => _toggle(target.id, value ?? false),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],

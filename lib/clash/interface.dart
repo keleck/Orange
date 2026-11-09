@@ -61,6 +61,12 @@ mixin ClashInterface {
 
   FutureOr<String> getMemory();
 
+  /// 走指定 proxy 探测各服务的可用性与解锁区域，返回 JSON 数组字符串。
+  FutureOr<String> serviceCheck(String data);
+
+  /// 走指定 proxy 请求出口 IP 源，返回 JSON 对象字符串。
+  FutureOr<String> outboundIp(String data);
+
   resetTraffic();
 
   startLog();
@@ -428,6 +434,27 @@ abstract class ClashHandlerInterface with ClashInterface {
   FutureOr<String> getMemory() {
     return invoke<String>(
       method: ActionMethod.getMemory,
+    );
+  }
+
+  @override
+  FutureOr<String> serviceCheck(String data) {
+    return invoke<String>(
+      method: ActionMethod.serviceCheck,
+      data: data,
+      // 一次 sweep 的预算是单次超时的 6 倍，这里再留些余量。
+      timeout: Duration(seconds: 60),
+      defaultValue: "[]",
+    );
+  }
+
+  @override
+  FutureOr<String> outboundIp(String data) {
+    return invoke<String>(
+      method: ActionMethod.getOutboundIp,
+      data: data,
+      timeout: Duration(seconds: 15),
+      defaultValue: "",
     );
   }
 }

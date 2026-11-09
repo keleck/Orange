@@ -291,6 +291,8 @@ enum ActionMethod {
   updateDns,
   getAndroidVpnOptions,
   getCurrentProfileName,
+  serviceCheck,
+  getOutboundIp,
 }
 
 enum AuthorizeCode { none, success, error }
