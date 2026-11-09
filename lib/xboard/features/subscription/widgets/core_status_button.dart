@@ -2,9 +2,14 @@ import 'dart:async';
 
 import 'package:fl_clash/clash/clash.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
+import 'package:fl_clash/xboard/features/profile/providers/profile_import_provider.dart';
+import 'package:fl_clash/xboard/features/subscription/services/subscription_status_checker.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// 内核（Clash Meta）运行状态
 enum CoreHealthStatus {
@@ -24,8 +29,9 @@ enum CoreHealthStatus {
 /// 内核状态指示灯
 ///
 /// 放在首页「规则 / 全局」切换按钮旁边，用于直观展示内核是否存活。
-/// 单击即可重启内核（等价于 [AppController.restartCore]）。
-class CoreStatusButton extends StatefulWidget {
+/// 单击即可重启内核，并自动重新拉取订阅下发配置
+/// （核心重启后配置为空，不重新下发则节点不可用）。
+class CoreStatusButton extends ConsumerStatefulWidget {
   const CoreStatusButton({
     super.key,
     this.compact = false,
@@ -35,10 +41,10 @@ class CoreStatusButton extends StatefulWidget {
   final bool compact;
 
   @override
-  State<CoreStatusButton> createState() => _CoreStatusButtonState();
+  ConsumerState<CoreStatusButton> createState() => _CoreStatusButtonState();
 }
 
-class _CoreStatusButtonState extends State<CoreStatusButton> {
+class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
   /// 心跳间隔
   static const _probeInterval = Duration(seconds: 4);
 
@@ -104,22 +110,60 @@ class _CoreStatusButtonState extends State<CoreStatusButton> {
     }
   }
 
+  /// 重新拉取订阅并把配置下发给内核
+  ///
+  /// 配置文件在首次应用后即从内存缓存与临时文件中清除，因此内核重启后
+  /// 仅调用 applyProfile 拿不到配置，必须重新导入订阅，否则节点列表为空。
+  Future<bool> _refreshSubscription() async {
+    final subscribeUrl = ref.read(subscriptionInfoProvider)?.subscribeUrl ?? '';
+    if (subscribeUrl.isNotEmpty) {
+      commonPrint.log('[内核重启] 重新导入订阅配置');
+      return await ref.read(profileImportProvider.notifier).importSubscription(
+            subscribeUrl,
+            forceRefresh: true,
+          );
+    }
+    // 没有订阅链接时退回完整刷新流程
+    commonPrint.log('[内核重启] 无订阅链接，执行完整刷新');
+    if (!mounted) return false;
+    await subscriptionStatusChecker.forceRefreshSubscriptionInfo(context, ref);
+    return ref.read(groupsProvider).isNotEmpty;
+  }
+
   Future<void> _restartCore() async {
     if (_status == CoreHealthStatus.restarting) return;
     setState(() => _status = CoreHealthStatus.restarting);
+
+    final wasRunning = ref.read(runTimeProvider) != null;
     try {
+      // 1. 先断开，避免内核重启后带着空配置启动
+      if (wasRunning) {
+        await globalState.appController.updateStatus(false);
+        await Future.delayed(const Duration(milliseconds: 600));
+      }
+
+      // 2. 重启内核
       await globalState.appController.restartCore();
-      // 留出核心重新初始化的时间再探测
-      await Future.delayed(const Duration(milliseconds: 800));
+
+      // 3. 重新拉取订阅并下发配置，否则节点列表为空
+      final refreshed = await _refreshSubscription();
+
+      // 4. 恢复连接
+      if (wasRunning && refreshed) {
+        await globalState.appController.updateStatus(true);
+      }
+
       final alive = await _isCoreAlive();
       if (!mounted) return;
       setState(() {
         _status = alive ? CoreHealthStatus.running : CoreHealthStatus.stopped;
       });
-      if (alive) {
-        XBoardNotification.showSuccess('内核已重启');
-      } else {
+      if (!alive) {
         XBoardNotification.showError('内核重启后无响应，请稍后重试');
+      } else if (!refreshed) {
+        XBoardNotification.showError('内核已重启，但订阅刷新失败，请手动刷新订阅');
+      } else {
+        XBoardNotification.showSuccess('内核已重启，订阅已刷新');
       }
     } catch (e) {
       commonPrint.log('重启内核失败: $e');
@@ -142,9 +186,9 @@ class _CoreStatusButtonState extends State<CoreStatusButton> {
       };
 
   String get _tooltip => switch (_status) {
-        CoreHealthStatus.running => '内核运行中，点击重启内核',
+        CoreHealthStatus.running => '内核运行中，点击重启内核并刷新订阅',
         CoreHealthStatus.restarting => '内核重启中…',
-        CoreHealthStatus.stopped => '内核未运行，点击重启内核',
+        CoreHealthStatus.stopped => '内核未运行，点击重启内核并刷新订阅',
         CoreHealthStatus.checking => '正在检测内核状态…',
       };
 
