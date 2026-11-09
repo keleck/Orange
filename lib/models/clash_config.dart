@@ -320,9 +320,11 @@ class Dns with _$Dns {
       // 政务
       "+.gov.cn",
       // NTP服务
+      // 注意：mihomo v1.19.33 起收紧域名校验，"*" 必须独占整个 label，
+      // 类似 "ntp*.*.com" 的部分通配会直接导致整份配置解析失败，故移除
       "ntp.*.com",
-      "ntp*.*.com",
       "+.pool.ntp.org",
+      "+.ntp.org",
       // STUN服务
       "stun.*.*",
       "stun.*.*.*",
