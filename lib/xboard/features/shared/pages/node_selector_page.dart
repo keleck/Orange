@@ -49,8 +49,14 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
           child: Column(
           children: [
             // 服务状态卡片（替代原来的「当前节点」卡片）
+            // nodeName 用于感知节点切换：组名不变时也能触发重新探测
             if (currentGroup != null && currentGroup.all.isNotEmpty)
-              ServiceStatusCard(proxyName: currentGroup.name),
+              ServiceStatusCard(
+                proxyName: currentGroup.name,
+                nodeName: currentGroup.getCurrentSelectedName(
+                  selectedMap[currentGroup.name] ?? '',
+                ),
+              ),
             // 用剩余空间自适应，写死高度会在不同屏幕上溢出到导航栏下面
             Expanded(
               child: _buildNodeList(context, currentGroup, selectedMap),

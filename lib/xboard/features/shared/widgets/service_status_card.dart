@@ -73,10 +73,17 @@ class ServiceStatusCard extends StatefulWidget {
   const ServiceStatusCard({
     super.key,
     required this.proxyName,
+    this.nodeName,
   });
 
   /// 用于探测的节点 / 策略组名称
   final String proxyName;
+
+  /// 当前选中的节点名。
+  ///
+  /// 只用于感知切换：策略组名不会随选中的节点变化，靠它才能在用户
+  /// 换了节点之后立刻重测，而不是等进详情页才更新。
+  final String? nodeName;
 
   @override
   State<ServiceStatusCard> createState() => _ServiceStatusCardState();
@@ -86,6 +93,9 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   Map<ServiceTarget, ServiceCheck> _checks = {};
   List<ServiceTarget> _enabled = ServiceTarget.values;
   bool _probing = false;
+
+  /// 探测进行中又切了节点时记下来，等这一轮结束再补测一次。
+  bool _pendingProbe = false;
 
   List<ServiceTarget> get _targets =>
       _enabled.take(_cardServiceCount).toList();
@@ -101,7 +111,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   @override
   void didUpdateWidget(ServiceStatusCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.proxyName != widget.proxyName) {
+    if (oldWidget.proxyName != widget.proxyName ||
+        oldWidget.nodeName != widget.nodeName) {
       _probe();
     }
   }
@@ -119,7 +130,10 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   }
 
   Future<void> _probe() async {
-    if (_probing) return;
+    if (_probing) {
+      _pendingProbe = true;
+      return;
+    }
     final targets = _targets;
     if (targets.isEmpty) {
       if (mounted) setState(() => _checks = {});
@@ -144,6 +158,10 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
       _checks = result;
       _probing = false;
     });
+    if (_pendingProbe) {
+      _pendingProbe = false;
+      await _probe();
+    }
   }
 
   int get _abnormalCount =>
