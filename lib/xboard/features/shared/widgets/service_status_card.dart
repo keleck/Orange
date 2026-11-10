@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/xboard/features/shared/services/service_probe.dart';
 import 'package:flutter/material.dart';
@@ -93,10 +94,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _loadEnabled();
-        _probe();
-      }
+      if (mounted) _bootstrap();
     });
   }
 
@@ -108,7 +106,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     }
   }
 
-  Future<void> _loadEnabled() async {
+  /// 先读回勾选配置再探测，避免用默认列表探一遍、配置读回来又对不上。
+  Future<void> _bootstrap() async {
     final ids = await ServiceStatusPrefs.load();
     if (!mounted) return;
     setState(() {
@@ -116,24 +115,30 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
           .where((target) => ids.contains(target.id))
           .toList();
     });
-    _probe();
+    await _probe();
   }
 
   Future<void> _probe() async {
     if (_probing) return;
     final targets = _targets;
     if (targets.isEmpty) {
-      setState(() => _checks = {});
+      if (mounted) setState(() => _checks = {});
       return;
     }
     setState(() {
       _probing = true;
       _checks = {};
     });
-    final result = await checkServices(
-      proxyName: widget.proxyName,
-      targets: targets,
-    );
+    var result = <ServiceTarget, ServiceCheck>{};
+    try {
+      result = await checkServices(
+        proxyName: widget.proxyName,
+        targets: targets,
+      );
+    } catch (e) {
+      // 探测本身出错也必须复位，否则界面会永久停在「检测中」。
+      commonPrint.log('服务探测失败: $e');
+    }
     if (!mounted) return;
     setState(() {
       _checks = result;
@@ -154,7 +159,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
         color: Colors.white.withValues(alpha: 0.55),
       );
     }
-    if (!_isDone) {
+    if (_probing || !_isDone) {
       return _Verdict(
         label: '检测中',
         color: Colors.white.withValues(alpha: 0.55),
@@ -178,7 +183,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     );
     // 详情页里可能改过启用项或重新测过，回来同步一次
     if (mounted) {
-      await _loadEnabled();
+      await _bootstrap();
     }
   }
 
@@ -343,10 +348,15 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
       _checks = {};
     });
     unawaited(_loadIp());
-    final result = await checkServices(
-      proxyName: widget.proxyName,
-      targets: _enabled,
-    );
+    var result = <ServiceTarget, ServiceCheck>{};
+    try {
+      result = await checkServices(
+        proxyName: widget.proxyName,
+        targets: _enabled,
+      );
+    } catch (e) {
+      commonPrint.log('服务探测失败: $e');
+    }
     if (!mounted) return;
     setState(() {
       _checks = result;
