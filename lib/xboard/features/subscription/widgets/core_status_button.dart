@@ -161,7 +161,16 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
       if (!alive) {
         XBoardNotification.showError('内核重启后无响应，请稍后重试');
       } else if (!refreshed) {
-        XBoardNotification.showError('内核已重启，但订阅刷新失败，请手动刷新订阅');
+        // 把导入失败的原始原因带出来，否则用户只知道「失败了」，
+        // 分不清是网络、订阅链接还是配置解析的问题。
+        final importState = ref.read(profileImportProvider);
+        final detail =
+            importState.lastResult?.errorMessage ?? importState.message;
+        XBoardNotification.showError(
+          detail.isEmpty
+              ? '内核已重启，但订阅刷新失败，请手动刷新订阅'
+              : '订阅刷新失败: $detail',
+        );
       } else {
         XBoardNotification.showSuccess('内核已重启，订阅已刷新');
       }
