@@ -9,6 +9,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/xboard/core/logger/logger.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 
@@ -145,22 +146,51 @@ class ClashCore {
 
   Future<List<Group>> getProxiesGroups() async {
     final proxies = await clashInterface.getProxies();
+    XBoardLogger.info('[groups] getProxies 返回 ${proxies.length} 项');
     if (proxies.isEmpty) return [];
-    final groupNames = [
-      UsedProxy.GLOBAL.name,
-      ...(proxies[UsedProxy.GLOBAL.name]["all"] as List).where((e) {
-        final proxy = proxies[e] ?? {};
-        return GroupTypeExtension.valueList.contains(proxy['type']);
-      })
-    ];
+
+    // 正常情况下 GLOBAL 一定存在，但内核刚启动、配置刚下发时可能还没建好，
+    // 直接取 ["all"] 会在 null 上抛 NoSuchMethodError，被上层 catch 吞掉后
+    // 节点列表就永远为空。这里做一次退化处理。
+    final globalRaw = proxies[UsedProxy.GLOBAL.name];
+    final groupNames = <String>[];
+    if (globalRaw is Map) {
+      groupNames.add(UsedProxy.GLOBAL.name);
+      groupNames.addAll(
+        (globalRaw["all"] as List? ?? const []).where((e) {
+          final proxy = proxies[e];
+          return proxy is Map &&
+              GroupTypeExtension.valueList.contains(proxy['type']);
+        }).cast<String>(),
+      );
+    } else {
+      // 没有 GLOBAL 时扫描全部，至少把已有的策略组列出来
+      groupNames.addAll(
+        proxies.entries
+            .where(
+              (entry) =>
+                  entry.value is Map &&
+                  GroupTypeExtension.valueList.contains(
+                    (entry.value as Map)['type'],
+                  ),
+            )
+            .map((entry) => entry.key)
+            .cast<String>(),
+      );
+    }
+    if (groupNames.isEmpty) return [];
+
     final groupsRaw = groupNames.map((groupName) {
-      final group = proxies[groupName];
+      final raw = proxies[groupName];
+      if (raw is! Map) return null;
+      // 复制一份，避免直接改内核返回的原始结构
+      final group = Map<String, dynamic>.from(raw);
       final allProxies = ((group["all"] ?? []) as List)
           .map(
             (name) => proxies[name],
           )
           .where((proxy) {
-            if (proxy == null) return false;
+            if (proxy is! Map) return false;
             // 过滤掉需要隐藏的节点
             return !_shouldHideProxy(proxy['name'] as String?);
           })
@@ -183,7 +213,7 @@ class ClashCore {
       // 优先级节点在前，普通节点在后，各自保持原始顺序
       group["all"] = [...priorityProxies, ...normalProxies];
       return group;
-    }).toList();
+    }).whereType<Map<String, dynamic>>().toList();
     return groupsRaw
         .map(
           (e) => Group.fromJson(e),

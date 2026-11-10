@@ -13,6 +13,7 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/dialog.dart';
+import 'package:fl_clash/xboard/core/logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
@@ -412,13 +413,20 @@ class AppController {
 
   Future<void> updateGroups() async {
     try {
-      _ref.read(groupsProvider.notifier).value = await retry(
+      final stopwatch = Stopwatch()..start();
+      final groups = await retry(
         task: () async {
           return await clashCore.getProxiesGroups();
         },
         retryIf: (res) => res.isEmpty,
       );
-    } catch (_) {
+      stopwatch.stop();
+      XBoardLogger.info(
+        '[groups] 读取到 ${groups.length} 个策略组，耗时 ${stopwatch.elapsedMilliseconds}ms',
+      );
+      _ref.read(groupsProvider.notifier).value = groups;
+    } catch (e) {
+      XBoardLogger.error('[groups] 读取策略组失败: $e');
       _ref.read(groupsProvider.notifier).value = [];
     }
   }

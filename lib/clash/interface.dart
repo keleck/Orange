@@ -265,7 +265,9 @@ abstract class ClashHandlerInterface with ClashInterface {
   Future<Map> getProxies() {
     return invoke<Map>(
       method: ActionMethod.getProxies,
-      timeout: Duration(seconds: 5),
+      // 低配机上内核刚启动时加载几十个节点 + 数百条规则，
+      // 5 秒经常不够，超时返回空 Map 会让节点列表一直为空。
+      timeout: Duration(seconds: 20),
     );
   }
 
