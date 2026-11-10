@@ -525,8 +525,13 @@ class GlobalState {
       }
     }
 
-    configMap["rules"] = configMap["rule"];
-    configMap.remove("rule");
+    // 内核的 RawConfig 用 json tag "rule" 输出规则，但解析结果里也可能
+    // 已经是 YAML 的 "rules"。以前这里直接 `rules = rule`，一旦 rule 为
+    // null 就会把规则整个覆盖成空，下发出去的配置 rules=0，分流失效。
+    final rules = configMap.remove("rule") ?? configMap["rules"];
+    if (rules != null) {
+      configMap["rules"] = rules;
+    }
     return configMap;
   }
 
