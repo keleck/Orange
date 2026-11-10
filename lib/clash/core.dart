@@ -212,6 +212,10 @@ class ClashCore {
       
       // 优先级节点在前，普通节点在后，各自保持原始顺序
       group["all"] = [...priorityProxies, ...normalProxies];
+      XBoardLogger.info(
+        '[groups] ${group['name']}: 原始 ${((raw['all'] ?? const []) as List).length} 项'
+        ' → 过滤后 ${allProxies.length} 项',
+      );
       return group;
     }).whereType<Map<String, dynamic>>().toList();
     return groupsRaw
