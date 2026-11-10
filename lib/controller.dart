@@ -342,6 +342,12 @@ class AppController {
     final params = await globalState.getSetupParams(
       pathConfig: realPatchConfig,
     );
+    // 下发的配置里到底有没有节点，是判断「内核为空」的关键：
+    // proxies=0 说明拿到的配置本身是空的；proxies=43 但内核仍空则问题在内核侧。
+    XBoardLogger.info(
+      '[core] 下发配置: proxies=${(params.config['proxies'] as List?)?.length ?? 0}, '
+      'rules=${(params.config['rules'] as List?)?.length ?? 0}',
+    );
     final message = await clashCore.setupConfig(params);
     if (message.isNotEmpty) {
       throw message;

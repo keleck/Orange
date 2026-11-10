@@ -481,7 +481,7 @@ class GlobalState {
 
   Future<Map<String, dynamic>> getProfileConfig(String profileId) async {
     Map<String, dynamic> configMap;
-    
+
     // 优先从内存缓存读取配置
     if (profileConfigCache.containsKey(profileId)) {
       final bytes = profileConfigCache[profileId]!;
@@ -490,42 +490,25 @@ class GlobalState {
       final tempFile = File(tempPath);
       await tempFile.parent.create(recursive: true);
       await tempFile.writeAsBytes(bytes);
-      
+
       configMap = await switch (clashLibHandler != null) {
         true => clashLibHandler!.getConfig(profileId),
         false => clashCore.getConfig(profileId),
       };
-      
-      // 读取后立即删除临时文件
-      try {
-        await tempFile.delete();
-        commonPrint.log('已删除临时配置文件: $tempPath');
-      } catch (e) {
-        commonPrint.log('删除临时配置文件失败: $e');
-      }
-      
-      // 清除内存缓存（配置已加载到核心）
-      profileConfigCache.remove(profileId);
+
+      // 这里以前会删除临时文件和内存缓存。但配置必须能被重复下发：
+      // 重启内核、开关 TUN、连接代理、刷新订阅都会再次调用 applyProfile，
+      // 第二次拿不到配置就会下发空内容，内核的代理列表被清空，
+      // 表现为 getProxies 一直返回 0 项、界面永远「正在加载节点」。
+      // 因此缓存与文件都保留。
     } else {
       // 从文件读取
       configMap = await switch (clashLibHandler != null) {
         true => clashLibHandler!.getConfig(profileId),
         false => clashCore.getConfig(profileId),
       };
-      
-      // 配置读取成功后删除本地 yaml 文件
-      try {
-        final profilePath = await appPath.getProfilePath(profileId);
-        final profileFile = File(profilePath);
-        if (await profileFile.exists()) {
-          await profileFile.delete();
-          commonPrint.log('已删除本地配置文件: $profilePath');
-        }
-      } catch (e) {
-        commonPrint.log('删除本地配置文件失败: $e');
-      }
     }
-    
+
     configMap["rules"] = configMap["rule"];
     configMap.remove("rule");
     return configMap;
