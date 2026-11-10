@@ -97,6 +97,17 @@ class GlobalState {
         Config(
           themeProps: defaultThemeProps,
         );
+
+    // xboard 版只提供「规则 / 全局」两档，direct 属于历史遗留的哑状态：
+    // currentGroupsState 会因此返回空列表、内核也不走代理，
+    // 表现就是界面一直「正在加载节点」而切换器却显示全局。
+    // 启动时直接归一化，避免用户每次都要手动切一下。
+    if (config.patchClashConfig.mode == Mode.direct) {
+      config = config.copyWith(
+        patchClashConfig: config.patchClashConfig.copyWith(mode: Mode.global),
+      );
+      await preferences.saveConfig(config);
+    }
     
     // 强制使用新的默认主题色
     config = config.copyWith(
