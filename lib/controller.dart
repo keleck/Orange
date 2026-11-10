@@ -13,7 +13,6 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/dialog.dart';
-import 'package:fl_clash/xboard/core/logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
@@ -342,12 +341,6 @@ class AppController {
     final params = await globalState.getSetupParams(
       pathConfig: realPatchConfig,
     );
-    // 下发的配置里到底有没有节点，是判断「内核为空」的关键：
-    // proxies=0 说明拿到的配置本身是空的；proxies=43 但内核仍空则问题在内核侧。
-    XBoardLogger.info(
-      '[core] 下发配置: proxies=${(params.config['proxies'] as List?)?.length ?? 0}, '
-      'rules=${(params.config['rules'] as List?)?.length ?? 0}',
-    );
     final message = await clashCore.setupConfig(params);
     if (message.isNotEmpty) {
       throw message;
@@ -365,23 +358,14 @@ class AppController {
   }
 
   Future applyProfile({bool silence = false}) async {
-    try {
+    if (silence) {
+      await _applyProfile();
+    } else {
       final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-      // 启动阶段首页还没挂载，此时也必须把配置下发下去。
-      // 以前这里直接 return，内核拿到的是一份空配置，
-      // 表现为指示灯是绿的、节点却一直「正在加载」。
-      if (silence || commonScaffoldState?.mounted != true) {
+      if (commonScaffoldState?.mounted != true) return;
+      await commonScaffoldState?.loadingRun(() async {
         await _applyProfile();
-      } else {
-        await commonScaffoldState?.loadingRun(() async {
-          await _applyProfile();
-        });
-      }
-    } catch (e, stack) {
-      // 配置解析失败时 _setupClashConfig 会抛错，必须让用户看到原因。
-      commonPrint.log('[core] 配置应用失败: $e\n$stack');
-      XBoardLogger.error('[core] 配置应用失败: $e', e, stack);
-      globalState.showNotifier('配置应用失败: $e');
+      });
     }
     addCheckIpNumDebounce();
   }
@@ -420,20 +404,13 @@ class AppController {
 
   Future<void> updateGroups() async {
     try {
-      final stopwatch = Stopwatch()..start();
-      final groups = await retry(
+      _ref.read(groupsProvider.notifier).value = await retry(
         task: () async {
           return await clashCore.getProxiesGroups();
         },
         retryIf: (res) => res.isEmpty,
       );
-      stopwatch.stop();
-      XBoardLogger.info(
-        '[groups] 读取到 ${groups.length} 个策略组，耗时 ${stopwatch.elapsedMilliseconds}ms',
-      );
-      _ref.read(groupsProvider.notifier).value = groups;
-    } catch (e) {
-      XBoardLogger.error('[groups] 读取策略组失败: $e');
+    } catch (_) {
       _ref.read(groupsProvider.notifier).value = [];
     }
   }

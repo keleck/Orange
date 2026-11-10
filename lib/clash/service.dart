@@ -18,9 +18,6 @@ class ClashService extends ClashHandlerInterface {
 
   Process? process;
 
-  /// 内核启动失败时记录的原因，用于界面提示。
-  String lastCoreError = '';
-
   factory ClashService() {
     _instance ??= ClashService._internal();
     return _instance!;
@@ -29,28 +26,6 @@ class ClashService extends ClashHandlerInterface {
   ClashService._internal() {
     _initServer();
     reStart();
-    _watchCoreStart();
-  }
-
-  /// 内核要主动连回本地端口，连不上就说明没起来。
-  ///
-  /// 以前这里没有任何兜底：`Process.start` 失败、或进程被安全软件拦掉时，
-  /// socket 永远不会连上，界面就只剩一个「正在加载节点」。
-  Future<void> _watchCoreStart() async {
-    for (var i = 0; i < 3; i++) {
-      await Future.delayed(const Duration(seconds: 5));
-      if (socketCompleter.isCompleted) {
-        return;
-      }
-    }
-    if (socketCompleter.isCompleted) {
-      return;
-    }
-    final detail = lastCoreError.isEmpty
-        ? '内核进程未连接，可能被安全软件拦截'
-        : lastCoreError;
-    commonPrint.log('[core] 启动失败: $detail');
-    globalState.showNotifier(detail);
   }
 
   _initServer() async {
@@ -117,34 +92,19 @@ class ClashService extends ClashHandlerInterface {
         return;
       }
     }
-    try {
-      process = await Process.start(
-        appPath.corePath,
-        [
-          arg,
-        ],
-      );
-      process?.stdout.listen((_) {});
-      process?.stderr.listen((e) {
-        final error = utf8.decode(e);
-        if (error.isNotEmpty) {
-          commonPrint.log(error);
-          lastCoreError = error.trim();
-        }
-      });
-      // 进程起来又立刻退出时，退出码是唯一线索。
-      process?.exitCode.then((code) {
-        if (code != 0 && !socketCompleter.isCompleted) {
-          lastCoreError = '内核进程异常退出，退出码 $code';
-          commonPrint.log('[core] $lastCoreError');
-        }
-      });
-    } catch (e) {
-      // 文件缺失、权限被拒、被杀软拦截都会走到这里，必须让用户看到。
-      lastCoreError = '内核启动失败：$e';
-      commonPrint.log('[core] $lastCoreError');
-      globalState.showNotifier(lastCoreError);
-    }
+    process = await Process.start(
+      appPath.corePath,
+      [
+        arg,
+      ],
+    );
+    process?.stdout.listen((_) {});
+    process?.stderr.listen((e) {
+      final error = utf8.decode(e);
+      if (error.isNotEmpty) {
+        commonPrint.log(error);
+      }
+    });
     isStarting = false;
   }
 

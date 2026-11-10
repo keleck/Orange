@@ -51,9 +51,7 @@ GroupsState currentGroupsState(Ref ref) {
   final groups = ref.watch(groupsProvider);
   return GroupsState(
     value: switch (mode) {
-      // direct 虽然不走代理，但节点列表依然要能看，
-      // 返回空会让界面误判成「正在加载节点」。
-      Mode.direct => groups.toList(),
+      Mode.direct => [],
       Mode.global => groups.toList(),
       Mode.rule => groups
           .where((item) => item.hidden == false)

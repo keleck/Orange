@@ -15,13 +15,6 @@ class ProfileImportNotifier extends StateNotifier<ImportState> {
     bool forceRefresh = false,
     Future<String?> Function()? refreshUrl,
   }) async {
-    // 已有导入任务在进行时直接返回：连接代理、切 TUN、重启内核等操作
-    // 会同时触发导入，重复请求会被服务层拒绝并报「正在导入中，请稍候」，
-    // 上层就会误判成刷新失败。这里直接当作「正在刷新」处理。
-    if (state.isImporting) {
-      _logger.info('已有导入任务进行中，跳过本次请求');
-      return true;
-    }
     _logger.info('开始导入订阅: ${UrlMasker.mask(url)}, forceRefresh: $forceRefresh');
     
     state = state.copyWith(

@@ -20,11 +20,6 @@ class FlClashHttpOverrides extends HttpOverrides {
   HttpClient createHttpClient(SecurityContext? context) {
     final client = super.createHttpClient(context);
     client.badCertificateCallback = (_, __, ___) => true;
-    // Dart 的 connectionTimeout 默认是 null，等于无限等待。
-    // 遇到 IPv6 优先但不通、TLS 中间盒或企业策略时，握手会既不成功也不失败，
-    // 上层虽然有 Future.timeout，但底层 socket 不会断，
-    // 表现就是订阅一直「正在加载节点」。给个硬上限让失败可感知。
-    client.connectionTimeout = const Duration(seconds: 15);
     client.findProxy = handleFindProxy;
     return client;
   }

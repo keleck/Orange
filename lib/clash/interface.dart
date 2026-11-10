@@ -239,9 +239,7 @@ abstract class ClashHandlerInterface with ClashInterface {
       method: ActionMethod.getConfig,
       data: path,
       timeout: Duration(minutes: 2),
-      // 用显式类型的空 Map：{} 是 Map<dynamic, dynamic>，
-      // 上层按 Map<String, dynamic> 强转时会抛类型错误。
-      defaultValue: Result.success(<String, dynamic>{}),
+      defaultValue: Result.success({}),
     );
     return res;
   }
@@ -267,9 +265,7 @@ abstract class ClashHandlerInterface with ClashInterface {
   Future<Map> getProxies() {
     return invoke<Map>(
       method: ActionMethod.getProxies,
-      // 低配机上内核刚启动时加载几十个节点 + 数百条规则，
-      // 5 秒经常不够，超时返回空 Map 会让节点列表一直为空。
-      timeout: Duration(seconds: 20),
+      timeout: Duration(seconds: 5),
     );
   }
 

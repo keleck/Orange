@@ -97,17 +97,6 @@ class GlobalState {
         Config(
           themeProps: defaultThemeProps,
         );
-
-    // xboard 版只提供「规则 / 全局」两档，direct 属于历史遗留的哑状态：
-    // currentGroupsState 会因此返回空列表、内核也不走代理，
-    // 表现就是界面一直「正在加载节点」而切换器却显示全局。
-    // 启动时直接归一化，避免用户每次都要手动切一下。
-    if (config.patchClashConfig.mode == Mode.direct) {
-      config = config.copyWith(
-        patchClashConfig: config.patchClashConfig.copyWith(mode: Mode.global),
-      );
-      await preferences.saveConfig(config);
-    }
     
     // 强制使用新的默认主题色
     config = config.copyWith(
@@ -481,7 +470,7 @@ class GlobalState {
 
   Future<Map<String, dynamic>> getProfileConfig(String profileId) async {
     Map<String, dynamic> configMap;
-
+    
     // 优先从内存缓存读取配置
     if (profileConfigCache.containsKey(profileId)) {
       final bytes = profileConfigCache[profileId]!;
@@ -490,29 +479,30 @@ class GlobalState {
       final tempFile = File(tempPath);
       await tempFile.parent.create(recursive: true);
       await tempFile.writeAsBytes(bytes);
-
+      
       configMap = await switch (clashLibHandler != null) {
         true => clashLibHandler!.getConfig(profileId),
         false => clashCore.getConfig(profileId),
       };
-
-      // 临时文件用完即删，避免配置以明文形式留在磁盘上。
-      // 但内存缓存必须保留：重启内核、开关 TUN、连接代理、刷新订阅
-      // 都会再次调用 applyProfile，缓存被删掉就只能给内核下发一份空配置，
-      // 表现为 getProxies 一直返回 0 项、界面永远「正在加载节点」。
+      
+      // 读取后立即删除临时文件
       try {
         await tempFile.delete();
+        commonPrint.log('已删除临时配置文件: $tempPath');
       } catch (e) {
         commonPrint.log('删除临时配置文件失败: $e');
       }
+      
+      // 清除内存缓存（配置已加载到核心）
+      profileConfigCache.remove(profileId);
     } else {
-      // 从文件读取（通常是 App 重启后内存缓存已失效）
+      // 从文件读取
       configMap = await switch (clashLibHandler != null) {
         true => clashLibHandler!.getConfig(profileId),
         false => clashCore.getConfig(profileId),
       };
-
-      // 文件同样用完即删，保持配置不落盘
+      
+      // 配置读取成功后删除本地 yaml 文件
       try {
         final profilePath = await appPath.getProfilePath(profileId);
         final profileFile = File(profilePath);
@@ -524,14 +514,9 @@ class GlobalState {
         commonPrint.log('删除本地配置文件失败: $e');
       }
     }
-
-    // 内核的 RawConfig 用 json tag "rule" 输出规则，但解析结果里也可能
-    // 已经是 YAML 的 "rules"。以前这里直接 `rules = rule`，一旦 rule 为
-    // null 就会把规则整个覆盖成空，下发出去的配置 rules=0，分流失效。
-    final rules = configMap.remove("rule") ?? configMap["rules"];
-    if (rules != null) {
-      configMap["rules"] = rules;
-    }
+    
+    configMap["rules"] = configMap["rule"];
+    configMap.remove("rule");
     return configMap;
   }
 

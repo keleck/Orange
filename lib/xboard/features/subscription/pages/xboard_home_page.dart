@@ -8,7 +8,6 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
-import 'package:fl_clash/xboard/core/logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -52,9 +51,6 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   bool _hasInitialized = false;
   bool _hasStartedLatencyTesting = false;
   bool _hasCheckedSubscriptionStatus = false;
-
-  /// 节点加载判定结果，用于日志去重
-  String _lastLoadingSnapshot = '';
   bool _isTunLoading = false;
   bool _showTrafficHint = true;
   bool _isManualRefresh = false;  // 标记是否为手动刷新（仅手动刷新时触发测速）
@@ -391,28 +387,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       }
     }
     
-    // 选中的组可能一个节点都没有（订阅里该组为空、或节点全被过滤），
-    // 这时只要还有别的组有节点，就不该让界面一直转圈。
-    if (currentGroup == null || currentGroup.all.isEmpty) {
-      for (final group in groups) {
-        if (group.all.isNotEmpty) {
-          currentGroup = group;
-          break;
-        }
-      }
-    }
-
-    final loading = currentGroup == null || currentGroup.all.isEmpty;
-    // 只在结论变化时记录，避免每帧刷日志
-    final snapshot =
-        '[loading] mode=$mode 组数=${groups.length} '
-        '当前组=${currentGroup?.name} 节点数=${currentGroup?.all.length} '
-        '→ loading=$loading';
-    if (snapshot != _lastLoadingSnapshot) {
-      _lastLoadingSnapshot = snapshot;
-      XBoardLogger.info(snapshot);
-    }
-    return loading;
+    return currentGroup == null || currentGroup.all.isEmpty;
   }
 
   // 中央大按钮

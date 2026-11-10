@@ -10,8 +10,6 @@ import 'package:fl_clash/plugins/tile.dart';
 import 'package:fl_clash/plugins/vpn.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/xboard/config/xboard_config.dart';
-import 'package:fl_clash/xboard/core/logger/file_sink_logger.dart';
-import 'package:fl_clash/xboard/core/logger/logger.dart';
 import 'package:fl_clash/xboard/config/utils/config_file_loader.dart'; // 配置文件加载器
 import 'package:fl_clash/xboard/infrastructure/network/domain_racing_service.dart'; // 域名竞速服务
 import 'package:flutter/material.dart';
@@ -32,10 +30,6 @@ RemoteTaskManager? remoteTaskManager;
 Future<void> main() async {
   globalState.isService = false;
   WidgetsFlutterBinding.ensureInitialized(); // 确保 Flutter 绑定已初始化
-
-  // 尽早把 XBoard 日志落到磁盘：桌面端从图标启动时 stdout 没有去处，
-  // 一旦出问题（比如一直加载节点）就完全无从排查。
-  await _setupFileLogging();
 
   // Windows 平台 WebView 初始化
   if (Platform.isWindows) {
@@ -82,28 +76,6 @@ Future<void> main() async {
   runApp(ProviderScope(
     child: const Application(),
   ));
-}
-
-/// 把 XBoard 日志同时写一份到 <数据目录>/logs/xboard.log
-///
-/// 超过 4MB 会轮转成 xboard.log.old，只保留一份历史。
-Future<void> _setupFileLogging() async {
-  try {
-    final home = await appPath.homeDirPath;
-    final dir = Directory('$home/logs');
-    final file = File('${dir.path}/xboard.log');
-    if (await file.exists() && await file.length() > 4 * 1024 * 1024) {
-      final old = File('${dir.path}/xboard.log.old');
-      if (await old.exists()) {
-        await old.delete();
-      }
-      await file.rename(old.path);
-    }
-    XBoardLogger.setLogger(FileSinkLogger(file));
-  } catch (e) {
-    // ignore: avoid_print
-    print('[Main] 日志落盘初始化失败: $e');
-  }
 }
 
 /// 加载安全配置（证书路径、UA、解密密钥等）
