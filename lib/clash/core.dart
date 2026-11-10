@@ -210,8 +210,13 @@ class ClashCore {
         }
       }
       
-      // 优先级节点在前，普通节点在后，各自保持原始顺序
-      group["all"] = [...priorityProxies, ...normalProxies];
+      // 优先级节点在前，普通节点在后，各自保持原始顺序。
+      // 每个节点都重新转成 Map<String, dynamic>：内核返回的是
+      // Map<dynamic, dynamic>，而 Group.fromJson 内部会做
+      // `e as Map<String, dynamic>`，不转会直接抛类型转换错误。
+      group["all"] = [...priorityProxies, ...normalProxies]
+          .map((proxy) => Map<String, dynamic>.from(proxy as Map))
+          .toList();
       XBoardLogger.info(
         '[groups] ${group['name']}: 原始 ${((raw['all'] ?? const []) as List).length} 项'
         ' → 过滤后 ${allProxies.length} 项',
@@ -315,7 +320,9 @@ class ClashCore {
     final profilePath = await appPath.getProfilePath(id);
     final res = await clashInterface.getConfig(profilePath);
     if (res.isSuccess) {
-      return res.data as Map<String, dynamic>;
+      // 内核或兜底值可能是 Map<dynamic, dynamic>，直接 as 会抛
+      // type '_Map<dynamic, dynamic>' is not a subtype of 'Map<String, dynamic>'
+      return Map<String, dynamic>.from(res.data as Map);
     } else {
       throw res.message;
     }

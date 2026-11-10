@@ -371,9 +371,10 @@ class AppController {
           await _applyProfile();
         });
       }
-    } catch (e) {
+    } catch (e, stack) {
       // 配置解析失败时 _setupClashConfig 会抛错，必须让用户看到原因。
-      commonPrint.log('[core] 配置应用失败: $e');
+      commonPrint.log('[core] 配置应用失败: $e\n$stack');
+      XBoardLogger.error('[core] 配置应用失败: $e', e, stack);
       globalState.showNotifier('配置应用失败: $e');
     }
     addCheckIpNumDebounce();

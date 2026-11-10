@@ -239,7 +239,9 @@ abstract class ClashHandlerInterface with ClashInterface {
       method: ActionMethod.getConfig,
       data: path,
       timeout: Duration(minutes: 2),
-      defaultValue: Result.success({}),
+      // 用显式类型的空 Map：{} 是 Map<dynamic, dynamic>，
+      // 上层按 Map<String, dynamic> 强转时会抛类型错误。
+      defaultValue: Result.success(<String, dynamic>{}),
     );
     return res;
   }
