@@ -432,12 +432,16 @@ class GlobalState {
         rawConfig["dns"]["nameserver-policy"][entry.key] =
             entry.value.splitByMultipleSeparators;
       }
-  } else {
+  } els    } else {
       // 即使不覆盖DNS，也要确保fake-ip-filter包含必要的国内域名过滤
       // 这样GEOIP,CN,DIRECT规则才能在fake-ip模式下正常工作
       final existingFilter = (rawConfig["dns"]["fake-ip-filter"] as List?)?.cast<String>() ?? [];
       final defaultFilter = realPatchConfig.dns.fakeIpFilter;
-      final mergedFilter = {...existingFilter, ...defaultFilter}.toList();
+      // 旧版本把 `ntp*.*.com` 这类部分通配写进过配置，mihomo 1.19.33 起
+      // 会直接拒绝整份配置，这里统一过滤掉，避免老配置继续报错。
+      final mergedFilter = {...existingFilter, ...defaultFilter}
+          .where(isValidFakeIpFilterPattern)
+          .toList();
       rawConfig["dns"]["fake-ip-filter"] = mergedFilter;
     }
     var rules = [];
@@ -637,3 +641,20 @@ class DetectionState {
 }
 
 final detectionState = DetectionState();
+
+/// fake-ip-filter 里的域名是否合法。
+///
+/// mihomo 1.19.33 起要求 `*` 和 `+` 必须独占整个 label，
+/// `ntp*.*.com` 这种部分通配会让整份配置解析失败：
+///   invalid domain "ntp*.*.com": "*" wildcard must occupy the entire label 1
+bool isValidFakeIpFilterPattern(String pattern) {
+  for (final label in pattern.split('.')) {
+    if (label.contains('*') && label != '*') {
+      return false;
+    }
+    if (label.contains('+') && label != '+') {
+      return false;
+    }
+  }
+  return true;
+}
