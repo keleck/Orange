@@ -496,17 +496,33 @@ class GlobalState {
         false => clashCore.getConfig(profileId),
       };
 
-      // 这里以前会删除临时文件和内存缓存。但配置必须能被重复下发：
-      // 重启内核、开关 TUN、连接代理、刷新订阅都会再次调用 applyProfile，
-      // 第二次拿不到配置就会下发空内容，内核的代理列表被清空，
+      // 临时文件用完即删，避免配置以明文形式留在磁盘上。
+      // 但内存缓存必须保留：重启内核、开关 TUN、连接代理、刷新订阅
+      // 都会再次调用 applyProfile，缓存被删掉就只能给内核下发一份空配置，
       // 表现为 getProxies 一直返回 0 项、界面永远「正在加载节点」。
-      // 因此缓存与文件都保留。
+      try {
+        await tempFile.delete();
+      } catch (e) {
+        commonPrint.log('删除临时配置文件失败: $e');
+      }
     } else {
-      // 从文件读取
+      // 从文件读取（通常是 App 重启后内存缓存已失效）
       configMap = await switch (clashLibHandler != null) {
         true => clashLibHandler!.getConfig(profileId),
         false => clashCore.getConfig(profileId),
       };
+
+      // 文件同样用完即删，保持配置不落盘
+      try {
+        final profilePath = await appPath.getProfilePath(profileId);
+        final profileFile = File(profilePath);
+        if (await profileFile.exists()) {
+          await profileFile.delete();
+          commonPrint.log('已删除本地配置文件: $profilePath');
+        }
+      } catch (e) {
+        commonPrint.log('删除本地配置文件失败: $e');
+      }
     }
 
     configMap["rules"] = configMap["rule"];
