@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:fl_clash/clash/core.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/config_vault.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/state.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -153,15 +154,9 @@ extension ProfileExtension on Profile {
     }
   }
 
-  /// 检查配置是否存在（优先检查内存缓存，再检查文件）
+  /// 检查配置是否存在（加密存储固定一份）
   Future<bool> check() async {
-    // 优先检查内存缓存
-    if (globalState.profileConfigCache.containsKey(id)) {
-      return true;
-    }
-    // 再检查文件
-    final profilePath = await appPath.getProfilePath(id);
-    return await File(profilePath).exists();
+    return await ConfigVault.exists();
   }
 
   Future<File> getFile() async {
@@ -175,16 +170,8 @@ extension ProfileExtension on Profile {
   }
 
   Future<int> get profileLastModified async {
-    // 如果配置在内存缓存中，返回当前时间
-    if (globalState.profileConfigCache.containsKey(id)) {
-      return DateTime.now().microsecondsSinceEpoch;
-    }
-    final path = await appPath.getProfilePath(id);
-    final file = File(path);
-    if (await file.exists()) {
-      return (await file.lastModified()).microsecondsSinceEpoch;
-    }
-    return 0;
+    final modified = await ConfigVault.lastModified();
+    return modified?.microsecondsSinceEpoch ?? 0;
   }
 
   Future<Profile> update() async {
@@ -197,27 +184,25 @@ extension ProfileExtension on Profile {
     ).saveFile(response.data);
   }
 
-  /// 保存配置到内存缓存（不写入文件）
+  /// 校验后加密保存到固定的配置文件
   Future<Profile> saveFile(Uint8List bytes) async {
     final message = await clashCore.validateConfig(utf8.decode(bytes));
     if (message.isNotEmpty) {
       throw message;
     }
-    // 保存到内存缓存，不写入文件
-    globalState.profileConfigCache[id] = bytes;
-    commonPrint.log('配置已保存到内存缓存: $id');
+    await ConfigVault.save(bytes);
+    commonPrint.log('配置已加密保存: ${ConfigVault.fileName}');
     return copyWith(lastUpdateDate: DateTime.now());
   }
 
-  /// 保存配置到内存缓存（不写入文件）
+  /// 校验后加密保存到固定的配置文件
   Future<Profile> saveFileWithString(String value) async {
     final message = await clashCore.validateConfig(value);
     if (message.isNotEmpty) {
       throw message;
     }
-    // 保存到内存缓存，不写入文件
-    globalState.profileConfigCache[id] = Uint8List.fromList(utf8.encode(value));
-    commonPrint.log('配置已保存到内存缓存: $id');
+    await ConfigVault.save(utf8.encode(value));
+    commonPrint.log('配置已加密保存: ${ConfigVault.fileName}');
     return copyWith(lastUpdateDate: DateTime.now());
   }
 }

@@ -470,53 +470,54 @@ class GlobalState {
 
   Future<Map<String, dynamic>> getProfileConfig(String profileId) async {
     Map<String, dynamic> configMap;
-    
-    // 优先从内存缓存读取配置
-    if (profileConfigCache.containsKey(profileId)) {
-      final bytes = profileConfigCache[profileId]!;
-      // 使用 Go 核心解析 YAML（需要先写入临时文件）
+
+    // 配置固定加密存放在 profiles/config.bin，不再常驻内存
+    final bytes = await ConfigVault.load();
+    if (bytes != null) {
+      // 内核解析 YAML 需要落一次盘：写临时文件，解析完立即删除，
+      // 磁盘上不会留下明文配置。
       final tempPath = await appPath.getProfilePath(profileId);
       final tempFile = File(tempPath);
       await tempFile.parent.create(recursive: true);
       await tempFile.writeAsBytes(bytes);
-      
+
       configMap = await switch (clashLibHandler != null) {
         true => clashLibHandler!.getConfig(profileId),
         false => clashCore.getConfig(profileId),
       };
-      
-      // 读取后立即删除临时文件
+
       try {
         await tempFile.delete();
         commonPrint.log('已删除临时配置文件: $tempPath');
       } catch (e) {
         commonPrint.log('删除临时配置文件失败: $e');
       }
-      
-      // 清除内存缓存（配置已加载到核心）
-      profileConfigCache.remove(profileId);
     } else {
-      // 从文件读取
+      // 兼容旧版本残留的明文 yaml：读一次后立即清理
       configMap = await switch (clashLibHandler != null) {
         true => clashLibHandler!.getConfig(profileId),
         false => clashCore.getConfig(profileId),
       };
-      
-      // 配置读取成功后删除本地 yaml 文件
+
       try {
         final profilePath = await appPath.getProfilePath(profileId);
         final profileFile = File(profilePath);
         if (await profileFile.exists()) {
           await profileFile.delete();
-          commonPrint.log('已删除本地配置文件: $profilePath');
+          commonPrint.log('已清理旧的明文配置: $profilePath');
         }
       } catch (e) {
-        commonPrint.log('删除本地配置文件失败: $e');
+        commonPrint.log('清理旧配置文件失败: $e');
       }
     }
-    
-    configMap["rules"] = configMap["rule"];
-    configMap.remove("rule");
+
+    // 内核 RawConfig 用 json tag "rule" 输出规则，解析结果也可能是 YAML 的
+    // "rules"；直接 `rules = rule` 会在 rule 为 null 时把规则清空，
+    // 导致下发出去的配置 rules=0、分流失效。
+    final rules = configMap.remove("rule") ?? configMap["rules"];
+    if (rules != null) {
+      configMap["rules"] = rules;
+    }
     return configMap;
   }
 

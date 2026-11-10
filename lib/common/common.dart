@@ -4,6 +4,7 @@ export 'color.dart';
 export 'constant.dart';
 export 'context.dart';
 export 'converter.dart';
+export 'config_vault.dart';
 export 'datetime.dart';
 export 'fixed.dart';
 export 'function.dart';
