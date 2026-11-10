@@ -174,6 +174,42 @@ Future<IpInfo?> lookupOutboundIp({
   }
 }
 
+/// 探测结果的进程内缓存。
+///
+/// 卡片和详情页共用一份：没切节点时再打开详情页直接复用，不重复请求；
+/// 只有节点变化（[bind] 的 key 变了）才丢弃重测。
+class ServiceStatusStore {
+  ServiceStatusStore._();
+
+  static String _key = '';
+
+  static final Map<ServiceTarget, ServiceCheck> checks = {};
+
+  static IpInfo? ipInfo;
+
+  /// 出口 IP 是否已经问过一次（失败也算，避免反复重试）。
+  static bool ipLoaded = false;
+
+  /// 绑定当前节点，节点变了就作废旧结果。
+  static void bind(String key) {
+    if (_key == key) {
+      return;
+    }
+    _key = key;
+    clear();
+  }
+
+  static void merge(Map<ServiceTarget, ServiceCheck> value) {
+    checks.addAll(value);
+  }
+
+  static void clear() {
+    checks.clear();
+    ipInfo = null;
+    ipLoaded = false;
+  }
+}
+
 /// 「管理服务」里勾选的目标，持久化到数据目录，重启后保留。
 class ServiceStatusPrefs {
   ServiceStatusPrefs._();

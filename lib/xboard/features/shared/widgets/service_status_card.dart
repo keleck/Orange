@@ -100,6 +100,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   List<ServiceTarget> get _targets =>
       _enabled.take(_cardServiceCount).toList();
 
+  String get _storeKey => '${widget.proxyName}|${widget.nodeName ?? ''}';
+
   @override
   void initState() {
     super.initState();
@@ -113,35 +115,47 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.proxyName != widget.proxyName ||
         oldWidget.nodeName != widget.nodeName) {
-      _probe();
+      _bootstrap();
     }
   }
 
-  /// 先读回勾选配置再探测，避免用默认列表探一遍、配置读回来又对不上。
+  /// 进入页面 / 切换节点：绑定缓存，缺哪几项才补测哪几项。
   Future<void> _bootstrap() async {
+    ServiceStatusStore.bind(_storeKey);
+    await _syncEnabled();
+    final missing = _targets
+        .where((target) => !_checks.containsKey(target))
+        .toList();
+    if (missing.isNotEmpty) {
+      await _probe(missing);
+    }
+  }
+
+  /// 只同步勾选配置与已有结果，不触发探测。
+  Future<void> _syncEnabled() async {
     final ids = await ServiceStatusPrefs.load();
     if (!mounted) return;
     setState(() {
       _enabled = ServiceTarget.values
           .where((target) => ids.contains(target.id))
           .toList();
+      _checks = Map.of(ServiceStatusStore.checks);
     });
-    await _probe();
   }
 
-  Future<void> _probe() async {
+  Future<void> _probe(List<ServiceTarget> targets) async {
     if (_probing) {
       _pendingProbe = true;
       return;
     }
-    final targets = _targets;
     if (targets.isEmpty) {
-      if (mounted) setState(() => _checks = {});
       return;
     }
     setState(() {
       _probing = true;
-      _checks = {};
+      for (final target in targets) {
+        _checks.remove(target);
+      }
     });
     var result = <ServiceTarget, ServiceCheck>{};
     try {
@@ -153,22 +167,17 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
       // 探测本身出错也必须复位，否则界面会永久停在「检测中」。
       commonPrint.log('服务探测失败: $e');
     }
+    ServiceStatusStore.merge(result);
     if (!mounted) return;
     setState(() {
-      _checks = result;
+      _checks = Map.of(ServiceStatusStore.checks);
       _probing = false;
     });
     if (_pendingProbe) {
       _pendingProbe = false;
-      await _probe();
+      await _bootstrap();
     }
   }
-
-  int get _abnormalCount =>
-      _targets.where((t) => _checks[t]?.isOk != true).length;
-
-  bool get _isDone =>
-      _targets.isNotEmpty && _targets.every((t) => _checks.containsKey(t));
 
   Widget _buildVerdict() {
     if (_targets.isEmpty) {
@@ -177,15 +186,28 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
         color: Colors.white.withValues(alpha: 0.55),
       );
     }
-    if (_probing || !_isDone) {
+    if (_probing) {
       return _Verdict(
         label: '检测中',
         color: Colors.white.withValues(alpha: 0.55),
       );
     }
-    final abnormal = _abnormalCount;
+    final done = _targets.where((t) => _checks.containsKey(t)).toList();
+    if (done.isEmpty) {
+      return _Verdict(
+        label: '待检测',
+        color: Colors.white.withValues(alpha: 0.55),
+      );
+    }
+    final abnormal = done.where((t) => _checks[t]?.isOk != true).length;
     if (abnormal > 0) {
       return _Verdict(label: '$abnormal 项异常', color: _amber);
+    }
+    if (done.length < _targets.length) {
+      return _Verdict(
+        label: '${done.length}/${_targets.length} 已测',
+        color: _amber,
+      );
     }
     return const _Verdict(label: '全部正常', color: _green);
   }
@@ -197,11 +219,14 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => ServiceStatusSheet(proxyName: widget.proxyName),
+      builder: (_) => ServiceStatusSheet(
+        proxyName: widget.proxyName,
+        nodeName: widget.nodeName,
+      ),
     );
-    // 详情页里可能改过启用项或重新测过，回来同步一次
+    // 详情页里可能改过勾选，回卡片只同步配置与已有结果，不重测
     if (mounted) {
-      await _bootstrap();
+      await _syncEnabled();
     }
   }
 
@@ -327,9 +352,13 @@ class ServiceStatusSheet extends StatefulWidget {
   const ServiceStatusSheet({
     super.key,
     required this.proxyName,
+    this.nodeName,
   });
 
   final String proxyName;
+
+  /// 与卡片共用同一份缓存 key，没切节点时复用已有结果
+  final String? nodeName;
 
   @override
   State<ServiceStatusSheet> createState() => _ServiceStatusSheetState();
@@ -342,51 +371,89 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
   bool _probing = false;
   bool _ipLoading = false;
 
+  String get _storeKey => '${widget.proxyName}|${widget.nodeName ?? ''}';
+
   @override
   void initState() {
     super.initState();
     _bootstrap();
   }
 
+  /// 首次进入：复用缓存，只补测还没有结果的服务；都测过就什么都不做。
   Future<void> _bootstrap() async {
+    ServiceStatusStore.bind(_storeKey);
     final ids = await ServiceStatusPrefs.load();
     if (!mounted) return;
     setState(() {
       _enabled = ServiceTarget.values
           .where((target) => ids.contains(target.id))
           .toList();
+      _checks = Map.of(ServiceStatusStore.checks);
+      _ipInfo = ServiceStatusStore.ipInfo;
     });
-    _refresh();
+    final missing = _enabled
+        .where((target) => !_checks.containsKey(target))
+        .toList();
+    if (missing.isNotEmpty) {
+      await _probe(missing, clear: false);
+    }
+    if (!ServiceStatusStore.ipLoaded) {
+      unawaited(_loadIp());
+    }
   }
 
+  /// 手动刷新（↻ 或下拉）：全部重测。
   Future<void> _refresh() async {
-    if (_probing) return;
+    unawaited(_loadIp(force: true));
+    await _probe(_enabled, clear: true);
+  }
+
+  Future<void> _probe(
+    List<ServiceTarget> targets, {
+    required bool clear,
+  }) async {
+    if (_probing || targets.isEmpty) return;
     setState(() {
       _probing = true;
-      _checks = {};
+      if (clear) {
+        _checks = {};
+        for (final target in targets) {
+          ServiceStatusStore.checks.remove(target);
+        }
+      } else {
+        for (final target in targets) {
+          _checks.remove(target);
+        }
+      }
     });
-    unawaited(_loadIp());
     var result = <ServiceTarget, ServiceCheck>{};
     try {
       result = await checkServices(
         proxyName: widget.proxyName,
-        targets: _enabled,
+        targets: targets,
       );
     } catch (e) {
       commonPrint.log('服务探测失败: $e');
     }
+    ServiceStatusStore.merge(result);
     if (!mounted) return;
     setState(() {
-      _checks = result;
+      _checks = Map.of(ServiceStatusStore.checks);
       _probing = false;
     });
   }
 
   /// 出口 IP 由内核走当前节点取，因此国旗来自节点落地归属地而不是本机。
-  Future<void> _loadIp() async {
+  Future<void> _loadIp({bool force = false}) async {
     if (_ipLoading) return;
+    if (!force && ServiceStatusStore.ipLoaded) {
+      setState(() => _ipInfo = ServiceStatusStore.ipInfo);
+      return;
+    }
     setState(() => _ipLoading = true);
     final info = await lookupOutboundIp(proxyName: widget.proxyName);
+    ServiceStatusStore.ipInfo = info;
+    ServiceStatusStore.ipLoaded = true;
     if (!mounted) return;
     setState(() {
       _ipInfo = info;
@@ -405,13 +472,13 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
     if (!mounted) return;
     final ids = await ServiceStatusPrefs.load();
     if (!mounted) return;
+    // 只同步勾选，不重测；已有结果全部保留
     setState(() {
       _enabled = ServiceTarget.values
           .where((target) => ids.contains(target.id))
           .toList();
-      _checks = {};
+      _checks = Map.of(ServiceStatusStore.checks);
     });
-    _refresh();
   }
 
   @override
