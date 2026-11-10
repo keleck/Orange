@@ -664,7 +664,9 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
         : (check == null
               ? Colors.white.withValues(alpha: 0.3)
               : (check.isOk ? _green : _red));
-    final region = check?.region;
+    // Google / GitHub 只判连通性、TikTok 的页面解析也可能拿不到地区，
+    // 这类服务用出口 IP 的归属地兜底，保证每行都有旗帜。
+    final region = check?.region ?? _ipInfo?.countryCode;
     final flag = countryFlagEmoji(region);
 
     return Padding(
