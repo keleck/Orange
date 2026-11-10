@@ -358,14 +358,22 @@ class AppController {
   }
 
   Future applyProfile({bool silence = false}) async {
-    if (silence) {
-      await _applyProfile();
-    } else {
+    try {
       final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-      if (commonScaffoldState?.mounted != true) return;
-      await commonScaffoldState?.loadingRun(() async {
+      // 启动阶段首页还没挂载，此时也必须把配置下发下去。
+      // 以前这里直接 return，内核拿到的是一份空配置，
+      // 表现为指示灯是绿的、节点却一直「正在加载」。
+      if (silence || commonScaffoldState?.mounted != true) {
         await _applyProfile();
-      });
+      } else {
+        await commonScaffoldState?.loadingRun(() async {
+          await _applyProfile();
+        });
+      }
+    } catch (e) {
+      // 配置解析失败时 _setupClashConfig 会抛错，必须让用户看到原因。
+      commonPrint.log('[core] 配置应用失败: $e');
+      globalState.showNotifier('配置应用失败: $e');
     }
     addCheckIpNumDebounce();
   }
