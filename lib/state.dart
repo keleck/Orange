@@ -432,7 +432,7 @@ class GlobalState {
         rawConfig["dns"]["nameserver-policy"][entry.key] =
             entry.value.splitByMultipleSeparators;
       }
-  } els    } else {
+    } else {
       // 即使不覆盖DNS，也要确保fake-ip-filter包含必要的国内域名过滤
       // 这样GEOIP,CN,DIRECT规则才能在fake-ip模式下正常工作
       final existingFilter = (rawConfig["dns"]["fake-ip-filter"] as List?)?.cast<String>() ?? [];
