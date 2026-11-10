@@ -165,7 +165,9 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
         // 分不清是网络、订阅链接还是配置解析的问题。
         final importState = ref.read(profileImportProvider);
         final detail =
-            importState.lastResult?.errorMessage ?? importState.message;
+            importState.lastResult?.errorMessage ??
+            importState.message ??
+            '';
         XBoardNotification.showError(
           detail.isEmpty
               ? '内核已重启，但订阅刷新失败，请手动刷新订阅'
