@@ -330,13 +330,20 @@ class ClashCore {
     List<String> names = const [],
     Duration timeout = const Duration(seconds: 10),
   }) async {
-    final data = await clashInterface.serviceCheck(
-      json.encode({
-        'proxy-name': proxyName,
-        'names': names,
-        'timeout': timeout.inMilliseconds,
-      }),
-    );
+    final data = await clashInterface
+        .serviceCheck(
+          json.encode({
+            'proxy-name': proxyName,
+            'names': names,
+            'timeout': timeout.inMilliseconds,
+          }),
+        )
+        .timeout(
+          // 内核一次 sweep 的预算是单次超时的 6 倍，这里留足余量后兜底，
+          // 避免回调丢失时界面永久停在「检测中」。
+          const Duration(seconds: 75),
+          onTimeout: () => '',
+        );
     if (data.isEmpty) {
       return const [];
     }

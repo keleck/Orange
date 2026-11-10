@@ -193,7 +193,13 @@ func handleAction(action *Action, result ActionResult) {
 			result.error(err.Error())
 			return
 		}
-		result.success(handleServiceCheck(params))
+		// Dart 侧按字符串接收，这里显式序列化，避免把切片直接塞进 data。
+		items, err := json.Marshal(handleServiceCheck(params))
+		if err != nil {
+			result.error(err.Error())
+			return
+		}
+		result.success(string(items))
 		return
 	case outboundIpMethod:
 		paramsString := action.Data.(string)
@@ -202,7 +208,12 @@ func handleAction(action *Action, result ActionResult) {
 			result.error(err.Error())
 			return
 		}
-		result.success(handleOutboundIp(params))
+		outbound, err := json.Marshal(handleOutboundIp(params))
+		if err != nil {
+			result.error(err.Error())
+			return
+		}
+		result.success(string(outbound))
 		return
 	default:
 		nextHandle(action, result)
