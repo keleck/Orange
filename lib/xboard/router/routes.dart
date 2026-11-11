@@ -19,6 +19,7 @@ import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'page_transitions.dart';
 import 'shell_layout.dart';
 
 /// XBoard 路由定义
@@ -123,49 +124,49 @@ final List<RouteBase> routes = [
                 GoRoute(
                   path: 'orders',
                   name: 'orders',
-                  pageBuilder: (context, state) => const NoTransitionPage(
+                  pageBuilder: (context, state) => const SlideFadePage(
                     child: OrderPage(),
                   ),
                 ),
                 GoRoute(
                   path: 'traffic-log',
                   name: 'traffic_log',
-                  pageBuilder: (context, state) => const NoTransitionPage(
+                  pageBuilder: (context, state) => const SlideFadePage(
                     child: TrafficLogPage(),
                   ),
                 ),
                 GoRoute(
                   path: 'support',
                   name: 'support',
-                  pageBuilder: (context, state) => const NoTransitionPage(
+                  pageBuilder: (context, state) => const SlideFadePage(
                     child: CrispSupportPage(),
                   ),
                 ),
                 GoRoute(
                   path: 'invite',
                   name: 'invite',
-                  pageBuilder: (context, state) => const NoTransitionPage(
+                  pageBuilder: (context, state) => const SlideFadePage(
                     child: InvitePage(),
                   ),
                 ),
                 GoRoute(
                   path: 'wallet',
                   name: 'wallet',
-                  pageBuilder: (context, state) => const NoTransitionPage(
+                  pageBuilder: (context, state) => const SlideFadePage(
                     child: WalletPage(),
                   ),
                 ),
                 GoRoute(
                   path: 'settings',
                   name: 'settings',
-                  pageBuilder: (context, state) => const NoTransitionPage(
+                  pageBuilder: (context, state) => const SlideFadePage(
                     child: SettingsPage(),
                   ),
                 ),
                 GoRoute(
                   path: 'tickets',
                   name: 'tickets',
-                  pageBuilder: (context, state) => const NoTransitionPage(
+                  pageBuilder: (context, state) => const SlideFadePage(
                     child: TicketsPage(),
                   ),
                   routes: [
