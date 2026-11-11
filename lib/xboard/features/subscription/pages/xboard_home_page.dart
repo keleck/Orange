@@ -1238,27 +1238,18 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   }
 
   Widget _buildNotificationButton(BuildContext context, WidgetRef ref) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => showNoticePopup(context),
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: Colors.white,
-              size: 24,
-            ),
+    // 无边框，只留白色铃铛图标（与设计稿一致）
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => showNoticePopup(context),
+        customBorder: const CircleBorder(),
+        child: const Padding(
+          padding: EdgeInsets.all(8),
+          child: Icon(
+            Icons.notifications_none_rounded,
+            color: Colors.white,
+            size: 26,
           ),
         ),
       ),

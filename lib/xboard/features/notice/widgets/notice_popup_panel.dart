@@ -316,6 +316,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
+                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),
@@ -347,56 +348,62 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white.withValues(alpha: 0.38),
+                            decoration: TextDecoration.none,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Html(
-                          data: _sanitizeNoticeHtml(notice.content),
-                          style: {
-                            'body': Style(
-                              margin: Margins.zero,
-                              padding: HtmlPaddings.zero,
-                              fontSize: FontSize(13.5),
-                              lineHeight: const LineHeight(1.7),
-                              color: Colors.white.withValues(alpha: 0.86),
-                            ),
-                            'p': Style(
-                              margin: Margins(
-                                top: Margin.zero(),
-                                bottom: Margin(10),
+                        // 兜底：即使 HTML 里残留了装饰样式，也强制不带下划线
+                        DefaultTextStyle.merge(
+                          style: const TextStyle(
+                            decoration: TextDecoration.none,
+                          ),
+                          child: Html(
+                            data: _sanitizeNoticeHtml(notice.content),
+                            style: {
+                              'body': Style(
+                                margin: Margins.zero,
+                                padding: HtmlPaddings.zero,
+                                fontSize: FontSize(13.5),
+                                lineHeight: const LineHeight(1.7),
+                                color: Colors.white.withValues(alpha: 0.86),
+                                textDecoration: TextDecoration.none,
                               ),
-                              padding: HtmlPaddings.zero,
-                            ),
-                            'div': Style(
-                              margin: Margins(
-                                top: Margin.zero(),
-                                bottom: Margin(6),
+                              'p': Style(
+                                margin: Margins(
+                                  top: Margin.zero(),
+                                  bottom: Margin(10),
+                                ),
+                                padding: HtmlPaddings.zero,
                               ),
-                            ),
-                            'a': Style(
-                              color: primary,
-                              textDecoration: TextDecoration.none,
-                            ),
-                            // 公告正文里大量 <u>/<font> 强调，统一成浅白下划线，
-                            // 不再沿用内容里内联的黄色等花哨颜色
-                            'u': Style(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              textDecorationColor:
-                                  Colors.white.withValues(alpha: 0.45),
-                            ),
-                            'strong': Style(color: Colors.white),
-                            'b': Style(color: Colors.white),
-                            'mark': Style(
-                              backgroundColor: Colors.transparent,
-                              color: Colors.white,
-                            ),
-                            'li': Style(
-                              margin: Margins(
-                                top: Margin.zero(),
-                                bottom: Margin(4),
+                              'div': Style(
+                                margin: Margins(
+                                  top: Margin.zero(),
+                                  bottom: Margin(6),
+                                ),
                               ),
-                            ),
-                          },
+                              'a': Style(
+                                color: primary,
+                                textDecoration: TextDecoration.none,
+                              ),
+                              'u': Style(
+                                textDecoration: TextDecoration.none,
+                                color: Colors.white.withValues(alpha: 0.9),
+                              ),
+                              'strong': Style(color: Colors.white),
+                              'b': Style(color: Colors.white),
+                              'mark': Style(
+                                backgroundColor: Colors.transparent,
+                                color: Colors.white,
+                                textDecoration: TextDecoration.none,
+                              ),
+                              'li': Style(
+                                margin: Margins(
+                                  top: Margin.zero(),
+                                  bottom: Margin(4),
+                                ),
+                              ),
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -478,6 +485,7 @@ class _NoticeRow extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                       height: 1.3,
+                      decoration: TextDecoration.none,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -489,6 +497,7 @@ class _NoticeRow extends StatelessWidget {
                       fontSize: 12.5,
                       height: 1.45,
                       color: Colors.white.withValues(alpha: 0.5),
+                      decoration: TextDecoration.none,
                     ),
                   ),
                   const SizedBox(height: 7),
@@ -497,6 +506,7 @@ class _NoticeRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11.5,
                       color: Colors.white.withValues(alpha: 0.32),
+                      decoration: TextDecoration.none,
                     ),
                   ),
                 ],
@@ -547,47 +557,88 @@ bool _isUnread(NoticeModel notice) {
   );
 }
 
-/// 公告正文是后台富文本编辑器写的，经常夹带内联颜色（黄、金等）和 `<font color>`，
-/// 直接渲染会显得很花。这里统一剥掉颜色/背景/文字装饰相关的内联样式，
-/// 让文字颜色完全由上面 style 里的主题色决定。
+/// 公告正文是后台富文本编辑器写的，经常整段夹带内联颜色（黄、金）、
+/// 下划线和 `border-bottom` 之类的装饰，直接渲染会「一屏黄线」。
+///
+/// 这里做白名单式清理：只保留尺寸/对齐/字重这类不影响颜色的声明，
+/// 颜色、背景、边框、下划线一律丢掉，并去掉 `<u>`/`<mark>`/`<font>` 这些
+/// 自带装饰的标签（保留其中的文字），最终颜色完全由 style 参数决定。
 String _sanitizeNoticeHtml(String html) {
   var result = html;
 
-  // <font ...> 只保留内容，丢掉 color/face/size 属性
-  result = result.replaceAll(
-    RegExp(r'<font\b[^>]*>', caseSensitive: false),
-    '<span>',
-  );
-  result = result.replaceAll(
-    RegExp(r'</font\s*>', caseSensitive: false),
-    '</span>',
-  );
-
-  // 剥掉内联 style 中的颜色、背景、文字装饰声明
+  // 先把图片占位保护起来，避免下面剥标签时被删掉
+  final images = <String>[];
   result = result.replaceAllMapped(
-    RegExp(r'''style\s*=\s*["']([^"']*)["']''', caseSensitive: false),
+    RegExp(r'<img\b[^>]*>', caseSensitive: false),
     (match) {
-      final declarations = match.group(1)!.split(';');
-      final kept = declarations
-          .where((declaration) {
-            final key = declaration.split(':').first.trim().toLowerCase();
-            if (key.isEmpty) return false;
-            return !key.contains('color') &&
-                !key.contains('background') &&
-                !key.contains('text-decoration');
-          })
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .join(';');
-      return kept.isEmpty ? '' : 'style="$kept"';
+      images.add(match.group(0)!);
+      return '[[NOTICE_IMG_${images.length - 1}]]';
     },
   );
 
-  // <mark> 高亮底色去掉，避免整段变成色块
-  result = result.replaceAll(
-    RegExp(r'</?mark\b[^>]*>', caseSensitive: false),
-    '',
+  // 内联 style 走白名单，其余（color/background/border/text-decoration…）全部丢弃
+  const keepKeys = {
+    'width',
+    'height',
+    'max-width',
+    'text-align',
+    'font-weight',
+    'font-style',
+    'font-size',
+  };
+  result = result.replaceAllMapped(
+    RegExp(r'''style\s*=\s*["']([^"']*)["']''', caseSensitive: false),
+    (match) {
+      final kept = <String>[];
+      for (final declaration in match.group(1)!.split(';')) {
+        final index = declaration.indexOf(':');
+        if (index <= 0) continue;
+        final key = declaration.substring(0, index).trim().toLowerCase();
+        final value = declaration.substring(index + 1).trim();
+        if (value.isEmpty) continue;
+        if (keepKeys.contains(key)) {
+          kept.add('$key:$value');
+        }
+      }
+      return kept.isEmpty ? '' : 'style="${kept.join(';')}"';
+    },
   );
+
+  // 只保留结构性标签；<u>/<font>/<span>/<mark>/<a> 等带样式的标签一律剥掉只留文字
+  const keepTags = {
+    'p',
+    'div',
+    'br',
+    'strong',
+    'b',
+    'li',
+    'ul',
+    'ol',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+  };
+  result = result.replaceAllMapped(
+    RegExp(r'<(/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>'),
+    (match) {
+      final isClosing = match.group(1) == '/';
+      final tag = match.group(2)!.toLowerCase();
+      if (!keepTags.contains(tag)) return '';
+      if (tag == 'br') return '<br>';
+      return isClosing ? '</$tag>' : '<$tag>';
+    },
+  );
+
+  // 还原图片，并限制宽度避免撑破弹窗
+  for (var i = 0; i < images.length; i++) {
+    final image = images[i]
+        .replaceAll(RegExp(r'''style\s*=\s*["'][^"']*["']'''), '')
+        .replaceFirst('<img', '<img style="max-width:100%"');
+    result = result.replaceAll('[[NOTICE_IMG_$i]]', image);
+  }
 
   return result;
 }
