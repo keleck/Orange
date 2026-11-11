@@ -20,16 +20,48 @@ class CustomRulesPage extends ConsumerStatefulWidget {
 
 class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
   static const _types = <_RuleType>[
-    _RuleType('域名后缀', 'DOMAIN-SUFFIX', 'example.com'),
-    _RuleType('域名', 'DOMAIN', 'www.example.com'),
-    _RuleType('域名关键字', 'DOMAIN-KEYWORD', 'example'),
-    _RuleType('IP 段', 'IP-CIDR', '192.168.0.0/16'),
+    _RuleType(
+      '域名后缀',
+      'DOMAIN-SUFFIX',
+      'example.com',
+      Icons.language_rounded,
+    ),
+    _RuleType(
+      '精确域名',
+      'DOMAIN',
+      'www.example.com',
+      Icons.my_location_rounded,
+    ),
+    _RuleType(
+      '域名关键词',
+      'DOMAIN-KEYWORD',
+      'example',
+      Icons.text_fields_rounded,
+    ),
+    _RuleType(
+      'IPv4 地址段',
+      'IP-CIDR',
+      '192.168.0.0/16',
+      Icons.router_outlined,
+    ),
+    _RuleType(
+      'IPv6 地址段',
+      'IP-CIDR6',
+      '2001:db8::/32',
+      Icons.settings_ethernet_rounded,
+    ),
+    _RuleType(
+      '国家/地区',
+      'GEOIP',
+      'CN',
+      Icons.public_rounded,
+    ),
   ];
 
   static const _targets = <_RuleTarget>[
-    _RuleTarget('代理', 'PROXY'),
-    _RuleTarget('直连', 'DIRECT'),
-    _RuleTarget('拒绝', 'REJECT'),
+    _RuleTarget('代理', 'PROXY', Icons.vpn_key_rounded),
+    _RuleTarget('直连', 'DIRECT', Icons.link_off_rounded),
+    _RuleTarget('拒绝', 'REJECT', Icons.block_rounded),
   ];
 
   final _ruleController = TextEditingController();
@@ -60,12 +92,18 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     final value = _ruleController.text.trim();
     if (value.isEmpty) return;
 
-    if (_type.token == 'IP-CIDR' && !value.contains('/')) {
-      XBoardNotification.showError('IP 段格式应为 192.168.0.0/16');
+    final isIpRule =
+        _type.token == 'IP-CIDR' || _type.token == 'IP-CIDR6';
+    if (isIpRule && !value.contains('/')) {
+      XBoardNotification.showError(
+        _type.token == 'IP-CIDR6'
+            ? 'IPv6 段格式应为 2001:db8::/32'
+            : 'IP 段格式应为 192.168.0.0/16',
+      );
       return;
     }
 
-    final rule = _type.token == 'IP-CIDR'
+    final rule = isIpRule
         ? '${_type.token},$value,${_resolveTarget(_target)},no-resolve'
         : '${_type.token},$value,${_resolveTarget(_target)}';
 
@@ -86,112 +124,6 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     await _appendRules([rule]);
     _remoteController.clear();
     if (mounted) FocusScope.of(context).unfocus();
-  }
-
-  Future<void> _showBulkImport() async {
-    final controller = TextEditingController();
-    final text = await showDialog<String>(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.55),
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFF1C1B33),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-          side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-        ),
-        title: const Text(
-          '批量导入规则',
-          style: TextStyle(fontSize: 16, color: Colors.white),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '每行一条，格式：类型,内容,目标\n例如：DOMAIN-SUFFIX,example.com,DIRECT',
-              style: TextStyle(
-                fontSize: 11.5,
-                height: 1.6,
-                color: Colors.white.withValues(alpha: 0.45),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: controller,
-              maxLines: 7,
-              minLines: 5,
-              style: const TextStyle(fontSize: 12.5, color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'DOMAIN-SUFFIX,google.com,PROXY\nDOMAIN-KEYWORD,ad,REJECT',
-                hintStyle: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white.withValues(alpha: 0.25),
-                ),
-                filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.08),
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.08),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              '取消',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
-            ),
-          ),
-          TextButton(
-            onPressed: () =>
-                Navigator.of(dialogContext).pop(controller.text),
-            child: Text(
-              '导入',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (text == null || text.trim().isEmpty) return;
-
-    final lines = text
-        .split(RegExp(r'[\n;]'))
-        .map((line) => line.trim())
-        .where((line) => line.isNotEmpty)
-        .toList();
-
-    final current = _rules;
-    final valid = <String>[];
-    for (final line in lines) {
-      final parts = line.split(',');
-      if (parts.length < 3) continue;
-      if (parts[1].trim().isEmpty) continue;
-      if (current.contains(line) || valid.contains(line)) continue;
-      valid.add(line);
-    }
-
-    if (valid.isEmpty) {
-      XBoardNotification.showError('没有可导入的有效规则');
-      return;
-    }
-
-    await _appendRules(valid);
   }
 
   Future<void> _appendRules(List<String> newRules) async {
@@ -292,20 +224,6 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                       const SizedBox(height: 10),
                       ...rules.map((rule) => _buildRuleItem(rule, primary)),
                     ],
-                    const SizedBox(height: 10),
-                    Center(
-                      child: TextButton(
-                        onPressed: _showBulkImport,
-                        child: Text(
-                          '批量导入规则',
-                          style: TextStyle(
-                            fontSize: 12.5,
-                            color: Colors.white.withValues(alpha: 0.4),
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -363,22 +281,54 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
           Row(
             children: [
               Expanded(
-                child: _DropdownField<_RuleType>(
-                  value: _type,
-                  items: _types,
-                  labelOf: (item) => item.label,
-                  icon: Icons.language_rounded,
-                  onChanged: (value) => setState(() => _type = value),
+                child: _PickerField(
+                  label: _type.label,
+                  icon: _type.icon,
+                  onTap: () async {
+                    final picked = await showOptionSheet<_RuleType>(
+                      context: context,
+                      title: '匹配类型',
+                      items: _types
+                          .map(
+                            (item) => _PickerOption<_RuleType>(
+                              value: item,
+                              label: item.label,
+                              icon: item.icon,
+                            ),
+                          )
+                          .toList(),
+                      selected: _type,
+                    );
+                    if (picked != null) {
+                      setState(() => _type = picked);
+                    }
+                  },
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _DropdownField<_RuleTarget>(
-                  value: _target,
-                  items: _targets,
-                  labelOf: (item) => item.label,
-                  icon: Icons.vpn_key_rounded,
-                  onChanged: (value) => setState(() => _target = value),
+                child: _PickerField(
+                  label: _target.label,
+                  icon: _target.icon,
+                  onTap: () async {
+                    final picked = await showOptionSheet<_RuleTarget>(
+                      context: context,
+                      title: '目标策略',
+                      items: _targets
+                          .map(
+                            (item) => _PickerOption<_RuleTarget>(
+                              value: item,
+                              label: item.label,
+                              icon: item.icon,
+                            ),
+                          )
+                          .toList(),
+                      selected: _target,
+                    );
+                    if (picked != null) {
+                      setState(() => _target = picked);
+                    }
+                  },
                 ),
               ),
             ],
@@ -577,86 +527,6 @@ class _Panel extends StatelessWidget {
   }
 }
 
-class _DropdownField<T> extends StatelessWidget {
-  final T value;
-  final List<T> items;
-  final String Function(T) labelOf;
-  final IconData icon;
-  final ValueChanged<T> onChanged;
-
-  const _DropdownField({
-    required this.value,
-    required this.items,
-    required this.labelOf,
-    required this.icon,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 46,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.07),
-        ),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<T>(
-          value: value,
-          isExpanded: true,
-          isDense: true,
-          borderRadius: BorderRadius.circular(14),
-          dropdownColor: const Color(0xFF1C1B33),
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            size: 18,
-            color: Colors.white.withValues(alpha: 0.4),
-          ),
-          style: const TextStyle(
-            fontSize: 13.5,
-            color: Colors.white,
-            decoration: TextDecoration.none,
-          ),
-          items: items
-              .map(
-                (item) => DropdownMenuItem<T>(
-                  value: item,
-                  child: Row(
-                    children: [
-                      Icon(
-                        icon,
-                        size: 15,
-                        color: Colors.white.withValues(alpha: 0.55),
-                      ),
-                      const SizedBox(width: 7),
-                      Flexible(
-                        child: Text(
-                          labelOf(item),
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 13.5,
-                            color: Colors.white,
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-              .toList(),
-          onChanged: (item) {
-            if (item != null) onChanged(item);
-          },
-        ),
-      ),
-    );
-  }
-}
 
 class _InputField extends StatelessWidget {
   final TextEditingController controller;
@@ -758,13 +628,228 @@ class _RuleType {
   final String label;
   final String token;
   final String hint;
+  final IconData icon;
 
-  const _RuleType(this.label, this.token, this.hint);
+  const _RuleType(this.label, this.token, this.hint, this.icon);
 }
 
 class _RuleTarget {
   final String label;
   final String token;
+  final IconData icon;
 
-  const _RuleTarget(this.label, this.token);
+  const _RuleTarget(this.label, this.token, this.icon);
+}
+
+/// 点击后从底部弹出选项面板的字段（替代原来的 DropdownButton）
+class _PickerField extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _PickerField({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        height: 46,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.07),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: Colors.white.withValues(alpha: 0.55),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 18,
+              color: Colors.white.withValues(alpha: 0.4),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PickerOption<T> {
+  final T value;
+  final String label;
+  final IconData icon;
+
+  const _PickerOption({
+    required this.value,
+    required this.label,
+    required this.icon,
+  });
+}
+
+/// 从底部弹出的单选面板：标题 + 图标 + 文案 + 选中勾
+Future<T?> showOptionSheet<T>({
+  required BuildContext context,
+  required String title,
+  required List<_PickerOption<T>> items,
+  required T selected,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    barrierColor: Colors.black.withValues(alpha: 0.45),
+    builder: (_) => _OptionSheet<T>(
+      title: title,
+      items: items,
+      selected: selected,
+    ),
+  );
+}
+
+class _OptionSheet<T> extends StatelessWidget {
+  final String title;
+  final List<_PickerOption<T>> items;
+  final T selected;
+
+  const _OptionSheet({
+    required this.title,
+    required this.items,
+    required this.selected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final media = MediaQuery.of(context);
+
+    return Container(
+      constraints: BoxConstraints(maxHeight: media.size.height * 0.72),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.alphaBlend(
+              primary.withValues(alpha: 0.10),
+              const Color(0xFF1B2030),
+            ),
+            const Color(0xFF14161F),
+          ],
+        ),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(24),
+        ),
+        border: Border(
+          top: BorderSide(
+            color: Colors.white.withValues(alpha: 0.08),
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: Colors.white.withValues(alpha: 0.06),
+            ),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  final isSelected = item.value == selected;
+                  return GestureDetector(
+                    onTap: () => Navigator.of(context).pop(item.value),
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 15,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            item.icon,
+                            size: 21,
+                            color: isSelected
+                                ? primary
+                                : Colors.white.withValues(alpha: 0.55),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Text(
+                              item.label,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                                color: isSelected
+                                    ? primary
+                                    : Colors.white.withValues(alpha: 0.9),
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
+                          ),
+                          if (isSelected)
+                            Icon(
+                              Icons.check_rounded,
+                              size: 20,
+                              color: primary,
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
