@@ -40,14 +40,15 @@ class ClashCore {
     if (!isExists) {
       await homeDir.create(recursive: true);
     }
+    // 只内置必需的 geo 数据（geoip.metadb + geosite.dat）。
+    // 旧格式 GeoIP.dat 与 ASN.mmdb 已从 APK 移除以减小体积，
+    // 内核在缺失时会按 geox-url 自动下载（也可在「资源」页手动同步）。
     const geoFileNameList = [
       mmdbFileName,
-      geoIpFileName,
       geoSiteFileName,
-      asnFileName,
     ];
-    try {
-      for (final geoFileName in geoFileNameList) {
+    for (final geoFileName in geoFileNameList) {
+      try {
         final geoFile = File(
           join(homePath, geoFileName),
         );
@@ -58,9 +59,10 @@ class ClashCore {
         final data = await rootBundle.load('assets/data/$geoFileName');
         List<int> bytes = data.buffer.asUint8List();
         await geoFile.writeAsBytes(bytes, flush: true);
+      } catch (e) {
+        // 单个 geo 文件缺失/写入失败不应阻塞启动，内核会自行下载
+        commonPrint.log('geo 初始化失败: $geoFileName, $e');
       }
-    } catch (e) {
-      exit(0);
     }
   }
 

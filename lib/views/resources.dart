@@ -120,6 +120,13 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
   Future<FileInfo> _getGeoFileLastModified(String fileName) async {
     final homePath = await appPath.homeDirPath;
     final file = File(join(homePath, fileName));
+    // 文件可能尚未下载（部分 geo 数据不再内置在 APK 中），此时显示为未下载
+    if (!await file.exists()) {
+      return FileInfo(
+        size: 0,
+        lastModified: DateTime.fromMillisecondsSinceEpoch(0),
+      );
+    }
     final lastModified = await file.lastModified();
     final size = await file.length();
     return FileInfo(
