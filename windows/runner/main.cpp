@@ -26,7 +26,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
-  Win32Window::Size size(1380, 720);
+  // 与 Dart 侧 window.dart 的固定尺寸（420x780）保持一致，
+  // 否则启动瞬间会先出现一个 1380x720 的白窗口，再缩成正确尺寸。
+  Win32Window::Size size(420, 780);
   if (!window.Create(L"mxycloud", origin, size)) {
     return EXIT_FAILURE;
   }

@@ -108,7 +108,8 @@ const wchar_t *WindowClassRegistrar::GetWindowClass()
     window_class.hInstance = GetModuleHandle(nullptr);
     window_class.hIcon =
         LoadIcon(window_class.hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
-    window_class.hbrBackground = 0;
+    // 用应用深色背景（#0F0E1D）作为窗口底色，避免首帧渲染前出现刺眼的白底闪烁
+    window_class.hbrBackground = CreateSolidBrush(RGB(15, 14, 29));
     window_class.lpszMenuName = nullptr;
     window_class.lpfnWndProc = Win32Window::WndProc;
     RegisterClass(&window_class);

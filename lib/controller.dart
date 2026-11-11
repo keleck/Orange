@@ -597,6 +597,13 @@ class AppController {
       commonPrint.log(details.stack.toString());
     };
     updateTray(true);
+    // 此时 Flutter 已完成首帧渲染，先把窗口显示出来，
+    // 不要等内核初始化完成再显示，否则启动时窗口会长时间不出现（无网络时尤其明显）。
+    if (!_ref.read(appSettingProvider).silentLaunch) {
+      window?.show();
+    } else {
+      window?.hide();
+    }
     await _initCore();
     await _initStatus();
     autoLaunch?.updateStatus(
@@ -604,11 +611,6 @@ class AppController {
     );
     autoUpdateProfiles();
     autoCheckUpdate();
-    if (!_ref.read(appSettingProvider).silentLaunch) {
-      window?.show();
-    } else {
-      window?.hide();
-    }
     await _handlePreference();
     await _handlerDisclaimer();
     _ref.read(initProvider.notifier).value = true;

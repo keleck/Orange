@@ -154,7 +154,16 @@ class ModuleInitializer {
     final accessor = ServiceLocator.get<XBoardConfigAccessor>();
     
     if (autoWarmUp) {
-      await accessor.refreshConfiguration();
+      // 预热会发起远程配置请求（含域名竞速）。无网络时如果无限等待，
+      // 会把整个启动流程卡住几十秒（表现为白窗口长时间不消失）。
+      // 这里最多等 4 秒，超时后让刷新在后台继续，不阻塞 UI 启动。
+      try {
+        await accessor
+            .refreshConfiguration()
+            .timeout(const Duration(seconds: 4));
+      } catch (e) {
+        _logger.warning('Config warm-up timed out or failed, continuing in background', e);
+      }
     }
     
     return accessor;

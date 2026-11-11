@@ -67,7 +67,9 @@ Future<void> main() async {
   await clashCore.preload();
   await globalState.initApp(version);
   await android?.init();
-  await window?.init(version); // 假设 window?.init(version) 是正确的调用
+  // 窗口尺寸/位置必须在窗口显示之前设置好，否则会先以原生初始尺寸露出白底。
+  // 原生初始尺寸已同步为 420x780（windows/runner/main.cpp），二者保持一致。
+  await window?.init(version);
   HttpOverrides.global = FlClashHttpOverrides();
 
   // 注册 WidgetsBindingObserver 来监听应用生命周期事件

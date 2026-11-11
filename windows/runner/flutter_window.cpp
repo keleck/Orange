@@ -27,6 +27,13 @@ bool FlutterWindow::OnCreate() {
   RegisterPlugins(flutter_controller_->engine());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
+  // Flutter 视图子窗口默认用白色背景刷，首帧渲染前会露白。
+  // 改成与应用一致的深色底，消除启动白闪。
+  HWND view_window = flutter_controller_->view()->GetNativeWindow();
+  SetClassLongPtr(
+      view_window, GCLP_HBRBACKGROUND,
+      reinterpret_cast<LONG_PTR>(CreateSolidBrush(RGB(15, 14, 29))));
+
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
 
   });
