@@ -127,27 +127,8 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
 
   /// 与页面背景同一套色系（AppColors 深紫/深紫黑），
   /// 只用主题色轻轻提亮一层，保证浮层既融入主题又能和底下的内容区分开。
-  LinearGradient _panelGradient(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    return LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Color.alphaBlend(
-          primary.withValues(alpha: 0.10),
-          AppColors.gradientColor1,
-        ),
-        Color.alphaBlend(
-          primary.withValues(alpha: 0.05),
-          AppColors.gradientColor2,
-        ),
-        Color.alphaBlend(
-          primary.withValues(alpha: 0.08),
-          AppColors.gradientColor4,
-        ),
-      ],
-    );
-  }
+  LinearGradient _panelGradient(BuildContext context) =>
+      noticePanelGradient(context);
 
   Widget _buildHeader() {
     final primary = Theme.of(context).colorScheme.primary;
@@ -282,139 +263,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
   }
 
   void _openDetail(NoticeModel notice) {
-    final primary = Theme.of(context).colorScheme.primary;
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
-      builder: (dialogContext) {
-        final media = MediaQuery.of(dialogContext);
-        return Center(
-          child: Container(
-            width: (media.size.width - 56).clamp(280.0, 400.0),
-            constraints: BoxConstraints(maxHeight: media.size.height * 0.7),
-            decoration: BoxDecoration(
-              gradient: _panelGradient(context),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.10),
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 16, 10, 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          notice.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.of(dialogContext).pop(),
-                        behavior: HitTestBehavior.opaque,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 18,
-                            color: Colors.white.withValues(alpha: 0.45),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const _PanelDivider(),
-                Flexible(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _formatDate(notice.createdAt),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white.withValues(alpha: 0.38),
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        // 兜底：即使 HTML 里残留了装饰样式，也强制不带下划线
-                        DefaultTextStyle.merge(
-                          style: const TextStyle(
-                            decoration: TextDecoration.none,
-                          ),
-                          child: Html(
-                            data: _sanitizeNoticeHtml(notice.content),
-                            style: {
-                              'body': Style(
-                                margin: Margins.zero,
-                                padding: HtmlPaddings.zero,
-                                fontSize: FontSize(13.5),
-                                lineHeight: const LineHeight(1.7),
-                                color: Colors.white.withValues(alpha: 0.86),
-                                textDecoration: TextDecoration.none,
-                              ),
-                              'p': Style(
-                                margin: Margins(
-                                  top: Margin.zero(),
-                                  bottom: Margin(10),
-                                ),
-                                padding: HtmlPaddings.zero,
-                              ),
-                              'div': Style(
-                                margin: Margins(
-                                  top: Margin.zero(),
-                                  bottom: Margin(6),
-                                ),
-                              ),
-                              'a': Style(
-                                color: primary,
-                                textDecoration: TextDecoration.none,
-                              ),
-                              'u': Style(
-                                textDecoration: TextDecoration.none,
-                                color: Colors.white.withValues(alpha: 0.9),
-                              ),
-                              'strong': Style(color: Colors.white),
-                              'b': Style(color: Colors.white),
-                              'mark': Style(
-                                backgroundColor: Colors.transparent,
-                                color: Colors.white,
-                                textDecoration: TextDecoration.none,
-                              ),
-                              'li': Style(
-                                margin: Margins(
-                                  top: Margin.zero(),
-                                  bottom: Margin(4),
-                                ),
-                              ),
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    showNoticeDetailDialog(context, notice);
   }
 }
 
@@ -674,4 +523,267 @@ String _formatDate(int timestamp) {
     return '${difference.inDays}天前';
   }
   return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+}
+
+/// 公告类卡片统一使用的渐变：以 AppColors 主题底色为基准，
+/// 用主题色轻轻提亮一层，浮层和详情弹窗都走这一套，保证观感一致。
+LinearGradient noticePanelGradient(BuildContext context) {
+  final primary = Theme.of(context).colorScheme.primary;
+  return LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color.alphaBlend(
+        primary.withValues(alpha: 0.10),
+        AppColors.gradientColor1,
+      ),
+      Color.alphaBlend(
+        primary.withValues(alpha: 0.05),
+        AppColors.gradientColor2,
+      ),
+      Color.alphaBlend(
+        primary.withValues(alpha: 0.08),
+        AppColors.gradientColor4,
+      ),
+    ],
+  );
+}
+
+/// 公告详情弹窗（浮层点条目、首页自动弹窗都复用这一套 UI）。
+///
+/// [dismissible] 为 false 时点遮罩不会关闭，底部会显示「下一条 / 关闭」按钮，
+/// 用于启动时依次推送的弹窗公告。
+Future<void> showNoticeDetailDialog(
+  BuildContext context,
+  NoticeModel notice, {
+  bool dismissible = true,
+  VoidCallback? onNext,
+}) {
+  final primary = Theme.of(context).colorScheme.primary;
+  final showFooter = !dismissible || onNext != null;
+
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: dismissible,
+    barrierColor: Colors.black.withValues(alpha: 0.5),
+    builder: (dialogContext) {
+      final media = MediaQuery.of(dialogContext);
+      return Center(
+        child: Container(
+          width: (media.size.width - 56).clamp(280.0, 400.0),
+          constraints: BoxConstraints(maxHeight: media.size.height * 0.72),
+          decoration: BoxDecoration(
+            gradient: noticePanelGradient(context),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.10),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.45),
+                blurRadius: 28,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 15, 10, 13),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.campaign_outlined,
+                      size: 18,
+                      color: primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        notice.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(dialogContext).pop(),
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: Colors.white.withValues(alpha: 0.45),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const _PanelDivider(),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(18, 14, 18, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _formatDate(notice.createdAt),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.38),
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // 兜底：即使 HTML 里残留了装饰样式，也强制不带下划线
+                      DefaultTextStyle.merge(
+                        style: const TextStyle(
+                          decoration: TextDecoration.none,
+                        ),
+                        child: Html(
+                          data: _sanitizeNoticeHtml(notice.content),
+                          style: {
+                            'body': Style(
+                              margin: Margins.zero,
+                              padding: HtmlPaddings.zero,
+                              fontSize: FontSize(13.5),
+                              lineHeight: const LineHeight(1.7),
+                              color: Colors.white.withValues(alpha: 0.86),
+                              textDecoration: TextDecoration.none,
+                            ),
+                            'p': Style(
+                              margin: Margins(
+                                top: Margin.zero(),
+                                bottom: Margin(10),
+                              ),
+                              padding: HtmlPaddings.zero,
+                            ),
+                            'div': Style(
+                              margin: Margins(
+                                top: Margin.zero(),
+                                bottom: Margin(6),
+                              ),
+                            ),
+                            'a': Style(
+                              color: primary,
+                              textDecoration: TextDecoration.none,
+                            ),
+                            'u': Style(
+                              textDecoration: TextDecoration.none,
+                              color: Colors.white.withValues(alpha: 0.9),
+                            ),
+                            'strong': Style(color: Colors.white),
+                            'b': Style(color: Colors.white),
+                            'mark': Style(
+                              backgroundColor: Colors.transparent,
+                              color: Colors.white,
+                              textDecoration: TextDecoration.none,
+                            ),
+                            'li': Style(
+                              margin: Margins(
+                                top: Margin.zero(),
+                                bottom: Margin(4),
+                              ),
+                            ),
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (showFooter) ...[
+                const _PanelDivider(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (onNext != null) ...[
+                        _NoticeDialogButton(
+                          label: '下一条',
+                          filled: false,
+                          onTap: () {
+                            Navigator.of(dialogContext).pop();
+                            onNext();
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                      ],
+                      _NoticeDialogButton(
+                        label: '关闭',
+                        filled: true,
+                        onTap: () => Navigator.of(dialogContext).pop(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+class _NoticeDialogButton extends StatelessWidget {
+  final String label;
+  final bool filled;
+  final VoidCallback onTap;
+
+  const _NoticeDialogButton({
+    required this.label,
+    required this.filled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+        decoration: BoxDecoration(
+          gradient: filled
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    primary,
+                    primary.withValues(alpha: 0.75),
+                  ],
+                )
+              : null,
+          color: filled ? null : Colors.white.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: filled
+                ? Colors.white.withValues(alpha: 0.12)
+                : Colors.white.withValues(alpha: 0.14),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: filled ? Colors.white : Colors.white.withValues(alpha: 0.85),
+            decoration: TextDecoration.none,
+          ),
+        ),
+      ),
+    );
+  }
 }

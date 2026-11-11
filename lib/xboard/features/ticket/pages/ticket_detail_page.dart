@@ -381,71 +381,61 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMe = message.isMe;
+    final primary = Theme.of(context).colorScheme.primary;
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isMe
-                    ? [
-                        Colors.blue.shade400.withValues(alpha: 0.3),
-                        Colors.blue.shade600.withValues(alpha: 0.2),
-                      ]
-                    : [
-                        Colors.white.withValues(alpha: 0.15),
-                        Colors.blue.withValues(alpha: 0.08),
-                      ],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withValues(alpha: 0.1),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.75,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  message.message,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  DateFormat('MM-dd HH:mm').format(message.createdAt),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.white.withValues(alpha: 0.7),
-                  ),
-                ),
-              ],
-            ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.fromLTRB(13, 10, 13, 8),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.76,
+        ),
+        decoration: BoxDecoration(
+          gradient: isMe
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    primary.withValues(alpha: 0.85),
+                    primary.withValues(alpha: 0.62),
+                  ],
+                )
+              : null,
+          color: isMe ? null : Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(14),
+            topRight: const Radius.circular(14),
+            bottomLeft: Radius.circular(isMe ? 14 : 4),
+            bottomRight: Radius.circular(isMe ? 4 : 14),
           ),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: isMe ? 0.10 : 0.07),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              message.message,
+              style: TextStyle(
+                color: isMe
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.88),
+                fontSize: 13.5,
+                height: 1.55,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              DateFormat('MM-dd HH:mm').format(message.createdAt),
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.white.withValues(alpha: 0.42),
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ],
         ),
       ),
     );

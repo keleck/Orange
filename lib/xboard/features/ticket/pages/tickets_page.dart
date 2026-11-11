@@ -1,10 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
-import 'package:intl/intl.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 
 class TicketsPage extends ConsumerWidget {
@@ -13,8 +11,6 @@ class TicketsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ticketsAsync = ref.watch(getTicketsProvider);
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -38,28 +34,8 @@ class TicketsPage extends ConsumerWidget {
               data: (tickets) {
                 final openCount = tickets.where((t) => t.status == 0).length;
                 final closedCount = tickets.where((t) => t.status == 1).length;
-                final waitingReply = tickets.where((t) => t.replyStatus == 1).length;
-
-                if (tickets.isEmpty) {
-                  return CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
-                    ),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: _HeaderSummary(
-                          openCount: openCount,
-                          closedCount: closedCount,
-                          waitingReply: waitingReply,
-                        ),
-                      ),
-                      const SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: _EmptyState(),
-                      ),
-                    ],
-                  );
-                }
+                final waitingReply =
+                    tickets.where((t) => t.replyStatus == 1).length;
 
                 return CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(
@@ -68,54 +44,103 @@ class TicketsPage extends ConsumerWidget {
                   slivers: [
                     SliverToBoxAdapter(
                       child: _HeaderSummary(
+                        total: tickets.length,
                         openCount: openCount,
                         closedCount: closedCount,
                         waitingReply: waitingReply,
                       ),
                     ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final ticket = tickets[index];
-                        return _TicketCard(ticket: ticket);
-                      },
-                      childCount: tickets.length,
+                    if (tickets.isEmpty)
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: _EmptyState(),
+                      )
+                    else
+                      SliverPadding(
+                        padding: const EdgeInsets.only(top: 4),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) =>
+                                _TicketCard(ticket: tickets[index]),
+                            childCount: tickets.length,
+                          ),
+                        ),
+                      ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 110)),
+                  ],
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => ListView(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.cloud_off_rounded,
+                            size: 40,
+                            color: Colors.white.withValues(alpha: 0.25),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            '工单加载失败',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 40),
+                            child: Text(
+                              '$error',
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withValues(alpha: 0.35),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          TextButton(
+                            onPressed: () => ref.invalidate(getTicketsProvider),
+                            child: const Text('重试'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 100)), // 增加底部空间避免被导航栏遮挡
                 ],
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => ListView(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  child: Center(child: Text('加载失败: $error')),
-                ),
-              ],
-            ),
+              ),
             ),
           ),
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 70),
-        child: FloatingActionButton(
-          onPressed: () => context.push('/user/tickets/create'),
-          child: const Icon(Icons.add),
+        padding: const EdgeInsets.only(bottom: 80),
+        child: _CreateTicketButton(
+          onTap: () => context.push('/user/tickets/create'),
         ),
       ),
     );
   }
 }
 
+/// 顶部概览：标题 + 三个统计，用竖线分隔而不是三个带框的小块
 class _HeaderSummary extends StatelessWidget {
+  final int total;
   final int openCount;
   final int closedCount;
   final int waitingReply;
 
   const _HeaderSummary({
+    required this.total,
     required this.openCount,
     required this.closedCount,
     required this.waitingReply,
@@ -123,81 +148,77 @@ class _HeaderSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(18, 15, 18, 14),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: theme.colorScheme.surface.withOpacity(0.9),
-          boxShadow: [
-            BoxShadow(
-              color: theme.colorScheme.primary.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color.alphaBlend(
+                primary.withValues(alpha: 0.12),
+                AppColors.gradientColor1,
+              ),
+              Color.alphaBlend(
+                primary.withValues(alpha: 0.04),
+                AppColors.gradientColor2,
+              ),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: theme.colorScheme.primary.withOpacity(0.08),
+            color: Colors.white.withValues(alpha: 0.07),
           ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.primary,
-                        theme.colorScheme.primary.withOpacity(0.7),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                Icon(Icons.support_agent_rounded, size: 18, color: primary),
+                const SizedBox(width: 8),
+                const Text(
+                  '工单概览',
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
                   ),
-                  child: const Icon(Icons.support_agent, color: Colors.white),
                 ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('工单概览', style: textTheme.titleMedium),
-                    Text(
-                      '查看进度并保持沟通',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
-                  ],
+                const Spacer(),
+                Text(
+                  '共 $total 条',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: Colors.white.withValues(alpha: 0.35),
+                    decoration: TextDecoration.none,
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Row(
               children: [
-                _StatPill(
-                  label: '处理中',
+                _StatItem(
                   value: openCount,
-                  color: theme.colorScheme.primary,
+                  label: '处理中',
+                  color: primary,
                 ),
-                const SizedBox(width: 8),
-                _StatPill(
-                  label: '待回复',
+                const _StatDivider(),
+                _StatItem(
                   value: waitingReply,
-                  color: Colors.amber.shade700,
+                  label: '待回复',
+                  color: const Color(0xFFFFC061),
                 ),
-                const SizedBox(width: 8),
-                _StatPill(
-                  label: '已关闭',
+                const _StatDivider(),
+                _StatItem(
                   value: closedCount,
-                  color: theme.colorScheme.outline,
+                  label: '已关闭',
+                  color: Colors.white.withValues(alpha: 0.45),
                 ),
               ],
             ),
@@ -208,46 +229,56 @@ class _HeaderSummary extends StatelessWidget {
   }
 }
 
-class _StatPill extends StatelessWidget {
-  final String label;
+class _StatItem extends StatelessWidget {
   final int value;
+  final String label;
   final Color color;
 
-  const _StatPill({
-    required this.label,
+  const _StatItem({
     required this.value,
+    required this.label,
     required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.4)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              '$value',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w700,
-                  ),
+      child: Column(
+        children: [
+          Text(
+            '$value',
+            style: TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.w700,
+              color: color,
+              height: 1.1,
+              decoration: TextDecoration.none,
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: color.withOpacity(0.8),
-                  ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.white.withValues(alpha: 0.42),
+              decoration: TextDecoration.none,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _StatDivider extends StatelessWidget {
+  const _StatDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 22,
+      color: Colors.white.withValues(alpha: 0.07),
     );
   }
 }
@@ -257,24 +288,47 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final primary = Theme.of(context).colorScheme.primary;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inbox_outlined, size: 64, color: theme.colorScheme.outline),
-          const SizedBox(height: 12),
-          Text(
-            '暂无工单',
-            style: theme.textTheme.titleMedium,
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: primary.withValues(alpha: 0.10),
+              border: Border.all(
+                color: primary.withValues(alpha: 0.18),
+              ),
+            ),
+            child: Icon(
+              Icons.forum_outlined,
+              size: 28,
+              color: primary.withValues(alpha: 0.85),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            '还没有工单',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
-            '遇到问题可以创建工单与客服沟通',
+            '遇到问题可以提交工单，客服会尽快回复你',
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+            style: TextStyle(
+              fontSize: 12.5,
+              height: 1.5,
+              color: Colors.white.withValues(alpha: 0.4),
+              decoration: TextDecoration.none,
             ),
           ),
         ],
@@ -290,270 +344,244 @@ class _TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final statusMeta = _statusMeta(ticket.status, theme);
-    final levelMeta = _levelMeta(ticket.level, theme);
-    final replyMeta = _replyStatusMeta(ticket.replyStatus, theme);
+    final primary = Theme.of(context).colorScheme.primary;
+    final statusColor = ticket.status == 0
+        ? primary
+        : Colors.white.withValues(alpha: 0.35);
     final messagePreview = (ticket.message ?? '').trim();
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () => context.push('/user/tickets/${ticket.id}'),
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: _glassmorphicDecoration(context),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      child: Material(
+        color: Colors.white.withValues(alpha: 0.035),
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: () => context.push('/user/tickets/${ticket.id}'),
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(15, 13, 12, 13),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.06),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            ticket.subject,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        _buildStatusChip(context, statusMeta),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '工单号: #${ticket.id}',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                        Wrap(
-                          spacing: 6,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: levelMeta.background,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: levelMeta.color.withOpacity(0.3)),
-                              ),
-                              child: Text(
-                                '优先级: ${levelMeta.label}',
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: levelMeta.color,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: replyMeta.background,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: replyMeta.color.withOpacity(0.3)),
-                              ),
-                              child: Text(
-                                replyMeta.label,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: replyMeta.color,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      messagePreview.isNotEmpty ? messagePreview : '无附加描述',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: statusColor,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '创建时间: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(ticket.createdAt)}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    const SizedBox(width: 9),
+                    Expanded(
+                      child: Text(
+                        ticket.subject,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          height: 1.3,
+                          decoration: TextDecoration.none,
+                        ),
                       ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.chevron_right,
+                      size: 18,
+                      color: Colors.white.withValues(alpha: 0.22),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 7),
+                Row(
+                  children: [
+                    Text(
+                      '#${ticket.id}',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: Colors.white.withValues(alpha: 0.32),
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    Text(
+                      '  ·  ',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: Colors.white.withValues(alpha: 0.2),
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    Text(
+                      _relativeTime(ticket.createdAt),
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: Colors.white.withValues(alpha: 0.32),
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (ticket.level == 2)
+                      const _MiniTag(
+                        label: '高优先级',
+                        color: Color(0xFFFF6B6B),
+                      ),
+                    if (ticket.level == 2) const SizedBox(width: 6),
+                    _ReplyTag(replyStatus: ticket.replyStatus),
+                  ],
+                ),
+                if (messagePreview.isNotEmpty) ...[
+                  const SizedBox(height: 9),
+                  Text(
+                    messagePreview,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      height: 1.5,
+                      color: Colors.white.withValues(alpha: 0.48),
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),
       ),
     );
   }
+}
 
-  BoxDecoration _glassmorphicDecoration(BuildContext context) {
-    final theme = Theme.of(context);
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          theme.colorScheme.primary.withValues(alpha: 0.08),
-          theme.colorScheme.primary.withValues(alpha: 0.04),
-        ],
+/// 高优先级小标签
+class _MiniTag extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _MiniTag({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: theme.colorScheme.primary.withValues(alpha: 0.15),
-        width: 1.5,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: theme.shadowColor.withValues(alpha: 0.08),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: color,
+          decoration: TextDecoration.none,
         ),
-        BoxShadow(
-          color: theme.shadowColor.withValues(alpha: 0.04),
-          blurRadius: 12,
-          offset: const Offset(0, 3),
+      ),
+    );
+  }
+}
+
+/// 回复状态：等待回复时用琥珀色提醒，已回复保持低调
+class _ReplyTag extends StatelessWidget {
+  final int replyStatus;
+
+  const _ReplyTag({required this.replyStatus});
+
+  @override
+  Widget build(BuildContext context) {
+    final isWaiting = replyStatus == 1;
+    final color = isWaiting
+        ? const Color(0xFFFFC061)
+        : Colors.white.withValues(alpha: 0.32);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          isWaiting ? Icons.mark_chat_unread_outlined : Icons.mark_chat_read_outlined,
+          size: 13,
+          color: color,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          isWaiting ? '等待回复' : '已回复',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: isWaiting ? FontWeight.w600 : FontWeight.w400,
+            color: color,
+            decoration: TextDecoration.none,
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildStatusChip(BuildContext context, _ChipMeta meta) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: meta.background,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: meta.color.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(meta.icon, size: 16, color: meta.color),
-          const SizedBox(width: 6),
-          Text(
-            meta.label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: meta.color,
-              fontWeight: FontWeight.w600,
-            ),
+class _CreateTicketButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _CreateTicketButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [primary, primary.withValues(alpha: 0.75)],
           ),
-        ],
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: primary.withValues(alpha: 0.35),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.add_rounded, size: 18, color: Colors.white),
+            SizedBox(width: 6),
+            Text(
+              '新建工单',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
+String _relativeTime(DateTime time) {
+  final now = DateTime.now();
+  final difference = now.difference(time);
 
-
-class _ChipMeta {
-  final String label;
-  final Color color;
-  final Color background;
-  final IconData? icon;
-
-  const _ChipMeta({
-    required this.label,
-    required this.color,
-    required this.background,
-    this.icon,
-  });
-}
-
-_ChipMeta _statusMeta(int status, ThemeData theme) {
-  switch (status) {
-    case 0:
-      return _ChipMeta(
-        label: '处理中',
-        color: Colors.green.shade700,
-        background: Colors.green.withOpacity(0.08),
-        icon: Icons.autorenew,
-      );
-    case 1:
-      return _ChipMeta(
-        label: '已关闭',
-        color: theme.colorScheme.outline,
-        background: theme.colorScheme.outline.withOpacity(0.12),
-        icon: Icons.check_circle,
-      );
-    default:
-      return _ChipMeta(
-        label: '未知',
-        color: theme.colorScheme.primary,
-        background: theme.colorScheme.primary.withOpacity(0.12),
-        icon: Icons.help_outline,
-      );
-  }
-}
-
-_ChipMeta _levelMeta(int level, ThemeData theme) {
-  switch (level) {
-    case 0:
-      return _ChipMeta(
-        label: '低优先级',
-        color: Colors.blueGrey.shade600,
-        background: Colors.blueGrey.withOpacity(0.12),
-        icon: Icons.low_priority,
-      );
-    case 1:
-      return _ChipMeta(
-        label: '中优先级',
-        color: Colors.orange.shade700,
-        background: Colors.orange.withOpacity(0.12),
-        icon: Icons.trending_up,
-      );
-    case 2:
-      return _ChipMeta(
-        label: '高优先级',
-        color: Colors.red.shade700,
-        background: Colors.red.withOpacity(0.12),
-        icon: Icons.priority_high,
-      );
-    default:
-      return _ChipMeta(
-        label: '未知优先级',
-        color: theme.colorScheme.primary,
-        background: theme.colorScheme.primary.withOpacity(0.12),
-        icon: Icons.help_outline,
-      );
-  }
-}
-
-_ChipMeta _replyStatusMeta(int replyStatus, ThemeData theme) {
-  switch (replyStatus) {
-    case 0:
-      return _ChipMeta(
-        label: '已回复',
-        color: Colors.green.shade700,
-        background: Colors.green.withOpacity(0.12),
-        icon: Icons.mark_chat_read,
-      );
-    case 1:
-      return _ChipMeta(
-        label: '等待回复',
-        color: Colors.amber.shade800,
-        background: Colors.amber.withOpacity(0.12),
-        icon: Icons.mark_chat_unread,
-      );
-    default:
-      return _ChipMeta(
-        label: '未知回复状态',
-        color: theme.colorScheme.primary,
-        background: theme.colorScheme.primary.withOpacity(0.12),
-        icon: Icons.help_outline,
-      );
-  }
+  if (difference.inMinutes < 1) return '刚刚';
+  if (difference.inHours < 1) return '${difference.inMinutes}分钟前';
+  if (difference.inDays < 1) return '${difference.inHours}小时前';
+  if (difference.inDays < 7) return '${difference.inDays}天前';
+  return '${time.year}-${time.month.toString().padLeft(2, '0')}-${time.day.toString().padLeft(2, '0')}';
 }

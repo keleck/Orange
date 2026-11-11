@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
@@ -24,7 +23,6 @@ import 'package:fl_clash/xboard/features/notice/widgets/notice_popup_panel.dart'
 import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, NoticeModel;
-import 'package:flutter_html/flutter_html.dart';
 import 'package:fl_clash/xboard/core/core.dart';
 import '../../shared/widgets/glass_container.dart';
 import '../widgets/core_status_button.dart';
@@ -236,7 +234,6 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     
     // 根据操作系统平台判断设备类型
     final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // 直接返回内容，外层 CommonScaffold 已有统一渐变背景
     return Container(
@@ -1905,275 +1902,17 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   }
 
   /// 依次显示弹窗通知
+  /// 依次显示弹窗通知（与首页铃铛里的公告浮层复用同一套详情 UI）
   void _showNextPopupNotice(List<NoticeModel> popupNotices, int index) {
     if (index >= popupNotices.length || !mounted) return;
-    
     final notice = popupNotices[index];
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: screenWidth > 600 ? 600 : double.infinity,
-                maxHeight: screenHeight * 0.85,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [
-                          // 使用统一的背景色
-                          AppColors.gradientColor1,
-                          AppColors.gradientColor3,
-                          AppColors.gradientColor4,
-                        ]
-                      : [
-                          Colors.white.withValues(alpha: 0.2),
-                          Colors.blue.withValues(alpha: 0.1),
-                        ],
-                  stops: isDark ? [0.0, 0.5, 1.0] : null,
-                ),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: isDark
-                      ? AppColors.gradientColor1.withValues(alpha: 0.8)
-                      : Colors.white.withValues(alpha: 0.3),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? AppColors.gradientColor1.withValues(alpha: 0.6)
-                        : Colors.blue.withValues(alpha: 0.15),
-                    blurRadius: 30,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 10),
-                  ),
-                  BoxShadow(
-                    color: isDark
-                        ? Colors.black.withValues(alpha: 0.6)
-                        : Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 20,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Header
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Theme.of(context).colorScheme.surfaceContainer
-                          : Theme.of(context).colorScheme.surface,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(24),
-                      ),
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(context).colorScheme.outline.withValues(alpha: isDark ? 0.2 : 0.1),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              notice.title,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => Navigator.of(context).pop(),
-                            borderRadius: BorderRadius.circular(12),
-                            child: Padding(
-                              padding: const EdgeInsets.all(6.0),
-                              child: Icon(
-                                Icons.close_rounded,
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Content
-                  Flexible(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Text(
-                              _formatNoticeDate(notice.createdAt),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                              ),
-                            ),
-                          ),
-                          Html(
-                            data: notice.content,
-                            style: {
-                              "body": Style(
-                                margin: Margins.zero,
-                                padding: HtmlPaddings.zero,
-                                fontSize: FontSize(Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14),
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85),
-                              ),
-                              "p": Style(
-                                margin: Margins(top: Margin.zero(), bottom: Margin(8)),
-                              ),
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Footer
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(
-                          color: Theme.of(context).colorScheme.outline.withValues(alpha: isDark ? 0.2 : 0.1),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (index < popupNotices.length - 1) ...[
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                _showNextPopupNotice(popupNotices, index + 1);
-                              },
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  '下一条',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                        ],
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => Navigator.of(context).pop(),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-                                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Text(
-                                '关闭',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+    showNoticeDetailDialog(
+      context,
+      notice,
+      dismissible: false,
+      onNext: index < popupNotices.length - 1
+          ? () => _showNextPopupNotice(popupNotices, index + 1)
+          : null,
     );
-  }
-
-  /// 格式化通知日期
-  String _formatNoticeDate(int? timestamp) {
-    if (timestamp == null) return '';
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    
-    if (difference.inDays == 0) {
-      if (difference.inHours == 0) {
-        if (difference.inMinutes == 0) {
-          return '刚刚';
-        }
-        return '${difference.inMinutes}分钟前';
-      }
-      return '${difference.inHours}小时前';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}天前';
-    } else {
-      return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    }
   }
 } 
