@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:fl_clash/clash/core.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/xboard/config/xboard_config.dart';
 import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/xboard/infrastructure/http/user_agent_config.dart';
@@ -25,10 +26,12 @@ class SubscriptionDownloader {
   /// [url] 订阅URL
   /// [enableRacing] 是否启用竞速（默认 true，false时只使用直连）
   /// [autoSwitchApi] 是否在失败时自动切换API链接（默认 true）
+  /// [useLocalProxy] 是否通过本地内核（上次连接的节点）拉取订阅
   static Future<Profile> downloadSubscription(
     String url, {
     bool enableRacing = true,
     bool autoSwitchApi = true,
+    bool useLocalProxy = false,
   }) async {
     try {
       // 确保 URL 有协议前缀
@@ -38,7 +41,11 @@ class SubscriptionDownloader {
       _logger.info('开始下载订阅: ${UrlMasker.mask(normalizedUrl)}');      
       // 尝试使用当前 URL 下载
       try {
-        return await _downloadWithUrl(normalizedUrl, enableRacing: enableRacing);
+        return await _downloadWithUrl(
+          normalizedUrl,
+          enableRacing: enableRacing,
+          useLocalProxy: useLocalProxy,
+        );
       } catch (e) {
         _logger.warning('使用当前URL下载失败: $e');
         
@@ -52,7 +59,11 @@ class SubscriptionDownloader {
             _logger.info('🔄 使用备用API重新下载订阅...');
             
             try {
-              return await _downloadWithUrl(alternativeUrl, enableRacing: enableRacing);
+              return await _downloadWithUrl(
+                alternativeUrl,
+                enableRacing: enableRacing,
+                useLocalProxy: useLocalProxy,
+              );
             } catch (e2) {
               _logger.error('使用备用API下载也失败: $e2');
               throw Exception('所有API链接都下载失败。原始错误: $e, 备用API错误: $e2');
@@ -81,22 +92,57 @@ class SubscriptionDownloader {
     }
   }
   
+  /// 本地内核的 socks5 入口（mixed-port 同时兼容 socks5），
+  /// 仅在代理正在运行时返回，否则返回 null（说明没有可用的「上次连接节点」）。
+  static String? _localProxyUrl() {
+    if (globalState.appState.runTime == null) return null;
+    final port = globalState.config.patchClashConfig.mixedPort;
+    if (port <= 0) return null;
+    return 'socks5://127.0.0.1:$port';
+  }
+
   /// 使用指定URL下载订阅
-  static Future<Profile> _downloadWithUrl(String url, {required bool enableRacing}) async {
+  ///
+  /// [useLocalProxy] 为 true 时，额外用本地内核的 mixed-port
+  /// （即「上次连接的节点」）作为一条下载路径参与竞速。
+  static Future<Profile> _downloadWithUrl(
+    String url, {
+    required bool enableRacing,
+    bool useLocalProxy = false,
+  }) async {
     final _DownloadResult result;
-    
+    final localProxyUrl = useLocalProxy ? _localProxyUrl() : null;
+    if (useLocalProxy && localProxyUrl == null) {
+      _logger.info('已开启「通过代理更新订阅」，但内核未运行，本次仍走直连');
+    } else if (localProxyUrl != null) {
+      _logger.info('已开启「通过代理更新订阅」，本地代理: $localProxyUrl');
+    }
+
     if (!enableRacing) {
-      // 禁用竞速：直接使用直连下载
-      _logger.info('竞速已禁用，使用直连下载');
-      result = await _downloadWithMethod(
-        url,
-        useProxy: false,
-        cancelToken: _CancelToken(),
-        taskIndex: 0,
-      );
+      // 禁用竞速：优先用本地代理（如果可用），否则直连
+      if (localProxyUrl != null) {
+        result = await _downloadWithMethod(
+          url,
+          useProxy: true,
+          proxyUrl: localProxyUrl,
+          cancelToken: _CancelToken(),
+          taskIndex: 0,
+        );
+      } else {
+        _logger.info('竞速已禁用，使用直连下载');
+        result = await _downloadWithMethod(
+          url,
+          useProxy: false,
+          cancelToken: _CancelToken(),
+          taskIndex: 0,
+        );
+      }
     } else {
       // 启用竞速：并发下载，第一个成功就获胜
-      final proxies = XBoardConfig.allProxyUrls;
+      final proxies = [
+        if (localProxyUrl != null) localProxyUrl,
+        ...XBoardConfig.allProxyUrls,
+      ];
       _logger.info('开始并发下载 (${proxies.length + 1}种方式)');
       
       final cancelTokens = <_CancelToken>[];
@@ -113,7 +159,7 @@ class SubscriptionDownloader {
           taskIndex: 0,
         ));
         
-        // 任务1+: 所有代理下载
+        // 任务1+: 所有代理下载（含本地节点代理）
         for (int i = 0; i < proxies.length; i++) {
           final proxyToken = _CancelToken();
           cancelTokens.add(proxyToken);

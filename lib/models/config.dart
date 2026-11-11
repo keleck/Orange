@@ -84,6 +84,7 @@ class AppSettingProps with _$AppSettingProps {
     @Default(true) bool minimizeOnExit,
     @Default(false) bool hidden,
     @Default(false) bool developerMode,
+    @Default(false) bool proxyUpdateSubscription,
     @Default(RecoveryStrategy.compatible) RecoveryStrategy recoveryStrategy,
   }) = _AppSettingProps;
 

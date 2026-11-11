@@ -164,9 +164,15 @@ class XBoardProfileImportService {
       
       // 使用 XBoard 订阅下载服务
       _logger.info('📄 使用 XBoard 订阅下载服务（并发竞速）');
+      final useLocalProxy =
+          globalState.config.appSetting.proxyUpdateSubscription;
+      if (useLocalProxy) {
+        _logger.info('🌐 已开启「通过代理更新订阅」，将尝试用本地节点拉取');
+      }
       final profile = await SubscriptionDownloader.downloadSubscription(
         url,
         enableRacing: true,
+        useLocalProxy: useLocalProxy,
       ).timeout(
         downloadTimeout,
         onTimeout: () {

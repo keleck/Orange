@@ -68,7 +68,8 @@ class Tray {
     );
     menuItems.add(startMenuItem);
     menuItems.add(MenuItem.separator());
-    for (final mode in Mode.values) {
+    // 托盘菜单只保留「规则 / 全局」，直连模式不在托盘提供
+    for (final mode in Mode.values.where((mode) => mode != Mode.direct)) {
       menuItems.add(
         MenuItem.checkbox(
           label: Intl.message(mode.name),

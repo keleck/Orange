@@ -1,12 +1,18 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as p;
+import 'package:fl_clash/clash/clash.dart';
+import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/user/providers/campus_hosts_provider.dart';
+import 'package:fl_clash/xboard/features/user/pages/custom_rules_page.dart';
+import 'package:fl_clash/xboard/features/user/widgets/settings_card.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -22,12 +28,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _lanProxyLoading = false;
   bool _isInitialized = false;
   bool _campusHostsLoading = false;
+  bool _geoUpdating = false;
+  Future<_GeoInfo>? _geoInfoFuture;
   late TextEditingController _importRulesController;
 
   @override
   void initState() {
     super.initState();
     _importRulesController = TextEditingController();
+    _geoInfoFuture = _loadGeoInfo();
     _loadSettings();
   }
   @override
@@ -635,18 +644,26 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 100), // 底部增加 padding 避免被导航栏遮挡
               children: [
-                _buildSectionHeader(context, '基础配置', icon: Icons.settings),
-                const SizedBox(height: 16),
+                _buildSectionHeader(context, '基础配置', icon: Icons.tune_rounded),
+                const SizedBox(height: 14),
                 _buildIPv6Section(context),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 _buildLanProxySection(context),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
+                _buildProxyUpdateSection(context),
+                const SizedBox(height: 10),
+                _buildGeoDatabaseSection(context),
+                const SizedBox(height: 10),
                 _buildCampusHostsSection(context),
-                const SizedBox(height: 32),
-                _buildSectionHeader(context, '自定义规则', icon: Icons.rule),
-                const SizedBox(height: 16),
-                _buildCustomRulesSection(context),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
+                _buildSectionHeader(
+                  context,
+                  '规则与分流',
+                  icon: Icons.alt_route_rounded,
+                ),
+                const SizedBox(height: 14),
+                _buildCustomRulesEntry(context),
+                const SizedBox(height: 28),
               ],
             ),
           ),
@@ -673,134 +690,151 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   Widget _buildIPv6Section(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.15),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'IPv6 支持',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '开启后将可以接收 IPv6 流量',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (_ipv6Loading)
-                const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              else
-                Switch(
-                  value: _ipv6Enabled,
-                  onChanged: _ipv6Loading ? null : (value) {
-                    _updateIPv6Setting(value);
-                  },
-                  activeColor: Colors.green.shade600,
-                ),
-            ],
-          ),
-        ],
-      ),
+    return SettingsCard(
+      icon: Icons.lan_outlined,
+      title: 'IPv6 支持',
+      subtitle: '开启后将可以接收 IPv6 流量',
+      trailing: _ipv6Loading
+          ? const _CardLoading()
+          : Switch(
+              value: _ipv6Enabled,
+              onChanged: _updateIPv6Setting,
+              activeColor: Theme.of(context).colorScheme.primary,
+            ),
     );
   }
 
   Widget _buildLanProxySection(BuildContext context) {
-    final theme = Theme.of(context);
+    return SettingsCard(
+      icon: Icons.wifi_tethering_rounded,
+      title: '局域网代理',
+      subtitle: '允许局域网内的设备通过本机代理上网',
+      trailing: _lanProxyLoading
+          ? const _CardLoading()
+          : Switch(
+              value: _lanProxyEnabled,
+              onChanged: _updateLanProxySetting,
+              activeColor: Theme.of(context).colorScheme.primary,
+            ),
+    );
+  }
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.15),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 局域网代理开关
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '局域网代理',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '允许通过局域网访问代理',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (_lanProxyLoading)
-                const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              else
-                Switch(
-                  value: _lanProxyEnabled,
-                  onChanged: _lanProxyLoading ? null : (value) {
-                    _updateLanProxySetting(value);
-                  },
-                  activeColor: Colors.green.shade600,
-                ),
-            ],
-          ),
-        ],
+  /// 通过代理更新订阅：开启后拉取订阅时会尝试用本地节点（上次连接的节点）代理
+  Widget _buildProxyUpdateSection(BuildContext context) {
+    final enabled = ref.watch(
+      appSettingProvider.select((state) => state.proxyUpdateSubscription),
+    );
+    return SettingsCard(
+      icon: Icons.cloud_sync_outlined,
+      title: '通过代理更新订阅',
+      subtitle: '使用上次连接的节点拉取订阅更新',
+      trailing: Switch(
+        value: enabled,
+        onChanged: (value) {
+          ref.read(appSettingProvider.notifier).updateState(
+                (state) => state.copyWith(proxyUpdateSubscription: value),
+              );
+          XBoardNotification.showSuccess(
+            value ? '将通过节点代理更新订阅' : '已改为直连更新订阅',
+          );
+        },
+        activeColor: Theme.of(context).colorScheme.primary,
       ),
     );
+  }
+
+  /// 地理数据库：展示本地 geoip.metadb 的日期与体积，并支持一键更新
+  Widget _buildGeoDatabaseSection(BuildContext context) {
+    return FutureBuilder<_GeoInfo>(
+      future: _geoInfoFuture,
+      builder: (context, snapshot) {
+        final info = snapshot.data;
+        final detail = info == null
+            ? '读取中…'
+            : info.exists
+                ? '${info.dateText}   ${info.sizeText}'
+                : '尚未下载';
+        return SettingsCard(
+          icon: Icons.public_rounded,
+          title: '地理数据库',
+          subtitle: '用于 IP 地理位置识别，影响分流规则的准确性',
+          child: Column(
+            children: [
+              SettingsInfoBar(text: detail),
+              const SizedBox(height: 12),
+              SettingsOutlineButton(
+                icon: Icons.download_rounded,
+                label: '更新地理数据库',
+                loading: _geoUpdating,
+                onTap: _updateGeoDatabase,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// 自定义分流规则入口
+  Widget _buildCustomRulesEntry(BuildContext context) {
+    final count = ref.watch(
+      patchClashConfigProvider.select((state) => state.customRules.length),
+    );
+    return SettingsCard(
+      icon: Icons.rule_folder_outlined,
+      title: '自定义分流规则',
+      subtitle: count > 0 ? '已配置 $count 条规则' : '添加远程规则或手动配置',
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        size: 20,
+        color: Colors.white.withValues(alpha: 0.3),
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const CustomRulesPage()),
+        );
+      },
+    );
+  }
+
+  Future<_GeoInfo> _loadGeoInfo() async {
+    try {
+      final home = await appPath.homeDirPath;
+      final file = File(p.join(home, mmdbFileName));
+      if (!await file.exists()) {
+        return const _GeoInfo(exists: false);
+      }
+      return _GeoInfo(
+        exists: true,
+        size: await file.length(),
+        modified: await file.lastModified(),
+      );
+    } catch (_) {
+      return const _GeoInfo(exists: false);
+    }
+  }
+
+  Future<void> _updateGeoDatabase() async {
+    setState(() => _geoUpdating = true);
+    try {
+      final message = await clashCore.updateGeoData(
+        UpdateGeoDataParams(
+          geoName: mmdbFileName,
+          geoType: 'MMDB',
+        ),
+      );
+      if (message.isNotEmpty) throw message;
+      XBoardNotification.showSuccess('地理数据库已更新');
+      if (mounted) {
+        setState(() => _geoInfoFuture = _loadGeoInfo());
+      }
+    } catch (e) {
+      XBoardNotification.showError('更新失败: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _geoUpdating = false);
+      }
+    }
   }
 
   Widget _buildCampusHostsSection(BuildContext context) {
@@ -935,178 +969,48 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 
-  Widget _buildCustomRulesSection(BuildContext context) {
-    final theme = Theme.of(context);
-    final customRules = ref.watch(patchClashConfigProvider.select((state) => state.customRules));
+}
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 批量导入按钮
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(0.25),
-                    Colors.white.withOpacity(0.15),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: FilledButton.tonal(
-                  onPressed: _showImportDialog,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.upload_file, size: 16),
-                      SizedBox(width: 6),
-                      Text('批量导入'),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        
-        // 规则列表
-        if (customRules.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.15),
-              ),
-            ),
-            child: Center(
-              child: Text(
-                '暂无规则',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          )
-        else
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.15),
-              ),
-            ),
-            constraints: const BoxConstraints(
-              maxHeight: 400,
-            ),
-            child: ListView.separated(
-              shrinkWrap: true,
-              separatorBuilder: (_, __) => Divider(
-                color: Colors.white.withOpacity(0.1),
-                height: 1,
-              ),
-              itemCount: customRules.length,
-              itemBuilder: (_, index) {
-                final rule = customRules[index];
-                // 解析规则: TYPE,CONDITION,DESTINATION
-                final parts = rule.split(',');
-                final displayRule = parts.length >= 3 
-                    ? '${parts[0]}, ${parts[1]}, ${parts.skip(2).join(',').trim()}'
-                    : rule;
-                
-                return Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              displayRule,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontFamily: 'monospace',
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              rule.length > 60 ? '${rule.substring(0, 60)}...' : rule,
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.5),
-                                fontSize: 10,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.delete_outline,
-                          color: Colors.red.shade300,
-                          size: 20,
-                        ),
-                        tooltip: '删除规则',
-                        onPressed: () {
-                          _removeCustomRule(rule);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          if (customRules.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  _clearAllRules();
-                },
-                icon: const Icon(Icons.delete_sweep),
-                label: const Text('清除所有规则'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red.shade300,
-                  side: BorderSide(color: Colors.red.shade300),
-                ),
-              ),
-            ),
-      ],
+
+class _GeoInfo {
+  final bool exists;
+  final int size;
+  final DateTime? modified;
+
+  const _GeoInfo({
+    required this.exists,
+    this.size = 0,
+    this.modified,
+  });
+
+  String get dateText {
+    final date = modified;
+    if (date == null) return '--';
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  String get sizeText {
+    if (size <= 0) return '0 B';
+    if (size < 1024) return '$size B';
+    if (size < 1024 * 1024) {
+      return '${(size / 1024).toStringAsFixed(1)} KB';
+    }
+    return '${(size / 1024 / 1024).toStringAsFixed(2)} MB';
+  }
+}
+
+class _CardLoading extends StatelessWidget {
+  const _CardLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 22,
+      height: 22,
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+      ),
     );
   }
 }
