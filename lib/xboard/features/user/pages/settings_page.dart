@@ -12,6 +12,7 @@ import 'package:fl_clash/state.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/user/providers/campus_hosts_provider.dart';
 import 'package:fl_clash/xboard/features/user/pages/custom_rules_page.dart';
+import 'package:fl_clash/xboard/features/user/pages/access_control_page.dart';
 import 'package:fl_clash/xboard/features/user/widgets/settings_card.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 
@@ -655,6 +656,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 _buildGeoDatabaseSection(context),
                 const SizedBox(height: 10),
                 _buildCampusHostsSection(context),
+                if (Platform.isAndroid) ...[
+                  const SizedBox(height: 10),
+                  _buildAccessControlEntry(context),
+                ],
                 const SizedBox(height: 28),
                 _buildSectionHeader(
                   context,
@@ -792,6 +797,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const CustomRulesPage()),
+        );
+      },
+    );
+  }
+
+  /// 应用访问控制（仅 Android 生效）
+  Widget _buildAccessControlEntry(BuildContext context) {
+    return SettingsCard(
+      icon: Icons.apps_rounded,
+      title: '应用访问控制',
+      subtitle: '选择哪些应用走代理、哪些直连',
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        size: 20,
+        color: Colors.white.withValues(alpha: 0.3),
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const AccessControlPage()),
         );
       },
     );
