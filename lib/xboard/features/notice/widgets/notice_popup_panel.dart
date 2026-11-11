@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, NoticeModel;
@@ -76,6 +77,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
     final media = MediaQuery.of(context);
     final width = (media.size.width - 48).clamp(280.0, 420.0);
     final maxHeight = media.size.height * 0.62;
+    final panelGradient = _panelGradient(context);
 
     return Align(
       alignment: Alignment.topCenter,
@@ -86,21 +88,13 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+              filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
               child: Material(
                 color: Colors.transparent,
                 child: Container(
                   constraints: BoxConstraints(maxHeight: maxHeight),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF241B3E),
-                        Color(0xFF1A1535),
-                        Color(0xFF151129),
-                      ],
-                    ),
+                    gradient: panelGradient,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.10),
@@ -131,15 +125,40 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
     );
   }
 
+  /// 与页面背景同一套色系（AppColors 深紫/深紫黑），
+  /// 只用主题色轻轻提亮一层，保证浮层既融入主题又能和底下的内容区分开。
+  LinearGradient _panelGradient(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color.alphaBlend(
+          primary.withValues(alpha: 0.10),
+          AppColors.gradientColor1,
+        ),
+        Color.alphaBlend(
+          primary.withValues(alpha: 0.05),
+          AppColors.gradientColor2,
+        ),
+        Color.alphaBlend(
+          primary.withValues(alpha: 0.08),
+          AppColors.gradientColor4,
+        ),
+      ],
+    );
+  }
+
   Widget _buildHeader() {
+    final primary = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 15, 12, 13),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.campaign_outlined,
             size: 19,
-            color: Color(0xFFB39DFF),
+            color: primary,
           ),
           const SizedBox(width: 9),
           const Expanded(
@@ -263,6 +282,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
   }
 
   void _openDetail(NoticeModel notice) {
+    final primary = Theme.of(context).colorScheme.primary;
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -274,15 +294,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
             width: (media.size.width - 56).clamp(280.0, 400.0),
             constraints: BoxConstraints(maxHeight: media.size.height * 0.7),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF241B3E),
-                  Color(0xFF1A1535),
-                  Color(0xFF151129),
-                ],
-              ),
+              gradient: _panelGradient(context),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.10),
@@ -339,22 +351,51 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
                         ),
                         const SizedBox(height: 10),
                         Html(
-                          data: notice.content,
+                          data: _sanitizeNoticeHtml(notice.content),
                           style: {
                             'body': Style(
                               margin: Margins.zero,
                               padding: HtmlPaddings.zero,
                               fontSize: FontSize(13.5),
-                              color: Colors.white.withValues(alpha: 0.82),
+                              lineHeight: const LineHeight(1.7),
+                              color: Colors.white.withValues(alpha: 0.86),
                             ),
                             'p': Style(
                               margin: Margins(
                                 top: Margin.zero(),
-                                bottom: Margin(8),
+                                bottom: Margin(10),
                               ),
                               padding: HtmlPaddings.zero,
                             ),
-                            'a': Style(color: const Color(0xFF8AB4FF)),
+                            'div': Style(
+                              margin: Margins(
+                                top: Margin.zero(),
+                                bottom: Margin(6),
+                              ),
+                            ),
+                            'a': Style(
+                              color: primary,
+                              textDecoration: TextDecoration.none,
+                            ),
+                            // 公告正文里大量 <u>/<font> 强调，统一成浅白下划线，
+                            // 不再沿用内容里内联的黄色等花哨颜色
+                            'u': Style(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              textDecorationColor:
+                                  Colors.white.withValues(alpha: 0.45),
+                            ),
+                            'strong': Style(color: Colors.white),
+                            'b': Style(color: Colors.white),
+                            'mark': Style(
+                              backgroundColor: Colors.transparent,
+                              color: Colors.white,
+                            ),
+                            'li': Style(
+                              margin: Margins(
+                                top: Margin.zero(),
+                                bottom: Margin(4),
+                              ),
+                            ),
                           },
                         ),
                       ],
@@ -382,6 +423,7 @@ class _NoticeRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUnread = _isUnread(notice);
+    final primary = Theme.of(context).colorScheme.primary;
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -397,11 +439,11 @@ class _NoticeRow extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isUnread
-                      ? const Color(0xFFB39DFF).withValues(alpha: 0.9)
+                      ? primary.withValues(alpha: 0.9)
                       : Colors.transparent,
                   border: Border.all(
                     color: isUnread
-                        ? const Color(0xFFB39DFF)
+                        ? primary
                         : Colors.white.withValues(alpha: 0.35),
                     width: 1.3,
                   ),
@@ -503,6 +545,51 @@ bool _isUnread(NoticeModel notice) {
         tag.toLowerCase().contains('弹窗') ||
         tag.toLowerCase().contains('popup'),
   );
+}
+
+/// 公告正文是后台富文本编辑器写的，经常夹带内联颜色（黄、金等）和 `<font color>`，
+/// 直接渲染会显得很花。这里统一剥掉颜色/背景/文字装饰相关的内联样式，
+/// 让文字颜色完全由上面 style 里的主题色决定。
+String _sanitizeNoticeHtml(String html) {
+  var result = html;
+
+  // <font ...> 只保留内容，丢掉 color/face/size 属性
+  result = result.replaceAll(
+    RegExp(r'<font\b[^>]*>', caseSensitive: false),
+    '<span>',
+  );
+  result = result.replaceAll(
+    RegExp(r'</font\s*>', caseSensitive: false),
+    '</span>',
+  );
+
+  // 剥掉内联 style 中的颜色、背景、文字装饰声明
+  result = result.replaceAllMapped(
+    RegExp(r'''style\s*=\s*["']([^"']*)["']''', caseSensitive: false),
+    (match) {
+      final declarations = match.group(1)!.split(';');
+      final kept = declarations
+          .where((declaration) {
+            final key = declaration.split(':').first.trim().toLowerCase();
+            if (key.isEmpty) return false;
+            return !key.contains('color') &&
+                !key.contains('background') &&
+                !key.contains('text-decoration');
+          })
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .join(';');
+      return kept.isEmpty ? '' : 'style="$kept"';
+    },
+  );
+
+  // <mark> 高亮底色去掉，避免整段变成色块
+  result = result.replaceAll(
+    RegExp(r'</?mark\b[^>]*>', caseSensitive: false),
+    '',
+  );
+
+  return result;
 }
 
 /// 把公告 HTML 内容压成一行纯文本，用于列表里的摘要
