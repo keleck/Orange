@@ -20,7 +20,7 @@ import 'package:fl_clash/xboard/features/subscription/providers/xboard_subscript
 import 'package:fl_clash/xboard/features/payment/pages/plan_purchase_page.dart';
 import 'package:fl_clash/xboard/features/profile/providers/profile_import_provider.dart';
 import 'package:fl_clash/xboard/features/shared/pages/node_selector_page.dart';
-import 'package:fl_clash/xboard/features/notice/pages/notice_list_page.dart';
+import 'package:fl_clash/xboard/features/notice/widgets/notice_popup_panel.dart';
 import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, NoticeModel;
@@ -1250,13 +1250,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const NoticeListPage(),
-              ),
-            );
-          },
+          onTap: () => showNoticePopup(context),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.all(10),
