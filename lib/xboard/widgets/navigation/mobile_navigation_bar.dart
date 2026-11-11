@@ -141,19 +141,19 @@ class _MobileNavigationBarState extends State<MobileNavigationBar>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.blue.shade400.withValues(alpha: 0.9), // 增强选中项的不透明度
-                          Colors.blue.shade600.withValues(alpha: 0.9),
+                          Colors.white.withValues(alpha: 0.95),
+                          Colors.white.withValues(alpha: 0.82),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withValues(alpha: 0.4),
+                          color: Colors.white.withValues(alpha: 0.14),
                           blurRadius: 16,
                           offset: const Offset(0, 4),
                         ),
                         BoxShadow(
-                          color: Colors.blue.withValues(alpha: 0.2),
+                          color: Colors.black.withValues(alpha: 0.18),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -215,9 +215,10 @@ class _MobileNavigationBarState extends State<MobileNavigationBar>
             final distance = (_slideAnimation.value - index).abs();
             // 根据距离计算透明度和颜色
             final opacity = (1 - (distance * 0.4)).clamp(0.0, 1.0);
+            // 选中胶囊是白色，图标随之转为深色，未选中保持白色半透明
             final iconColor = Color.lerp(
-              Colors.white.withValues(alpha: 0.4), // 降低未选中项的不透明度
-              Colors.white,
+              Colors.white.withValues(alpha: 0.42),
+              const Color(0xFF151129),
               opacity,
             )!;
             

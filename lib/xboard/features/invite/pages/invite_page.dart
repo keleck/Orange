@@ -100,33 +100,12 @@ class _InvitePageState extends ConsumerState<InvitePage>
 
 /// 液态玻璃装饰 - 返回 BoxDecoration
 BoxDecoration glassmorphicDecoration(BuildContext context) {
-  final theme = Theme.of(context);
   return BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        theme.colorScheme.primary.withValues(alpha: 0.08),
-        theme.colorScheme.primary.withValues(alpha: 0.04),
-      ],
-    ),
-    borderRadius: BorderRadius.circular(16),
+    color: Colors.white.withValues(alpha: 0.035),
+    borderRadius: BorderRadius.circular(18),
     border: Border.all(
-      color: theme.colorScheme.primary.withValues(alpha: 0.15),
-      width: 1.5,
+      color: Colors.white.withValues(alpha: 0.07),
     ),
-    boxShadow: [
-      BoxShadow(
-        color: theme.shadowColor.withValues(alpha: 0.08),
-        blurRadius: 24,
-        offset: const Offset(0, 8),
-      ),
-      BoxShadow(
-        color: theme.shadowColor.withValues(alpha: 0.04),
-        blurRadius: 12,
-        offset: const Offset(0, 3),
-      ),
-    ],
   );
 }
 
@@ -146,7 +125,7 @@ class GlassmorphicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(18),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(

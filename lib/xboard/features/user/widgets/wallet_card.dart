@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:flutter/services.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/xboard/features/payment/providers/xboard_payment_provider.dart';
 import 'package:fl_clash/xboard/features/payment/widgets/payment_method_selector_dialog.dart';
 import 'package:fl_clash/xboard/features/payment/widgets/payment_waiting_overlay.dart';
@@ -168,8 +169,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withValues(alpha: 0.12),
-                    Colors.blue.withValues(alpha: 0.08),
+                    Colors.white.withValues(alpha: 0.10),
+                    Colors.white.withValues(alpha: 0.04),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -179,7 +180,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withValues(alpha: 0.15),
+                    color: Colors.black.withValues(alpha: 0.35),
                     blurRadius: 30,
                     spreadRadius: 2,
                     offset: const Offset(0, 10),
@@ -202,15 +203,16 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.blue.shade400.withValues(alpha: 0.3),
-                                Colors.blue.shade600.withValues(alpha: 0.2),
-                              ],
-                            ),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.14),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: Colors.blue.withValues(alpha: 0.3),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.24),
                             ),
                           ),
                           child: Icon(
@@ -247,8 +249,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Colors.white.withValues(alpha: 0.08),
-                                Colors.blue.withValues(alpha: 0.04),
+                                Colors.white.withValues(alpha: 0.06),
+                                Colors.white.withValues(alpha: 0.03),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -278,7 +280,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.blue.shade300,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -358,18 +360,25 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        Colors.blue.shade400.withValues(alpha: 0.4),
-                                        Colors.blue.shade600.withValues(alpha: 0.3),
+                                        Theme.of(context).colorScheme.primary,
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withValues(alpha: 0.75),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: Colors.blue.withValues(alpha: 0.3),
+                                      color: Colors.white
+                                          .withValues(alpha: 0.10),
                                       width: 1.5,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.blue.withValues(alpha: 0.2),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withValues(alpha: 0.25),
                                         blurRadius: 8,
                                       ),
                                     ],
@@ -418,40 +427,29 @@ class _WalletCardState extends ConsumerState<WalletCard> {
 
     return Column(
       children: [
-        // 余额卡片 - 液态玻璃效果
-        ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    theme.colorScheme.primary.withValues(alpha: 0.12),
-                    theme.colorScheme.primary.withValues(alpha: 0.05),
-                  ],
+        // 余额卡片：与页面同一套深色渐变，仅用主题色轻提亮
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.alphaBlend(
+                  theme.colorScheme.primary.withValues(alpha: 0.10),
+                  AppColors.gradientColor1,
                 ),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                  width: 1.5,
+                Color.alphaBlend(
+                  theme.colorScheme.primary.withValues(alpha: 0.03),
+                  AppColors.gradientColor2,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
-                  ),
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.04),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.07),
+            ),
+          ),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -548,8 +546,6 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                   ],
                 ),
               ),
-            ),
-          ),
         ),
         const SizedBox(height: 16),
         // 自动续费开关 - 液态玻璃卡片
@@ -698,20 +694,12 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                     ),
                     const SizedBox(height: 14),
                     Container(
-                      padding: const EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(13),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.tertiaryContainer
-                                .withValues(alpha: 0.5),
-                            theme.colorScheme.tertiaryContainer
-                                .withValues(alpha: 0.3),
-                          ],
-                        ),
+                        color: Colors.white.withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.colorScheme.tertiary
-                              .withValues(alpha: 0.2),
+                          color: Colors.white.withValues(alpha: 0.06),
                           width: 1,
                         ),
                       ),
@@ -720,14 +708,14 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.tertiary
-                                  .withValues(alpha: 0.15),
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.14),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
                               Icons.lightbulb_rounded,
                               size: 16,
-                              color: Colors.white,
+                              color: theme.colorScheme.primary,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -771,21 +759,13 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(14),
-                                    color: theme.colorScheme.primary
-                                        .withValues(alpha: 0.12),
+                                    color: Colors.white
+                                        .withValues(alpha: 0.045),
                                     border: Border.all(
-                                      color: theme.colorScheme.primary
-                                          .withValues(alpha: 0.25),
-                                      width: 1.5,
+                                      color: Colors.white
+                                          .withValues(alpha: 0.08),
+                                      width: 1,
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: theme.colorScheme.primary
-                                            .withValues(alpha: 0.08),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
                                   ),
                                   child: Center(
                                     child: Text(
