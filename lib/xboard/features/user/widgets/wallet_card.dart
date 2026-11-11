@@ -400,33 +400,12 @@ class _WalletCardState extends ConsumerState<WalletCard> {
   }
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
-    final theme = Theme.of(context);
     return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          theme.colorScheme.primary.withValues(alpha: 0.06),
-          theme.colorScheme.primary.withValues(alpha: 0.02),
-        ],
-      ),
+      color: Colors.white.withValues(alpha: 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: theme.colorScheme.primary.withValues(alpha: 0.12),
-        width: 1,
+        color: Colors.white.withValues(alpha: 0.07),
       ),
-      boxShadow: [
-        BoxShadow(
-          color: theme.shadowColor.withValues(alpha: 0.05),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-        BoxShadow(
-          color: theme.shadowColor.withValues(alpha: 0.02),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ],
     );
   }
 
@@ -639,7 +618,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           )
                         : Switch.adaptive(
                             value: autoRenew,
-                            activeColor: Colors.green,
+                            activeColor: Theme.of(context).colorScheme.primary,
                             onChanged: (value) async {
                               setState(() {
                                 _isLoading = true;

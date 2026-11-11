@@ -115,159 +115,103 @@ class TrafficLogPage extends ConsumerWidget {
   }
 
   Widget _buildLogCard(BuildContext context, TrafficLog log) {
-    final theme = Theme.of(context);
+    final primary = Theme.of(context).colorScheme.primary;
     final date = DateTime.fromMillisecondsSinceEpoch(log.recordAt * 1000);
     final total = log.upload + log.download;
     final now = DateTime.now();
-    final isToday = date.year == now.year && date.month == now.month && date.day == now.day;
-    final isYesterday = date.difference(now).inDays == -1 && date.day == now.day - 1;
-    
+    final isToday =
+        date.year == now.year && date.month == now.month && date.day == now.day;
+    final isYesterday =
+        date.difference(now).inDays == -1 && date.day == now.day - 1;
+
     String formatDate() {
       if (isToday) {
         return '今天 ${DateFormat('HH:mm').format(date)}';
       } else if (isYesterday) {
         return '昨天 ${DateFormat('HH:mm').format(date)}';
-      } else {
-        return DateFormat('MM-dd HH:mm').format(date);
       }
+      return DateFormat('MM-dd HH:mm').format(date);
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                theme.colorScheme.primary.withValues(alpha: 0.06),
-                theme.colorScheme.primary.withValues(alpha: 0.02),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: theme.colorScheme.primary.withValues(alpha: 0.12),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: theme.shadowColor.withValues(alpha: 0.05),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.035),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.06),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today_rounded,
+                size: 14,
+                color: primary,
               ),
-              BoxShadow(
-                color: theme.shadowColor.withValues(alpha: 0.02),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+              const SizedBox(width: 8),
+              Text(
+                formatDate(),
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '×${log.serverRate}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: primary,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
               ),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.calendar_today_rounded,
-                            size: 14,
-                            color: theme.colorScheme.primary,
-                          ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      formatDate(),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.tertiaryContainer,
-                        theme.colorScheme.tertiaryContainer.withValues(alpha: 0.7),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.speed_rounded,
-                        size: 13,
-                        color: theme.colorScheme.onTertiaryContainer,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '×${log.serverRate}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.onTertiaryContainer,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTrafficItem(
-                    context,
-                    Icons.arrow_upward_rounded,
-                    '上传',
-                    log.upload,
-                    Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildTrafficItem(
-                    context,
-                    Icons.arrow_downward_rounded,
-                    '下载',
-                    log.download,
-                    Colors.green,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildTrafficItem(
-                    context,
-                    Icons.import_export_rounded,
-                    '总计',
-                    total,
-                    theme.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-            ),
+          const SizedBox(height: 12),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTrafficItem(
+                context,
+                Icons.arrow_upward_rounded,
+                '上传',
+                log.upload,
+                const Color(0xFFFFB86B),
+              ),
+              const _TrafficDivider(),
+              _buildTrafficItem(
+                context,
+                Icons.arrow_downward_rounded,
+                '下载',
+                log.download,
+                const Color(0xFF5FD3A0),
+              ),
+              const _TrafficDivider(),
+              _buildTrafficItem(
+                context,
+                Icons.import_export_rounded,
+                '总计',
+                total,
+                primary,
+              ),
+            ],
           ),
-        ),
+        ],
       ),
     );
   }
@@ -279,69 +223,68 @@ class TrafficLogPage extends ConsumerWidget {
     int bytes,
     Color color,
   ) {
-    final theme = Theme.of(context);
     final formatted = _formatBytesWithUnit(bytes);
-    
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
+
+    return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(icon, size: 14, color: color),
-              ),
-              const SizedBox(width: 6),
+              Icon(icon, size: 13, color: color),
+              const SizedBox(width: 5),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 11.5,
+                  color: Colors.white.withValues(alpha: 0.42),
+                  decoration: TextDecoration.none,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
                 formatted['value'],
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                   color: Colors.white,
+                  decoration: TextDecoration.none,
                 ),
               ),
               const SizedBox(width: 2),
               Text(
                 formatted['unit'],
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.w500,
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: Colors.white.withValues(alpha: 0.4),
+                  decoration: TextDecoration.none,
                 ),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TrafficDivider extends StatelessWidget {
+  const _TrafficDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 30,
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      color: Colors.white.withValues(alpha: 0.06),
     );
   }
 }

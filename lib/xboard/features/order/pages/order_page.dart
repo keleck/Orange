@@ -64,141 +64,151 @@ class _OrderCard extends ConsumerWidget {
   const _OrderCard({required this.order});
 
   @override
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final primary = Theme.of(context).colorScheme.primary;
+    final createdAt = DateFormat('yyyy-MM-dd HH:mm').format(order.createdAt);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: _glassmorphicDecoration(context),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      order.planName ?? '未知套餐',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    Text(
-                      '¥${order.totalAmount}',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '订单号: ${order.tradeNo}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    _buildStatusChip(context, order.status),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '创建时间: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(order.createdAt)}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '周期: ${order.period}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (order.status == OrderStatus.pending)
-                  TextButton(
-                    onPressed: () => _cancelOrder(context, ref),
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorScheme.error,
-                    ),
-                    child: const Text('取消订单'),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.fromLTRB(15, 14, 13, 10),
+      decoration: _glassmorphicDecoration(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  order.planName ?? '未知套餐',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
                   ),
-                const SizedBox(width: 8),
-                FilledButton.tonal(
-                  onPressed: () => _showDetails(context),
-                  child: const Text('查看详情'),
                 ),
-              ],
-            ),
-              ],
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '¥${order.totalAmount}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: primary,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Text(
+                createdAt,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  color: Colors.white.withValues(alpha: 0.32),
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const Spacer(),
+              _buildStatusChip(context, order.status),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Text(
+            '订单号 ${order.tradeNo}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.white.withValues(alpha: 0.24),
+              decoration: TextDecoration.none,
             ),
           ),
-        ),
+          const SizedBox(height: 10),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.white.withValues(alpha: 0.06),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (order.status == OrderStatus.pending) ...[
+                GestureDetector(
+                  onTap: () => _cancelOrder(context, ref),
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 9,
+                    ),
+                    child: Text(
+                      '取消订单',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: Colors.white.withValues(alpha: 0.45),
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 2),
+              ],
+              GestureDetector(
+                onTap: () => _showDetails(context),
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primary.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(9),
+                    border: Border.all(
+                      color: primary.withValues(alpha: 0.30),
+                    ),
+                  ),
+                  child: Text(
+                    '查看详情',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: primary,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
-    final theme = Theme.of(context);
     return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          theme.colorScheme.primary.withValues(alpha: 0.08),
-          theme.colorScheme.primary.withValues(alpha: 0.04),
-        ],
-      ),
-      borderRadius: BorderRadius.circular(16),
+      color: Colors.white.withValues(alpha: 0.035),
+      borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: theme.colorScheme.primary.withValues(alpha: 0.15),
-        width: 1.5,
+        color: Colors.white.withValues(alpha: 0.07),
       ),
-      boxShadow: [
-        BoxShadow(
-          color: theme.shadowColor.withValues(alpha: 0.08),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
-        ),
-        BoxShadow(
-          color: theme.shadowColor.withValues(alpha: 0.04),
-          blurRadius: 12,
-          offset: const Offset(0, 3),
-        ),
-      ],
     );
   }
 
   BoxDecoration _detailGlassmorphicDecoration(BuildContext context) {
-    final theme = Theme.of(context);
     return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          theme.colorScheme.primary.withValues(alpha: 0.06),
-          theme.colorScheme.primary.withValues(alpha: 0.02),
-        ],
-      ),
+      color: Colors.white.withValues(alpha: 0.04),
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: theme.colorScheme.primary.withValues(alpha: 0.12),
-        width: 1,
+        color: Colors.white.withValues(alpha: 0.06),
       ),
-      boxShadow: [
-        BoxShadow(
-          color: theme.shadowColor.withValues(alpha: 0.05),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ],
     );
   }
 
@@ -426,17 +436,18 @@ class _OrderCard extends ConsumerWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color),
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(7),
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: color,
-          fontSize: 12,
+          color: color.withValues(alpha: 0.95),
+          fontSize: 10.5,
+          fontWeight: FontWeight.w600,
+          decoration: TextDecoration.none,
         ),
       ),
     );

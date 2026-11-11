@@ -22,10 +22,6 @@ class UserCenterPage extends ConsumerStatefulWidget {
 class _UserCenterPageState extends ConsumerState<UserCenterPage> {
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktop = screenWidth > 768;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       decoration: AppColors.getBackgroundDecoration(),
       child: Column(
@@ -57,10 +53,10 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
               // 垂直列表样式的快捷入口 - 包装在一个容器中
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white.withValues(alpha: 0.035),
+                  borderRadius: BorderRadius.circular(18),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.07),
                     width: 1,
                   ),
                 ),
@@ -128,23 +124,11 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
               const SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.red.shade500.withOpacity(0.9),
-                      Colors.red.shade500.withOpacity(0.8),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                  color: Colors.white.withValues(alpha: 0.035),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.07),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.red.shade500.withOpacity(0.15),
-                      blurRadius: 12,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
                 ),
                 child: Material(
                   color: Colors.transparent,
@@ -161,12 +145,18 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(10),
+                            width: 38,
+                            height: 38,
+                            alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.18),
+                              color: const Color(0xFFFF6B6B).withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(11),
                             ),
-                            child: const Icon(Icons.logout, size: 18, color: Colors.white),
+                            child: const Icon(
+                              Icons.logout_rounded,
+                              size: 18,
+                              color: Color(0xFFFF6B6B),
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -208,9 +198,11 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
   }
 
   Widget _buildTrafficUsageCard(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     // 优先使用 XBoard 用户状态中的订阅信息（实时API数据）
     final domainSubscription = ref.watch(subscriptionInfoProvider);
-    
+
     // 降级使用 Profile 中的订阅信息（Profile Header解析数据）
     final currentProfile = ref.watch(currentProfileProvider);
     final profileSubscriptionInfo = currentProfile?.subscriptionInfo;
@@ -222,7 +214,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     int? planId;
 
     if (domainSubscription != null) {
-      used = domainSubscription.uploadedBytes + domainSubscription.downloadedBytes;
+      used =
+          domainSubscription.uploadedBytes + domainSubscription.downloadedBytes;
       total = domainSubscription.transferLimit;
       expireDate = domainSubscription.expiredAt;
       planId = domainSubscription.planId;
@@ -232,7 +225,9 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       total = profileSubscriptionInfo.total;
       hasData = true;
       if (profileSubscriptionInfo.expire != 0) {
-         expireDate = DateTime.fromMillisecondsSinceEpoch(profileSubscriptionInfo.expire * 1000);
+        expireDate = DateTime.fromMillisecondsSinceEpoch(
+          profileSubscriptionInfo.expire * 1000,
+        );
       }
     }
 
@@ -240,300 +235,65 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       return const SizedBox.shrink();
     }
 
-    // Handle infinite/unknown total
     final totalStr = total > 0 ? _formatBytes(total.toDouble()) : '∞';
     final usedStr = _formatBytes(used.toDouble());
-    
+    final ratio = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
+
     String expireStr = '长期有效';
     bool isExpired = false;
     bool isExpiringSoon = false;
-    
     if (expireDate != null) {
-       expireStr = '${expireDate.year}-${expireDate.month.toString().padLeft(2,'0')}-${expireDate.day.toString().padLeft(2,'0')}';
-       // check if expired
-       final now = DateTime.now();
-       if (expireDate.isBefore(now)) {
-         expireStr += ' (已过期)';
-         isExpired = true;
-       } else {
-         // Check if expiring within 24 hours
-         if (expireDate.difference(now).inHours < 24) {
-           isExpiringSoon = true;
-           expireStr = '${expireDate.year}-${expireDate.month.toString().padLeft(2,'0')}-${expireDate.day.toString().padLeft(2,'0')} ${expireDate.hour.toString().padLeft(2,'0')}:${expireDate.minute.toString().padLeft(2,'0')}';
-         }
-       }
+      expireStr =
+          '${expireDate.year}-${expireDate.month.toString().padLeft(2, '0')}-${expireDate.day.toString().padLeft(2, '0')}';
+      final now = DateTime.now();
+      if (expireDate.isBefore(now)) {
+        isExpired = true;
+      } else if (expireDate.difference(now).inHours < 24) {
+        isExpiringSoon = true;
+      }
     }
 
-    if (isExpired) {
-      final theme = Theme.of(context);
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          border: Border.all(
-            color: Colors.white.withOpacity(0.15),
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.15),
-                        ),
-                        child: Icon(
-                          Icons.account_circle,
-                          color: Colors.white,
-                          size: 22,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            final userInfo = ref.watch(userInfoProvider);
-                            return Text(
-                              userInfo?.email ?? '用户账户',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '当前状态',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '无可用套餐',
-                    style: TextStyle(
-                      color: Colors.red.shade300,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (planId != null) {
-                  context.push('/plans?planId=$planId');
-                } else {
-                  context.push('/plans');
-                }
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.blue.shade600,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text('购买套餐'),
-            ),
-          ],
-        ),
-      );
-    }
-    
-    if (isExpiringSoon) {
-      final theme = Theme.of(context);
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          border: Border.all(
-            color: Colors.orange.withOpacity(0.3),
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.15),
-                  ),
-                  child: Icon(
-                    Icons.account_circle,
-                    color: Colors.white,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      final userInfo = ref.watch(userInfoProvider);
-                      return Text(
-                        userInfo?.email ?? '用户账户',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Icon(
-                  Icons.access_time_filled_rounded, 
-                  color: Colors.orange.shade300,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '套餐将在明天过期，请立即续费以免影响使用',
-                    style: TextStyle(
-                      color: Colors.orange.shade300,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '过期时间',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      expireStr,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                FilledButton(
-                  onPressed: () {
-                    if (planId != null) {
-                      context.push('/plans?planId=$planId');
-                    } else {
-                      context.push('/plans');
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.orange.shade600,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                  child: const Text('续费套餐'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
+    final email = ref.watch(userInfoProvider)?.email ?? '用户账户';
 
-    // Calculate progress (0.0 to 1.0)
-    double progress = total > 0 ? (used / total) : 0.0;
-    if (progress > 1.0) progress = 1.0;
-    if (progress < 0.0) progress = 0.0;
-
-    final theme = Theme.of(context);
-    final bool isTrafficWarning = progress >= 1.0; // 流量达到100%
-    
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.alphaBlend(
+              primary.withValues(alpha: 0.12),
+              AppColors.gradientColor1,
+            ),
+            Color.alphaBlend(
+              primary.withValues(alpha: 0.04),
+              AppColors.gradientColor2,
+            ),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isTrafficWarning 
-            ? Colors.red.withOpacity(0.3)
-            : Colors.white.withOpacity(0.15),
-          width: isTrafficWarning ? 1.5 : 1,
+          color: Colors.white.withValues(alpha: 0.07),
         ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
+                  color: primary.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.15),
                 ),
                 child: Icon(
-                  Icons.account_circle,
-                  color: Colors.white,
-                  size: 28,
+                  Icons.person_rounded,
+                  size: 22,
+                  color: primary,
                 ),
               ),
               const SizedBox(width: 12),
@@ -544,103 +304,131 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     Text(
                       '账户',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 11,
+                        fontSize: 11.5,
+                        color: Colors.white.withValues(alpha: 0.42),
+                        decoration: TextDecoration.none,
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        final userInfo = ref.watch(userInfoProvider);
-                        return Text(
-                          userInfo?.email ?? '用户账户',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      },
+                    Text(
+                      email,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ],
                 ),
               ),
+              if (isExpired)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF6B6B).withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: const Text(
+                    '已过期',
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFFF6B6B),
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Divider(
-            color: Colors.white.withOpacity(0.1),
             height: 1,
+            thickness: 1,
+            color: Colors.white.withValues(alpha: 0.06),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
+                flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '已用流量',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 12,
+                        fontSize: 11.5,
+                        color: Colors.white.withValues(alpha: 0.42),
+                        decoration: TextDecoration.none,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    RichText(
-                      text: TextSpan(
-                        text: usedStr,
-                        style: TextStyle(
-                          color: isTrafficWarning 
-                            ? Colors.red.shade300
-                            : Colors.green.shade300,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: theme.textTheme.bodyMedium?.fontFamily,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: ' / $totalStr',
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            usedStr,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.5),
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                              fontFamily: theme.textTheme.bodyMedium?.fontFamily,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: isExpired ? const Color(0xFFFF6B6B) : primary,
+                              decoration: TextDecoration.none,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Text(
+                          ' / $totalStr',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: Colors.white.withValues(alpha: 0.38),
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
               Container(
-                height: 30,
                 width: 1,
-                color: Colors.white.withOpacity(0.15),
+                height: 34,
+                margin: const EdgeInsets.symmetric(horizontal: 14),
+                color: Colors.white.withValues(alpha: 0.07),
               ),
-              const SizedBox(width: 16),
               Expanded(
+                flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '有效期至',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 12,
+                        fontSize: 11.5,
+                        color: Colors.white.withValues(alpha: 0.42),
+                        decoration: TextDecoration.none,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      expireStr,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
+                      isExpiringSoon ? '$expireStr 到期' : expireStr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13.5,
                         fontWeight: FontWeight.w600,
+                        color: isExpiringSoon
+                            ? const Color(0xFFFFC061)
+                            : Colors.white,
+                        decoration: TextDecoration.none,
                       ),
                     ),
                   ],
@@ -648,109 +436,47 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          // Animated Progress Bar
-          TweenAnimationBuilder<double>(
-            tween: Tween<double>(begin: 0, end: progress),
-            duration: const Duration(milliseconds: 1500),
-            curve: Curves.easeOutCubic,
-            builder: (context, value, child) {
-              return Container(
-                height: 8,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
+          if (total > 0) ...[
+            const SizedBox(height: 13),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: ratio,
+                minHeight: 5,
+                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  isExpired ? const Color(0xFFFF6B6B) : primary,
                 ),
-                alignment: Alignment.centerLeft,
-                // Use ClipRRect/AntiAlias or just alignment/width control
-                child: FractionallySizedBox(
-                  widthFactor: value < 0.01 && value > 0 ? 0.01 : value, // Min width text or logical handling
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: isTrafficWarning
-                          ? [
-                              theme.colorScheme.error.withValues(alpha: 0.6),
-                              theme.colorScheme.error,
-                            ]
-                          : [
-                              theme.colorScheme.primary.withValues(alpha: 0.6),
-                              theme.colorScheme.primary,
-                            ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                         BoxShadow(
-                           color: isTrafficWarning
-                             ? theme.colorScheme.error.withValues(alpha: 0.25)
-                             : theme.colorScheme.primary.withValues(alpha: 0.25),
-                           blurRadius: 8,
-                           spreadRadius: 0,
-                           offset: const Offset(0, 2),
-                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          // 流量预警提示和透支按钮
-          if (isTrafficWarning) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.error.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: theme.colorScheme.error.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_rounded,
-                    color: theme.colorScheme.error,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      '流量即将用尽，可透支下月流量继续使用',
-                      style: TextStyle(
-                        color: theme.colorScheme.error,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: theme.colorScheme.error,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+          ],
+          if (isExpired || isExpiringSoon) ...[
+            const SizedBox(height: 13),
+            GestureDetector(
+              onTap: () {
+                if (planId != null) {
+                  context.push('/plans?planId=$planId');
+                } else {
+                  context.push('/plans');
+                }
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                height: 38,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primary, primary.withValues(alpha: 0.75)],
                   ),
+                  borderRadius: BorderRadius.circular(11),
                 ),
-                onPressed: () {
-                  _handleFetchTransfer(context);
-                },
                 child: const Text(
-                  '提前透支下月流量',
+                  '购买套餐',
                   style: TextStyle(
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
                   ),
                 ),
               ),
@@ -1312,8 +1038,8 @@ class _ActionTile extends StatelessWidget {
             ),
           ),
           padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
+            vertical: 13,
+            horizontal: 14,
           ),
           child: Row(
             children: [
@@ -1331,8 +1057,9 @@ class _ActionTile extends StatelessWidget {
                       title,
                       style: TextStyle(
                         color: palette.textColor,
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
+                        height: 1.25,
                       ),
                     ),
                     if (subtitle != null) ...[
@@ -1341,7 +1068,8 @@ class _ActionTile extends StatelessWidget {
                         subtitle!,
                         style: TextStyle(
                           color: palette.subtextColor,
-                          fontSize: 13,
+                          fontSize: 12.5,
+                          height: 1.4,
                         ),
                       ),
                     ],
@@ -1367,12 +1095,14 @@ class _CircleIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      width: 42,
+      height: 42,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
         color: background,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(icon, size: 18, color: iconColor ?? Colors.white),
+      child: Icon(icon, size: 19, color: iconColor ?? Colors.white),
     );
   }
 }
@@ -1400,58 +1130,20 @@ class _Palette {
 }
 
 _Palette _palette(ThemeData theme, _TileTone tone, {bool danger = false}) {
-  switch (tone) {
-    case _TileTone.danger:
-      final base = Colors.red.shade500;
-      return _Palette(
-        gradient: LinearGradient(
-          colors: [base.withOpacity(0.9), base.withOpacity(0.8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        shadow: [
-          BoxShadow(
-            color: base.withOpacity(0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 8),
-          ),
-        ],
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
-        textColor: Colors.white,
-        subtextColor: Colors.white.withOpacity(0.85),
-        iconBackground: Colors.white.withOpacity(0.18),
-        iconColor: Colors.white,
-      );
-    case _TileTone.subtle:
-      return _Palette(
-        gradient: LinearGradient(
-          colors: [
-            Colors.transparent,
-            Colors.transparent,
-          ],
-        ),
-        border: null,
-        shadow: null,
-        textColor: Colors.white,
-        subtextColor: Colors.white.withOpacity(0.6),
-        iconBackground: Colors.white.withOpacity(0.12),
-        iconColor: Colors.white,
-      );
-    case _TileTone.neutral:
-      return _Palette(
-        gradient: LinearGradient(
-          colors: [
-            Colors.transparent,
-            Colors.transparent,
-          ],
-        ),
-        border: null,
-        shadow: null,
-        textColor: Colors.white,
-        subtextColor: Colors.white.withOpacity(0.6),
-        iconBackground: Colors.white.withOpacity(0.12),
-        iconColor: Colors.white,
-      );
-  }
+  // 统一成主题色系的浅色图标块，不再按 tone 变出多种彩色渐变
+  final primary = theme.colorScheme.primary;
+  final isDanger = tone == _TileTone.danger || danger;
+  final accent = isDanger ? const Color(0xFFFF6B6B) : primary;
+  return _Palette(
+    gradient: const LinearGradient(
+      colors: [Colors.transparent, Colors.transparent],
+    ),
+    shadow: null,
+    border: null,
+    textColor: Colors.white,
+    subtextColor: Colors.white.withValues(alpha: 0.45),
+    iconBackground: accent.withValues(alpha: 0.12),
+    iconColor: accent,
+  );
 }
 
