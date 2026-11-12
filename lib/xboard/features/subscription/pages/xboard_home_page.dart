@@ -416,48 +416,59 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         SizedBox(
           width: _discSize + 80,
           height: _discSize + 80,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: isDisabled
-                ? null
-                : () {
-                    globalState.appController.updateStatus(!isStart);
-                  },
-            onTapDown: isDisabled ? null : (_) => _scaleController.reverse(),
-            onTapUp: isDisabled ? null : (_) => _scaleController.forward(),
-            onTapCancel: isDisabled ? null : () => _scaleController.forward(),
-            child: AnimatedBuilder(
-              animation: _pulseController,
-              builder: (context, _) {
-                return Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.none,
-                  children: [
-                    // 圆盘背后两层环：连接后浅薄荷 + 深青绿，未连接换成灰色，
-                    // 都顺时针无限循环游走
-                    CustomPaint(
-                      size: const Size(_discSize + 80, _discSize + 80),
-                      painter: ConnectRingPainter(
-                        progress: _pulseController.value,
-                        active: isStart && !isDisabled,
-                        opacity: isDisabled ? 0.45 : 1,
-                        discSize: _discSize,
-                      ),
+          child: AnimatedBuilder(
+            animation: _pulseController,
+            builder: (context, _) {
+              return Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
+                children: [
+                  // 圆盘背后三层环
+                  CustomPaint(
+                    size: const Size(_discSize + 80, _discSize + 80),
+                    painter: ConnectRingPainter(
+                      progress: _pulseController.value,
+                      active: isStart && !isDisabled,
+                      opacity: isDisabled ? 0.45 : 1,
+                      discSize: _discSize,
                     ),
-                    ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: Opacity(
-                        opacity: isDisabled ? 0.6 : 1.0,
-                        child: _buildConnectDisc(
-                          isStart: isStart,
-                          isDisabled: isDisabled,
+                  ),
+                  // 点击区域只限圆盘本身（ClipOval 让命中测试也是圆的），
+                  // 环所在的那圈不响应点击
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: isDisabled
+                          ? null
+                          : () {
+                              globalState.appController.updateStatus(!isStart);
+                            },
+                      onTapDown:
+                          isDisabled ? null : (_) => _scaleController.reverse(),
+                      onTapUp:
+                          isDisabled ? null : (_) => _scaleController.forward(),
+                      onTapCancel: isDisabled
+                          ? null
+                          : () => _scaleController.forward(),
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: _discSize,
+                          height: _discSize,
+                          child: Opacity(
+                            opacity: isDisabled ? 0.6 : 1.0,
+                            child: _buildConnectDisc(
+                              isStart: isStart,
+                              isDisabled: isDisabled,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ],
-                );
-              },
-            ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
         const SizedBox(height: 16),
