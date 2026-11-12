@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as math;
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
@@ -27,6 +26,7 @@ import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, Noti
 import 'package:fl_clash/xboard/core/core.dart';
 import '../../shared/widgets/glass_container.dart';
 import '../widgets/core_status_button.dart';
+import '../widgets/connect_orb.dart';
 import '../widgets/subscription_usage_card.dart';
 import '../widgets/xboard_connect_button.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
@@ -374,19 +374,6 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
 
   static const double _discSize = 180;
 
-  /// 顺时针但不规则的绕圈位移：
-  /// 基础角速度 theta 上叠加两条不同频率的正弦，让角速度时快时慢；
-  /// 半径也做周期伸缩，避免看起来像机械匀速转圈。
-  Offset _orbitOffset(double t) {
-    final theta = t * 2 * math.pi;
-    final angle = theta +
-        0.55 * math.sin(theta * 2.0) +
-        0.30 * math.sin(theta * 3.3 + 1.1);
-    final radius =
-        17 + 8 * math.sin(theta * 1.6 + 0.4) + 5 * math.sin(theta * 2.7 + 2.0);
-    return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
-  }
-
   // 中央大按钮：白色圆盘 + 绕圈游走的投影；连接后是黑色圆盘 + 闪电 + 薄荷光晕
   Widget _buildCentralConnectButton(BuildContext context, WidgetRef ref) {
     final state = ref.watch(startButtonSelectorStateProvider);
@@ -442,36 +429,31 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             child: AnimatedBuilder(
               animation: _pulseController,
               builder: (context, _) {
-                final orbit = _orbitOffset(_pulseController.value);
+                final orbit = connectOrbitOffset(_pulseController.value);
                 return Stack(
                   alignment: Alignment.center,
                   clipBehavior: Clip.none,
                   children: [
-                    // 绕圈游走的那层「阴影」：连接后是薄荷色光晕，未连接是深色投影。
-                    // 用 Transform 平移一张已经模糊好的圆，比逐帧改 BoxShadow.offset
-                    // 重新计算模糊便宜得多。
-                    Transform.translate(
-                      offset: orbit,
-                      child: Container(
-                        width: _discSize,
-                        height: _discSize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            if (isStart) ...[
-                              BoxShadow(
-                                color: const Color(0xFF9BEFC9)
-                                    .withValues(alpha: isDisabled ? 0.12 : 0.28),
-                                blurRadius: 16,
-                                spreadRadius: 4,
-                              ),
-                              BoxShadow(
-                                color: const Color(0xFF9BEFC9)
-                                    .withValues(alpha: isDisabled ? 0.16 : 0.48),
-                                blurRadius: 34,
-                                spreadRadius: 18,
-                              ),
-                            ] else ...[
+                    // 连接后：手绘感的不规则圆环，顺时针游走
+                    if (isStart)
+                      CustomPaint(
+                        size: const Size(_discSize + 40, _discSize + 40),
+                        painter: ConnectHaloPainter(
+                          progress: _pulseController.value,
+                          opacity: isDisabled ? 0.4 : 1,
+                        ),
+                      )
+                    else
+                      // 未连接：深色投影绕圈游走。用 Transform 平移一张已经模糊好的圆，
+                      // 比逐帧改 BoxShadow.offset 重新计算模糊便宜得多。
+                      Transform.translate(
+                        offset: orbit,
+                        child: Container(
+                          width: _discSize,
+                          height: _discSize,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
                               BoxShadow(
                                 color: Colors.black
                                     .withValues(alpha: isDisabled ? 0.22 : 0.45),
@@ -485,10 +467,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                 spreadRadius: 10,
                               ),
                             ],
-                          ],
+                          ),
                         ),
                       ),
-                    ),
                     ScaleTransition(
                       scale: _scaleAnimation,
                       child: Opacity(
@@ -526,6 +507,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     required bool isStart,
     required bool isDisabled,
   }) {
+    if (isStart && !isDisabled) {
+      return const ConnectActiveDisc(size: _discSize);
+    }
     return Container(
       width: _discSize,
       height: _discSize,
@@ -537,23 +521,15 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                 end: Alignment.bottomRight,
                 colors: [Color(0xFF9AA1AC), Color(0xFF6B7280)],
               )
-            : isStart
-                ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF26262A), Color(0xFF040405)],
-                  )
-                : const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFFFFFFF), Color(0xFFECEFF4)],
-                  ),
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFFFFF), Color(0xFFECEFF4)],
+              ),
         border: Border.all(
-          color: isStart
-              ? Colors.white.withValues(alpha: 0.07)
-              : isDisabled
-                  ? Colors.white.withValues(alpha: 0.12)
-                  : Colors.black.withValues(alpha: 0.55),
+          color: isDisabled
+              ? Colors.white.withValues(alpha: 0.12)
+              : Colors.black.withValues(alpha: 0.55),
           width: 1,
         ),
       ),
@@ -564,39 +540,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                 size: 72,
                 color: Colors.white.withValues(alpha: 0.85),
               )
-            : isStart
-                ? _buildBoltIcon()
-                : const Icon(
-                    Icons.power_settings_new_rounded,
-                    size: 76,
-                    color: Color(0xFF141416),
-                  ),
-      ),
-    );
-  }
-
-  /// 连接后的闪电：用 Text 承载 Material 图标字形，才能叠加两层发光阴影
-  Widget _buildBoltIcon() {
-    final icon = Icons.bolt_rounded;
-    return Text(
-      String.fromCharCode(icon.codePoint),
-      style: TextStyle(
-        fontFamily: icon.fontFamily,
-        package: icon.fontPackage,
-        fontSize: 86,
-        height: 1,
-        color: const Color(0xFFFFE33C),
-        shadows: [
-          Shadow(
-            color: const Color(0xFFFFD400).withValues(alpha: 0.9),
-            blurRadius: 26,
-          ),
-          Shadow(
-            color: const Color(0xFFFFF3A0).withValues(alpha: 0.55),
-            blurRadius: 8,
-          ),
-        ],
-        decoration: TextDecoration.none,
+            : const Icon(
+                Icons.power_settings_new_rounded,
+                size: 76,
+                color: Color(0xFF141416),
+              ),
       ),
     );
   }
