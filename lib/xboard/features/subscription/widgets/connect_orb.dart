@@ -27,12 +27,15 @@ class ConnectHaloPainter extends CustomPainter {
   final double progress;
   final double opacity;
 
+  final double discSize;
+
   const ConnectHaloPainter({
     required this.progress,
     this.opacity = 1,
+    this.discSize = kConnectDiscSize,
   });
 
-  static const Color _band = Color(0xFF0E5B4B);
+  static const Color _band = Color(0xFF1B7A61);
   static const Color _edge = Color(0xFF7FE3C6);
 
   @override
@@ -41,28 +44,29 @@ class ConnectHaloPainter extends CustomPainter {
     final angle = theta +
         0.55 * math.sin(theta * 2.0) +
         0.30 * math.sin(theta * 3.3 + 1.1);
+    // 偏移要明显大于环与圆盘的半径差，才会露出参考图里那种偏心的月牙带
     final orbitRadius =
-        9 + 4 * math.sin(theta * 1.6 + 0.4) + 2.5 * math.sin(theta * 2.7 + 2.0);
+        21 + 6 * math.sin(theta * 1.6 + 0.4) + 4 * math.sin(theta * 2.7 + 2.0);
     final center = size.center(Offset.zero) +
         Offset(math.cos(angle) * orbitRadius, math.sin(angle) * orbitRadius);
-    final baseRadius = size.width * 0.5 - 4;
+    final baseRadius = discSize * 0.5 + 9;
 
     final path = _blobPath(center, baseRadius, theta * 0.55);
 
-    // 内侧暗青绿：半透明叠在页面底色上，接近参考里那圈偏暗的绿
+    // 实心青绿环带：叠在页面底色上偏暗，但不像发光那样发虚
     canvas.drawPath(
       path,
       Paint()
-        ..color = _band.withValues(alpha: 0.66 * opacity)
+        ..color = _band.withValues(alpha: 0.92 * opacity)
         ..style = PaintingStyle.fill,
     );
     // 外沿薄荷色细描边
     canvas.drawPath(
       path,
       Paint()
-        ..color = _edge.withValues(alpha: 0.85 * opacity)
+        ..color = _edge.withValues(alpha: 0.75 * opacity)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2
+        ..strokeWidth = 1.6
         ..strokeJoin = StrokeJoin.round,
     );
   }
@@ -151,7 +155,7 @@ class HandDrawnBoltPainter extends CustomPainter {
       Paint()
         ..color = outline
         ..style = PaintingStyle.stroke
-        ..strokeWidth = size.width * 0.022
+        ..strokeWidth = size.width * 0.030
         ..strokeJoin = StrokeJoin.round,
     );
   }
@@ -211,10 +215,10 @@ class ConnectActiveDisc extends StatelessWidget {
       ),
       child: Center(
         child: Transform.rotate(
-          angle: 0.06,
+          angle: 0.10,
           child: RepaintBoundary(
             child: CustomPaint(
-              size: Size(size * 0.72, size * 0.95),
+              size: Size(size * 0.56, size * 0.74),
               painter: const HandDrawnBoltPainter(),
             ),
           ),

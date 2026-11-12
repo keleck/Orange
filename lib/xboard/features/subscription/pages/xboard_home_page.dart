@@ -414,8 +414,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          width: _discSize + 60,
-          height: _discSize + 60,
+          width: _discSize + 80,
+          height: _discSize + 80,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: isDisabled
@@ -437,10 +437,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                     // 连接后：手绘感的不规则圆环，顺时针游走
                     if (isStart)
                       CustomPaint(
-                        size: const Size(_discSize + 40, _discSize + 40),
+                        size: const Size(_discSize + 80, _discSize + 80),
                         painter: ConnectHaloPainter(
                           progress: _pulseController.value,
                           opacity: isDisabled ? 0.4 : 1,
+                          discSize: _discSize,
                         ),
                       )
                     else
