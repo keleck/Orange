@@ -15,15 +15,15 @@ Offset connectOrbitOffset(double t, {double phase = 0}) {
       0.55 * math.sin(theta * 2 + phase) +
       0.30 * math.sin(theta * 3 + phase);
   final radius =
-      9 + 4 * math.sin(theta * 2 + phase) + 3 * math.sin(theta * 3 + phase);
+      8 + 2 * math.sin(theta * 2 + phase) + 1.5 * math.sin(theta * 3 + phase);
   return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
 }
 
-/// 圆盘背后那两层环。
+/// 圆盘背后的两层环。
 ///
-/// 实机放大图里是两圈：外圈浅薄荷、内圈深青绿，两者圆心有偏移，
-/// 所以在同一侧露出两道月牙；圆盘压在上面并投下阴影，层次就是这么来的。
-/// 未连接时同样的结构换成灰色。
+/// 逐帧分解实机后确认是两圈：一圈深青绿宽带、一圈浅薄荷细弧，
+/// 两者相位差很大（约 2.2 弧度），所以经常一个在左下、另一个在左上，
+/// 甚至分处两侧 —— 这就是「一层一层」的层次感来源。
 class ConnectRingPainter extends CustomPainter {
   final double progress;
   final bool active;
@@ -37,38 +37,29 @@ class ConnectRingPainter extends CustomPainter {
     this.discSize = kConnectDiscSize,
   });
 
-  // 连接后
-  static const Color _outerActive = Color(0xFF5CC3A4);
-  static const Color _innerActive = Color(0xFF17594C);
-  // 未连接
-  static const Color _outerIdle = Color(0xFF343B44);
-  static const Color _innerIdle = Color(0xFF262C34);
+  static const Color _mint = Color(0xFF6FD3B4);
+  static const Color _teal = Color(0xFF17594C);
+  static const Color _greyLight = Color(0xFF454E58);
+  static const Color _greyDark = Color(0xFF262C34);
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
-    final t = progress;
 
-    // 外圈：偏得更多一点，露出更宽的一道
-    final outerCenter = center + connectOrbitOffset(t, phase: 0);
-    final outerRadius = discSize * 0.5 + 14;
+    // 外层：深青绿宽带，偏移更大
     canvas.drawCircle(
-      outerCenter,
-      outerRadius,
+      center + connectOrbitOffset(progress, phase: 2.2),
+      discSize * 0.5 + 9,
       Paint()
-        ..color = (active ? _outerActive : _outerIdle)
-            .withValues(alpha: (active ? 0.42 : 0.85) * opacity),
+        ..color = (active ? _teal : _greyDark).withValues(alpha: opacity),
     );
 
-    // 内圈：偏移相位错开，两道月牙不会完全重合
-    final innerCenter = center + connectOrbitOffset(t, phase: 2.1);
-    final innerRadius = discSize * 0.5 + 6;
+    // 内层：薄荷细弧，相位错开，露在另一侧
     canvas.drawCircle(
-      innerCenter,
-      innerRadius,
+      center + connectOrbitOffset(progress),
+      discSize * 0.5 + 4,
       Paint()
-        ..color = (active ? _innerActive : _innerIdle)
-            .withValues(alpha: (active ? 0.95 : 0.95) * opacity),
+        ..color = (active ? _mint : _greyLight).withValues(alpha: opacity),
     );
   }
 
@@ -117,11 +108,15 @@ class HandDrawnBoltPainter extends CustomPainter {
         ..color = color.withValues(alpha: 0.45)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.05),
     );
-    // 主体
+    // 主体：左上亮、右下略暗，避免整块纯色显得平
     canvas.drawPath(
       path,
       Paint()
-        ..color = color
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [const Color(0xFFFFF27A), color],
+        ).createShader(Offset.zero & size)
         ..style = PaintingStyle.fill
         ..strokeJoin = StrokeJoin.round,
     );
@@ -131,7 +126,7 @@ class HandDrawnBoltPainter extends CustomPainter {
       Paint()
         ..color = outline
         ..style = PaintingStyle.stroke
-        ..strokeWidth = size.width * 0.028
+        ..strokeWidth = size.width * 0.032
         ..strokeJoin = StrokeJoin.round,
     );
   }
@@ -205,7 +200,7 @@ class ConnectActiveDisc extends StatelessWidget {
           angle: 0.10,
           child: RepaintBoundary(
             child: CustomPaint(
-              size: Size(size * 0.68, size * 0.74),
+              size: Size(size * 0.68, size * 0.90),
               painter: const HandDrawnBoltPainter(),
             ),
           ),
