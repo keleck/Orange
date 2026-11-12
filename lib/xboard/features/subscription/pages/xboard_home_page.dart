@@ -463,7 +463,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         const SizedBox(height: 16),
         // 状态胶囊：圆点 + 文字
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(999),
@@ -472,8 +472,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 8,
-                height: 8,
+                width: 4,
+                height: 4,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isDisabled
@@ -483,7 +483,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                           : const Color(0xFF9AA0A6),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 5),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 420),
                 switchInCurve: Curves.easeOutCubic,
@@ -497,9 +497,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                     color: isDisabled
                         ? Colors.white.withValues(alpha: 0.5)
                         : Colors.white.withValues(alpha: 0.92),
-                    fontSize: 15,
+                    fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    letterSpacing: 1,
+                    letterSpacing: 0.3,
                     decoration: TextDecoration.none,
                   ),
                 ),
