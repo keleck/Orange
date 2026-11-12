@@ -75,15 +75,16 @@ class LanguageSelector extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
         decoration: BoxDecoration(
-          color: const Color(0xFFF2F7FC),
+          color: const Color(0xFFE6F2FF),
           borderRadius: BorderRadius.circular(999),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              currentLanguage['flag']!,
-              style: const TextStyle(fontSize: 15),
+            const Icon(
+              Icons.translate,
+              size: 17,
+              color: Color(0xFF3B8EF0),
             ),
             const SizedBox(width: 7),
             Text(
