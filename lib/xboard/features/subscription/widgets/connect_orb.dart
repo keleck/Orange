@@ -15,7 +15,7 @@ Offset connectOrbitOffset(double t, {double phase = 0}) {
       0.55 * math.sin(theta * 2 + phase) +
       0.30 * math.sin(theta * 3 + phase);
   final radius =
-      8 + 2 * math.sin(theta * 2 + phase) + 1.5 * math.sin(theta * 3 + phase);
+      15 + 4 * math.sin(theta * 2 + phase) + 3 * math.sin(theta * 3 + phase);
   return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
 }
 

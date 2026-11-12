@@ -77,7 +77,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     );
     _pulseController = AnimationController(
         vsync: this,
-        duration: const Duration(seconds: 9),
+        duration: const Duration(seconds: 6),
     )..repeat();
     _tunLoadingController = AnimationController(
         vsync: this,
