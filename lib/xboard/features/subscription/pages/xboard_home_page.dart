@@ -460,17 +460,51 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             ),
           ),
         ),
-        const SizedBox(height: 18),
-        Text(
-          label,
-          style: TextStyle(
-            color: isDisabled
-                ? Colors.white.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.92),
-            fontSize: 15.5,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 1.2,
-            decoration: TextDecoration.none,
+        const SizedBox(height: 16),
+        // 状态胶囊：圆点 + 文字
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDisabled
+                      ? const Color(0xFFFFB74D)
+                      : isStart
+                          ? const Color(0xFF3DDC97)
+                          : const Color(0xFF9AA0A6),
+                ),
+              ),
+              const SizedBox(width: 10),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 420),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
+                child: Text(
+                  label,
+                  key: ValueKey(label),
+                  style: TextStyle(
+                    color: isDisabled
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : Colors.white.withValues(alpha: 0.92),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -498,10 +532,25 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         ),
       );
     }
-    if (isStart) {
-      return const ConnectActiveDisc(size: _discSize);
-    }
-    return const ConnectIdleDisc(size: _discSize);
+    // 未连接 <-> 已连接 之间做淡出淡入，避免直接硬切
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 420),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+      child: isStart
+          ? const ConnectActiveDisc(
+              key: ValueKey('connect-active'),
+              size: _discSize,
+            )
+          : ConnectIdleDisc(
+              key: const ValueKey('connect-idle'),
+              size: _discSize,
+              progress: _pulseController.value,
+            ),
+    );
   }
 
   // 当前节点卡片

@@ -19,12 +19,12 @@ Offset connectOrbitOffset(double t, {double phase = 0}) {
   return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
 }
 
-/// 圆盘背后叠着的三个半透明圆。
+/// 圆盘背后三层整圆（被盘盖住，只露出外面那一部分）。
 ///
-/// 逐帧量实机得到：绿色从盘边一直铺到盘径 +25 左右，但覆盖率从 52% 平滑衰减到 5%，
-/// 说明它不是一条实边，而是几个半透明圆错相位叠出来的：
-/// 重叠多的地方浓、重叠少的地方淡，边缘自然渐隐，转动时就会呈现「圆角」般的柔和过渡。
-/// 每层的透明度还随角度轻微呼吸，进一步打散硬边。
+/// 是完整的圆、不是切出来的弧段，所以露出的两端自然收窄、没有硬边。
+/// 三层半径与偏移依次加大，露出宽度逐层递减；整体绕盘顺时针旋转。
+/// 偏移量是固定的（只有方向在转），不能做成呼吸式，否则转到某些角度
+/// 三层会缩回去、看起来又变成一圈均匀环。
 class ConnectRingPainter extends CustomPainter {
   final double progress;
   final bool active;
@@ -41,31 +41,35 @@ class ConnectRingPainter extends CustomPainter {
   static const Color _mint = Color(0xFF7FE3C6);
   static const Color _teal = Color(0xFF1E7F66);
   static const Color _deep = Color(0xFF0E4B3E);
-  static const Color _greyLight = Color(0xFF4A535E);
-  static const Color _greyMid = Color(0xFF3A424C);
-  static const Color _greyDeep = Color(0xFF262C34);
+  static const Color _greySolid = Color(0xFF5A636E);
+  static const Color _greyMid = Color(0xFF454E58);
+  static const Color _greyDeep = Color(0xFF333A42);
 
-  // 三层：半径增量 / 相位 / 基础透明度
-  static const List<double> _radiusStep = [3, 8, 14];
-  static const List<double> _phase = [0.0, 2.1, 4.2];
-  static const List<double> _baseAlpha = [0.55, 0.45, 0.38];
+  // 半径增量 / 固定偏移距离 / 透明度
+  static const List<double> _radiusStep = [3, 7, 11];
+  static const List<double> _orbitDistance = [8, 12, 16];
+  static const List<double> _alpha = [0.40, 0.28, 0.20];
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final colors = active
         ? const [_mint, _teal, _deep]
-        : const [_greyLight, _greyMid, _greyDeep];
+        : const [_greySolid, _greyMid, _greyDeep];
     final theta = progress * 2 * math.pi;
 
     for (var i = 0; i < 3; i++) {
-      // 透明度随转动轻微呼吸，让叠加处一直在变，边缘不会出现固定硬边
-      final breathe = 1 + 0.18 * math.sin(theta * 2 + _phase[i]);
-      final alpha = (_baseAlpha[i] * breathe).clamp(0.18, 0.85) * opacity;
+      // 方向随转动走，距离固定
+      final angle = theta + i * 2.1;
+      final orbit = Offset(
+        math.cos(angle) * _orbitDistance[i],
+        math.sin(angle) * _orbitDistance[i],
+      );
       canvas.drawCircle(
-        center + connectOrbitOffset(progress, phase: _phase[i]),
+        center + orbit,
         discSize * 0.5 + _radiusStep[i],
-        Paint()..color = colors[i].withValues(alpha: alpha),
+        Paint()
+          ..color = colors[i].withValues(alpha: _alpha[i] * opacity),
       );
     }
   }
@@ -172,9 +176,7 @@ class HandDrawnBoltPainter extends CustomPainter {
   }
 }
 
-/// 连接后的黑色圆盘 + 手绘闪电
-///
-/// 盘自身带一层向下投影，压在背后的绿环上，形成「盘浮在环上」的层次。
+/// 连接后的圆盘：深绿色底 + 与未连接一致的白色线条电源图标
 class ConnectActiveDisc extends StatelessWidget {
   final double size;
 
@@ -185,25 +187,40 @@ class ConnectActiveDisc extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const RadialGradient(
-          center: Alignment(-0.25, -0.3),
-          radius: 0.95,
-          colors: [Color(0xFF1B1815), Color(0xFF0B0A09), Color(0xFF060606)],
-          stops: [0.0, 0.6, 1.0],
+        gradient: RadialGradient(
+          center: Alignment(-0.3, -0.35),
+          radius: 1.0,
+          colors: [Color(0xFF00855A), Color(0xFF006945), Color(0xFF004E33)],
+          stops: [0.0, 0.62, 1.0],
         ),
       ),
-      child: Center(
-        child: Transform.rotate(
-          angle: 0.10,
-          child: RepaintBoundary(
-            child: CustomPaint(
-              size: Size(size * 0.68, size * 0.90),
-              painter: const HandDrawnBoltPainter(),
+      child: Stack(
+        children: [
+          // 内缩的细白圈，与未连接保持一致
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsets.all(size * 0.045),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    width: 1.4,
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+          Center(
+            child: Icon(
+              Icons.power_settings_new_rounded,
+              size: size * 0.42,
+              color: Colors.white.withValues(alpha: 0.95),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -213,41 +230,52 @@ class ConnectActiveDisc extends StatelessWidget {
 class ConnectIdleDisc extends StatelessWidget {
   final double size;
   final Color color;
+  final double progress;
 
   const ConnectIdleDisc({
     super.key,
     this.size = kConnectDiscSize,
     this.color = const Color(0xFF1D2229),
+    this.progress = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
-      child: Padding(
-        // 实机里那圈细白线是内缩的，不是贴着盘边
-        padding: EdgeInsets.all(size * 0.045),
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.85),
-              width: 1.4,
+      child: Stack(
+        children: [
+          // 盘面
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color,
             ),
           ),
-          child: Center(
+          // 内缩的细白圈（正圆）
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsets.all(size * 0.045),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    width: 1.4,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Center(
             child: Icon(
               Icons.power_settings_new_rounded,
               size: size * 0.42,
               color: Colors.white.withValues(alpha: 0.95),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
