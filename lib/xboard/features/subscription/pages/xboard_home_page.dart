@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
@@ -76,8 +77,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     );
     _pulseController = AnimationController(
         vsync: this,
-        duration: const Duration(seconds: 2),
-    );
+        duration: const Duration(seconds: 9),
+    )..repeat();
     _tunLoadingController = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 800),
@@ -102,21 +103,6 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       }
       autoLatencyService.initialize(ref);
       _waitForGroupsAndStartTesting();
-      
-      // 初始化动画状态
-      if (ref.read(runTimeProvider) != null) {
-        _pulseController.repeat();
-      }
-    });
-    
-    // 监听运行状态控制呼吸动画
-    ref.listenManual(runTimeProvider.select((state) => state != null), (prev, isStart) {
-      if (isStart) {
-        _pulseController.repeat();
-      } else {
-        _pulseController.stop();
-        _pulseController.reset();
-      }
     });
 
     ref.listenManual(xboardUserProvider, (previous, next) {
@@ -245,16 +231,15 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
           Column(
             children: [
               // 整体下移，增加顶部间距（安卓减少间距）
-              SizedBox(height: isDesktop ? 220 : 220),
+              SizedBox(height: isDesktop ? 220 : 170),
               Expanded(
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 10),
                       // 主连接按钮
                       _buildCentralConnectButton(context, ref),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 14),
                       // 当前节点卡片
                       _buildCurrentNodeCard(context, ref),
                     ],
@@ -387,141 +372,231 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     return currentGroup == null || currentGroup.all.isEmpty;
   }
 
-  // 中央大按钮
+  static const double _discSize = 180;
+
+  /// 顺时针但不规则的绕圈位移：
+  /// 基础角速度 theta 上叠加两条不同频率的正弦，让角速度时快时慢；
+  /// 半径也做周期伸缩，避免看起来像机械匀速转圈。
+  Offset _orbitOffset(double t) {
+    final theta = t * 2 * math.pi;
+    final angle = theta +
+        0.55 * math.sin(theta * 2.0) +
+        0.30 * math.sin(theta * 3.3 + 1.1);
+    final radius =
+        17 + 8 * math.sin(theta * 1.6 + 0.4) + 5 * math.sin(theta * 2.7 + 2.0);
+    return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
+  }
+
+  // 中央大按钮：白色圆盘 + 绕圈游走的投影；连接后是黑色圆盘 + 闪电 + 薄荷光晕
   Widget _buildCentralConnectButton(BuildContext context, WidgetRef ref) {
     final state = ref.watch(startButtonSelectorStateProvider);
     final isStart = ref.watch(runTimeProvider.select((state) => state != null));
-    
+
     // 检查订阅状态
     final domainSubscription = ref.watch(subscriptionInfoProvider);
     final userState = ref.watch(xboardUserProvider);
     final isExpired = domainSubscription?.isExpired ?? false;
     final isTrafficExhausted = domainSubscription?.isTrafficExhausted ?? false;
-    
+
     // 检查节点加载状态
     final isNodeLoading = _calculateIsNodeLoading(ref);
-    
+
     // 刷新订阅过程中不检查流量和过期状态，避免误导用户
     final isRefreshing = userState.isLoading;
-    
+
     // 如果账号过期、流量耗尽或节点正在加载，禁用连接按钮
     // 但刷新过程中不因为流量或过期状态禁用
-    final isDisabled = isRefreshing 
-        ? isNodeLoading 
+    final isDisabled = isRefreshing
+        ? isNodeLoading
         : (isExpired || isTrafficExhausted || isNodeLoading);
-    
+
     // 节点加载失败时不隐藏按钮，而是显示加载状态
     if (!state.isInit) {
       return Container();
     }
 
-    return GestureDetector(
-      onTap: isDisabled ? null : () {
-        globalState.appController.updateStatus(!isStart);
-      },
-      onTapDown: isDisabled ? null : (_) => _scaleController.reverse(),
-      onTapUp: isDisabled ? null : (_) => _scaleController.forward(),
-      onTapCancel: isDisabled ? null : () => _scaleController.forward(),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isStart)
-            AnimatedBuilder(
+    final label = isRefreshing
+        ? '刷新中...'
+        : isNodeLoading
+            ? '加载中...'
+            : isDisabled
+                ? (isExpired ? '账号已过期' : '流量已耗尽')
+                : (isStart ? '闪电加速中' : '未连接');
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: _discSize + 60,
+          height: _discSize + 60,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: isDisabled
+                ? null
+                : () {
+                    globalState.appController.updateStatus(!isStart);
+                  },
+            onTapDown: isDisabled ? null : (_) => _scaleController.reverse(),
+            onTapUp: isDisabled ? null : (_) => _scaleController.forward(),
+            onTapCancel: isDisabled ? null : () => _scaleController.forward(),
+            child: AnimatedBuilder(
               animation: _pulseController,
-              builder: (context, child) {
+              builder: (context, _) {
+                final orbit = _orbitOffset(_pulseController.value);
                 return Stack(
                   alignment: Alignment.center,
-                  children: List.generate(3, (index) {
-                    final delay = index * 0.5;
-                    final value = (_pulseController.value + delay) % 1.0;
-                    final scale = 1.0 + (value * 0.5); // 1.0 -> 1.5
-                    final opacity = (1.0 - value).clamp(0.0, 1.0);
-                    
-                    return Transform.scale(
-                      scale: scale,
+                  clipBehavior: Clip.none,
+                  children: [
+                    // 绕圈游走的那层「阴影」：连接后是薄荷色光晕，未连接是深色投影。
+                    // 用 Transform 平移一张已经模糊好的圆，比逐帧改 BoxShadow.offset
+                    // 重新计算模糊便宜得多。
+                    Transform.translate(
+                      offset: orbit,
                       child: Container(
-                        width: 180,
-                        height: 180,
+                        width: _discSize,
+                        height: _discSize,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.green.withValues(alpha: opacity * 0.5),
-                            width: 2,
-                          ),
+                          boxShadow: [
+                            if (isStart) ...[
+                              BoxShadow(
+                                color: const Color(0xFF9BEFC9)
+                                    .withValues(alpha: isDisabled ? 0.12 : 0.28),
+                                blurRadius: 16,
+                                spreadRadius: 4,
+                              ),
+                              BoxShadow(
+                                color: const Color(0xFF9BEFC9)
+                                    .withValues(alpha: isDisabled ? 0.16 : 0.48),
+                                blurRadius: 34,
+                                spreadRadius: 18,
+                              ),
+                            ] else ...[
+                              BoxShadow(
+                                color: Colors.black
+                                    .withValues(alpha: isDisabled ? 0.22 : 0.45),
+                                blurRadius: 16,
+                                spreadRadius: 2,
+                              ),
+                              BoxShadow(
+                                color: Colors.black
+                                    .withValues(alpha: isDisabled ? 0.32 : 0.85),
+                                blurRadius: 40,
+                                spreadRadius: 10,
+                              ),
+                            ],
+                          ],
                         ),
                       ),
-                    );
-                  }),
+                    ),
+                    ScaleTransition(
+                      scale: _scaleAnimation,
+                      child: Opacity(
+                        opacity: isDisabled ? 0.6 : 1.0,
+                        child: _buildConnectDisc(
+                          isStart: isStart,
+                          isDisabled: isDisabled,
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
-          ScaleTransition(
-            scale: _scaleAnimation,
-            child: Opacity(
-              opacity: isDisabled ? 0.5 : 1.0,
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: isDisabled
-                        ? [
-                            Colors.grey.shade400,
-                            Colors.grey.shade600,
-                          ]
-                        : isStart
-                            ? [
-                                Colors.green.shade400,
-                                Colors.green.shade600,
-                              ]
-                            : [
-                                const Color(0xFF4A5568), // 更亮的灰蓝色
-                                const Color(0xFF2D3748), // 中等灰蓝色
-                              ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        Text(
+          label,
+          style: TextStyle(
+            color: isDisabled
+                ? Colors.white.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.92),
+            fontSize: 15.5,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.2,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectDisc({
+    required bool isStart,
+    required bool isDisabled,
+  }) {
+    return Container(
+      width: _discSize,
+      height: _discSize,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: isDisabled
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF9AA1AC), Color(0xFF6B7280)],
+              )
+            : isStart
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF26262A), Color(0xFF040405)],
+                  )
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFFFFFFF), Color(0xFFECEFF4)],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: isDisabled
-                          ? Colors.black.withValues(alpha: 0.2)
-                          : isStart 
-                              ? Colors.green.withValues(alpha: 0.5)
-                              : Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 40,
-                      spreadRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      isDisabled ? Icons.block : Icons.power_settings_new,
-                      size: 80,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      isRefreshing
-                          ? '刷新中...'
-                          : isNodeLoading
-                              ? '加载中...'
-                              : isDisabled 
-                                  ? (isExpired ? '账号已过期' : '流量已耗尽')
-                                  : (isStart ? '已连接' : '未连接'),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+        border: Border.all(
+          color: isStart
+              ? Colors.white.withValues(alpha: 0.07)
+              : isDisabled
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.black.withValues(alpha: 0.55),
+          width: 1,
+        ),
+      ),
+      child: Center(
+        child: isDisabled
+            ? Icon(
+                Icons.block,
+                size: 72,
+                color: Colors.white.withValues(alpha: 0.85),
+              )
+            : isStart
+                ? _buildBoltIcon()
+                : const Icon(
+                    Icons.power_settings_new_rounded,
+                    size: 76,
+                    color: Color(0xFF141416),
+                  ),
+      ),
+    );
+  }
+
+  /// 连接后的闪电：用 Text 承载 Material 图标字形，才能叠加两层发光阴影
+  Widget _buildBoltIcon() {
+    final icon = Icons.bolt_rounded;
+    return Text(
+      String.fromCharCode(icon.codePoint),
+      style: TextStyle(
+        fontFamily: icon.fontFamily,
+        package: icon.fontPackage,
+        fontSize: 86,
+        height: 1,
+        color: const Color(0xFFFFE33C),
+        shadows: [
+          Shadow(
+            color: const Color(0xFFFFD400).withValues(alpha: 0.9),
+            blurRadius: 26,
+          ),
+          Shadow(
+            color: const Color(0xFFFFF3A0).withValues(alpha: 0.55),
+            blurRadius: 8,
           ),
         ],
+        decoration: TextDecoration.none,
       ),
     );
   }
