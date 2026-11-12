@@ -18,15 +18,14 @@ Offset connectOrbitOffset(double t) {
   return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
 }
 
-/// 连接后的光晕：手绘感的不规则圆环。
+/// 连接后的光晕：圆盘背后那圈青绿色带子。
 ///
-/// 参考效果里它不是一圈均匀的模糊发光，而像用马克笔绕着圆盘画了一圈：
-/// 边界有轻微起伏、整体偏离圆心、内侧是暗青绿色带、外沿是一条薄荷色描边。
-/// 这里用一条「半径带谐波扰动」的闭合路径来画，并让它顺时针缓慢转动。
+/// 实机效果里它不是一条均匀描边，而是一圈有体积的带子：
+/// 内侧压暗、外侧提亮到薄荷色，整体偏离圆心缓慢绕行，
+/// 再叠上圆盘自己投下的阴影，才有「环在后面、盘浮在上面」的层次。
 class ConnectHaloPainter extends CustomPainter {
   final double progress;
   final double opacity;
-
   final double discSize;
 
   const ConnectHaloPainter({
@@ -35,8 +34,9 @@ class ConnectHaloPainter extends CustomPainter {
     this.discSize = kConnectDiscSize,
   });
 
-  static const Color _band = Color(0xFF1B7A61);
-  static const Color _edge = Color(0xFF7FE3C6);
+  static const Color _inner = Color(0xFF0B3F33);
+  static const Color _mid = Color(0xFF1E7F66);
+  static const Color _edge = Color(0xFF79E0BF);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -44,29 +44,37 @@ class ConnectHaloPainter extends CustomPainter {
     final angle = theta +
         0.55 * math.sin(theta * 2.0) +
         0.30 * math.sin(theta * 3.3 + 1.1);
-    // 偏移要明显大于环与圆盘的半径差，才会露出参考图里那种偏心的月牙带
+    // 环只比圆盘大一点点，再整体偏移，露出来的才是月牙状的一条带
     final orbitRadius =
-        21 + 6 * math.sin(theta * 1.6 + 0.4) + 4 * math.sin(theta * 2.7 + 2.0);
+        7 + 4 * math.sin(theta * 1.6 + 0.4) + 2.5 * math.sin(theta * 2.7 + 2.0);
     final center = size.center(Offset.zero) +
         Offset(math.cos(angle) * orbitRadius, math.sin(angle) * orbitRadius);
-    final baseRadius = discSize * 0.5 + 9;
+    final baseRadius = discSize * 0.5 + 6;
 
     final path = _blobPath(center, baseRadius, theta * 0.55);
+    final rect = Rect.fromCircle(center: center, radius: baseRadius);
 
-    // 实心青绿环带：叠在页面底色上偏暗，但不像发光那样发虚
+    // 带子的体积感：由内到外 深青 -> 青 -> 薄荷
     canvas.drawPath(
       path,
       Paint()
-        ..color = _band.withValues(alpha: 0.92 * opacity)
-        ..style = PaintingStyle.fill,
+        ..shader = RadialGradient(
+          colors: [
+            _inner.withValues(alpha: opacity),
+            _mid.withValues(alpha: opacity),
+            _edge.withValues(alpha: opacity),
+          ],
+          stops: const [0.86, 0.955, 1.0],
+        ).createShader(rect),
     );
-    // 外沿薄荷色细描边
+
+    // 外沿再压一条极细的高光，边界更利落
     canvas.drawPath(
       path,
       Paint()
-        ..color = _edge.withValues(alpha: 0.75 * opacity)
+        ..color = const Color(0xFFA5F0D6).withValues(alpha: 0.55 * opacity)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.6
+        ..strokeWidth = 1.1
         ..strokeJoin = StrokeJoin.round,
     );
   }
@@ -78,9 +86,9 @@ class ConnectHaloPainter extends CustomPainter {
     for (var i = 0; i <= steps; i++) {
       final a = i / steps * 2 * math.pi;
       final wobble = 1 +
-          0.030 * math.sin(a * 3 + phase * 1.3) +
-          0.019 * math.sin(a * 5 - phase * 0.9) +
-          0.010 * math.sin(a * 8 + phase * 1.7);
+          0.022 * math.sin(a * 3 + phase * 1.3) +
+          0.014 * math.sin(a * 5 - phase * 0.9) +
+          0.008 * math.sin(a * 8 + phase * 1.7);
       final r = radius * wobble;
       final point = Offset(
         center.dx + math.cos(a) * r,
@@ -98,13 +106,15 @@ class ConnectHaloPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(ConnectHaloPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.opacity != opacity;
+    return oldDelegate.progress != progress ||
+        oldDelegate.opacity != opacity ||
+        oldDelegate.discSize != discSize;
   }
 }
 
 /// 手绘感闪电：粗笔触多边形 + 米白描边 + 外发光。
 ///
-/// 直接用品字形图标会太「标准」，参考里的闪电边缘是手画的、有粗细变化，
+/// 直接用品字形图标会太「标准」，实机里闪电边缘是手画的、有粗细变化，
 /// 所以这里自己描一条闭合路径，顶点连线用二次贝塞尔轻微外鼓模拟笔触。
 class HandDrawnBoltPainter extends CustomPainter {
   final Color color;
@@ -132,14 +142,14 @@ class HandDrawnBoltPainter extends CustomPainter {
     canvas.drawPath(
       path,
       Paint()
-        ..color = color.withValues(alpha: 0.50)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.13),
+        ..color = color.withValues(alpha: 0.55)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.16),
     );
     canvas.drawPath(
       path,
       Paint()
-        ..color = color.withValues(alpha: 0.40)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.05),
+        ..color = color.withValues(alpha: 0.45)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.06),
     );
     // 主体
     canvas.drawPath(
@@ -155,7 +165,7 @@ class HandDrawnBoltPainter extends CustomPainter {
       Paint()
         ..color = outline
         ..style = PaintingStyle.stroke
-        ..strokeWidth = size.width * 0.030
+        ..strokeWidth = size.width * 0.032
         ..strokeJoin = StrokeJoin.round,
     );
   }
@@ -195,6 +205,9 @@ class HandDrawnBoltPainter extends CustomPainter {
 }
 
 /// 连接后的黑色圆盘 + 手绘闪电
+///
+/// 圆盘自身带一层向下的投影，会压在背后的青绿环带上，
+/// 这样「环在下面、盘浮在上面」的层次才出来。
 class ConnectActiveDisc extends StatelessWidget {
   final double size;
 
@@ -205,20 +218,33 @@ class ConnectActiveDisc extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: RadialGradient(
-          center: Alignment(-0.2, -0.25),
-          radius: 0.9,
-          colors: [Color(0xFF141210), Color(0xFF070605)],
+        gradient: const RadialGradient(
+          center: Alignment(-0.25, -0.3),
+          radius: 0.95,
+          colors: [Color(0xFF1A1714), Color(0xFF0A0908), Color(0xFF050505)],
+          stops: [0.0, 0.62, 1.0],
         ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.05),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.55),
+            offset: const Offset(0, 7),
+            blurRadius: 16,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Center(
         child: Transform.rotate(
           angle: 0.10,
           child: RepaintBoundary(
             child: CustomPaint(
-              size: Size(size * 0.56, size * 0.74),
+              size: Size(size * 0.57, size * 0.59),
               painter: const HandDrawnBoltPainter(),
             ),
           ),
