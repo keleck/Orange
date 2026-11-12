@@ -24,39 +24,9 @@ class LanguageSelector extends ConsumerWidget {
 
     return PopupMenuButton<String>(
       offset: const Offset(0, 40),
+      padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-      ),
-      icon: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: const Color(0xFFE6F2FF),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              currentLanguage['flag']!,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              currentLanguage['name']!,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF409EFF),
-              ),
-            ),
-            const SizedBox(width: 4),
-            const Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: Color(0xFF409EFF),
-              size: 18,
-            ),
-          ],
-        ),
       ),
       tooltip: '切换语言 / Switch Language',
       onSelected: (String languageCode) {
@@ -100,6 +70,39 @@ class LanguageSelector extends ConsumerWidget {
           },
         ).toList();
       },
+      // 用 child 而不是 icon：icon 会被塞进 IconButton（48x48 最小尺寸 + 内边距），
+      // 胶囊会显得偏大偏空
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF2F7FC),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              currentLanguage['flag']!,
+              style: const TextStyle(fontSize: 15),
+            ),
+            const SizedBox(width: 7),
+            Text(
+              currentLanguage['name']!,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF3B8EF0),
+              ),
+            ),
+            const SizedBox(width: 2),
+            const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: Color(0xFF3B8EF0),
+              size: 18,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
