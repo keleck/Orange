@@ -231,7 +231,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
           Column(
             children: [
               // 整体下移，增加顶部间距（安卓减少间距）
-              SizedBox(height: isDesktop ? 220 : 170),
+              SizedBox(height: isDesktop ? 190 : 140),
               Expanded(
                 child: Center(
                   child: Column(
@@ -239,7 +239,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                     children: [
                       // 主连接按钮
                       _buildCentralConnectButton(context, ref),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 6),
                       // 当前节点卡片
                       _buildCurrentNodeCard(context, ref),
                     ],
@@ -471,7 +471,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             },
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
         // 状态胶囊：圆点 + 文字
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
