@@ -193,14 +193,6 @@ class ConnectActiveDisc extends StatelessWidget {
           colors: [Color(0xFF1B1815), Color(0xFF0B0A09), Color(0xFF060606)],
           stops: [0.0, 0.6, 1.0],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            offset: const Offset(0, 6),
-            blurRadius: 16,
-            spreadRadius: 1,
-          ),
-        ],
       ),
       child: Center(
         child: Transform.rotate(
@@ -236,14 +228,6 @@ class ConnectIdleDisc extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            offset: const Offset(0, 6),
-            blurRadius: 16,
-            spreadRadius: 1,
-          ),
-        ],
       ),
       child: Padding(
         // 实机里那圈细白线是内缩的，不是贴着盘边
