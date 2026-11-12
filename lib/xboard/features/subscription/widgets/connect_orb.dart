@@ -19,11 +19,12 @@ Offset connectOrbitOffset(double t, {double phase = 0}) {
   return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
 }
 
-/// 圆盘背后的两层环。
+/// 圆盘背后叠着的三个半透明圆。
 ///
-/// 逐帧分解实机后确认是两圈：一圈深青绿宽带、一圈浅薄荷细弧，
-/// 两者相位差很大（约 2.2 弧度），所以经常一个在左下、另一个在左上，
-/// 甚至分处两侧 —— 这就是「一层一层」的层次感来源。
+/// 逐帧量实机得到：绿色从盘边一直铺到盘径 +25 左右，但覆盖率从 52% 平滑衰减到 5%，
+/// 说明它不是一条实边，而是几个半透明圆错相位叠出来的：
+/// 重叠多的地方浓、重叠少的地方淡，边缘自然渐隐，转动时就会呈现「圆角」般的柔和过渡。
+/// 每层的透明度还随角度轻微呼吸，进一步打散硬边。
 class ConnectRingPainter extends CustomPainter {
   final double progress;
   final bool active;
@@ -37,30 +38,36 @@ class ConnectRingPainter extends CustomPainter {
     this.discSize = kConnectDiscSize,
   });
 
-  static const Color _mint = Color(0xFF6FD3B4);
-  static const Color _teal = Color(0xFF17594C);
-  static const Color _greyLight = Color(0xFF454E58);
-  static const Color _greyDark = Color(0xFF262C34);
+  static const Color _mint = Color(0xFF7FE3C6);
+  static const Color _teal = Color(0xFF1E7F66);
+  static const Color _deep = Color(0xFF0E4B3E);
+  static const Color _greyLight = Color(0xFF4A535E);
+  static const Color _greyMid = Color(0xFF3A424C);
+  static const Color _greyDeep = Color(0xFF262C34);
+
+  // 三层：半径增量 / 相位 / 基础透明度
+  static const List<double> _radiusStep = [3, 8, 14];
+  static const List<double> _phase = [0.0, 2.1, 4.2];
+  static const List<double> _baseAlpha = [0.55, 0.45, 0.38];
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
+    final colors = active
+        ? const [_mint, _teal, _deep]
+        : const [_greyLight, _greyMid, _greyDeep];
+    final theta = progress * 2 * math.pi;
 
-    // 外层：深青绿宽带，偏移更大
-    canvas.drawCircle(
-      center + connectOrbitOffset(progress, phase: 2.2),
-      discSize * 0.5 + 9,
-      Paint()
-        ..color = (active ? _teal : _greyDark).withValues(alpha: opacity),
-    );
-
-    // 内层：薄荷细弧，相位错开，露在另一侧
-    canvas.drawCircle(
-      center + connectOrbitOffset(progress),
-      discSize * 0.5 + 4,
-      Paint()
-        ..color = (active ? _mint : _greyLight).withValues(alpha: opacity),
-    );
+    for (var i = 0; i < 3; i++) {
+      // 透明度随转动轻微呼吸，让叠加处一直在变，边缘不会出现固定硬边
+      final breathe = 1 + 0.18 * math.sin(theta * 2 + _phase[i]);
+      final alpha = (_baseAlpha[i] * breathe).clamp(0.18, 0.85) * opacity;
+      canvas.drawCircle(
+        center + connectOrbitOffset(progress, phase: _phase[i]),
+        discSize * 0.5 + _radiusStep[i],
+        Paint()..color = colors[i].withValues(alpha: alpha),
+      );
+    }
   }
 
   @override
