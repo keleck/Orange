@@ -429,48 +429,21 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             child: AnimatedBuilder(
               animation: _pulseController,
               builder: (context, _) {
-                final orbit = connectOrbitOffset(_pulseController.value);
                 return Stack(
                   alignment: Alignment.center,
                   clipBehavior: Clip.none,
                   children: [
-                    // 连接后：手绘感的不规则圆环，顺时针游走
-                    if (isStart)
-                      CustomPaint(
-                        size: const Size(_discSize + 80, _discSize + 80),
-                        painter: ConnectHaloPainter(
-                          progress: _pulseController.value,
-                          opacity: isDisabled ? 0.4 : 1,
-                          discSize: _discSize,
-                        ),
-                      )
-                    else
-                      // 未连接：深色投影绕圈游走。用 Transform 平移一张已经模糊好的圆，
-                      // 比逐帧改 BoxShadow.offset 重新计算模糊便宜得多。
-                      Transform.translate(
-                        offset: orbit,
-                        child: Container(
-                          width: _discSize,
-                          height: _discSize,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black
-                                    .withValues(alpha: isDisabled ? 0.22 : 0.45),
-                                blurRadius: 16,
-                                spreadRadius: 2,
-                              ),
-                              BoxShadow(
-                                color: Colors.black
-                                    .withValues(alpha: isDisabled ? 0.32 : 0.85),
-                                blurRadius: 40,
-                                spreadRadius: 10,
-                              ),
-                            ],
-                          ),
-                        ),
+                    // 圆盘背后两层环：连接后浅薄荷 + 深青绿，未连接换成灰色，
+                    // 都顺时针无限循环游走
+                    CustomPaint(
+                      size: const Size(_discSize + 80, _discSize + 80),
+                      painter: ConnectRingPainter(
+                        progress: _pulseController.value,
+                        active: isStart && !isDisabled,
+                        opacity: isDisabled ? 0.45 : 1,
+                        discSize: _discSize,
                       ),
+                    ),
                     ScaleTransition(
                       scale: _scaleAnimation,
                       child: Opacity(
@@ -508,46 +481,27 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     required bool isStart,
     required bool isDisabled,
   }) {
-    if (isStart && !isDisabled) {
+    if (isDisabled) {
+      return Container(
+        width: _discSize,
+        height: _discSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color(0xFF3A4048),
+        ),
+        child: Center(
+          child: Icon(
+            Icons.block,
+            size: _discSize * 0.4,
+            color: Colors.white.withValues(alpha: 0.6),
+          ),
+        ),
+      );
+    }
+    if (isStart) {
       return const ConnectActiveDisc(size: _discSize);
     }
-    return Container(
-      width: _discSize,
-      height: _discSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: isDisabled
-            ? const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF9AA1AC), Color(0xFF6B7280)],
-              )
-            : const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFFFFFFFF), Color(0xFFECEFF4)],
-              ),
-        border: Border.all(
-          color: isDisabled
-              ? Colors.white.withValues(alpha: 0.12)
-              : Colors.black.withValues(alpha: 0.55),
-          width: 1,
-        ),
-      ),
-      child: Center(
-        child: isDisabled
-            ? Icon(
-                Icons.block,
-                size: 72,
-                color: Colors.white.withValues(alpha: 0.85),
-              )
-            : const Icon(
-                Icons.power_settings_new_rounded,
-                size: 76,
-                color: Color(0xFF141416),
-              ),
-      ),
-    );
+    return const ConnectIdleDisc(size: _discSize);
   }
 
   // 当前节点卡片

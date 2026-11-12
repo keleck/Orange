@@ -5,117 +5,83 @@ import 'package:flutter/material.dart';
 /// 连接按钮的圆盘直径
 const double kConnectDiscSize = 180;
 
-/// 顺时针但不规则的绕圈位移：
-/// 基础角速度 theta 上叠加两条不同频率的正弦，让角速度时快时慢；
-/// 半径也做周期伸缩，避免看起来像机械匀速转圈。
-Offset connectOrbitOffset(double t) {
+/// 顺时针但不规则的绕圈位移。
+///
+/// 频率全部取整数倍：theta 走满 2π 时正好回到起点，
+/// 循环播放不会有接缝跳变（非整数倍会在每圈末尾突然跳一下）。
+Offset connectOrbitOffset(double t, {double phase = 0}) {
   final theta = t * 2 * math.pi;
   final angle = theta +
-      0.55 * math.sin(theta * 2.0) +
-      0.30 * math.sin(theta * 3.3 + 1.1);
+      0.55 * math.sin(theta * 2 + phase) +
+      0.30 * math.sin(theta * 3 + phase);
   final radius =
-      17 + 8 * math.sin(theta * 1.6 + 0.4) + 5 * math.sin(theta * 2.7 + 2.0);
+      9 + 4 * math.sin(theta * 2 + phase) + 3 * math.sin(theta * 3 + phase);
   return Offset(math.cos(angle) * radius, math.sin(angle) * radius);
 }
 
-/// 连接后的光晕：圆盘背后那圈青绿色带子。
+/// 圆盘背后那两层环。
 ///
-/// 实机效果里它不是一条均匀描边，而是一圈有体积的带子：
-/// 内侧压暗、外侧提亮到薄荷色，整体偏离圆心缓慢绕行，
-/// 再叠上圆盘自己投下的阴影，才有「环在后面、盘浮在上面」的层次。
-class ConnectHaloPainter extends CustomPainter {
+/// 实机放大图里是两圈：外圈浅薄荷、内圈深青绿，两者圆心有偏移，
+/// 所以在同一侧露出两道月牙；圆盘压在上面并投下阴影，层次就是这么来的。
+/// 未连接时同样的结构换成灰色。
+class ConnectRingPainter extends CustomPainter {
   final double progress;
+  final bool active;
   final double opacity;
   final double discSize;
 
-  const ConnectHaloPainter({
+  const ConnectRingPainter({
     required this.progress,
+    required this.active,
     this.opacity = 1,
     this.discSize = kConnectDiscSize,
   });
 
-  static const Color _inner = Color(0xFF0B3F33);
-  static const Color _mid = Color(0xFF1E7F66);
-  static const Color _edge = Color(0xFF79E0BF);
+  // 连接后
+  static const Color _outerActive = Color(0xFF5CC3A4);
+  static const Color _innerActive = Color(0xFF17594C);
+  // 未连接
+  static const Color _outerIdle = Color(0xFF343B44);
+  static const Color _innerIdle = Color(0xFF262C34);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final theta = progress * 2 * math.pi;
-    final angle = theta +
-        0.55 * math.sin(theta * 2.0) +
-        0.30 * math.sin(theta * 3.3 + 1.1);
-    // 环只比圆盘大一点点，再整体偏移，露出来的才是月牙状的一条带
-    final orbitRadius =
-        7 + 4 * math.sin(theta * 1.6 + 0.4) + 2.5 * math.sin(theta * 2.7 + 2.0);
-    final center = size.center(Offset.zero) +
-        Offset(math.cos(angle) * orbitRadius, math.sin(angle) * orbitRadius);
-    final baseRadius = discSize * 0.5 + 6;
+    final center = size.center(Offset.zero);
+    final t = progress;
 
-    final path = _blobPath(center, baseRadius, theta * 0.55);
-    final rect = Rect.fromCircle(center: center, radius: baseRadius);
-
-    // 带子的体积感：由内到外 深青 -> 青 -> 薄荷
-    canvas.drawPath(
-      path,
+    // 外圈：偏得更多一点，露出更宽的一道
+    final outerCenter = center + connectOrbitOffset(t, phase: 0);
+    final outerRadius = discSize * 0.5 + 14;
+    canvas.drawCircle(
+      outerCenter,
+      outerRadius,
       Paint()
-        ..shader = RadialGradient(
-          colors: [
-            _inner.withValues(alpha: opacity),
-            _mid.withValues(alpha: opacity),
-            _edge.withValues(alpha: opacity),
-          ],
-          stops: const [0.86, 0.955, 1.0],
-        ).createShader(rect),
+        ..color = (active ? _outerActive : _outerIdle)
+            .withValues(alpha: (active ? 0.42 : 0.85) * opacity),
     );
 
-    // 外沿再压一条极细的高光，边界更利落
-    canvas.drawPath(
-      path,
+    // 内圈：偏移相位错开，两道月牙不会完全重合
+    final innerCenter = center + connectOrbitOffset(t, phase: 2.1);
+    final innerRadius = discSize * 0.5 + 6;
+    canvas.drawCircle(
+      innerCenter,
+      innerRadius,
       Paint()
-        ..color = const Color(0xFFA5F0D6).withValues(alpha: 0.55 * opacity)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.1
-        ..strokeJoin = StrokeJoin.round,
+        ..color = (active ? _innerActive : _innerIdle)
+            .withValues(alpha: (active ? 0.95 : 0.95) * opacity),
     );
-  }
-
-  /// 半径做三组不同频率的谐波扰动，形成「手画歪了一点」的闭合轮廓
-  Path _blobPath(Offset center, double radius, double phase) {
-    final path = Path();
-    const steps = 200;
-    for (var i = 0; i <= steps; i++) {
-      final a = i / steps * 2 * math.pi;
-      final wobble = 1 +
-          0.022 * math.sin(a * 3 + phase * 1.3) +
-          0.014 * math.sin(a * 5 - phase * 0.9) +
-          0.008 * math.sin(a * 8 + phase * 1.7);
-      final r = radius * wobble;
-      final point = Offset(
-        center.dx + math.cos(a) * r,
-        center.dy + math.sin(a) * r,
-      );
-      if (i == 0) {
-        path.moveTo(point.dx, point.dy);
-      } else {
-        path.lineTo(point.dx, point.dy);
-      }
-    }
-    path.close();
-    return path;
   }
 
   @override
-  bool shouldRepaint(ConnectHaloPainter oldDelegate) {
+  bool shouldRepaint(ConnectRingPainter oldDelegate) {
     return oldDelegate.progress != progress ||
+        oldDelegate.active != active ||
         oldDelegate.opacity != opacity ||
         oldDelegate.discSize != discSize;
   }
 }
 
 /// 手绘感闪电：粗笔触多边形 + 米白描边 + 外发光。
-///
-/// 直接用品字形图标会太「标准」，实机里闪电边缘是手画的、有粗细变化，
-/// 所以这里自己描一条闭合路径，顶点连线用二次贝塞尔轻微外鼓模拟笔触。
 class HandDrawnBoltPainter extends CustomPainter {
   final Color color;
   final Color outline;
@@ -138,18 +104,18 @@ class HandDrawnBoltPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final path = _buildPath(size);
 
-    // 两层外发光：大范围柔光 + 紧贴笔画的一层亮边
+    // 外发光
     canvas.drawPath(
       path,
       Paint()
         ..color = color.withValues(alpha: 0.55)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.16),
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.14),
     );
     canvas.drawPath(
       path,
       Paint()
         ..color = color.withValues(alpha: 0.45)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.06),
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.width * 0.05),
     );
     // 主体
     canvas.drawPath(
@@ -165,7 +131,7 @@ class HandDrawnBoltPainter extends CustomPainter {
       Paint()
         ..color = outline
         ..style = PaintingStyle.stroke
-        ..strokeWidth = size.width * 0.032
+        ..strokeWidth = size.width * 0.028
         ..strokeJoin = StrokeJoin.round,
     );
   }
@@ -206,8 +172,7 @@ class HandDrawnBoltPainter extends CustomPainter {
 
 /// 连接后的黑色圆盘 + 手绘闪电
 ///
-/// 圆盘自身带一层向下的投影，会压在背后的青绿环带上，
-/// 这样「环在下面、盘浮在上面」的层次才出来。
+/// 盘自身带一层向下投影，压在背后的绿环上，形成「盘浮在环上」的层次。
 class ConnectActiveDisc extends StatelessWidget {
   final double size;
 
@@ -223,17 +188,13 @@ class ConnectActiveDisc extends StatelessWidget {
         gradient: const RadialGradient(
           center: Alignment(-0.25, -0.3),
           radius: 0.95,
-          colors: [Color(0xFF1A1714), Color(0xFF0A0908), Color(0xFF050505)],
-          stops: [0.0, 0.62, 1.0],
-        ),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.05),
-          width: 1,
+          colors: [Color(0xFF1B1815), Color(0xFF0B0A09), Color(0xFF060606)],
+          stops: [0.0, 0.6, 1.0],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.55),
-            offset: const Offset(0, 7),
+            color: Colors.black.withValues(alpha: 0.5),
+            offset: const Offset(0, 6),
             blurRadius: 16,
             spreadRadius: 1,
           ),
@@ -244,8 +205,60 @@ class ConnectActiveDisc extends StatelessWidget {
           angle: 0.10,
           child: RepaintBoundary(
             child: CustomPaint(
-              size: Size(size * 0.57, size * 0.59),
+              size: Size(size * 0.68, size * 0.74),
               painter: const HandDrawnBoltPainter(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 未连接的圆盘：深灰蓝实色 + 内缩一圈细白线
+class ConnectIdleDisc extends StatelessWidget {
+  final double size;
+  final Color color;
+
+  const ConnectIdleDisc({
+    super.key,
+    this.size = kConnectDiscSize,
+    this.color = const Color(0xFF1D2229),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.5),
+            offset: const Offset(0, 6),
+            blurRadius: 16,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Padding(
+        // 实机里那圈细白线是内缩的，不是贴着盘边
+        padding: EdgeInsets.all(size * 0.045),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.85),
+              width: 1.4,
+            ),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.power_settings_new_rounded,
+              size: size * 0.42,
+              color: Colors.white.withValues(alpha: 0.95),
             ),
           ),
         ),
