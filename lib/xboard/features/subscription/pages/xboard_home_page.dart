@@ -408,7 +408,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             ? '加载中...'
             : isDisabled
                 ? (isExpired ? '账号已过期' : '流量已耗尽')
-                : (isStart ? '闪电加速中' : '未连接');
+                : (isStart ? '已连接' : '未连接');
 
     return Column(
       mainAxisSize: MainAxisSize.min,
