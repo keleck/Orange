@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:fl_clash/xboard/features/shared/widgets/app_icon_tile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
@@ -697,6 +698,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget _buildIPv6Section(BuildContext context) {
     return SettingsCard(
       icon: Icons.lan_outlined,
+      accentColor: AppIconColors.teal,
       title: 'IPv6 支持',
       subtitle: '开启后将可以接收 IPv6 流量',
       trailing: _ipv6Loading
@@ -712,6 +714,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget _buildLanProxySection(BuildContext context) {
     return SettingsCard(
       icon: Icons.wifi_tethering_rounded,
+      accentColor: AppIconColors.blue,
       title: '局域网代理',
       subtitle: '允许局域网内的设备通过本机代理上网',
       trailing: _lanProxyLoading
@@ -731,6 +734,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
     return SettingsCard(
       icon: Icons.cloud_sync_outlined,
+      accentColor: AppIconColors.blue,
       title: '通过代理更新订阅',
       subtitle: '使用上次连接的节点拉取订阅更新',
       trailing: Switch(
@@ -761,6 +765,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 : '尚未下载';
         return SettingsCard(
           icon: Icons.public_rounded,
+          accentColor: AppIconColors.blue,
           title: '地理数据库',
           subtitle: '用于 IP 地理位置识别，影响分流规则的准确性',
           child: Column(
@@ -787,6 +792,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
     return SettingsCard(
       icon: Icons.rule_folder_outlined,
+      accentColor: AppIconColors.purple,
       title: '自定义分流规则',
       subtitle: count > 0 ? '已配置 $count 条规则' : '添加远程规则或手动配置',
       trailing: Icon(
@@ -806,6 +812,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget _buildAccessControlEntry(BuildContext context) {
     return SettingsCard(
       icon: Icons.apps_rounded,
+      accentColor: AppIconColors.purple,
       title: '应用访问控制',
       subtitle: '选择哪些应用走代理、哪些直连',
       trailing: Icon(

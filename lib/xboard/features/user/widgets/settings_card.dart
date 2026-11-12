@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_clash/xboard/features/shared/widgets/app_icon_tile.dart';
 
 /// 设置类页面的统一卡片样式：
 /// 深色半透明底 + 细描边 + 左侧圆角图标块，标题/副标题上下排布。
@@ -27,9 +28,6 @@ class SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    final accent = accentColor ?? primary;
-
     final content = Container(
       padding: EdgeInsets.all(dense ? 14 : 16),
       decoration: BoxDecoration(
@@ -45,21 +43,10 @@ class SettingsCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: dense ? 38 : 44,
-                height: dense ? 38 : 44,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: accent.withValues(alpha: 0.16),
-                  ),
-                ),
-                child: Icon(
-                  icon,
-                  size: dense ? 18 : 21,
-                  color: accent,
-                ),
+              AppIconTile(
+                icon: icon,
+                color: accentColor ?? AppIconColors.blue,
+                size: dense ? 38 : 44,
               ),
               const SizedBox(width: 13),
               Expanded(

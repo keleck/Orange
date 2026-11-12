@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/xboard/features/shared/widgets/app_icon_tile.dart';
 
 class UserCenterPage extends ConsumerStatefulWidget {
   const UserCenterPage({super.key});
@@ -68,6 +69,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       title: '邀请好友',
                       subtitle: '邀请好友获得佣金',
                       tone: _TileTone.neutral,
+                      color: AppIconColors.purple,
                       onTap: () => context.push('/user/invite'),
                     ),
                     _ActionTile(
@@ -75,6 +77,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       title: '订单记录',
                       subtitle: '查看历史订单',
                       tone: _TileTone.neutral,
+                      color: AppIconColors.blue,
                       onTap: () => context.push('/user/orders'),
                     ),
                     _ActionTile(
@@ -82,6 +85,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       title: '流量明细',
                       subtitle: '查看每日流量使用',
                       tone: _TileTone.neutral,
+                      color: AppIconColors.teal,
                       onTap: () => context.push('/user/traffic-log'),
                     ),
                     if (XBoardConfig.showWallet)
@@ -90,6 +94,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                         title: '我的钱包',
                         subtitle: '余额与充值管理',
                         tone: _TileTone.neutral,
+                        color: AppIconColors.blue,
                         onTap: () => context.push('/user/wallet'),
                       ),
                     _ActionTile(
@@ -97,6 +102,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       title: '我的工单',
                       subtitle: '工单、官网、高阶功能等',
                       tone: _TileTone.neutral,
+                      color: AppIconColors.green,
                       onTap: () => context.push('/user/tickets'),
                     ),
                     _ActionTile(
@@ -104,6 +110,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       title: '在线客服',
                       subtitle: '即时咨询与帮助',
                       tone: _TileTone.neutral,
+                      color: AppIconColors.purple,
                       onTap: () => context.push('/user/support'),
                     ),
                     if (_shouldShowTelegram())
@@ -112,6 +119,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                         title: 'Telegram 讨论组',
                         subtitle: '加入社区交流讨论',
                         tone: _TileTone.neutral,
+                        color: AppIconColors.blue,
                         onTap: () => _openTelegramLink(context),
                       ),
                   ],
@@ -1005,6 +1013,7 @@ class _ActionTile extends StatelessWidget {
   final VoidCallback onTap;
   final bool compact;
   final bool danger;
+  final Color color;
 
   const _ActionTile({
     required this.icon,
@@ -1014,6 +1023,7 @@ class _ActionTile extends StatelessWidget {
     this.subtitle,
     this.compact = false,
     this.danger = false,
+    this.color = AppIconColors.blue,
   });
 
   @override
@@ -1043,10 +1053,10 @@ class _ActionTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _CircleIcon(
+              AppIconTile(
                 icon: icon,
-                background: palette.iconBackground,
-                iconColor: palette.iconColor,
+                color: color,
+                size: 42,
               ),
               const SizedBox(width: 12),
               Expanded(
