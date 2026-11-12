@@ -388,10 +388,10 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: primary.withValues(alpha: 0.16),
+                    color: Colors.white.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: primary.withValues(alpha: 0.35),
+                      color: Colors.white.withValues(alpha: 0.30),
                     ),
                   ),
                   child: Text(
@@ -399,7 +399,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600,
-                      color: primary,
+                      color: Colors.white,
                       decoration: TextDecoration.none,
                     ),
                   ),

@@ -298,10 +298,10 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   color: primary.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.person_rounded,
                   size: 22,
-                  color: primary,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(width: 12),
@@ -585,6 +585,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
           child: _SmallActionTile(
             icon: Icons.language,
             title: '官网',
+            iconColor: AppIconColors.blue,
             onTap: () async {
               if (websiteUrl == null || websiteUrl.isEmpty) {
                 XBoardNotification.showError('未配置官网地址');
@@ -605,6 +606,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
           child: _SmallActionTile(
             icon: Icons.system_update,
             title: '检查更新',
+            iconColor: AppIconColors.teal,
             badge: updateState.hasUpdate ? '新' : null,
             isLoading: updateState.isChecking,
             onTap: () async {
@@ -828,10 +830,10 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
               child: Row(
                 children: [
-                  _CircleIcon(
+                  const AppIconTile(
                     icon: Icons.card_giftcard,
-                    background: Colors.white.withOpacity(0.15),
-                    iconColor: Colors.white,
+                    color: AppIconColors.purple,
+                    size: 42,
                   ),
                   const SizedBox(width: 12),
                   Column(
@@ -930,6 +932,7 @@ class _SmallActionTile extends StatelessWidget {
   final String? badge;
   final bool isLoading;
   final VoidCallback onTap;
+  final Color iconColor;
 
   const _SmallActionTile({
     required this.icon,
@@ -937,6 +940,7 @@ class _SmallActionTile extends StatelessWidget {
     required this.onTap,
     this.badge,
     this.isLoading = false,
+    this.iconColor = AppIconColors.blue,
   });
 
   @override
@@ -969,7 +973,7 @@ class _SmallActionTile extends StatelessWidget {
                   ),
                 )
               else
-                Icon(icon, size: 20, color: Colors.white),
+                AppIconTile(icon: icon, color: iconColor, size: 30),
               const SizedBox(width: 8),
               Text(
                 title,

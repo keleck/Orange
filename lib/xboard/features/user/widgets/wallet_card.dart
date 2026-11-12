@@ -614,7 +614,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           )
                         : Switch.adaptive(
                             value: autoRenew,
-                            activeColor: Theme.of(context).colorScheme.primary,
+                            activeColor: Colors.white,
                             onChanged: (value) async {
                               setState(() {
                                 _isLoading = true;
