@@ -452,13 +452,22 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
   }
 
   Widget _buildLatencyWidget(Proxy proxy, String? testUrl) {
+    final url = testUrl ?? ref.read(appSettingProvider).testUrl;
     final delayState = ref.watch(getDelayProvider(
       proxyName: proxy.name,
-      testUrl: testUrl ?? ref.read(appSettingProvider).testUrl,
+      testUrl: url,
     ));
-    
-    return LatencyIndicator(
-      delayValue: delayState,
+
+    // 单击延迟徽标只测这一个节点，互不影响
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => delayTest([proxy], url),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        child: LatencyIndicator(
+          delayValue: delayState,
+        ),
+      ),
     );
   }
 
