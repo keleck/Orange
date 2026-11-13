@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 
 import 'package:fl_clash/xboard/features/latency/services/auto_latency_service.dart';
-import 'package:fl_clash/xboard/features/latency/widgets/node_quality_badge.dart';
+import 'package:fl_clash/xboard/features/latency/widgets/ip_quality_badge.dart';
 import 'package:fl_clash/xboard/features/subscription/services/subscription_status_checker.dart';
 import 'package:fl_clash/xboard/features/subscription/services/subscription_status_service.dart';
 import 'package:fl_clash/xboard/features/subscription/providers/xboard_subscription_provider.dart';
@@ -1262,9 +1262,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           const SizedBox(height: 7),
                                           Align(
                                             alignment: Alignment.centerLeft,
-                                            child: NodeQualityBadge(
+                                            child: IpQualityBadge(
                                               proxyName: displayName,
-                                              testUrl: currentGroup?.testUrl,
                                               enabled: isStart,
                                             ),
                                           ),

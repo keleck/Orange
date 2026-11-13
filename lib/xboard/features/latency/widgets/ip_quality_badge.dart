@@ -1,37 +1,32 @@
-import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../services/node_quality_service.dart';
+import '../services/ip_quality_service.dart';
 
-/// 节点质量标签
+/// 出口 IP 质量标签
 ///
-/// 连接成功后自动对当前节点做质量评估（延迟 / 抖动 / 丢包），
-/// 以胶囊标签的形式展示在节点名称下方，样式对齐上游「质量优」标签。
-class NodeQualityBadge extends ConsumerStatefulWidget {
-  const NodeQualityBadge({
+/// 连接成功后走当前节点请求出口 IP 画像，展示两个胶囊：
+/// 归属类型（住宅 / 商业 / 机房 …）与质量（质量优 / 良 / 一般 / 差）。
+class IpQualityBadge extends ConsumerStatefulWidget {
+  const IpQualityBadge({
     super.key,
     required this.proxyName,
-    this.testUrl,
     required this.enabled,
   });
 
   /// 当前展示的节点名（可能是组名，内部会解析到真实节点）
   final String proxyName;
 
-  /// 组自带的测速地址，为空时使用全局设置
-  final String? testUrl;
-
   /// 是否已连接，未连接不展示也不评估
   final bool enabled;
 
   @override
-  ConsumerState<NodeQualityBadge> createState() => _NodeQualityBadgeState();
+  ConsumerState<IpQualityBadge> createState() => _IpQualityBadgeState();
 }
 
-class _NodeQualityBadgeState extends ConsumerState<NodeQualityBadge> {
-  NodeQuality? _quality;
+class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
+  IpQuality? _quality;
   bool _evaluating = false;
   int _token = 0;
 
@@ -39,7 +34,6 @@ class _NodeQualityBadgeState extends ConsumerState<NodeQualityBadge> {
   void initState() {
     super.initState();
     if (widget.enabled) {
-      // 内核刚启动时立即测速容易失败，稍等一下再评估
       Future.delayed(const Duration(milliseconds: 700), () {
         if (mounted && widget.enabled) _evaluate();
       });
@@ -47,12 +41,11 @@ class _NodeQualityBadgeState extends ConsumerState<NodeQualityBadge> {
   }
 
   @override
-  void didUpdateWidget(covariant NodeQualityBadge oldWidget) {
+  void didUpdateWidget(covariant IpQualityBadge oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!widget.enabled) {
       if (_quality != null || _evaluating) {
         _token++;
-        // didUpdateWidget 之后必然重建，直接清状态即可
         _quality = null;
         _evaluating = false;
       }
@@ -61,7 +54,7 @@ class _NodeQualityBadgeState extends ConsumerState<NodeQualityBadge> {
     final nodeChanged = oldWidget.proxyName != widget.proxyName;
     final justConnected = !oldWidget.enabled && widget.enabled;
     if (justConnected) {
-      // 刚连上，等链路稳定后再评估
+      // 刚连上，等链路稳定后再查出口 IP
       Future.delayed(const Duration(milliseconds: 900), () {
         if (mounted && widget.enabled) _evaluate(force: true);
       });
@@ -83,21 +76,16 @@ class _NodeQualityBadgeState extends ConsumerState<NodeQualityBadge> {
       return;
     }
 
-    final cardState = ref.read(getProxyCardStateProvider(name));
-    final realName = cardState.proxyName;
+    final realName = ref.read(getProxyCardStateProvider(name)).proxyName;
     if (realName.isEmpty) return;
-
-    final url = cardState.testUrl.getSafeValue(
-      ref.read(getRealTestUrlProvider(widget.testUrl)),
-    );
 
     if (mounted) {
       setState(() => _evaluating = true);
     }
 
-    final result = await nodeQualityService
-        .evaluate(realName, url, force: force)
-        .catchError((_) => NodeQuality.unknown);
+    final result = await ipQualityService
+        .evaluate(realName, force: force)
+        .catchError((_) => IpQuality.unknown);
 
     if (!mounted || token != _token) return;
     setState(() {
@@ -115,9 +103,9 @@ class _NodeQualityBadgeState extends ConsumerState<NodeQualityBadge> {
       return const SizedBox.shrink();
     }
 
-    final level = quality?.level ?? NodeQualityLevel.unknown;
-    final (background, foreground) = _colors(level);
-    final text = quality?.label ?? '质量评估中';
+    final level = quality?.level ?? IpQualityLevel.unknown;
+    final usage = quality?.usage ?? IpUsageType.unknown;
+    final (background, foreground) = _levelColors(level);
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 260),
@@ -125,47 +113,72 @@ class _NodeQualityBadgeState extends ConsumerState<NodeQualityBadge> {
       switchOutCurve: Curves.easeInCubic,
       transitionBuilder: (child, animation) =>
           FadeTransition(opacity: animation, child: child),
-      child: Container(
-        key: ValueKey(text),
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: foreground,
-            fontSize: 10.5,
-            fontWeight: FontWeight.w600,
-            height: 1.15,
-            letterSpacing: 0.2,
-            decoration: TextDecoration.none,
+      child: Row(
+        key: ValueKey('${usage.name}-${level.name}'),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (usage != IpUsageType.unknown) ...[
+            _pill(
+              text: usage.label,
+              background: Colors.white.withValues(alpha: 0.10),
+              foreground: Colors.white.withValues(alpha: 0.75),
+            ),
+            const SizedBox(width: 6),
+          ],
+          _pill(
+            text: quality?.levelLabel ?? '质量评估中',
+            background: background,
+            foreground: foreground,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pill({
+    required String text,
+    required Color background,
+    required Color foreground,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: foreground,
+          fontSize: 10.5,
+          fontWeight: FontWeight.w600,
+          height: 1.15,
+          letterSpacing: 0.2,
+          decoration: TextDecoration.none,
         ),
       ),
     );
   }
 
-  (Color, Color) _colors(NodeQualityLevel level) {
+  (Color, Color) _levelColors(IpQualityLevel level) {
     return switch (level) {
-      NodeQualityLevel.excellent => (
+      IpQualityLevel.excellent => (
           const Color(0xFF3DDC97),
           const Color(0xFF04281A),
         ),
-      NodeQualityLevel.good => (
+      IpQualityLevel.good => (
           const Color(0xFF22C55E),
           const Color(0xFF04240F),
         ),
-      NodeQualityLevel.fair => (
+      IpQualityLevel.fair => (
           const Color(0xFFF0A93B),
           const Color(0xFF3A2400),
         ),
-      NodeQualityLevel.poor => (
+      IpQualityLevel.poor => (
           const Color(0xFFEF5350),
           const Color(0xFF3A0A0A),
         ),
-      NodeQualityLevel.unknown => (
+      IpQualityLevel.unknown => (
           Colors.white.withValues(alpha: 0.12),
           Colors.white.withValues(alpha: 0.62),
         ),
