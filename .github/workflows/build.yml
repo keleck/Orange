@@ -463,13 +463,17 @@ jobs:
 
       - name: Patch rpm spec paths
         run: |
-          # flutter_app_packager 的 rpm spec 用相对路径取文件，新版 rpmbuild
-          # 在 BUILD/<name>-<ver>-build 下执行 %install 会找不到，改成 %{_builddir}/...
+          # flutter_app_packager 的 rpm spec 用相对路径取文件，新版 rpmbuild 的
+          # %install 在 BUILD/<name>-<ver>-build 下执行会找不到，改成 %{_topdir}/BUILD/...
+          # 另外软链目标写的是 %{name}，而实际二进制名来自 linux/CMakeLists.txt 的 BINARY_NAME
           F=plugins/flutter_distributor/packages/flutter_app_packager/lib/src/makers/rpm/make_rpm_config.dart
-          sed -i "s|'cp -r %{name}/\* |'cp -r %{_builddir}/%{name}/* |" "$F"
-          sed -i "s|'cp -r %{name}.desktop |'cp -r %{_builddir}/%{name}.desktop |" "$F"
-          sed -i "s|'cp -r %{name}.png |'cp -r %{_builddir}/%{name}.png |" "$F"
-          grep -n "_builddir" "$F"
+          BIN=$(grep -m1 'set(BINARY_NAME' linux/CMakeLists.txt | sed 's/.*"\(.*\)".*/\1/')
+          echo "binary name: $BIN"
+          sed -i "s|'cp -r %{name}/\* |'cp -r %{_topdir}/BUILD/%{name}/* |" "$F"
+          sed -i "s|'cp -r %{name}.desktop |'cp -r %{_topdir}/BUILD/%{name}.desktop |" "$F"
+          sed -i "s|'cp -r %{name}.png |'cp -r %{_topdir}/BUILD/%{name}.png |" "$F"
+          sed -i "s|%{_datadir}/%{name}/%{name} |%{_datadir}/%{name}/$BIN |" "$F"
+          grep -n "_topdir\|ln -s" "$F"
 
       - name: Build AppImage / Deb / Rpm
         run: dart setup.dart linux --arch amd64
