@@ -479,46 +479,34 @@ class BuildCommand extends Command {
       .map((e) => e.arch!)
       .toList();
 
+  /// 依赖安装失败不中断构建：不同发行版包名不一致（如 libfuse2 / libfuse2t64），
+  /// 能装上最好，装不上就让后续打包步骤暴露真正的问题。
+  Future<void> _tryExec(String command, {String? name}) async {
+    try {
+      await Build.exec(Build.getExecutable(command), name: name);
+    } catch (e) {
+      print("skip: $command -> $e");
+    }
+  }
+
   _getLinuxDependencies(Arch arch) async {
-    await Build.exec(
-      Build.getExecutable("sudo apt update -y"),
-    );
-    await Build.exec(
-      Build.getExecutable("sudo apt install -y ninja-build libgtk-3-dev"),
-    );
-    await Build.exec(
-      Build.getExecutable("sudo apt install -y libayatana-appindicator3-dev"),
-    );
-    await Build.exec(
-      Build.getExecutable("sudo apt-get install -y libkeybinder-3.0-dev"),
-    );
-    await Build.exec(
-      Build.getExecutable("sudo apt install -y locate"),
-    );
+    await _tryExec("sudo apt update -y");
+    await _tryExec("sudo apt install -y ninja-build libgtk-3-dev");
+    await _tryExec("sudo apt install -y libayatana-appindicator3-dev");
+    await _tryExec("sudo apt-get install -y libkeybinder-3.0-dev");
+    await _tryExec("sudo apt install -y locate");
     if (arch == Arch.amd64) {
-      await Build.exec(
-        Build.getExecutable("sudo apt install -y rpm patchelf"),
-      );
-      await Build.exec(
-        Build.getExecutable("sudo apt install -y libfuse2"),
-      );
+      await _tryExec("sudo apt install -y rpm patchelf");
+      // Ubuntu 24.04 起包名改为 libfuse2t64，两个都试一次
+      await _tryExec("sudo apt install -y libfuse2");
+      await _tryExec("sudo apt install -y libfuse2t64");
 
       final downloadName = arch == Arch.amd64 ? "x86_64" : "aarch64";
-      await Build.exec(
-        Build.getExecutable(
-          "wget -O appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-$downloadName.AppImage",
-        ),
+      await _tryExec(
+        "wget -O appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-$downloadName.AppImage",
       );
-      await Build.exec(
-        Build.getExecutable(
-          "chmod +x appimagetool",
-        ),
-      );
-      await Build.exec(
-        Build.getExecutable(
-          "sudo mv appimagetool /usr/local/bin/",
-        ),
-      );
+      await _tryExec("chmod +x appimagetool");
+      await _tryExec("sudo mv appimagetool /usr/local/bin/");
     }
   }
 
