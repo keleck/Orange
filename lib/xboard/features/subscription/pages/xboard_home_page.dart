@@ -907,8 +907,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
           } : null,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 24),
-            // 顶部略收、底部多留一点，内容整体上移，质量标签不贴边
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
@@ -1138,21 +1137,18 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   // 固定正方形，避免多行内容把图标拉长变形
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 6),
-                                    child: Container(
-                                      width: 48,
-                                      height: 48,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.shade700,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: const Icon(
-                                        Icons.public,
-                                        color: Colors.white,
-                                        size: 24,
-                                      ),
+                                  Container(
+                                    width: 48,
+                                    height: 48,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.shade700,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(
+                                      Icons.public,
+                                      color: Colors.white,
+                                      size: 24,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
@@ -1266,16 +1262,21 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                               ),
                                           ],
                                         ),
-                                        if (isStart && displayName != '未选择') ...[
-                                          const SizedBox(height: 5),
-                                          Align(
+                                        // 固定高度的第三行：未连接也占位，
+                                        // 连接后只是把标签填进来，卡片高度不变、不会跳动
+                                        const SizedBox(height: 5),
+                                        SizedBox(
+                                          height: 18,
+                                          child: Align(
                                             alignment: Alignment.centerLeft,
-                                            child: IpQualityBadge(
-                                              proxyName: displayName,
-                                              enabled: isStart,
-                                            ),
+                                            child: isStart && displayName != '未选择'
+                                                ? IpQualityBadge(
+                                                    proxyName: displayName,
+                                                    enabled: isStart,
+                                                  )
+                                                : const SizedBox.shrink(),
                                           ),
-                                        ],
+                                        ),
                                       ],
                                     ),
                                   ),
