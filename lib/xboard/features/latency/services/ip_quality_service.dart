@@ -8,10 +8,10 @@ import 'package:fl_clash/xboard/core/core.dart';
 
 final _logger = FileLogger('ip_quality_service.dart');
 
-/// IP 质量等级
+/// IP 质量等级，与 FlClash 的三档一致：优 / 一般 / 差
 enum IpQualityLevel { unknown, poor, fair, good, excellent }
 
-/// IP 归属类型，对应上游「住宅 / 商业 / 机房 / 移动」标签
+/// IP 归属类型，对应「住宅 / 商业 / 机房 / 移动」标签
 enum IpUsageType {
   unknown('未知'),
   residential('住宅'),
@@ -33,8 +33,6 @@ class IpQuality {
     this.ip,
     this.asnOrg,
     this.asn,
-    this.risk,
-    this.isNative,
     this.isProxy = false,
     this.isVpn = false,
     this.isTor = false,
@@ -52,12 +50,6 @@ class IpQuality {
   final String? ip;
   final String? asnOrg;
   final int? asn;
-
-  /// ping0 风控值 0~100（越小越干净），没有则为空
-  final int? risk;
-
-  /// 是否原生 IP（false = 广播 IP）
-  final bool? isNative;
 
   final bool isProxy;
   final bool isVpn;
@@ -89,7 +81,7 @@ class IpQuality {
 
   @override
   String toString() => 'IpQuality(${level.name}, ${usage.name}, score=$score, '
-      'ip=$ip, risk=$risk, src=$source)';
+      'ip=$ip, src=$source)';
 }
 
 class _CacheEntry {
@@ -122,7 +114,7 @@ enum _Source {
   final String label;
 }
 
-/// 与上游一致的波次：配额最紧的源放最后，前一波没答上来才启动下一波
+/// 与 FlClash 一致的波次：配额最紧的源放最后，前一波没答上来才启动下一波
 const _waves = <List<_Source>>[
   [_Source.identMe, _Source.ipApiCom, _Source.ipQuery],
   [_Source.ipLocate],
@@ -294,9 +286,9 @@ _Answer? _answer(
   if (type == null) return null;
   return (
     quality: IpQuality(
-      level: _levelOfType(type, isProxy, isVpn, isTor, isAbuser),
+      level: _levelOf(type, isTor: isTor, isAbuser: isAbuser),
       usage: type,
-      score: _scoreOfType(type, isProxy, isVpn, isTor, isAbuser),
+      score: _scoreOf(type, isProxy, isVpn, isTor, isAbuser),
       ip: ip,
       asnOrg: organization,
       asn: asn,
@@ -358,66 +350,42 @@ int? _asn(Object? value) {
 
 // ---------------------------------------------------------------- 等级映射
 
-IpQualityLevel _levelOfType(
-  IpUsageType type,
-  bool isProxy,
-  bool isVpn,
-  bool isTor,
-  bool isAbuser,
-) {
+/// 与 FlClash 的 `IpQuality.level` 完全一致：
+/// Tor / 滥用 → 差；机房 → 一般；住宅 / 移动 / 商业 → 优
+IpQualityLevel _levelOf(
+  IpUsageType type, {
+  required bool isTor,
+  required bool isAbuser,
+}) {
   if (isTor || isAbuser) return IpQualityLevel.poor;
-  if (isProxy || isVpn) return IpQualityLevel.fair;
-  // 与上游标签一致：干净的机房 IP 同样算「质量优」
   return switch (type) {
-    IpUsageType.hosting ||
     IpUsageType.residential ||
-    IpUsageType.business ||
-    IpUsageType.mobile =>
+    IpUsageType.mobile ||
+    IpUsageType.business =>
       IpQualityLevel.excellent,
+    IpUsageType.hosting => IpQualityLevel.fair,
     IpUsageType.unknown => IpQualityLevel.unknown,
   };
 }
 
-int _scoreOfType(
+int _scoreOf(
   IpUsageType type,
   bool isProxy,
   bool isVpn,
   bool isTor,
   bool isAbuser,
 ) {
-  var score = 100;
-  if (isAbuser) score -= 45;
-  if (isTor) score -= 45;
-  if (isProxy) score -= 40;
-  if (isVpn) score -= 30;
-  if (type == IpUsageType.hosting) score -= 10;
-  return score.clamp(0, 100);
-}
-
-IpQualityLevel _levelOfRisk(int? risk) {
-  if (risk == null) return IpQualityLevel.unknown;
-  if (risk < 25) return IpQualityLevel.excellent;
-  if (risk < 40) return IpQualityLevel.good;
-  if (risk < 50) return IpQualityLevel.fair;
-  return IpQualityLevel.poor;
-}
-
-IpQualityLevel _downgrade(IpQualityLevel level) {
-  return switch (level) {
-    IpQualityLevel.excellent => IpQualityLevel.good,
-    IpQualityLevel.good => IpQualityLevel.fair,
-    IpQualityLevel.fair => IpQualityLevel.poor,
-    IpQualityLevel.poor => IpQualityLevel.poor,
-    IpQualityLevel.unknown => IpQualityLevel.unknown,
-  };
+  if (isTor || isAbuser) return 30;
+  if (type == IpUsageType.hosting) return 70;
+  if (isProxy || isVpn) return 60;
+  return 100;
 }
 
 /// 出口 IP 质量评估。
 ///
-/// 1. 走当前节点取出口 IP
-/// 2. 与上游一致：ident.me / ip-api.com / ipquery.io 三源竞速，失败再依次补
-///    iplocate.io、ipapi.is、proxycheck.io，拿到 IP 类型与代理/机房标记
-/// 3. 同时查 ping0.cc 的风控值，有风控值时以它为准细化「优 / 良 / 一般 / 差」
+/// 逻辑照搬 FlClash：走当前节点取出口 IP，再用六源波次竞速拿 IP 类型，
+/// 类型决定标签（住宅 / 商业 / 移动 → 质量优，机房 → 质量一般），
+/// Tor / 滥用标记直接判「质量差」。
 class IpQualityService {
   static final IpQualityService _instance = IpQualityService._internal();
 
@@ -428,7 +396,6 @@ class IpQualityService {
   static const Duration _cacheTtl = Duration(minutes: 5);
   static const Duration _sourceTimeout = Duration(seconds: 8);
   static const Duration _hedge = Duration(seconds: 1);
-  static const Duration _ping0Timeout = Duration(seconds: 20);
 
   static const String _ipUrl = 'https://www.cloudflare.com/cdn-cgi/trace';
 
@@ -486,82 +453,19 @@ class IpQualityService {
       return IpQuality.unknown;
     }
 
-    // 类型走多源竞速，风控值走 ping0，两边并行
-    final results = await Future.wait<IpQuality?>([
-      _lookupType(ip).catchError((Object e) {
-        _logger.debug('多源类型查询失败: $e');
-        return null;
-      }),
-      _lookupPing0(proxyName, ip).catchError((Object e) {
-        _logger.debug('ping0 风控查询失败: $e');
-        return null;
-      }),
-    ]);
-
-    final typeAnswer = results[0];
-    final riskAnswer = results[1];
-
-    if (typeAnswer == null && riskAnswer == null) {
-      _logger.debug('IP 质量评估失败: $ip');
+    final quality = await _lookupType(ip).catchError((Object e) {
+      _logger.debug('IP 质量查询失败: $e');
+      return null;
+    });
+    if (quality == null || !quality.isKnown) {
+      _logger.debug('IP 质量查询无结果: $ip');
       return IpQuality.unknown;
     }
 
-    final quality = _merge(typeAnswer, riskAnswer, ip);
-    if (quality.isKnown) {
-      _cache[proxyName] = _CacheEntry(quality, DateTime.now());
-    }
+    _cache[proxyName] = _CacheEntry(quality, DateTime.now());
     _logger.debug('出口 IP 质量评估完成 $proxyName -> $quality');
     return quality;
   }
-
-  /// 类型以多源为准，风控值以 ping0 为准，两者互相补位
-  IpQuality _merge(IpQuality? type, IpQuality? risk, String ip) {
-    if (type == null) {
-      // 只有 ping0：类型和风控都来自它
-      return risk!;
-    }
-    if (risk == null) {
-      return type;
-    }
-
-    final riskValue = risk.risk;
-    var level = type.level;
-    if (riskValue != null) {
-      level = _levelOfRisk(riskValue);
-      if (risk.isNative == false) {
-        level = _downgrade(level);
-      }
-      // 多源已经识别出代理 / VPN / 滥用时，不允许被风控值抬高
-      if (type.isTor || type.isAbuser) {
-        level = IpQualityLevel.poor;
-      } else if ((type.isProxy || type.isVpn) &&
-          level.index > IpQualityLevel.fair.index) {
-        level = IpQualityLevel.fair;
-      }
-    }
-
-    // ping0 能区分「家庭宽带」和「机房」，类型上更贴近实际使用场景
-    final usage = risk.usage != IpUsageType.unknown ? risk.usage : type.usage;
-
-    return IpQuality(
-      level: level,
-      usage: usage,
-      score: riskValue != null ? (100 - riskValue).clamp(0, 100) : type.score,
-      ip: ip,
-      asnOrg: type.asnOrg,
-      asn: type.asn,
-      risk: riskValue,
-      isNative: risk.isNative,
-      isProxy: type.isProxy,
-      isVpn: type.isVpn,
-      isTor: type.isTor,
-      isAbuser: type.isAbuser,
-      source: riskValue != null ? '${type.source}+ping0' : type.source,
-      checkedAt: DateTime.now(),
-    );
-  }
-
-  // ------------------------------------------------------------ 出口 IP
 
   Future<String?> _fetchOutboundIp(String proxyName) async {
     try {
@@ -585,8 +489,7 @@ class IpQualityService {
     return null;
   }
 
-  // ------------------------------------------------------------ 多源竞速
-
+  /// 六源波次竞速，先答上来的非推断结果直接胜出
   Future<IpQuality?> _lookupType(String ip) {
     final completer = Completer<IpQuality?>();
     var wave = 0;
@@ -659,101 +562,6 @@ class IpQualityService {
       throw const _SourceFailure('noType');
     }
     return answer;
-  }
-
-  // ---------------------------------------------------------------- ping0
-
-  Future<IpQuality?> _lookupPing0(String proxyName, String ip) async {
-    for (var attempt = 0; attempt < 2; attempt++) {
-      if (attempt > 0) {
-        await Future.delayed(const Duration(milliseconds: 800));
-      }
-      final html = await _fetchPing0(proxyName, ip);
-      if (html == null || html.isEmpty) continue;
-      final quality = _parsePing0(html, ip);
-      if (quality != null) return quality;
-    }
-    return null;
-  }
-
-  Future<String?> _fetchPing0(String proxyName, String ip) async {
-    try {
-      final result = await clashCore.outboundIp(
-        proxyName: proxyName,
-        urls: ['https://ping0.cc/ip/$ip'],
-        timeout: _ping0Timeout,
-      );
-      if (result == null || result.error != null || result.body.isEmpty) {
-        return null;
-      }
-      return result.body;
-    } catch (e) {
-      _logger.debug('ping0 请求失败: $e');
-      return null;
-    }
-  }
-
-  IpQuality? _parsePing0(String html, String ip) {
-    final typeLabel = _sectionLabel(html, 'line-iptype');
-    final nativeLabel = _sectionLabel(html, 'line-nativeip');
-    final risk = _parseRisk(html);
-
-    if (typeLabel == null && risk == null) return null;
-
-    final isNative = switch (nativeLabel) {
-      final label? when label.contains('原生') => true,
-      final label? when label.contains('广播') => false,
-      _ => null,
-    };
-
-    var usage = IpUsageType.unknown;
-    if (typeLabel != null) {
-      if (typeLabel.contains('IDC') || typeLabel.contains('机房')) {
-        usage = IpUsageType.hosting;
-      } else if (typeLabel.contains('家庭') || typeLabel.contains('宽带')) {
-        usage = IpUsageType.residential;
-      }
-    }
-    if (usage == IpUsageType.unknown && isNative == false) {
-      usage = IpUsageType.hosting;
-    }
-
-    var level = _levelOfRisk(risk);
-    if (isNative == false && level != IpQualityLevel.unknown) {
-      level = _downgrade(level);
-    }
-
-    return IpQuality(
-      level: level,
-      usage: usage,
-      score: risk != null ? (100 - risk).clamp(0, 100) : 0,
-      ip: ip,
-      risk: risk,
-      isNative: isNative,
-      source: 'ping0',
-      checkedAt: DateTime.now(),
-    );
-  }
-
-  String? _sectionLabel(String html, String sectionClass) {
-    final pattern = RegExp(
-      '$sectionClass[\\s\\S]{0,3000}?<span class="label[^"]*"[^>]*>\\s*([^<]{1,24}?)\\s*</span>',
-    );
-    final value = pattern.firstMatch(html)?.group(1)?.trim();
-    if (value == null || value.isEmpty) return null;
-    return value;
-  }
-
-  int? _parseRisk(String html) {
-    final match = RegExp(
-      r'riskcurrent[^>]*title="(\d+)\s*-\s*(\d+)',
-    ).firstMatch(html);
-    if (match == null) return null;
-    final start = int.tryParse(match.group(1) ?? '');
-    final end = int.tryParse(match.group(2) ?? '');
-    if (start == null) return null;
-    if (end == null) return start;
-    return ((start + end) / 2).round();
   }
 }
 

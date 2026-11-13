@@ -140,15 +140,18 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
   }
 
   void _showDetail(IpQuality quality) {
+    final flags = <String>[
+      if (quality.isProxy) '代理',
+      if (quality.isVpn) 'VPN',
+      if (quality.isTor) 'Tor',
+      if (quality.isAbuser) '滥用',
+    ];
     final rows = <String, String>{
       '出口 IP': quality.ip ?? '-',
       'IP 类型': quality.usageLabel,
-      '风控值': quality.risk == null ? '-' : '${quality.risk}',
-      '原生 / 广播': switch (quality.isNative) {
-        true => '原生 IP',
-        false => '广播 IP',
-        null => '-',
-      },
+      '所属组织': quality.asnOrg ?? '-',
+      'ASN': quality.asn == null ? '-' : 'AS${quality.asn}',
+      '风险标记': flags.isEmpty ? '无' : flags.join(' / '),
       '数据来源': quality.source ?? '-',
       '评估时间': quality.checkedAt == null
           ? '-'
