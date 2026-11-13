@@ -141,7 +141,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
     required Color foreground,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(999),
@@ -150,7 +150,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
         text,
         style: TextStyle(
           color: foreground,
-          fontSize: 10.5,
+          fontSize: 10,
           fontWeight: FontWeight.w600,
           height: 1.15,
           letterSpacing: 0.2,

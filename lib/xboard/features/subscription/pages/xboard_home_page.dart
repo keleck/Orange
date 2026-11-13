@@ -1134,9 +1134,13 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                               )
                             : Row(
                                 key: const ValueKey('node-loaded'),
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                  // 固定正方形，避免多行内容把图标拉长变形
                                   Container(
-                                    padding: const EdgeInsets.all(12),
+                                    width: 48,
+                                    height: 48,
+                                    alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       color: Colors.blue.shade700,
                                       borderRadius: BorderRadius.circular(12),
@@ -1159,7 +1163,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                               '当前节点',
                                               style: TextStyle(
                                                 color: Colors.white.withValues(alpha: 0.7),
-                                                fontSize: 12,
+                                                fontSize: 11,
                                               ),
                                             ),
                                             if (lastTraffic != null) ...[
@@ -1206,7 +1210,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             ],
                                           ],
                                         ),
-                                        const SizedBox(height: 4),
+                                        const SizedBox(height: 2),
                                         // 节点名称 + 延迟
                                         Row(
                                           children: [
@@ -1215,7 +1219,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                                 displayName,
                                                 style: const TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 16,
+                                                  fontSize: 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                                 maxLines: 1,
@@ -1259,7 +1263,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           ],
                                         ),
                                         if (isStart && displayName != '未选择') ...[
-                                          const SizedBox(height: 7),
+                                          const SizedBox(height: 4),
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: IpQualityBadge(
