@@ -461,6 +461,16 @@ jobs:
       - name: Generate project code
         run: dart run build_runner build --delete-conflicting-outputs
 
+      - name: Patch rpm spec paths
+        run: |
+          # flutter_app_packager 的 rpm spec 用相对路径取文件，新版 rpmbuild
+          # 在 BUILD/<name>-<ver>-build 下执行 %install 会找不到，改成 %{_builddir}/...
+          F=plugins/flutter_distributor/packages/flutter_app_packager/lib/src/makers/rpm/make_rpm_config.dart
+          sed -i "s|'cp -r %{name}/\* |'cp -r %{_builddir}/%{name}/* |" "$F"
+          sed -i "s|'cp -r %{name}.desktop |'cp -r %{_builddir}/%{name}.desktop |" "$F"
+          sed -i "s|'cp -r %{name}.png |'cp -r %{_builddir}/%{name}.png |" "$F"
+          grep -n "_builddir" "$F"
+
       - name: Build AppImage / Deb / Rpm
         run: dart setup.dart linux --arch amd64
 
