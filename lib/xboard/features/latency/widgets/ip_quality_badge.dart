@@ -107,28 +107,105 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
     final usage = quality?.usage ?? IpUsageType.unknown;
     final (background, foreground) = _levelColors(level);
 
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 260),
-      switchInCurve: Curves.easeOutCubic,
-      switchOutCurve: Curves.easeInCubic,
-      transitionBuilder: (child, animation) =>
-          FadeTransition(opacity: animation, child: child),
-      child: Row(
-        key: ValueKey('${usage.name}-${level.name}'),
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (usage != IpUsageType.unknown) ...[
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPress: quality == null ? null : () => _showDetail(quality),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 260),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, animation) =>
+            FadeTransition(opacity: animation, child: child),
+        child: Row(
+          key: ValueKey('${usage.name}-${level.name}'),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (usage != IpUsageType.unknown) ...[
+              _pill(
+                text: usage.label,
+                background: Colors.white.withValues(alpha: 0.10),
+                foreground: Colors.white.withValues(alpha: 0.75),
+              ),
+              const SizedBox(width: 6),
+            ],
             _pill(
-              text: usage.label,
-              background: Colors.white.withValues(alpha: 0.10),
-              foreground: Colors.white.withValues(alpha: 0.75),
+              text: quality?.levelLabel ?? '质量评估中',
+              background: background,
+              foreground: foreground,
             ),
-            const SizedBox(width: 6),
           ],
-          _pill(
-            text: quality?.levelLabel ?? '质量评估中',
-            background: background,
-            foreground: foreground,
+        ),
+      ),
+    );
+  }
+
+  void _showDetail(IpQuality quality) {
+    final rows = <String, String>{
+      '出口 IP': quality.ip ?? '-',
+      'IP 类型': quality.usageLabel,
+      '风控值': quality.risk == null ? '-' : '${quality.risk}',
+      '原生 / 广播': switch (quality.isNative) {
+        true => '原生 IP',
+        false => '广播 IP',
+        null => '-',
+      },
+      '数据来源': switch (quality.source) {
+        'ping0' => 'ping0.cc',
+        'ip-api' => 'ip-api.com',
+        _ => quality.source ?? '-',
+      },
+      '评估时间': quality.checkedAt == null
+          ? '-'
+          : '${quality.checkedAt!.hour.toString().padLeft(2, '0')}:'
+              '${quality.checkedAt!.minute.toString().padLeft(2, '0')}',
+    };
+
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1B1A28),
+        title: const Text(
+          'IP 质量详情',
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final entry in rows.entries)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 3),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 84,
+                      child: Text(
+                        entry.key,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.55),
+                          fontSize: 12.5,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        entry.value,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('知道了'),
           ),
         ],
       ),

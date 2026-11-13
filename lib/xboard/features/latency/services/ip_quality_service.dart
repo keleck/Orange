@@ -113,7 +113,7 @@ class IpQualityService {
   IpQualityService._internal();
 
   static const Duration _cacheTtl = Duration(minutes: 5);
-  static const Duration _timeout = Duration(seconds: 15);
+  static const Duration _timeout = Duration(seconds: 20);
 
   /// 取出口 IP：cloudflare trace 体积小、响应快
   static const String _ipUrl = 'https://www.cloudflare.com/cdn-cgi/trace';
@@ -285,14 +285,20 @@ class IpQualityService {
     final ip = await _fetchOutboundIp(proxyName);
     if (ip == null || ip.isEmpty) return IpQuality.unknown;
 
-    final html = await _fetch(proxyName, _ping0Url(ip));
-    if (html == null || html.isEmpty) return IpQuality.unknown;
-
-    try {
-      final quality = _parsePing0(html, ip);
-      if (quality.isKnown) return quality;
-    } catch (e) {
-      _logger.debug('ping0 页面解析失败: $e');
+    // 首次失败（超时 / 限流）再试一次，避免直接掉到精度较低的备用源
+    for (var attempt = 0; attempt < 2; attempt++) {
+      if (attempt > 0) {
+        await Future.delayed(const Duration(milliseconds: 800));
+      }
+      final html = await _fetch(proxyName, _ping0Url(ip));
+      if (html == null || html.isEmpty) continue;
+      try {
+        final quality = _parsePing0(html, ip);
+        if (quality.isKnown) return quality;
+        _logger.debug('ping0 页面无有效字段（第 ${attempt + 1} 次）');
+      } catch (e) {
+        _logger.debug('ping0 页面解析失败: $e');
+      }
     }
     return IpQuality.unknown;
   }
