@@ -41,7 +41,12 @@ endif()
 # of modifying this function.
 function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_features(${TARGET} PUBLIC cxx_std_14)
-  target_compile_options(${TARGET} PRIVATE -Wall -Werror)
+  # 新版 clang（Ubuntu 24.04）下第三方插件会触发废弃 API / 可能未初始化告警，
+  # 这些不是本项目的代码问题，这里关掉对应告警避免 -Werror 直接中断构建。
+  target_compile_options(${TARGET} PRIVATE -Wall -Werror
+    -Wno-deprecated-declarations
+    -Wno-sometimes-uninitialized
+    -Wno-unknown-warning-option)
   target_compile_options(${TARGET} PRIVATE "$<$<NOT:$<CONFIG:Debug>>:-O3>")
   target_compile_definitions(${TARGET} PRIVATE "$<$<NOT:$<CONFIG:Debug>>:NDEBUG>")
 endfunction()
