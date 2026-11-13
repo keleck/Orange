@@ -149,11 +149,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
         false => '广播 IP',
         null => '-',
       },
-      '数据来源': switch (quality.source) {
-        'ping0' => 'ping0.cc',
-        'ip-api' => 'ip-api.com',
-        _ => quality.source ?? '-',
-      },
+      '数据来源': quality.source ?? '-',
       '评估时间': quality.checkedAt == null
           ? '-'
           : '${quality.checkedAt!.hour.toString().padLeft(2, '0')}:'
