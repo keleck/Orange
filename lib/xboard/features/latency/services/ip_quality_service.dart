@@ -6,25 +6,16 @@ import 'package:fl_clash/xboard/core/core.dart';
 
 final _logger = FileLogger('ip_quality_service.dart');
 
-/// IP 质量等级（基于出口 IP 的风险画像，与延迟无关）
+/// IP 质量等级
 enum IpQualityLevel {
-  /// 未评估
   unknown,
-
-  /// 差：被标记为代理 / VPN / 滥用
   poor,
-
-  /// 一般：机房 IP 且带风险标记
   fair,
-
-  /// 良：机房 IP，未被标记
   good,
-
-  /// 优：原生干净 IP
   excellent,
 }
 
-/// IP 归属类型，对应上游「商业」这类标签
+/// IP 归属类型，对应上游「机房 / 住宅」这类标签
 enum IpUsageType {
   unknown('未知'),
   residential('住宅'),
@@ -48,26 +39,35 @@ class IpQuality {
     this.ip,
     this.countryCode,
     this.asnOrg,
+    this.risk,
+    this.isNative,
     this.isDatacenter = false,
     this.isProxy = false,
+    this.source,
     this.checkedAt,
   });
 
   final IpQualityLevel level;
   final IpUsageType usage;
 
-  /// 综合评分 0~100
+  /// 综合评分 0~100（越大越好）
   final int score;
 
   final String? ip;
   final String? countryCode;
   final String? asnOrg;
 
-  /// 数据中心 / 机房 IP
-  final bool isDatacenter;
+  /// 风控值 0~100（越小越干净）
+  final int? risk;
 
-  /// 被识别为代理或 VPN
+  /// 是否原生 IP（false = 广播 IP）
+  final bool? isNative;
+
+  final bool isDatacenter;
   final bool isProxy;
+
+  /// 数据来源，便于排查
+  final String? source;
 
   final DateTime? checkedAt;
 
@@ -91,7 +91,7 @@ class IpQuality {
 
   @override
   String toString() => 'IpQuality(${level.name}, ${usage.name}, score=$score, '
-      'ip=$ip, dc=$isDatacenter, proxy=$isProxy)';
+      'ip=$ip, risk=$risk, native=$isNative, src=$source)';
 }
 
 class _IpQualityCacheEntry {
@@ -103,8 +103,8 @@ class _IpQualityCacheEntry {
 
 /// 出口 IP 质量评估。
 ///
-/// 连接成功后走当前节点请求 IP 画像接口，拿到出口 IP 的风险标记
-/// （机房 / 代理 / VPN），据此给出「质量优 / 良 / 一般 / 差」。
+/// 与上游一致，以 ping0.cc 的 IP 段级画像为准（它能区分「IDC 机房」与
+/// 「家庭宽带」，并给出风控值 / 原生广播），拿不到时再退回 ip-api.com。
 class IpQualityService {
   static final IpQualityService _instance = IpQualityService._internal();
 
@@ -113,17 +113,20 @@ class IpQualityService {
   IpQualityService._internal();
 
   static const Duration _cacheTtl = Duration(minutes: 5);
-  static const Duration _timeout = Duration(seconds: 12);
+  static const Duration _timeout = Duration(seconds: 15);
 
-  /// 主源：字段最实用（proxy / hosting / mobile / asn），体积小、无需 key
-  static const String _primaryUrl =
+  /// 取出口 IP：cloudflare trace 体积小、响应快
+  static const String _ipUrl = 'https://www.cloudflare.com/cdn-cgi/trace';
+
+  /// ping0 详情页（服务端渲染，含 IP 类型 / 原生 / 风控值）
+  static String _ping0Url(String ip) => 'https://ping0.cc/ip/$ip';
+
+  /// 备用源：免费、体积小，只有 proxy / hosting / mobile
+  static const String _fallbackUrl =
       'http://ip-api.com/json/?fields=status,country,countryCode,isp,org,as,'
       'proxy,hosting,mobile,query';
 
-  /// 备用源：HTTPS，只有归属信息，没有风险标记
-  static const String _fallbackUrl = 'https://ipwho.is/';
-
-  /// 机房 / 云厂商 / IDC 关键词
+  /// 机房 / 云厂商 / IDC 关键词（备用源判定用）
   static const List<String> _hostingHints = [
     'idc',
     'cloud',
@@ -172,7 +175,6 @@ class IpQualityService {
     'kamatera',
   ];
 
-  /// 运营商 / 家宽关键词
   static const List<String> _ispHints = [
     'telecom',
     'telecommunication',
@@ -211,11 +213,8 @@ class IpQualityService {
     'telenor',
     'rogers',
     'telus',
-    'true internet',
-    'ais fibre',
   ];
 
-  /// 移动网络关键词
   static const List<String> _mobileHints = [
     'mobile',
     'cellular',
@@ -268,9 +267,9 @@ class IpQualityService {
   }
 
   Future<IpQuality> _run(String proxyName) async {
-    var quality = await _queryPrimary(proxyName);
+    var quality = await _queryPing0(proxyName);
     if (!quality.isKnown) {
-      _logger.debug('主源评估失败，尝试备用源: $proxyName');
+      _logger.debug('ping0 评估失败，回退 ip-api.com: $proxyName');
       quality = await _queryFallback(proxyName);
     }
     if (quality.isKnown) {
@@ -280,8 +279,135 @@ class IpQualityService {
     return quality;
   }
 
-  Future<IpQuality> _queryPrimary(String proxyName) async {
-    final body = await _fetch(proxyName, _primaryUrl);
+  // ---------------------------------------------------------------- ping0
+
+  Future<IpQuality> _queryPing0(String proxyName) async {
+    final ip = await _fetchOutboundIp(proxyName);
+    if (ip == null || ip.isEmpty) return IpQuality.unknown;
+
+    final html = await _fetch(proxyName, _ping0Url(ip));
+    if (html == null || html.isEmpty) return IpQuality.unknown;
+
+    try {
+      final quality = _parsePing0(html, ip);
+      if (quality.isKnown) return quality;
+    } catch (e) {
+      _logger.debug('ping0 页面解析失败: $e');
+    }
+    return IpQuality.unknown;
+  }
+
+  Future<String?> _fetchOutboundIp(String proxyName) async {
+    final body = await _fetch(proxyName, _ipUrl);
+    if (body == null) return null;
+    for (final line in body.split('\n')) {
+      if (line.startsWith('ip=')) {
+        final ip = line.substring(3).trim();
+        if (ip.isNotEmpty) return ip;
+      }
+    }
+    return null;
+  }
+
+  IpQuality _parsePing0(String html, String ip) {
+    final typeLabel = _sectionLabel(html, 'line-iptype');
+    final nativeLabel = _sectionLabel(html, 'line-nativeip');
+    final risk = _parseRisk(html);
+
+    if (typeLabel == null && risk == null) {
+      return IpQuality.unknown;
+    }
+
+    final isNative = switch (nativeLabel) {
+      final label? when label.contains('原生') => true,
+      final label? when label.contains('广播') => false,
+      _ => null,
+    };
+
+    var usage = IpUsageType.unknown;
+    if (typeLabel != null) {
+      if (typeLabel.contains('IDC') || typeLabel.contains('机房')) {
+        usage = IpUsageType.hosting;
+      } else if (typeLabel.contains('家庭') || typeLabel.contains('宽带')) {
+        usage = IpUsageType.residential;
+      }
+    }
+    if (usage == IpUsageType.unknown && isNative == false) {
+      // 广播 IP 基本都是跨国 IDC 段
+      usage = IpUsageType.hosting;
+    }
+    if (usage == IpUsageType.unknown) {
+      usage = IpUsageType.business;
+    }
+
+    var level = _levelOfRisk(risk);
+    // 广播 IP 容易被风控，降一档
+    if (isNative == false) {
+      level = _downgrade(level);
+    }
+
+    final score = (100 - (risk ?? 50)).clamp(0, 100);
+
+    return IpQuality(
+      level: level,
+      usage: usage,
+      score: score,
+      ip: ip,
+      risk: risk,
+      isNative: isNative,
+      isDatacenter: usage == IpUsageType.hosting,
+      source: 'ping0',
+      checkedAt: DateTime.now(),
+    );
+  }
+
+  /// 取某个区块里第一个 label 文本（如 line-iptype -> "IDC机房 IP"）
+  String? _sectionLabel(String html, String sectionClass) {
+    final pattern = RegExp(
+      '$sectionClass[\\s\\S]{0,3000}?<span class="label[^"]*"[^>]*>\\s*([^<]{1,24}?)\\s*</span>',
+    );
+    final match = pattern.firstMatch(html);
+    final value = match?.group(1)?.trim();
+    if (value == null || value.isEmpty) return null;
+    return value;
+  }
+
+  /// 风控值：取当前档位的区间起点（0-15 / 15-25 / 25-40 / 40-50 / 50-70 / 70-100）
+  int? _parseRisk(String html) {
+    final match = RegExp(
+      r'riskcurrent[^>]*title="(\d+)\s*-\s*(\d+)',
+    ).firstMatch(html);
+    if (match == null) return null;
+    final start = int.tryParse(match.group(1) ?? '');
+    final end = int.tryParse(match.group(2) ?? '');
+    if (start == null) return null;
+    // 用区间中点更贴近真实值
+    if (end == null) return start;
+    return ((start + end) / 2).round();
+  }
+
+  IpQualityLevel _levelOfRisk(int? risk) {
+    if (risk == null) return IpQualityLevel.unknown;
+    if (risk < 25) return IpQualityLevel.excellent;
+    if (risk < 40) return IpQualityLevel.good;
+    if (risk < 50) return IpQualityLevel.fair;
+    return IpQualityLevel.poor;
+  }
+
+  IpQualityLevel _downgrade(IpQualityLevel level) {
+    return switch (level) {
+      IpQualityLevel.excellent => IpQualityLevel.good,
+      IpQualityLevel.good => IpQualityLevel.fair,
+      IpQualityLevel.fair => IpQualityLevel.poor,
+      IpQualityLevel.poor => IpQualityLevel.poor,
+      IpQualityLevel.unknown => IpQualityLevel.unknown,
+    };
+  }
+
+  // ------------------------------------------------------------ 备用源
+
+  Future<IpQuality> _queryFallback(String proxyName) async {
+    final body = await _fetch(proxyName, _fallbackUrl);
     if (body == null) return IpQuality.unknown;
     try {
       final decoded = json.decode(body);
@@ -290,36 +416,6 @@ class IpQualityService {
     } catch (e) {
       _logger.debug('ip-api.com 解析失败: $e');
       return IpQuality.unknown;
-    }
-  }
-
-  Future<IpQuality> _queryFallback(String proxyName) async {
-    final body = await _fetch(proxyName, _fallbackUrl);
-    if (body == null) return IpQuality.unknown;
-    try {
-      final decoded = json.decode(body);
-      if (decoded is! Map) return IpQuality.unknown;
-      return _fromIpWhoIs(decoded.cast<String, dynamic>());
-    } catch (e) {
-      _logger.debug('ipwho.is 解析失败: $e');
-      return IpQuality.unknown;
-    }
-  }
-
-  Future<String?> _fetch(String proxyName, String url) async {
-    try {
-      final result = await clashCore.outboundIp(
-        proxyName: proxyName,
-        urls: [url],
-        timeout: _timeout,
-      );
-      if (result == null || result.error != null || result.body.isEmpty) {
-        return null;
-      }
-      return result.body;
-    } catch (e) {
-      _logger.debug('出口 IP 请求失败: $e');
-      return null;
     }
   }
 
@@ -342,68 +438,27 @@ class IpQualityService {
       isDatacenter: isDatacenter,
     );
 
-    final score = _score(
-      usage: usage,
-      isDatacenter: isDatacenter,
-      isProxy: isProxy,
-    );
+    var level = IpQualityLevel.excellent;
+    if (isProxy) {
+      level = IpQualityLevel.poor;
+    } else if (usage == IpUsageType.hosting) {
+      level = IpQualityLevel.good;
+    }
 
     return IpQuality(
-      level: _levelOf(score),
+      level: level,
       usage: usage,
-      score: score,
+      score: isProxy ? 45 : (usage == IpUsageType.hosting ? 90 : 100),
       ip: _string(json['query']),
       countryCode: _string(json['countryCode']),
       asnOrg: _string(json['org']) ?? _string(json['isp']),
       isDatacenter: isDatacenter || usage == IpUsageType.hosting,
       isProxy: isProxy,
+      source: 'ip-api',
       checkedAt: DateTime.now(),
     );
   }
 
-  IpQuality _fromIpWhoIs(Map<String, dynamic> json) {
-    if (json['success'] == false) return IpQuality.unknown;
-
-    final connection = _map(json['connection']);
-    final security = _map(json['security']);
-
-    final orgText = [
-      _string(connection?['org']),
-      _string(connection?['isp']),
-      _string(connection?['domain']),
-    ].whereType<String>().join(' ');
-
-    final isDatacenter = security?['hosting'] == true;
-    final isProxy = security?['proxy'] == true ||
-        security?['vpn'] == true ||
-        security?['tor'] == true;
-
-    final usage = _guessUsage(
-      text: orgText,
-      isMobile: false,
-      isDatacenter: isDatacenter,
-    );
-
-    final score = _score(
-      usage: usage,
-      isDatacenter: isDatacenter,
-      isProxy: isProxy,
-    );
-
-    return IpQuality(
-      level: _levelOf(score),
-      usage: usage,
-      score: score,
-      ip: _string(json['ip']),
-      countryCode: _string(json['country_code']),
-      asnOrg: _string(connection?['org']),
-      isDatacenter: isDatacenter || usage == IpUsageType.hosting,
-      isProxy: isProxy,
-      checkedAt: DateTime.now(),
-    );
-  }
-
-  /// 归属类型判定：移动 → 机房 → 住宅 → 商业（兜底，保证一定有标签）
   IpUsageType _guessUsage({
     required String text,
     required bool isMobile,
@@ -430,27 +485,23 @@ class IpQualityService {
     return false;
   }
 
-  int _score({
-    required IpUsageType usage,
-    required bool isDatacenter,
-    required bool isProxy,
-  }) {
-    var score = 100;
-    if (isProxy) score -= 45;
-    if (isDatacenter || usage == IpUsageType.hosting) score -= 10;
-    return score.clamp(0, 100);
-  }
+  // ------------------------------------------------------------- 通用
 
-  IpQualityLevel _levelOf(int score) {
-    if (score >= 88) return IpQualityLevel.excellent;
-    if (score >= 72) return IpQualityLevel.good;
-    if (score >= 55) return IpQualityLevel.fair;
-    return IpQualityLevel.poor;
-  }
-
-  Map<String, dynamic>? _map(Object? value) {
-    if (value is Map) return value.cast<String, dynamic>();
-    return null;
+  Future<String?> _fetch(String proxyName, String url) async {
+    try {
+      final result = await clashCore.outboundIp(
+        proxyName: proxyName,
+        urls: [url],
+        timeout: _timeout,
+      );
+      if (result == null || result.error != null || result.body.isEmpty) {
+        return null;
+      }
+      return result.body;
+    } catch (e) {
+      _logger.debug('出口 IP 请求失败: $e');
+      return null;
+    }
   }
 
   String? _string(Object? value) {

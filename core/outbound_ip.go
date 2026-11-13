@@ -15,7 +15,8 @@ const (
 	outboundIpConcurrency = 3
 	outboundIpStagger     = 800 * time.Millisecond
 
-	outboundIpMaxBody = 4096
+	// IP 质量页（ping0.cc）是完整 HTML，4096 会截断导致解析失败
+	outboundIpMaxBody = 262144
 )
 
 type OutboundIpParams struct {
