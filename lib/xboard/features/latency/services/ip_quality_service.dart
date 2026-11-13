@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:fl_clash/clash/clash.dart';
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/core/core.dart';
+
+import '../../shared/services/service_probe.dart';
 
 final _logger = FileLogger('ip_quality_service.dart');
 
@@ -394,16 +396,19 @@ class IpQualityService {
   IpQualityService._internal();
 
   static const Duration _cacheTtl = Duration(minutes: 5);
+  static const Duration _ipCacheTtl = Duration(days: 3);
+  static const Duration _failureCooldown = Duration(minutes: 5);
   static const Duration _sourceTimeout = Duration(seconds: 8);
   static const Duration _hedge = Duration(seconds: 1);
 
-  static const String _ipUrl = 'https://www.cloudflare.com/cdn-cgi/trace';
-
   final Map<String, _CacheEntry> _cache = {};
+  final Map<String, _CacheEntry> _ipCache = {};
+  final Map<String, DateTime> _failures = {};
   final Map<String, Future<IpQuality>> _inflight = {};
 
   final Dio _dio = Dio(
     BaseOptions(
+      headers: {'User-Agent': browserUa},
       connectTimeout: _sourceTimeout,
       receiveTimeout: _sourceTimeout,
       sendTimeout: _sourceTimeout,
@@ -426,6 +431,12 @@ class IpQualityService {
     if (!force) {
       final cached = peek(proxyName);
       if (cached != null) return Future.value(cached);
+      // 失败后冷却，避免每次重建都打一轮接口（与 FlClash 一致）
+      final failedAt = _failures[proxyName];
+      if (failedAt != null &&
+          DateTime.now().difference(failedAt) < _failureCooldown) {
+        return Future.value(IpQuality.unknown);
+      }
     }
 
     final running = _inflight[proxyName];
@@ -453,40 +464,47 @@ class IpQualityService {
       return IpQuality.unknown;
     }
 
+    // 同一 IP 的结果 3 天内复用，与 FlClash 的本地缓存一致
+    final cached = _ipCache[ip];
+    if (cached != null &&
+        DateTime.now().difference(cached.time) < _ipCacheTtl) {
+      _cache[proxyName] = _CacheEntry(cached.quality, DateTime.now());
+      return cached.quality;
+    }
+
     final quality = await _lookupType(ip).catchError((Object e) {
       _logger.debug('IP 质量查询失败: $e');
       return null;
     });
     if (quality == null || !quality.isKnown) {
       _logger.debug('IP 质量查询无结果: $ip');
+      _failures[proxyName] = DateTime.now();
       return IpQuality.unknown;
     }
 
-    _cache[proxyName] = _CacheEntry(quality, DateTime.now());
+    final now = DateTime.now();
+    _failures.remove(proxyName);
+    _cache[proxyName] = _CacheEntry(quality, now);
+    _ipCache[ip] = _CacheEntry(quality, now);
     _logger.debug('出口 IP 质量评估完成 $proxyName -> $quality');
     return quality;
   }
 
   Future<String?> _fetchOutboundIp(String proxyName) async {
     try {
-      final result = await clashCore.outboundIp(
+      // 与 FlClash 一致：cloudflare trace / ip.sb / ipinfo.io / ipwho.is /
+      // geojs / country.is / ipquery.io / ident.me 八源竞速
+      final info = await lookupOutboundIp(
         proxyName: proxyName,
-        urls: [_ipUrl],
-        timeout: const Duration(seconds: 12),
+        timeout: const Duration(seconds: 6),
       );
-      if (result == null || result.error != null || result.body.isEmpty) {
-        return null;
-      }
-      for (final line in result.body.split('\n')) {
-        if (line.startsWith('ip=')) {
-          final ip = line.substring(3).trim();
-          if (ip.isNotEmpty) return ip;
-        }
-      }
+      final ip = info?.ip;
+      if (ip == null || ip.isEmpty) return null;
+      return ip;
     } catch (e) {
       _logger.debug('出口 IP 请求失败: $e');
+      return null;
     }
-    return null;
   }
 
   /// 六源波次竞速，先答上来的非推断结果直接胜出
