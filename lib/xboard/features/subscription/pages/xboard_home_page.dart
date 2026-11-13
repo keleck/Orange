@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 
 import 'package:fl_clash/xboard/features/latency/services/auto_latency_service.dart';
+import 'package:fl_clash/xboard/features/latency/widgets/node_quality_badge.dart';
 import 'package:fl_clash/xboard/features/subscription/services/subscription_status_checker.dart';
 import 'package:fl_clash/xboard/features/subscription/services/subscription_status_service.dart';
 import 'package:fl_clash/xboard/features/subscription/providers/xboard_subscription_provider.dart';
@@ -638,6 +639,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     }
 
     final bool isNodeLoading = _calculateIsNodeLoading(ref);
+    final bool isStart = ref.watch(runTimeProvider.select((state) => state != null));
     final bool hasImportError = importState.lastResult?.isSuccess == false;
     final bool isNodeInteractive = !shouldShowPurchaseButton && !isNodeLoading;
     if (isNodeLoading && !_nodeLoadingController.isAnimating) {
@@ -1256,6 +1258,17 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                               ),
                                           ],
                                         ),
+                                        if (isStart && displayName != '未选择') ...[
+                                          const SizedBox(height: 7),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: NodeQualityBadge(
+                                              proxyName: displayName,
+                                              testUrl: currentGroup?.testUrl,
+                                              enabled: isStart,
+                                            ),
+                                          ),
+                                        ],
                                       ],
                                     ),
                                   ),
