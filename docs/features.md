@@ -292,10 +292,10 @@ header('Content-Type: application/json');
 // 每次发版只改这两处
 $latest = '2.7.69';
 $files = [
-    'android' => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-android-arm64-v8a.apk',
-    'windows' => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-windows-amd64-setup.exe',
-    'macos'   => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-macos-universal.dmg',
-    'linux'   => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-linux-amd64.AppImage',
+    'android' => 'https://example.com/download/cloud-2.7.69-android-arm64-v8a.apk',
+    'windows' => 'https://example.com/download/cloud-2.7.69-windows-amd64-setup.exe',
+    'macos'   => 'https://example.com/download/cloud-2.7.69-macos-universal.dmg',
+    'linux'   => 'https://example.com/download/cloud-2.7.69-linux-amd64.AppImage',
 ];
 
 $current  = $_GET['version'] ?? '0';
