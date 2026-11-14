@@ -284,7 +284,12 @@ update:
   "forceUpdate": false
 }
 ```
-
+```nginx
+location = /api/v1/check-update {
+    default_type application/json;
+    return 200 '{"latest_version":"2.7.68","update_available":true,"download_url":"https://你的域名/download","release_notes":"","force_update":false}';
+}
+```
 ---
 
 ## 📚 相关文档
