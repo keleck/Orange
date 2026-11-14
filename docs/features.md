@@ -284,10 +284,49 @@ update:
   "forceUpdate": false
 }
 ```
+**新建 check-update.php，放到网站根目录：**
+```php
+<?php
+header('Content-Type: application/json');
+
+// 每次发版只改这两处
+$latest = '2.7.69';
+$files = [
+    'android' => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-android-arm64-v8a.apk',
+    'windows' => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-windows-amd64-setup.exe',
+    'macos'   => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-macos-universal.dmg',
+    'linux'   => 'https://xn--9kqy16b6sf.xyz/download/mxycloud-2.7.69-linux-amd64.AppImage',
+];
+
+$current  = $_GET['version'] ?? '0';
+$platform = $_GET['platform'] ?? 'android';
+
+function isNewer(string $latest, string $current): bool {
+    $a = array_map('intval', explode('.', preg_replace('/[^0-9.]/', '', $latest)));
+    $b = array_map('intval', explode('.', preg_replace('/[^0-9.]/', '', $current)));
+    $n = max(count($a), count($b));
+    for ($i = 0; $i < $n; $i++) {
+        $x = $a[$i] ?? 0;
+        $y = $b[$i] ?? 0;
+        if ($x != $y) return $x > $y;
+    }
+    return false;
+}
+
+echo json_encode([
+    'latest_version'   => $latest,
+    'update_available' => isNewer($latest, $current),
+    'download_url'     => $files[$platform] ?? $files['android'],
+    'release_notes'    => '修复已知问题，优化性能',
+    'force_update'     => false,
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+```
+
+**2. nginx 把那个路径指到 PHP（替换掉之前的静态 return 200）：**
+
 ```nginx
 location = /api/v1/check-update {
-    default_type application/json;
-    return 200 '{"latest_version":"2.7.68","update_available":true,"download_url":"https://你的域名/download","release_notes":"","force_update":false}';
+    rewrite ^ /check-update.php last;
 }
 ```
 ---
