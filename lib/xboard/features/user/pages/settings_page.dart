@@ -299,15 +299,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.fg(context).withOpacity(0.15),
-                    AppColors.fg(context).withOpacity(0.05),
+                    AppColors.surface(context, 0.15),
+                    AppColors.surface(context, 0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: AppColors.fg(context).withOpacity(0.2),
+                  color: AppColors.outline(context),
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -327,7 +327,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: AppColors.fg(context).withOpacity(0.1),
+                          color: AppColors.outline(context),
                         ),
                       ),
                     ),
@@ -428,7 +428,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               color: Colors.black.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: AppColors.fg(context).withOpacity(0.1),
+                                color: AppColors.outline(context),
                               ),
                             ),
                             child: Text(
@@ -467,20 +467,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 color: AppColors.fg(context).withOpacity(0.4),
                               ),
                               filled: true,
-                              fillColor:
-                                  AppColors.fg(context).withOpacity(0.05),
+                              fillColor: AppColors.surface(context, 0.05),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color:
-                                      AppColors.fg(context).withOpacity(0.15),
+                                  color: AppColors.outline(context),
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color:
-                                      AppColors.fg(context).withOpacity(0.15),
+                                  color: AppColors.outline(context),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -522,7 +519,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
-                          color: AppColors.fg(context).withOpacity(0.1),
+                          color: AppColors.outline(context),
                         ),
                       ),
                     ),
@@ -721,6 +718,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               value: _ipv6Enabled,
               onChanged: _updateIPv6Setting,
               activeColor: Theme.of(context).colorScheme.primary,
+              inactiveThumbColor: AppColors.isDark(context)
+                  ? Colors.white.withValues(alpha: 0.6)
+                  : Colors.white,
+              inactiveTrackColor: AppColors.isDark(context)
+                  ? Colors.white.withValues(alpha: 0.15)
+                  : const Color(0xFFDDE2EA),
             ),
     );
   }
@@ -737,6 +740,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               value: _lanProxyEnabled,
               onChanged: _updateLanProxySetting,
               activeColor: Theme.of(context).colorScheme.primary,
+              inactiveThumbColor: AppColors.isDark(context)
+                  ? Colors.white.withValues(alpha: 0.6)
+                  : Colors.white,
+              inactiveTrackColor: AppColors.isDark(context)
+                  ? Colors.white.withValues(alpha: 0.15)
+                  : const Color(0xFFDDE2EA),
             ),
     );
   }
@@ -764,6 +773,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           );
         },
         activeColor: Theme.of(context).colorScheme.primary,
+        inactiveThumbColor: AppColors.isDark(context)
+            ? Colors.white.withValues(alpha: 0.6)
+            : Colors.white,
+        inactiveTrackColor: AppColors.isDark(context)
+            ? Colors.white.withValues(alpha: 0.15)
+            : const Color(0xFFDDE2EA),
       ),
     );
   }
@@ -905,9 +920,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.fg(context).withOpacity(0.1),
+                    color: AppColors.surface(context, 0.1),
                     border: Border.all(
-                      color: AppColors.fg(context).withOpacity(0.2),
+                      color: AppColors.outline(context),
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -976,6 +991,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                     }
                                   },
                             activeColor: Colors.green.shade600,
+                            inactiveThumbColor: AppColors.isDark(context)
+                                ? Colors.white.withValues(alpha: 0.6)
+                                : Colors.white,
+                            inactiveTrackColor: AppColors.isDark(context)
+                                ? Colors.white.withValues(alpha: 0.15)
+                                : const Color(0xFFDDE2EA),
                           ),
                         ],
                       ),

@@ -835,8 +835,8 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final gradient = [
-      AppColors.fg(context).withOpacity(0.15),
-      AppColors.fg(context).withOpacity(0.1),
+      AppColors.surface(context, 0.15),
+      AppColors.surface(context, 0.1),
     ];
 
     return AnimatedContainer(
@@ -848,7 +848,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.fg(context).withOpacity(0.15)),
+        border: Border.all(color: AppColors.outline(context)),
       ),
       child: Column(
         children: [
@@ -908,15 +908,15 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     controller: _codeController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: AppColors.fg(context).withOpacity(0.1),
+                      fillColor: AppColors.surface(context, 0.1),
                       hintText:
                           AppLocalizations.of(context).xboardEnterGiftCardCode,
                       hintStyle: TextStyle(
                           color: AppColors.fg(context).withOpacity(0.5)),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                            color: AppColors.fg(context).withOpacity(0.15)),
+                        borderSide:
+                            BorderSide(color: AppColors.outline(context)),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 12),
@@ -992,9 +992,9 @@ class _SmallActionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Ink(
           decoration: BoxDecoration(
-            color: AppColors.fg(context).withOpacity(0.12),
+            color: AppColors.surface(context, 0.12),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.fg(context).withOpacity(0.15)),
+            border: Border.all(color: AppColors.outline(context)),
           ),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: Row(
@@ -1086,7 +1086,7 @@ class _ActionTile extends StatelessWidget {
             borderRadius: BorderRadius.zero, // 移除圆角
             border: Border(
               bottom: BorderSide(
-                color: AppColors.fg(context).withOpacity(0.05), // 底部分隔线
+                color: AppColors.outline(context), // 底部分隔线
                 width: 0.5,
               ),
             ),
