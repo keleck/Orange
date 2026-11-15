@@ -34,6 +34,24 @@ class ApplicationState extends ConsumerState<Application> {
   Timer? _autoUpdateGroupTaskTimer;
   Timer? _autoUpdateProfilesTaskTimer;
 
+  // 缓存 GoRouter：主题 / 语言切换会触发 rebuild，重建 router 会把页面重置到首页
+  GoRouter? _router;
+  bool? _routerAuthenticated;
+  bool? _routerInitialized;
+
+  GoRouter _getRouter(UserAuthState userState) {
+    final authenticated = userState.isAuthenticated;
+    final initialized = userState.isInitialized;
+    if (_router == null ||
+        _routerAuthenticated != authenticated ||
+        _routerInitialized != initialized) {
+      _routerAuthenticated = authenticated;
+      _routerInitialized = initialized;
+      _router = _buildRouter(userState);
+    }
+    return _router!;
+  }
+
   final _pageTransitionsTheme = const PageTransitionsTheme(
     builders: <TargetPlatform, PageTransitionsBuilder>{
       TargetPlatform.android: CommonPageTransitionsBuilder(),
@@ -264,7 +282,7 @@ class ApplicationState extends ConsumerState<Application> {
                   ),
                 );
               },
-              routerConfig: _buildRouter(userState),
+              routerConfig: _getRouter(userState),
               scrollBehavior: BaseScrollBehavior(),
               title: appName,
               locale: utils.getLocaleForString(locale),
