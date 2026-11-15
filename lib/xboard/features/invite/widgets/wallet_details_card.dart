@@ -48,16 +48,16 @@ class WalletDetailsCard extends ConsumerWidget {
                         const SizedBox(width: 8),
                         TextButton.icon(
                           onPressed: () => _showTransferDialog(context),
-                          icon: const Icon(Icons.swap_horiz),
+                          icon: Icon(Icons.swap_horiz),
                           label: Text(appLocalizations.transfer),
                         ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if (inviteState.isLoading && !inviteState.hasInviteData)
-                  const Center(child: CircularProgressIndicator())
+                  Center(child: CircularProgressIndicator())
                 else
                   Row(
                     children: [

@@ -398,7 +398,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ),
           ),
-          const SizedBox(height: 48),
+          SizedBox(height: 48),
 
           // Title
           Text(
@@ -544,7 +544,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       : null,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 appLocalizations.xboardRememberPassword,
                 style: TextStyle(
@@ -589,7 +589,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
               child: userState.isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
@@ -605,7 +605,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
             ),
           ),
-          const SizedBox(height: 48),
+          SizedBox(height: 48),
 
           // Register Link
           Center(

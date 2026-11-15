@@ -19,7 +19,7 @@ class VPNItem extends ConsumerWidget {
     final enable =
         ref.watch(vpnSettingProvider.select((state) => state.enable));
     return ListItem.switchItem(
-      title: const Text("VPN"),
+      title: Text("VPN"),
       subtitle: Text(appLocalizations.vpnEnableDesc),
       delegate: SwitchDelegate(
         value: enable,
@@ -140,7 +140,7 @@ class Ipv6Item extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final ipv6 = ref.watch(vpnSettingProvider.select((state) => state.ipv6));
     return ListItem.switchItem(
-      title: const Text("IPv6"),
+      title: Text("IPv6"),
       subtitle: Text(appLocalizations.ipv6InboundDesc),
       delegate: SwitchDelegate(
         value: ipv6,
@@ -357,8 +357,8 @@ final networkItems = [
       items: [
         const VpnSystemProxyItem(),
         const BypassDomainItem(),
-        const AllowBypassItem(),
-        const Ipv6Item(),
+        AllowBypassItem(),
+        Ipv6Item(),
       ],
     ),
   if (system.isDesktop)

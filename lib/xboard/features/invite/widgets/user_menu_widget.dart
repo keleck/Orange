@@ -46,7 +46,7 @@ class UserMenuWidget extends ConsumerWidget {
                   children: [
                     const Icon(Icons.brightness_6,
                         color: Colors.white, size: 20),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       appLocalizations.switchTheme,
                       style: TextStyle(

@@ -69,7 +69,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 20,
-                  offset: const Offset(0, 5),
+                  offset: Offset(0, 5),
                 ),
               ],
             ),
@@ -154,7 +154,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                         ),
                         const SizedBox(height: 16),
                         AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
+                          duration: Duration(milliseconds: 300),
                           child: _isSuccess
                               ? Text(
                                   appLocalizations.transferSuccess,
@@ -163,7 +163,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green,
                                   ),
-                                  key: const ValueKey('success-text'),
+                                  key: ValueKey('success-text'),
                                 )
                               : _isTransferring
                                   ? Text(
@@ -173,7 +173,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
-                                      key: const ValueKey('loading-text'),
+                                      key: ValueKey('loading-text'),
                                     )
                                   : Text(
                                       appLocalizations.maxTransferable(
@@ -187,11 +187,11 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                                       key: const ValueKey('balance-text'),
                                     ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         if (!_isTransferring && !_isSuccess) ...[
                           TextField(
                             controller: _amountController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               labelText: appLocalizations.transferAmount,
                               labelStyle: TextStyle(
@@ -229,7 +229,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           Text(
                             appLocalizations.transferNote,
                             style: TextStyle(
@@ -286,7 +286,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Material(
                           color: Colors.transparent,
                           child: InkWell(

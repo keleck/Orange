@@ -92,7 +92,7 @@ class _ProvidersViewState extends ConsumerState<ProvidersView> {
           onPressed: () {
             _updateProviders();
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.sync,
           ),
         )
@@ -200,13 +200,13 @@ class ProviderItem extends StatelessWidget {
             spacing: 12,
             children: [
               CommonChip(
-                avatar: const Icon(Icons.upload),
+                avatar: Icon(Icons.upload),
                 label: appLocalizations.upload,
                 onPressed: _handleSideLoadProvider,
               ),
               if (provider.vehicleType == "HTTP")
                 CommonChip(
-                  avatar: const Icon(Icons.sync),
+                  avatar: Icon(Icons.sync),
                   label: appLocalizations.sync,
                   onPressed: _handleUpdateProvider,
                 ),

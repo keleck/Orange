@@ -50,7 +50,7 @@ class CommissionHistoryCard extends ConsumerWidget {
                               .onSurface
                               .withOpacity(0.4),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           appLocalizations.noCommissionRecord,
                           style: TextStyle(
@@ -72,7 +72,7 @@ class CommissionHistoryCard extends ConsumerWidget {
                     children: [
                       TextButton.icon(
                         onPressed: () => _showCommissionHistoryDialog(context),
-                        icon: const Icon(Icons.history),
+                        icon: Icon(Icons.history),
                         label: Text(appLocalizations.viewHistory),
                       ),
                       if (inviteState.commissionHistory.length >= 5)
@@ -81,12 +81,12 @@ class CommissionHistoryCard extends ConsumerWidget {
                               .read(inviteProvider.notifier)
                               .loadNextHistoryPage(),
                           icon: inviteState.isLoadingHistory
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 16,
                                   height: 16,
                                   child:
                                       CircularProgressIndicator(strokeWidth: 2))
-                              : const Icon(Icons.refresh),
+                              : Icon(Icons.refresh),
                           label: Text(inviteState.isLoadingHistory
                               ? appLocalizations.loading
                               : appLocalizations.loadMore),
@@ -127,7 +127,7 @@ class CommissionHistoryCard extends ConsumerWidget {
               children: [
                 Text(
                   '¥${commission.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

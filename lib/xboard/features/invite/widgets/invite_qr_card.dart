@@ -122,8 +122,7 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                         children: [
                           ElevatedButton.icon(
                             onPressed: () => _saveQrCode(context, inviteUrl),
-                            icon:
-                                const Icon(Icons.save_alt, color: Colors.white),
+                            icon: Icon(Icons.save_alt, color: Colors.white),
                             label: Text(
                               appLocalizations.saveQr,
                               style: const TextStyle(color: Colors.white),
@@ -138,7 +137,7 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                           ElevatedButton.icon(
                             onPressed: () =>
                                 _copyToClipboard(context, inviteUrl),
-                            icon: const Icon(Icons.link, color: Colors.white),
+                            icon: Icon(Icons.link, color: Colors.white),
                             label: Text(
                               appLocalizations.copyInviteLink,
                               style: const TextStyle(color: Colors.white),
@@ -185,7 +184,7 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                     child: Column(
                       children: [
                         const CircularProgressIndicator(),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         Text(
                           appLocalizations.generatingInviteCode,
                           style: TextStyle(

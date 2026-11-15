@@ -324,7 +324,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
                             color: Colors.white,
                             size: 20,
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           Text(
                             appLocalizations.xboardBuyNow,
                             style: const TextStyle(
@@ -381,7 +381,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
       appBar: showPurchasePage
           ? AppBar(
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back),
                 onPressed: _backToPlans,
                 tooltip: AppLocalizations.of(context).xboardBack,
               ),
@@ -462,7 +462,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
                                 style: const TextStyle(color: Colors.red),
                                 textAlign: TextAlign.center,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               ElevatedButton(
                                 onPressed: _refreshPlans,
                                 child: Text(appLocalizations.xboardRetry),

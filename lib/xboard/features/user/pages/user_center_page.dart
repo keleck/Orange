@@ -39,7 +39,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
             automaticallyImplyLeading: false,
             actions: [
               IconButton(
-                icon: const Icon(Icons.settings),
+                icon: Icon(Icons.settings),
                 onPressed: () => context.push('/user/settings'),
               ),
             ],
@@ -186,7 +186,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     '退出登录',
                                     style: TextStyle(
                                       color: Colors.white,
@@ -315,7 +315,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   color: primary.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.person_rounded,
                   size: 22,
                   color: Colors.white,
@@ -354,7 +354,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF6B6B).withValues(alpha: 0.14),
+                    color: Color(0xFFFF6B6B).withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(7),
                   ),
                   child: Text(
@@ -666,7 +666,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(AppLocalizations.of(context).xboardConfirmStartDataCycle),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -693,7 +693,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     appLocalizations.xboardResetCycleNotes,
                     style: TextStyle(fontSize: 13),
@@ -858,7 +858,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
               child: Row(
                 children: [
-                  const AppIconTile(
+                  AppIconTile(
                     icon: Icons.card_giftcard,
                     color: AppIconColors.purple,
                     size: 42,
@@ -869,7 +869,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     children: [
                       Text(
                         appLocalizations.xboardGiftCardRedeem,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,

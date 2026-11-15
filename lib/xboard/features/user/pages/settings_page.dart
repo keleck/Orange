@@ -421,7 +421,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
@@ -490,7 +490,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               contentPadding: const EdgeInsets.all(12),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Row(
                             children: [
                               Icon(
@@ -573,7 +573,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                           size: 16,
                                           color: Colors.white,
                                         ),
-                                        const SizedBox(width: 6),
+                                        SizedBox(width: 6),
                                         Text(
                                           appLocalizations.import,
                                           style: TextStyle(
@@ -667,7 +667,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 const SizedBox(height: 10),
                 _buildCampusHostsSection(context),
                 if (Platform.isAndroid) ...[
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   _buildAccessControlEntry(context),
                 ],
                 SizedBox(height: 28),

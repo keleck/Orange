@@ -16,7 +16,7 @@ class LogLevelItem extends ConsumerWidget {
     final logLevel =
         ref.watch(patchClashConfigProvider.select((state) => state.logLevel));
     return ListItem<LogLevel>.options(
-      leading: const Icon(Icons.info_outline),
+      leading: Icon(Icons.info_outline),
       title: Text(appLocalizations.logLevel),
       subtitle: Text(logLevel.name),
       delegate: OptionsDelegate<LogLevel>(
@@ -48,7 +48,7 @@ class UaItem extends ConsumerWidget {
         ref.watch(patchClashConfigProvider.select((state) => state.globalUa));
     return ListItem<String?>.options(
       leading: const Icon(Icons.computer_outlined),
-      title: const Text("UA"),
+      title: Text("UA"),
       subtitle: Text(globalUa ?? appLocalizations.defaultText),
       delegate: OptionsDelegate<String?>(
         title: "UA",
@@ -79,7 +79,7 @@ class KeepAliveIntervalItem extends ConsumerWidget {
     final keepAliveInterval = ref.watch(
         patchClashConfigProvider.select((state) => state.keepAliveInterval));
     return ListItem.input(
-      leading: const Icon(Icons.timer_outlined),
+      leading: Icon(Icons.timer_outlined),
       title: Text(appLocalizations.keepAliveIntervalDesc),
       subtitle: Text("$keepAliveInterval ${appLocalizations.seconds}"),
       delegate: InputDelegate(
@@ -121,7 +121,7 @@ class TestUrlItem extends ConsumerWidget {
     final testUrl =
         ref.watch(appSettingProvider.select((state) => state.testUrl));
     return ListItem.input(
-      leading: const Icon(Icons.timeline),
+      leading: Icon(Icons.timeline),
       title: Text(appLocalizations.testUrl),
       subtitle: Text(testUrl),
       delegate: InputDelegate(
@@ -167,7 +167,7 @@ class PortItem extends ConsumerWidget {
     final mixedPort =
         ref.watch(patchClashConfigProvider.select((state) => state.mixedPort));
     return ListItem(
-      leading: const Icon(Icons.adjust_outlined),
+      leading: Icon(Icons.adjust_outlined),
       title: Text(appLocalizations.port),
       subtitle: Text("$mixedPort"),
       onTap: () {
@@ -213,7 +213,7 @@ class HostsItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListItem.open(
       leading: const Icon(Icons.view_list_outlined),
-      title: const Text("Hosts"),
+      title: Text("Hosts"),
       subtitle: Text(appLocalizations.hostsDesc),
       delegate: OpenDelegate(
         blur: false,
@@ -251,7 +251,7 @@ class Ipv6Item extends ConsumerWidget {
         ref.watch(patchClashConfigProvider.select((state) => state.ipv6));
     return ListItem.switchItem(
       leading: const Icon(Icons.water_outlined),
-      title: const Text("IPv6"),
+      title: Text("IPv6"),
       subtitle: Text(appLocalizations.ipv6Desc),
       delegate: SwitchDelegate(
         value: ipv6,
@@ -275,7 +275,7 @@ class AllowLanItem extends ConsumerWidget {
     final allowLan =
         ref.watch(patchClashConfigProvider.select((state) => state.allowLan));
     return ListItem.switchItem(
-      leading: const Icon(Icons.device_hub),
+      leading: Icon(Icons.device_hub),
       title: Text(appLocalizations.allowLan),
       subtitle: Text(appLocalizations.allowLanDesc),
       delegate: SwitchDelegate(
@@ -301,7 +301,7 @@ class UnifiedDelayItem extends ConsumerWidget {
         .watch(patchClashConfigProvider.select((state) => state.unifiedDelay));
 
     return ListItem.switchItem(
-      leading: const Icon(Icons.compress_outlined),
+      leading: Icon(Icons.compress_outlined),
       title: Text(appLocalizations.unifiedDelay),
       subtitle: Text(appLocalizations.unifiedDelayDesc),
       delegate: SwitchDelegate(
@@ -327,7 +327,7 @@ class FindProcessItem extends ConsumerWidget {
         .select((state) => state.findProcessMode == FindProcessMode.always));
 
     return ListItem.switchItem(
-      leading: const Icon(Icons.polymer_outlined),
+      leading: Icon(Icons.polymer_outlined),
       title: Text(appLocalizations.findProcessMode),
       subtitle: Text(appLocalizations.findProcessModeDesc),
       delegate: SwitchDelegate(
@@ -353,7 +353,7 @@ class TcpConcurrentItem extends ConsumerWidget {
     final tcpConcurrent = ref
         .watch(patchClashConfigProvider.select((state) => state.tcpConcurrent));
     return ListItem.switchItem(
-      leading: const Icon(Icons.double_arrow_outlined),
+      leading: Icon(Icons.double_arrow_outlined),
       title: Text(appLocalizations.tcpConcurrent),
       subtitle: Text(appLocalizations.tcpConcurrentDesc),
       delegate: SwitchDelegate(
@@ -378,7 +378,7 @@ class GeodataLoaderItem extends ConsumerWidget {
     final isMemconservative = ref.watch(patchClashConfigProvider.select(
         (state) => state.geodataLoader == GeodataLoader.memconservative));
     return ListItem.switchItem(
-      leading: const Icon(Icons.memory),
+      leading: Icon(Icons.memory),
       title: Text(appLocalizations.geodataLoader),
       subtitle: Text(appLocalizations.geodataLoaderDesc),
       delegate: SwitchDelegate(
@@ -405,7 +405,7 @@ class ExternalControllerItem extends ConsumerWidget {
     final hasExternalController = ref.watch(patchClashConfigProvider.select(
         (state) => state.externalController == ExternalControllerStatus.open));
     return ListItem.switchItem(
-      leading: const Icon(Icons.api_outlined),
+      leading: Icon(Icons.api_outlined),
       title: Text(appLocalizations.externalController),
       subtitle: Text(appLocalizations.externalControllerDesc),
       delegate: SwitchDelegate(
@@ -555,7 +555,7 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                   onPressed: _handleReset,
                   child: Text(appLocalizations.reset),
                 ),
-                const SizedBox(
+                SizedBox(
                   width: 4,
                 ),
                 TextButton(
@@ -588,7 +588,7 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                     _handleUpdate();
                   },
                   decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     labelText: appLocalizations.mixedPort,
                   ),
                   validator: (value) {
@@ -627,7 +627,7 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                       _handleUpdate();
                     },
                     decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       labelText: appLocalizations.port,
                     ),
                     validator: (value) {
@@ -667,7 +667,7 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                       _handleUpdate();
                     },
                     decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       labelText: appLocalizations.socksPort,
                     ),
                     validator: (value) {
@@ -708,7 +708,7 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                       _handleUpdate();
                     },
                     decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       labelText: appLocalizations.redirPort,
                     ),
                     validator: (value) {
@@ -749,7 +749,7 @@ class _PortDialogState extends ConsumerState<_PortDialog> {
                       _handleUpdate();
                     },
                     decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       labelText: appLocalizations.tproxyPort,
                     ),
                     validator: (value) {

@@ -257,7 +257,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                   size: 18,
                   color: Colors.white.withValues(alpha: 0.8),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   appLocalizations.xboardServiceStatus,
                   style: TextStyle(
@@ -268,7 +268,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                 ),
                 const Spacer(),
                 _buildVerdict(),
-                const SizedBox(width: 2),
+                SizedBox(width: 2),
                 Icon(
                   Icons.chevron_right,
                   size: 18,
@@ -512,7 +512,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                     color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
                       appLocalizations.xboardServiceStatus,
@@ -803,7 +803,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Container(
             width: 36,
             height: 4,
@@ -832,7 +832,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                     color: Colors.white.withValues(alpha: 0.45),
                   ),
                 ),
-                const Spacer(),
+                Spacer(),
                 TextButton(
                   onPressed: () => _toggleAll(!allSelected),
                   child: Text(allSelected

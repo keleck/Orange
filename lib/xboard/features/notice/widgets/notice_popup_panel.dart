@@ -145,7 +145,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
             color: primary,
           ),
           SizedBox(width: 9),
-          const Expanded(
+          Expanded(
             child: Text(
               appLocalizations.xboardSystemNotice,
               style: TextStyle(

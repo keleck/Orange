@@ -21,7 +21,7 @@ class ThemeDialog extends ConsumerWidget {
             title: Row(
               children: [
                 const Icon(Icons.auto_mode),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(appLocalizations.auto),
               ],
             ),
@@ -40,7 +40,7 @@ class ThemeDialog extends ConsumerWidget {
             title: Row(
               children: [
                 const Icon(Icons.light_mode),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(appLocalizations.light),
               ],
             ),
@@ -59,7 +59,7 @@ class ThemeDialog extends ConsumerWidget {
             title: Row(
               children: [
                 const Icon(Icons.dark_mode),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(appLocalizations.dark),
               ],
             ),

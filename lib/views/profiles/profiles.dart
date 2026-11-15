@@ -333,7 +333,7 @@ class ProfileItem extends StatelessWidget {
           width: 40,
           child: FadeThroughBox(
             child: profile.isUpdating
-                ? const Padding(
+                ? Padding(
                     padding: EdgeInsets.all(8),
                     child: CircularProgressIndicator(),
                   )

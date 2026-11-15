@@ -72,7 +72,7 @@ class TicketsPage extends ConsumerWidget {
                   ],
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stack) => ListView(
                 children: [
                   SizedBox(
@@ -181,7 +181,7 @@ class _HeaderSummary extends StatelessWidget {
             Row(
               children: [
                 Icon(Icons.support_agent_rounded, size: 18, color: primary),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   appLocalizations.xboardTicketOverview,
                   style: TextStyle(
@@ -191,7 +191,7 @@ class _HeaderSummary extends StatelessWidget {
                     decoration: TextDecoration.none,
                   ),
                 ),
-                const Spacer(),
+                Spacer(),
                 Text(
                   '共 $total 条',
                   style: TextStyle(
@@ -312,7 +312,7 @@ class _EmptyState extends StatelessWidget {
               color: primary.withValues(alpha: 0.85),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             appLocalizations.xboardNoTickets,
             style: TextStyle(
@@ -555,7 +555,7 @@ class _CreateTicketButton extends StatelessWidget {
             BoxShadow(
               color: primary.withValues(alpha: 0.35),
               blurRadius: 18,
-              offset: const Offset(0, 8),
+              offset: Offset(0, 8),
             ),
           ],
         ),

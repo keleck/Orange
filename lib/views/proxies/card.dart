@@ -140,7 +140,7 @@ class ProxyCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.speed, size: 18),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(appLocalizations.testDelay),
             ],
           ),

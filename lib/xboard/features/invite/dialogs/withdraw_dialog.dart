@@ -76,7 +76,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 20,
-                  offset: const Offset(0, 5),
+                  offset: Offset(0, 5),
                 ),
               ],
             ),

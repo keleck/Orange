@@ -170,7 +170,7 @@ class BackupAndRecovery extends ConsumerWidget {
         ListHeader(title: appLocalizations.remote),
         if (dav == null)
           ListItem(
-            leading: const Icon(Icons.account_box),
+            leading: Icon(Icons.account_box),
             title: Text(appLocalizations.noInfo),
             subtitle: Text(appLocalizations.pleaseBindWebDAV),
             trailing: FilledButton.tonal(
@@ -184,7 +184,7 @@ class BackupAndRecovery extends ConsumerWidget {
           )
         else ...[
           ListItem(
-            leading: const Icon(Icons.account_box),
+            leading: Icon(Icons.account_box),
             title: TooltipText(
               text: Text(
                 dav.user,
@@ -238,7 +238,7 @@ class BackupAndRecovery extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             height: 4,
           ),
           ListItem.input(
@@ -419,8 +419,8 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
               maxLines: 5,
               minLines: 1,
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.link),
-                border: const OutlineInputBorder(),
+                prefixIcon: Icon(Icons.link),
+                border: OutlineInputBorder(),
                 labelText: appLocalizations.address,
                 helperText: appLocalizations.addressHelp,
               ),
@@ -434,8 +434,8 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
             TextFormField(
               controller: userController,
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.account_circle),
-                border: const OutlineInputBorder(),
+                prefixIcon: Icon(Icons.account_circle),
+                border: OutlineInputBorder(),
                 labelText: appLocalizations.account,
               ),
               validator: (String? value) {

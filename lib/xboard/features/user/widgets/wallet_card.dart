@@ -228,7 +228,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Text(
                           appLocalizations.xboardCustomAmount,
                           style: TextStyle(
@@ -487,7 +487,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                       BoxShadow(
                         color: theme.colorScheme.primary.withValues(alpha: 0.2),
                         blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        offset: Offset(0, 4),
                       ),
                     ],
                   ),
@@ -525,7 +525,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                     );
                   },
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
@@ -594,7 +594,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             : theme.iconTheme.color?.withOpacity(0.5),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -696,7 +696,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Text(
                           appLocalizations.xboardAccountTopup,
                           style: TextStyle(
@@ -707,7 +707,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
                     Container(
                       padding: const EdgeInsets.all(13),
                       decoration: BoxDecoration(
@@ -797,7 +797,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         );
                       }).toList(),
                     ),
-                    const SizedBox(height: 12), // 添加一个小的固定间距
+                    SizedBox(height: 12), // 添加一个小的固定间距
                     SizedBox(
                       width: double.infinity,
                       height: 50,

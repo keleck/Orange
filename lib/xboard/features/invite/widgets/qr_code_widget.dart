@@ -37,7 +37,7 @@ class QrCodeWidget extends StatelessWidget {
                 size: 48,
                 color: Colors.grey,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 appLocalizations.noInvitationData,
                 style: const TextStyle(

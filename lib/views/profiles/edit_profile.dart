@@ -221,7 +221,7 @@ class _EditProfileViewState extends State<EditProfileView> {
           textInputAction: TextInputAction.next,
           controller: labelController,
           decoration: InputDecoration(
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(),
             labelText: appLocalizations.name,
           ),
           validator: (String? value) {
@@ -241,7 +241,7 @@ class _EditProfileViewState extends State<EditProfileView> {
             maxLines: 5,
             minLines: 1,
             decoration: InputDecoration(
-              border: const OutlineInputBorder(),
+              border: OutlineInputBorder(),
               labelText: appLocalizations.url,
             ),
             validator: (String? value) {
@@ -268,7 +268,7 @@ class _EditProfileViewState extends State<EditProfileView> {
               textInputAction: TextInputAction.next,
               controller: autoUpdateDurationController,
               decoration: InputDecoration(
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(),
                 labelText: appLocalizations.autoUpdateInterval,
               ),
               validator: (String? value) {
@@ -314,12 +314,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                           spacing: 12,
                           children: [
                             CommonChip(
-                              avatar: const Icon(Icons.edit),
+                              avatar: Icon(Icons.edit),
                               label: appLocalizations.edit,
                               onPressed: _editProfileFile,
                             ),
                             CommonChip(
-                              avatar: const Icon(Icons.upload),
+                              avatar: Icon(Icons.upload),
                               label: appLocalizations.upload,
                               onPressed: _uploadProfileFile,
                             ),

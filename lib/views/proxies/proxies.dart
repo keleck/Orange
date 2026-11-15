@@ -106,7 +106,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
                     builder: (_, type) {
                       return AdaptiveSheetScaffold(
                         type: type,
-                        body: const ProxiesSetting(),
+                        body: ProxiesSetting(),
                         title: appLocalizations.settings,
                       );
                     },
@@ -192,7 +192,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
               onPressed: () {
                 _proxiesTabKey.currentState?.scrollToGroupSelected();
               },
-              icon: const Icon(
+              icon: Icon(
                 Icons.adjust_outlined,
               ),
             )
@@ -223,7 +223,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> with PageMixin {
             builder: (_, type) {
               return AdaptiveSheetScaffold(
                 type: type,
-                body: const ProxiesSetting(),
+                body: ProxiesSetting(),
                 title: appLocalizations.settings,
               );
             },

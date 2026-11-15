@@ -832,7 +832,7 @@ class _AddRuleDialogState extends State<AddRuleDialog> {
                       : TextFormField(
                           controller: _contentController,
                           decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
+                            border: OutlineInputBorder(),
                             labelText: appLocalizations.content,
                           ),
                           validator: (_) {

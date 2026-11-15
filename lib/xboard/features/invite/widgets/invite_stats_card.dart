@@ -31,9 +31,9 @@ class InviteStatsCard extends ConsumerWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if (inviteState.isLoading && !inviteState.hasInviteData)
-                  const Center(child: CircularProgressIndicator())
+                  Center(child: CircularProgressIndicator())
                 else
                   Row(
                     children: [

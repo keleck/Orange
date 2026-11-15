@@ -408,7 +408,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   Text(
                     appLocalizations.createAccount,
                     style: textTheme.displaySmall?.copyWith(
@@ -446,7 +446,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
                 child: TextFormField(
                   controller: _emailController,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                   ),
@@ -485,7 +485,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               child: TextFormField(
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                 ),
@@ -556,7 +556,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               child: TextFormField(
                 controller: _confirmPasswordController,
                 obscureText: !_isConfirmPasswordVisible,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                 ),
@@ -630,7 +630,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: TextFormField(
                         controller: _emailCodeController,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                         ),
@@ -689,7 +689,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       ),
                     ),
                     child: _isSendingEmailCode
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
@@ -702,7 +702,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
           ],
 
           // Invite Code
@@ -712,7 +712,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: TextFormField(
                 controller: _inviteCodeController,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                 ),
@@ -768,7 +768,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
               ),
               child: _isRegistering
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
@@ -776,14 +776,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     )
                   : Text(
                       appLocalizations.registerAccount,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // Back to Login
           Row(

@@ -122,12 +122,12 @@ class DesktopNavigationRail extends ConsumerWidget {
       destinations: [
         NavigationRailDestination(
           icon: const Icon(Icons.home_outlined),
-          selectedIcon: const Icon(Icons.home),
+          selectedIcon: Icon(Icons.home),
           label: Text(appLocalizations.xboardHome),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.shopping_bag_outlined),
-          selectedIcon: const Icon(Icons.shopping_bag),
+          selectedIcon: Icon(Icons.shopping_bag),
           label: Text(appLocalizations.xboardPlans),
         ),
         NavigationRailDestination(

@@ -254,7 +254,7 @@ class _OrderCard extends ConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     _buildStatusChip(context, order.status),
                   ],
                 ),

@@ -120,7 +120,7 @@ class AboutView extends ConsumerWidget {
               "https://t.me/FlClash",
             );
           },
-          trailing: const Icon(Icons.launch),
+          trailing: Icon(Icons.launch),
         ),
         ListItem(
           title: Text(appLocalizations.project),
@@ -129,7 +129,7 @@ class AboutView extends ConsumerWidget {
               "https://github.com/$repository",
             );
           },
-          trailing: const Icon(Icons.launch),
+          trailing: Icon(Icons.launch),
         ),
         ListItem(
           title: Text(appLocalizations.core),
@@ -223,7 +223,7 @@ class AboutView extends ConsumerWidget {
                 },
               );
             }),
-            const SizedBox(
+            SizedBox(
               height: 24,
             ),
             Text(

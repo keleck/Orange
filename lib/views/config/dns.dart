@@ -87,7 +87,7 @@ class PreferH3Item extends ConsumerWidget {
     final preferH3 = ref
         .watch(patchClashConfigProvider.select((state) => state.dns.preferH3));
     return ListItem.switchItem(
-      title: const Text("PreferH3"),
+      title: Text("PreferH3"),
       subtitle: Text(appLocalizations.preferH3Desc),
       delegate: SwitchDelegate(
         value: preferH3,

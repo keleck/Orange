@@ -51,7 +51,7 @@ class _CommissionHistoryDialogState
           IconButton(
             onPressed: () =>
                 ref.read(inviteProvider.notifier).refreshCommissionHistory(),
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             tooltip: appLocalizations.refresh,
           ),
         ],
@@ -69,7 +69,7 @@ class _CommissionHistoryDialogState
                   Text(
                     appLocalizations
                         .totalRecords(inviteState.commissionHistory.length),
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                   Text(
                     appLocalizations.pageNumber(inviteState.currentHistoryPage),
@@ -87,7 +87,7 @@ class _CommissionHistoryDialogState
                         children: [
                           const Icon(Icons.history,
                               size: 48, color: Colors.grey),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Text(appLocalizations.noCommissionRecord,
                               style: const TextStyle(color: Colors.grey)),
                         ],
@@ -106,7 +106,7 @@ class _CommissionHistoryDialogState
                                   ? Column(
                                       children: [
                                         const CircularProgressIndicator(),
-                                        const SizedBox(height: 8),
+                                        SizedBox(height: 8),
                                         Text(appLocalizations.loading,
                                             style: const TextStyle(
                                                 color: Colors.grey)),
@@ -116,7 +116,7 @@ class _CommissionHistoryDialogState
                                       onPressed: () => ref
                                           .read(inviteProvider.notifier)
                                           .loadNextHistoryPage(),
-                                      icon: const Icon(Icons.expand_more),
+                                      icon: Icon(Icons.expand_more),
                                       label: Text(appLocalizations.loadMore),
                                     ),
                             ),
@@ -162,7 +162,7 @@ class _CommissionHistoryDialogState
               children: [
                 Text(
                   '¥${commission.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

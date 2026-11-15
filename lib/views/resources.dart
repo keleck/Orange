@@ -185,14 +185,14 @@ class _GeoDataListItemState extends State<GeoDataListItem> {
               spacing: 12,
               children: [
                 CommonChip(
-                  avatar: const Icon(Icons.edit),
+                  avatar: Icon(Icons.edit),
                   label: appLocalizations.edit,
                   onPressed: () {
                     _updateUrl(url, ref);
                   },
                 ),
                 CommonChip(
-                  avatar: const Icon(Icons.sync),
+                  avatar: Icon(Icons.sync),
                   label: appLocalizations.sync,
                   onPressed: () {
                     _handleUpdateGeoDataItem();
@@ -315,7 +315,7 @@ class _UpdateGeoUrlFormDialogState extends State<UpdateGeoUrlFormDialog> {
             onPressed: _handleReset,
             child: Text(appLocalizations.reset),
           ),
-          const SizedBox(
+          SizedBox(
             width: 4,
           ),
         ],

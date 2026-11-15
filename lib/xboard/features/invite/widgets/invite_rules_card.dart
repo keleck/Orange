@@ -27,7 +27,7 @@ class InviteRulesCard extends ConsumerWidget {
                   children: [
                     Icon(Icons.rule,
                         color: Theme.of(context).colorScheme.primary),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       appLocalizations.inviteRules,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -36,7 +36,7 @@ class InviteRulesCard extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   '• ${appLocalizations.inviteRegisterReward}\n'
                   '• ${appLocalizations.friendInviteReward}\n'

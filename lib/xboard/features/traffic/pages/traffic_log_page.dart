@@ -83,7 +83,7 @@ class TrafficLogPage extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (err, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -168,7 +168,7 @@ class TrafficLogPage extends ConsumerWidget {
                   decoration: TextDecoration.none,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
@@ -196,7 +196,7 @@ class TrafficLogPage extends ConsumerWidget {
                 Icons.arrow_upward_rounded,
                 appLocalizations.upload,
                 log.upload,
-                const Color(0xFFFFB86B),
+                Color(0xFFFFB86B),
               ),
               const _TrafficDivider(),
               _buildTrafficItem(
@@ -204,7 +204,7 @@ class TrafficLogPage extends ConsumerWidget {
                 Icons.arrow_downward_rounded,
                 appLocalizations.download,
                 log.download,
-                const Color(0xFF5FD3A0),
+                Color(0xFF5FD3A0),
               ),
               const _TrafficDivider(),
               _buildTrafficItem(

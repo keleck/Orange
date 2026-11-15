@@ -70,7 +70,7 @@ class UpdateDialog extends ConsumerWidget {
             ),
           ),
           if (state.releaseNotes != null && state.releaseNotes!.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               appLocalizations.updateCheckReleaseNotes,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -122,7 +122,7 @@ class UpdateDialog extends ConsumerWidget {
               Navigator.of(context).pop();
             }
           },
-          icon: const Icon(Icons.download, size: 18),
+          icon: Icon(Icons.download, size: 18),
           label: Text(state.forceUpdate
               ? appLocalizations.updateCheckMustUpdate
               : appLocalizations.updateCheckUpdateNow),

@@ -887,7 +887,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       ),
                                 SizedBox(width: 4),
                                 AnimatedDefaultTextStyle(
-                                  duration: const Duration(milliseconds: 200),
+                                  duration: Duration(milliseconds: 200),
                                   style: TextStyle(
                                     color: Colors.white.withValues(
                                         alpha: isNodeLoading
@@ -1011,7 +1011,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.card_giftcard_rounded,
                                       color: Colors.white,
                                       size: 22,
@@ -1156,7 +1156,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       color: Colors.red.shade600,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.error_outline,
                                       color: Colors.white,
                                       size: 16,
@@ -1924,7 +1924,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(AppLocalizations.of(context).xboardConfirmStartDataCycle),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -1951,7 +1951,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     appLocalizations.xboardResetCycleNotes,
                     style: TextStyle(fontSize: 13),

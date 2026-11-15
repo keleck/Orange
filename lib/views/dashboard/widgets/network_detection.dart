@@ -66,7 +66,7 @@ class _NetworkDetectionState extends ConsumerState<NetworkDetection> {
                                   .colorScheme
                                   .onSurfaceVariant,
                             ),
-                      const SizedBox(
+                      SizedBox(
                         width: 8,
                       ),
                       Flexible(

@@ -312,7 +312,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: _openCrispChat,
-              icon: const Icon(Icons.support_agent),
+              icon: Icon(Icons.support_agent),
               label: Text(appLocalizations.onlineSupport),
             ),
           ],

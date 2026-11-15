@@ -152,7 +152,7 @@ class _InputDialogState extends State<InputDialog> {
             onPressed: _handleReset,
             child: Text(appLocalizations.reset),
           ),
-          const SizedBox(
+          SizedBox(
             width: 4,
           ),
         ],
@@ -273,7 +273,7 @@ class ListInputPage extends StatelessWidget {
           onPressed: () async {
             _handleAddOrEdit();
           },
-          child: const Icon(Icons.add),
+          child: Icon(Icons.add),
         ),
       ),
       child: items.isEmpty
@@ -424,7 +424,7 @@ class MapInputPage extends StatelessWidget {
           onPressed: () async {
             _handleAddOrEdit();
           },
-          child: const Icon(Icons.add),
+          child: Icon(Icons.add),
         ),
       ),
       child: items.isEmpty
