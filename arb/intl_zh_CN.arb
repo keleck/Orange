@@ -1245,5 +1245,6 @@
   "xboardConfigUpdated": "配置已更新",
   "xboardTrafficExhaustedEmoji": "💾 流量已用尽！",
   "xboardTrafficHeavy": "📊 流量使用较多",
-  "xboardTrafficInUse": "📡 流量使用中"
+  "xboardTrafficInUse": "📡 流量使用中",
+  "xboardResetCycleNotes": "• 此操作会立即重置当前流量\\n• 会影响下次流量重置时间\\n• 部分套餐可能不支持此功能"
 }

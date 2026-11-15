@@ -1529,5 +1529,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("💾 通信量が上限です！"),
         "xboardTrafficHeavy": MessageLookupByLibrary.simpleMessage("📊 通信量多め"),
         "xboardTrafficInUse": MessageLookupByLibrary.simpleMessage("📡 通信量使用中"),
-      };
+        "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage("• 現在の通信量を即座にリセットします\\n• 次回のリセット時刻に影響します\\n• 一部のプランは未対応の場合があります"),
+  };
 }

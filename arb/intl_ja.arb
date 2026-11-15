@@ -1012,5 +1012,6 @@
   "xboardConfigUpdated": "設定を更新しました",
   "xboardTrafficExhaustedEmoji": "💾 通信量が上限です！",
   "xboardTrafficHeavy": "📊 通信量多め",
-  "xboardTrafficInUse": "📡 通信量使用中"
+  "xboardTrafficInUse": "📡 通信量使用中",
+  "xboardResetCycleNotes": "• 現在の通信量を即座にリセットします\\n• 次回のリセット時刻に影響します\\n• 一部のプランは未対応の場合があります"
 }

@@ -1575,5 +1575,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("💾 流量已用尽！"),
         "xboardTrafficHeavy": MessageLookupByLibrary.simpleMessage("📊 流量使用较多"),
         "xboardTrafficInUse": MessageLookupByLibrary.simpleMessage("📡 流量使用中"),
-      };
+        "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage("• 此操作会立即重置当前流量\\n• 会影响下次流量重置时间\\n• 部分套餐可能不支持此功能"),
+  };
 }

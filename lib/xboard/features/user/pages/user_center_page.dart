@@ -277,7 +277,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       }
     }
 
-    final email = ref.watch(userInfoProvider)?.email ?? appLocalizations.xboardUserAccount;
+    final email = ref.watch(userInfoProvider)?.email ??
+        appLocalizations.xboardUserAccount;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
@@ -606,14 +607,16 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
             iconColor: AppIconColors.blue,
             onTap: () async {
               if (websiteUrl == null || websiteUrl.isEmpty) {
-                XBoardNotification.showError(appLocalizations.xboardWebsiteNotConfigured);
+                XBoardNotification.showError(
+                    appLocalizations.xboardWebsiteNotConfigured);
                 return;
               }
               final uri = Uri.parse(websiteUrl);
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               } else {
-                XBoardNotification.showError(appLocalizations.xboardCannotOpenLink);
+                XBoardNotification.showError(
+                    appLocalizations.xboardCannotOpenLink);
               }
             },
           ),
@@ -625,7 +628,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
             icon: Icons.system_update,
             title: AppLocalizations.of(context).checkUpdate,
             iconColor: AppIconColors.teal,
-            badge: updateState.hasUpdate ? appLocalizations.xboardNewBadge : null,
+            badge:
+                updateState.hasUpdate ? appLocalizations.xboardNewBadge : null,
             isLoading: updateState.isChecking,
             onTap: () async {
               await ref.read(updateCheckProvider.notifier).checkForUpdates();
@@ -638,9 +642,11 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   );
                 }
               } else if (state.error != null) {
-                XBoardNotification.showError(appLocalizations.xboardUpdateCheckFailed);
+                XBoardNotification.showError(
+                    appLocalizations.xboardUpdateCheckFailed);
               } else {
-                XBoardNotification.showSuccess(appLocalizations.xboardAlreadyLatest);
+                XBoardNotification.showSuccess(
+                    appLocalizations.xboardAlreadyLatest);
               }
             },
           ),
@@ -689,9 +695,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '• 此操作会立即重置当前流量\n'
-                    '• 会影响下次流量重置时间\n'
-                    appLocalizations.xboardSomePlansUnsupported,
+                    appLocalizations.xboardResetCycleNotes,
                     style: TextStyle(fontSize: 13),
                   ),
                 ],
@@ -748,7 +752,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
         XBoardNotification.showSuccess(appLocalizations.xboardDataCycleReset);
       } else if (context.mounted) {
-        XBoardNotification.showError(appLocalizations.xboardOperationFailedRetry);
+        XBoardNotification.showError(
+            appLocalizations.xboardOperationFailedRetry);
       }
     } catch (e) {
       // 移除加载提示
@@ -809,7 +814,8 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
       await XBoardSDK.instance.coupon.redeemGiftCard(code);
 
       if (mounted) {
-        XBoardNotification.showSuccess(appLocalizations.xboardGiftCardRedeemSuccess);
+        XBoardNotification.showSuccess(
+            appLocalizations.xboardGiftCardRedeemSuccess);
         _codeController.clear();
         setState(() => _isExpanded = false);
       }

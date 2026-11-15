@@ -1969,5 +1969,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("📊 Большой расход трафика"),
         "xboardTrafficInUse":
             MessageLookupByLibrary.simpleMessage("📡 Трафик используется"),
-      };
+        "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage("• Текущий трафик будет сброшен сразу\\n• Это влияет на время следующего сброса\\n• Некоторые тарифы могут не поддерживать это"),
+  };
 }

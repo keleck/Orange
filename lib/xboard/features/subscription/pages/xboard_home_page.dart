@@ -422,7 +422,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             ? appLocalizations.loading
             : isDisabled
                 ? (isExpired ? appLocalizations.xboardAccountExpired : '流量已耗尽')
-                : (isStart ? appLocalizations.xboardConnected : appLocalizations.xboardDisconnected);
+                : (isStart
+                    ? appLocalizations.xboardConnected
+                    : appLocalizations.xboardDisconnected);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -898,7 +900,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         ? FontWeight.w600
                                         : FontWeight.w500,
                                   ),
-                                  child: Text(_isTunLoading ? appLocalizations.xboardLoadingDots : 'TUN'),
+                                  child: Text(_isTunLoading
+                                      ? appLocalizations.xboardLoadingDots
+                                      : 'TUN'),
                                 ),
                               ],
                             ),
@@ -1049,7 +1053,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                 if (isTrafficExhausted && !isExpired) ...[
                                   SizedBox(height: 6),
                                   Text(
-                                    appLocalizations.xboardTrafficExhaustedRenew,
+                                    appLocalizations
+                                        .xboardTrafficExhaustedRenew,
                                     style: TextStyle(
                                       color:
                                           Colors.white.withValues(alpha: 0.8),
@@ -1104,7 +1109,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         ),
                                         const SizedBox(width: 12),
                                         Text(
-                                          appLocalizations.xboardConfirmNextCycle,
+                                          appLocalizations
+                                              .xboardConfirmNextCycle,
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 16,
@@ -1122,7 +1128,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     ),
                                     SizedBox(height: 6),
                                     Text(
-                                      appLocalizations.xboardTrafficExhaustedAdvance,
+                                      appLocalizations
+                                          .xboardTrafficExhaustedAdvance,
                                       style: TextStyle(
                                         color:
                                             Colors.white.withValues(alpha: 0.8),
@@ -1157,7 +1164,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                   ),
                                   SizedBox(width: 12),
                                   Text(
-                                    importState.message ?? appLocalizations.xboardFetchNodesFailed,
+                                    importState.message ??
+                                        appLocalizations.xboardFetchNodesFailed,
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
@@ -1229,7 +1237,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             Row(
                                               children: [
                                                 Text(
-                                                  appLocalizations.xboardCurrentNode,
+                                                  appLocalizations
+                                                      .xboardCurrentNode,
                                                   style: TextStyle(
                                                     color: Colors.white
                                                         .withValues(alpha: 0.7),
@@ -1309,7 +1318,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                                   ),
                                                 ),
                                                 if (currentGroup != null &&
-                                                    displayName != appLocalizations.xboardUnselected)
+                                                    displayName !=
+                                                        appLocalizations
+                                                            .xboardUnselected)
                                                   Consumer(
                                                     builder: (context, ref, _) {
                                                       final delay = ref.watch(
@@ -1374,7 +1385,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                               child: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: isStart &&
-                                                        displayName != appLocalizations.xboardUnselected
+                                                        displayName !=
+                                                            appLocalizations
+                                                                .xboardUnselected
                                                     ? IpQualityBadge(
                                                         proxyName: displayName,
                                                         enabled: isStart,
@@ -1940,9 +1953,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '• 此操作会立即重置当前流量\n'
-                    '• 会影响下次流量重置时间\n'
-                    appLocalizations.xboardSomePlansUnsupported,
+                    appLocalizations.xboardResetCycleNotes,
                     style: TextStyle(fontSize: 13),
                   ),
                 ],

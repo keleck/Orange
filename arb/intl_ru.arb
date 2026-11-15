@@ -1012,5 +1012,6 @@
   "xboardConfigUpdated": "Конфигурация обновлена",
   "xboardTrafficExhaustedEmoji": "💾 Трафик исчерпан!",
   "xboardTrafficHeavy": "📊 Большой расход трафика",
-  "xboardTrafficInUse": "📡 Трафик используется"
+  "xboardTrafficInUse": "📡 Трафик используется",
+  "xboardResetCycleNotes": "• Текущий трафик будет сброшен сразу\\n• Это влияет на время следующего сброса\\n• Некоторые тарифы могут не поддерживать это"
 }

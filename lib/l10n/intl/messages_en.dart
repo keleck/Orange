@@ -2168,5 +2168,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("📊 Heavy data usage"),
         "xboardTrafficInUse":
             MessageLookupByLibrary.simpleMessage("📡 Data in use"),
-      };
+        "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage("• This will reset your current data immediately\\n• It affects the next reset time\\n• Some plans may not support this"),
+  };
 }

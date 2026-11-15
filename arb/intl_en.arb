@@ -1276,5 +1276,6 @@
   "xboardConfigUpdated": "Configuration updated",
   "xboardTrafficExhaustedEmoji": "💾 Data used up!",
   "xboardTrafficHeavy": "📊 Heavy data usage",
-  "xboardTrafficInUse": "📡 Data in use"
+  "xboardTrafficInUse": "📡 Data in use",
+  "xboardResetCycleNotes": "• This will reset your current data immediately\\n• It affects the next reset time\\n• Some plans may not support this"
 }

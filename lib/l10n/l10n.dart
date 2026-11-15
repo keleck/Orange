@@ -5329,6 +5329,16 @@ class AppLocalizations {
     );
   }
 
+  /// `• This will reset your current data immediately\n• It affects the next reset time\n• Some plans may not support this`
+  String get xboardResetCycleNotes {
+    return Intl.message(
+      '• This will reset your current data immediately\n• It affects the next reset time\n• Some plans may not support this',
+      name: 'xboardResetCycleNotes',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remember Password`
   String get xboardRememberPassword {
     return Intl.message(
