@@ -81,7 +81,8 @@ class NoticeHtmlStyles {
             return {
               'font-family': 'monospace',
               'font-size': '${(textTheme.bodySmall?.fontSize ?? 12)}px',
-              'background-color': _colorToHex(colorScheme.surfaceContainerHighest),
+              'background-color':
+                  _colorToHex(colorScheme.surfaceContainerHighest),
               'color': _colorToHex(colorScheme.tertiary),
               'padding': '2px 4px',
               'border-radius': '4px',
@@ -90,18 +91,22 @@ class NoticeHtmlStyles {
             return {
               'font-family': 'monospace',
               'font-size': '${textTheme.bodySmall?.fontSize ?? 12}px',
-              'background-color': _colorToHex(colorScheme.surfaceContainerHighest),
+              'background-color':
+                  _colorToHex(colorScheme.surfaceContainerHighest),
               'padding': '12px',
               'margin': '8px 0',
-              'border': '1px solid ${_colorToHex(colorScheme.outline.withValues(alpha: 0.2))}',
+              'border':
+                  '1px solid ${_colorToHex(colorScheme.outline.withValues(alpha: 0.2))}',
               'border-radius': '8px',
               'overflow': 'auto',
             };
           case 'blockquote':
             return {
-              'color': _colorToHex(colorScheme.onSurface.withValues(alpha: 0.7)),
+              'color':
+                  _colorToHex(colorScheme.onSurface.withValues(alpha: 0.7)),
               'font-style': 'italic',
-              'border-left': '4px solid ${_colorToHex(colorScheme.primary.withValues(alpha: 0.5))}',
+              'border-left':
+                  '4px solid ${_colorToHex(colorScheme.primary.withValues(alpha: 0.5))}',
               'padding-left': '12px',
               'margin': '8px 0',
             };
@@ -128,7 +133,8 @@ class NoticeHtmlStyles {
           case 'hr':
             return {
               'border': 'none',
-              'border-top': '1px solid ${_colorToHex(colorScheme.outline.withValues(alpha: 0.3))}',
+              'border-top':
+                  '1px solid ${_colorToHex(colorScheme.outline.withValues(alpha: 0.3))}',
               'margin': '16px 0',
             };
           case 'img':
@@ -147,4 +153,3 @@ class NoticeHtmlStyles {
     );
   }
 }
-

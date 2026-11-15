@@ -7,6 +7,7 @@ import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 final _memoryInfoStateNotifier = ValueNotifier<TrafficValue>(
   TrafficValue(value: 0),

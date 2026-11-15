@@ -235,9 +235,8 @@ class ServiceStatusPrefs {
         final decoded = json.decode(await file.readAsString());
         if (decoded is List) {
           final ids = decoded.whereType<String>().toSet();
-          final valid = ids
-              .where((id) => ServiceTarget.byId(id) != null)
-              .toSet();
+          final valid =
+              ids.where((id) => ServiceTarget.byId(id) != null).toSet();
           _cache = valid;
           return valid;
         }

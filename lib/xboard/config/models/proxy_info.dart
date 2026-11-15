@@ -1,7 +1,7 @@
 import 'config_entry.dart';
 
 /// 代理信息
-/// 
+///
 /// 扩展ConfigEntry，添加代理特有的属性
 class ProxyInfo extends ConfigEntry {
   final String protocol; // http, socks5, etc.
@@ -43,13 +43,15 @@ class ProxyInfo extends ConfigEntry {
     try {
       // 解析代理URL格式：protocol://username:password@host:port
       final uri = Uri.parse(url.contains('://') ? url : 'http://$url');
-      
+
       return ProxyInfo(
         url: url,
         description: description,
         protocol: uri.scheme.isNotEmpty ? uri.scheme : 'http',
-        username: uri.userInfo.isNotEmpty ? uri.userInfo.split(':').first : null,
-        password: uri.userInfo.contains(':') ? uri.userInfo.split(':').last : null,
+        username:
+            uri.userInfo.isNotEmpty ? uri.userInfo.split(':').first : null,
+        password:
+            uri.userInfo.contains(':') ? uri.userInfo.split(':').last : null,
         host: uri.host,
         port: uri.port != 0 ? uri.port : null,
       );

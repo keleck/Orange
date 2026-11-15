@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/subscription_status_service.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+
 class SubscriptionStatusDialog extends StatelessWidget {
   final SubscriptionStatusResult statusResult;
   final VoidCallback? onPurchase;
@@ -27,6 +28,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -48,10 +50,14 @@ class SubscriptionStatusDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              statusResult.getDetailMessage(context) ?? statusResult.getMessage(context),
+              statusResult.getDetailMessage(context) ??
+                  statusResult.getMessage(context),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.8),
+                  ),
               textAlign: TextAlign.center,
             ),
             if (_shouldShowFeatureList()) ...[
@@ -74,6 +80,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
       ],
     );
   }
+
   Widget _buildIcon() {
     Color iconColor;
     IconData iconData;
@@ -112,6 +119,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
       ),
     );
   }
+
   String _getTitle(BuildContext context) {
     switch (statusResult.type) {
       case SubscriptionStatusType.noSubscription:
@@ -124,14 +132,19 @@ class SubscriptionStatusDialog extends StatelessWidget {
         return AppLocalizations.of(context).xboardSubscriptionStatus;
     }
   }
+
   bool _shouldShowFeatureList() {
     return statusResult.type == SubscriptionStatusType.noSubscription;
   }
+
   Widget _buildFeatureList(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        color: Theme.of(context)
+            .colorScheme
+            .surfaceContainerHighest
+            .withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -140,9 +153,9 @@ class SubscriptionStatusDialog extends StatelessWidget {
           Text(
             AppLocalizations.of(context).xboardAfterPurchasingPlan,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
           ),
           const SizedBox(height: 12),
           _buildFeatureItem(
@@ -176,6 +189,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildFeatureItem(
     BuildContext context,
     IconData icon,
@@ -204,14 +218,17 @@ class SubscriptionStatusDialog extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
               Text(
                 description,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.7),
+                    ),
               ),
             ],
           ),
@@ -219,6 +236,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
       ],
     );
   }
+
   List<Widget> _buildActions(BuildContext context) {
     final actions = <Widget>[];
     if (statusResult.type == SubscriptionStatusType.expired ||
@@ -234,7 +252,10 @@ class SubscriptionStatusDialog extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context).xboardRefreshStatus,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -250,7 +271,10 @@ class SubscriptionStatusDialog extends StatelessWidget {
           child: Text(
             AppLocalizations.of(context).xboardHandleLater,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -275,6 +299,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
     );
     return actions;
   }
+
   Color _getPrimaryButtonColor() {
     switch (statusResult.type) {
       case SubscriptionStatusType.noSubscription:
@@ -287,6 +312,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
         return Colors.green.shade600;
     }
   }
+
   String _getPrimaryButtonText(BuildContext context) {
     switch (statusResult.type) {
       case SubscriptionStatusType.noSubscription:

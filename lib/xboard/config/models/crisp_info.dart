@@ -1,7 +1,7 @@
 import 'config_entry.dart';
 
 /// Crisp 客服系统配置信息
-/// 
+///
 /// 用于存储 Crisp 在线客服系统的配置
 class CrispInfo extends ConfigEntry {
   /// Crisp 网站 ID

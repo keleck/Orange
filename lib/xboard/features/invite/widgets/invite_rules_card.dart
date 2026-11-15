@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class InviteRulesCard extends ConsumerWidget {
   const InviteRulesCard({super.key});
@@ -10,7 +11,7 @@ class InviteRulesCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final inviteState = ref.watch(inviteProvider);
-    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
@@ -22,15 +23,16 @@ class InviteRulesCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                  Row(
+                Row(
                   children: [
-                    Icon(Icons.rule, color: Theme.of(context).colorScheme.primary),
+                    Icon(Icons.rule,
+                        color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
                       appLocalizations.inviteRules,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),

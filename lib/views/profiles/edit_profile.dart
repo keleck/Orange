@@ -10,6 +10,7 @@ import 'package:fl_clash/pages/editor.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class EditProfileView extends StatefulWidget {
   final Profile profile;

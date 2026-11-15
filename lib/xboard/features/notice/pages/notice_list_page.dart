@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'dart:ui';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class NoticeListPage extends ConsumerStatefulWidget {
   const NoticeListPage({super.key});
@@ -99,7 +100,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
               size: 64,
               color: theme.colorScheme.error,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               appLocalizations.xboardLoadingFailed,
               style: theme.textTheme.titleLarge,
@@ -133,7 +134,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
               size: 64,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               appLocalizations.xboardNoNotifications,
               style: theme.textTheme.titleMedium?.copyWith(
@@ -499,7 +500,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                                   width: 1,
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 appLocalizations.close,
                                 style: TextStyle(
                                   color: Colors.white,

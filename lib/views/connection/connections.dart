@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'item.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class ConnectionsView extends ConsumerStatefulWidget {
   const ConnectionsView({super.key});

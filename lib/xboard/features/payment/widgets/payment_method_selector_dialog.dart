@@ -14,7 +14,8 @@ class PaymentMethodSelectorDialog extends StatefulWidget {
   });
 
   @override
-  State<PaymentMethodSelectorDialog> createState() => _PaymentMethodSelectorDialogState();
+  State<PaymentMethodSelectorDialog> createState() =>
+      _PaymentMethodSelectorDialogState();
 
   /// 显示支付方式选择对话框
   static Future<DomainPaymentMethod?> show(
@@ -32,7 +33,8 @@ class PaymentMethodSelectorDialog extends StatefulWidget {
   }
 }
 
-class _PaymentMethodSelectorDialogState extends State<PaymentMethodSelectorDialog> {
+class _PaymentMethodSelectorDialogState
+    extends State<PaymentMethodSelectorDialog> {
   DomainPaymentMethod? _selectedMethod;
 
   @override
@@ -60,9 +62,10 @@ class _PaymentMethodSelectorDialogState extends State<PaymentMethodSelectorDialo
           itemBuilder: (context, index) {
             final method = widget.paymentMethods[index];
             final isSelected = _selectedMethod?.id == method.id;
-            
+
             return ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               leading: method.iconUrl != null && method.iconUrl!.isNotEmpty
                   ? Image.network(
                       method.iconUrl!,

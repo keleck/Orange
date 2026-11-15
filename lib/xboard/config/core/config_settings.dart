@@ -1,5 +1,5 @@
 /// 配置设置
-/// 
+///
 /// 包含模块的各种配置参数
 class ConfigSettings {
   final String currentProvider;
@@ -19,14 +19,10 @@ class ConfigSettings {
     return ConfigSettings(
       currentProvider: json['currentProvider'] as String? ?? 'Flclash',
       remoteConfig: RemoteConfigSettings.fromJson(
-        json['remoteConfig'] as Map<String, dynamic>? ?? {}
-      ),
+          json['remoteConfig'] as Map<String, dynamic>? ?? {}),
       subscription: SubscriptionSettings.fromJson(
-        json['subscription'] as Map<String, dynamic>? ?? {}
-      ),
-      log: LogSettings.fromJson(
-        json['log'] as Map<String, dynamic>? ?? {}
-      ),
+          json['subscription'] as Map<String, dynamic>? ?? {}),
+      log: LogSettings.fromJson(json['log'] as Map<String, dynamic>? ?? {}),
     );
   }
 
@@ -84,7 +80,8 @@ class RemoteConfigSettings {
   factory RemoteConfigSettings.fromJson(Map<String, dynamic> json) {
     final sourcesList = json['sources'] as List<dynamic>? ?? [];
     final sources = sourcesList
-        .map((item) => RemoteSourceConfig.fromJson(item as Map<String, dynamic>))
+        .map(
+            (item) => RemoteSourceConfig.fromJson(item as Map<String, dynamic>))
         .toList();
 
     return RemoteConfigSettings(
@@ -105,10 +102,10 @@ class RemoteConfigSettings {
   }
 
   bool validate() {
-    return sources.isNotEmpty && 
-           maxRetries > 0 && 
-           timeout.inSeconds > 0 && 
-           retryDelay.inSeconds >= 0;
+    return sources.isNotEmpty &&
+        maxRetries > 0 &&
+        timeout.inSeconds > 0 &&
+        retryDelay.inSeconds >= 0;
   }
 
   List<String> getValidationErrors() {
@@ -184,7 +181,8 @@ class RemoteSourceConfig {
       name: json['name'] as String? ?? '',
       url: json['url'] as String? ?? '',
       headers: headersData?.cast<String, String>(),
-      timeout: timeoutSeconds != null ? Duration(seconds: timeoutSeconds) : null,
+      timeout:
+          timeoutSeconds != null ? Duration(seconds: timeoutSeconds) : null,
       encryptionKey: json['encryptionKey'] as String?,
       priority: json['priority'] as int?,
       isEncrypted: json['isEncrypted'] as bool? ?? false,
@@ -241,7 +239,9 @@ class SubscriptionSettings {
 
   factory SubscriptionSettings.fromJson(Map<String, dynamic> json) {
     return SubscriptionSettings(
-      preferEncrypt: json['preferEncrypt'] as bool? ?? json['prefer_encrypt'] as bool? ?? false,
+      preferEncrypt: json['preferEncrypt'] as bool? ??
+          json['prefer_encrypt'] as bool? ??
+          false,
     );
   }
 

@@ -87,13 +87,13 @@ class _DiscountBadge extends StatelessWidget {
           colors: [Colors.green.shade400, Colors.green.shade600],
         ),
         borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.green.shade200.withValues(alpha: 0.5),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.shade200.withValues(alpha: 0.5),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -202,8 +202,8 @@ class _ValidateButton extends StatelessWidget {
     return SizedBox(
       height: 48,
       child: ElevatedButton(
-        onPressed: isValidating 
-            ? null 
+        onPressed: isValidating
+            ? null
             : () {
                 // 收起键盘
                 FocusScope.of(context).unfocus();
@@ -271,4 +271,3 @@ class _ErrorMessage extends StatelessWidget {
     );
   }
 }
-

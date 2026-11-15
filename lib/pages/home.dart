@@ -35,7 +35,8 @@ class HomePage extends StatelessWidget {
             navigationItems: navigationItems,
             currentIndex: currentIndex,
           );
-          final bottomNavigationBar = viewMode == ViewMode.mobile ? navigationBar : null;
+          final bottomNavigationBar =
+              viewMode == ViewMode.mobile ? navigationBar : null;
           final sideNavigationBar =
               viewMode != ViewMode.mobile ? navigationBar : null;
           return CommonScaffold(

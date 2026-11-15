@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
 import '../widgets/widgets.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class LogsView extends ConsumerStatefulWidget {
   const LogsView({super.key});

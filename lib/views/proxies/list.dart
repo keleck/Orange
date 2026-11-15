@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'card.dart';
 import 'common.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 typedef GroupNameProxiesMap = Map<String, List<Proxy>>;
 

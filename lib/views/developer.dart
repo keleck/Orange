@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/app.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class DeveloperView extends ConsumerWidget {
   const DeveloperView({super.key});

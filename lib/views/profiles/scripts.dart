@@ -12,6 +12,7 @@ import 'package:fl_clash/widgets/popup.dart';
 import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class ScriptsView extends ConsumerStatefulWidget {
   const ScriptsView({super.key});

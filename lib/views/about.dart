@@ -9,6 +9,7 @@ import 'package:fl_clash/xboard/features/update_check/widgets/update_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 @immutable
 class Contributor {

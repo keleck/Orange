@@ -5,6 +5,7 @@ import 'package:fl_clash/xboard/features/shared/shared.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/user_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 /// 桌面端侧边导航栏
 class DesktopNavigationRail extends ConsumerWidget {

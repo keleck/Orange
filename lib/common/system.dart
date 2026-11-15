@@ -7,6 +7,7 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/input.dart';
 import 'package:flutter/services.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class System {
   static System? _instance;

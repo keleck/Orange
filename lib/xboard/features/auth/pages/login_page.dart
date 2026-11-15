@@ -14,6 +14,7 @@ import 'package:fl_clash/xboard/config/utils/config_file_loader.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:fl_clash/xboard/features/crisp_support/pages/crisp_support_page.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});

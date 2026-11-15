@@ -74,7 +74,8 @@ class ConfigVault {
     final iv = IV.fromSecureRandom(_ivLength);
     final encrypter = Encrypter(AES(Key(_deriveKey(salt)), mode: AESMode.cbc));
     final encrypted = encrypter.encryptBytes(plain, iv: iv);
-    final payload = Uint8List.fromList([...salt, ...iv.bytes, ...encrypted.bytes]);
+    final payload =
+        Uint8List.fromList([...salt, ...iv.bytes, ...encrypted.bytes]);
     final file = await _resolveFile();
     await file.writeAsBytes(payload, flush: true);
   }
@@ -96,7 +97,8 @@ class ConfigVault {
         Uint8List.fromList(raw.sublist(_saltLength, headerLength)),
       );
       final cipher = Encrypted(Uint8List.fromList(raw.sublist(headerLength)));
-      final encrypter = Encrypter(AES(Key(_deriveKey(salt)), mode: AESMode.cbc));
+      final encrypter =
+          Encrypter(AES(Key(_deriveKey(salt)), mode: AESMode.cbc));
       final plain = encrypter.decryptBytes(cipher, iv: iv);
       if (plain.isEmpty) {
         return null;

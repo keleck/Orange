@@ -13,9 +13,10 @@ final configProvider = FutureProvider.autoDispose<ConfigModel?>((ref) async {
   }
 });
 
-/// 配置状态Provider  
+/// 配置状态Provider
 /// 提供配置的加载状态和错误信息
-final configStateProvider = StateNotifierProvider<ConfigStateNotifier, ConfigState>((ref) {
+final configStateProvider =
+    StateNotifierProvider<ConfigStateNotifier, ConfigState>((ref) {
   return ConfigStateNotifier();
 });
 
@@ -51,7 +52,7 @@ class ConfigStateNotifier extends StateNotifier<ConfigState> {
 
   Future<void> loadConfig() async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final config = await XBoardSDK.instance.config.getConfig();
       state = state.copyWith(

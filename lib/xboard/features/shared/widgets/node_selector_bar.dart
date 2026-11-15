@@ -9,11 +9,13 @@ import 'package:fl_clash/xboard/features/shared/widgets/glass_container.dart';
 import 'package:fl_clash/xboard/features/latency/services/auto_latency_service.dart';
 import 'package:fl_clash/xboard/features/latency/widgets/latency_indicator.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+
 class NodeSelectorBar extends ConsumerStatefulWidget {
   const NodeSelectorBar({super.key});
   @override
   ConsumerState<NodeSelectorBar> createState() => _NodeSelectorBarState();
 }
+
 class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
   String? _lastProxyName;
   bool _isFirstBuild = true;
@@ -29,15 +31,18 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
       });
     });
   }
+
   @override
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final groups = ref.watch(groupsProvider);
     final selectedMap = ref.watch(selectedMapProvider);
-    final mode = ref.watch(patchClashConfigProvider.select((state) => state.mode));
+    final mode =
+        ref.watch(patchClashConfigProvider.select((state) => state.mode));
     ref.listen(runTimeProvider, (previous, next) {
       final wasConnected = previous != null;
       final isConnected = next != null;
@@ -74,7 +79,8 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
             (g) => g.name == selectedProxyName,
             orElse: () => group, // 如果没找到引用的组，就使用当前组
           );
-          if (referencedGroup.name == selectedProxyName && referencedGroup.type == GroupType.URLTest) {
+          if (referencedGroup.name == selectedProxyName &&
+              referencedGroup.type == GroupType.URLTest) {
             currentGroup = referencedGroup;
             break;
           } else {
@@ -85,7 +91,8 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
       }
       if (currentGroup == null) {
         currentGroup = groups.firstWhere(
-          (group) => group.hidden != true && group.name != GroupName.GLOBAL.name,
+          (group) =>
+              group.hidden != true && group.name != GroupName.GLOBAL.name,
           orElse: () => groups.first,
         );
         if (currentGroup.now != null && currentGroup.now!.isNotEmpty) {
@@ -94,7 +101,8 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
             (g) => g.name == nowValue,
             orElse: () => currentGroup!,
           );
-          if (referencedGroup.name == nowValue && referencedGroup.type == GroupType.URLTest) {
+          if (referencedGroup.name == nowValue &&
+              referencedGroup.type == GroupType.URLTest) {
             currentGroup = referencedGroup;
           }
         }
@@ -124,6 +132,7 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
       child: _buildProxyDisplay(context, currentGroup, currentProxy),
     );
   }
+
   Widget _buildProxyDisplay(BuildContext context, Group group, Proxy proxy) {
     return GlassContainer(
       borderRadius: BorderRadius.circular(16),
@@ -164,8 +173,8 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
                     Text(
                       proxy.name,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                            fontWeight: FontWeight.w600,
+                          ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -194,7 +203,8 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
                 ),
                 child: Text(
                   AppLocalizations.of(context).xboardSwitch,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
@@ -203,6 +213,7 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
       ),
     );
   }
+
   Widget _buildProxyLatency(Proxy proxy) {
     final delayState = ref.watch(getDelayProvider(
       proxyName: proxy.name,
@@ -214,12 +225,16 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
       showIcon: true,
     );
   }
+
   Widget _buildEmptyState(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceContainerHighest
+              .withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.all(14),
@@ -247,17 +262,17 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
                   Text(
                     AppLocalizations.of(context).xboardNoAvailableNodes,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     AppLocalizations.of(context).xboardClickToSetupNodes,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
                   ),
                 ],
               ),
@@ -281,7 +296,8 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
               ),
               child: Text(
                 AppLocalizations.of(context).xboardSetup,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                style:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
               ),
             ),
           ],
@@ -289,6 +305,7 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
       ),
     );
   }
+
   void _checkNodeChange(Proxy currentProxy) {
     if (_isFirstBuild) {
       _lastProxyName = currentProxy.name;
@@ -300,6 +317,7 @@ class _NodeSelectorBarState extends ConsumerState<NodeSelectorBar> {
       autoLatencyService.onNodeChanged();
     }
   }
+
   void _handleManualTest(Proxy proxy) {
     autoLatencyService.testProxy(proxy, forceTest: true);
   }

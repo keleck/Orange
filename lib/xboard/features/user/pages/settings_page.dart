@@ -17,6 +17,7 @@ import 'package:fl_clash/xboard/features/user/pages/access_control_page.dart';
 import 'package:fl_clash/xboard/features/user/widgets/settings_card.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -347,7 +348,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 size: 20,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             Text(
                               appLocalizations.xboardBulkImportRules,
                               style: TextStyle(
@@ -397,7 +398,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                   size: 16,
                                   color: Colors.blue.shade300,
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     appLocalizations.xboardRuleFormatHint,
@@ -411,7 +412,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                           Text(
                             appLocalizations.xboardRuleExamples,
                             style: TextStyle(
@@ -440,7 +441,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                           Text(
                             appLocalizations.xboardPasteRulesHint,
                             style: TextStyle(
@@ -497,7 +498,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 size: 14,
                                 color: Colors.green.shade300,
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: 6),
                               Text(
                                 appLocalizations.xboardRuleSeparatorHint,
                                 style: TextStyle(
@@ -573,7 +574,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                           color: Colors.white,
                                         ),
                                         const SizedBox(width: 6),
-                                        const Text(
+                                        Text(
                                           appLocalizations.import,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -642,7 +643,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             surfaceTintColor: Colors.transparent,
             backgroundColor: Colors.transparent,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back),
               onPressed: () => context.pop(),
             ),
           ),
@@ -669,7 +670,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   const SizedBox(height: 10),
                   _buildAccessControlEntry(context),
                 ],
-                const SizedBox(height: 28),
+                SizedBox(height: 28),
                 _buildSectionHeader(
                   context,
                   appLocalizations.xboardRulesAndRouting,
@@ -973,7 +974,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         appLocalizations.xboardCampusHostsHint,
                         style: TextStyle(
@@ -989,7 +990,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           },
           loading: () => Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(
@@ -997,7 +998,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 appLocalizations.xboardLoadingCampusConfig,
                 style: TextStyle(

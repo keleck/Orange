@@ -7,6 +7,7 @@ import 'package:fl_clash/views/proxies/common.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class ProxyCard extends StatelessWidget {
   final String groupName;
@@ -123,7 +124,7 @@ class ProxyCard extends StatelessWidget {
   _showContextMenu(BuildContext context, TapDownDetails details) {
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
-    
+
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(

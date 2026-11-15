@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/stat_item_widget.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class InviteStatsCard extends ConsumerWidget {
   const InviteStatsCard({super.key});
@@ -11,7 +12,7 @@ class InviteStatsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final inviteState = ref.watch(inviteProvider);
-    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
@@ -38,8 +39,8 @@ class InviteStatsCard extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: StatItemWidget(
-                          title: appLocalizations.totalInvites, 
-                          value: '${inviteState.totalInvites}', 
+                          title: appLocalizations.totalInvites,
+                          value: '${inviteState.totalInvites}',
                           icon: Icons.people,
                         ),
                       ),
@@ -52,8 +53,8 @@ class InviteStatsCard extends ConsumerWidget {
                       ),
                       Expanded(
                         child: StatItemWidget(
-                          title: appLocalizations.totalCommission, 
-                          value: inviteState.formattedCommission, 
+                          title: appLocalizations.totalCommission,
+                          value: inviteState.formattedCommission,
                           icon: Icons.monetization_on,
                         ),
                       ),

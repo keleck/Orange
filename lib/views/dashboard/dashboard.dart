@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'widgets/start_button.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 typedef _IsEditWidgetBuilder = Widget Function(bool isEdit);
 
@@ -171,53 +172,53 @@ class _DashboardViewState extends ConsumerState<DashboardView> with PageMixin {
     return Align(
       alignment: Alignment.topCenter,
       child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16).copyWith(
-            bottom: 88,
-          ),
-          child: Column(
-            children: [
-              // 添加节点选择器横条进行测试
-              const NodeSelectorBar(),
-              const SizedBox(height: 16),
-              _buildIsEdit((isEdit) {
-                return isEdit
-                    ? SystemBackBlock(
-                        child: CommonPopScope(
-                          child: SuperGrid(
-                            key: key,
-                            crossAxisCount: columns,
-                            crossAxisSpacing: spacing,
-                            mainAxisSpacing: spacing,
-                            children: [
-                              ...dashboardState.dashboardWidgets
-                                  .where(
-                                    (item) => item.platforms.contains(
-                                      SupportPlatform.currentPlatform,
-                                    ),
-                                  )
-                                  .map(
-                                    (item) => item.widget,
+        padding: const EdgeInsets.all(16).copyWith(
+          bottom: 88,
+        ),
+        child: Column(
+          children: [
+            // 添加节点选择器横条进行测试
+            const NodeSelectorBar(),
+            const SizedBox(height: 16),
+            _buildIsEdit((isEdit) {
+              return isEdit
+                  ? SystemBackBlock(
+                      child: CommonPopScope(
+                        child: SuperGrid(
+                          key: key,
+                          crossAxisCount: columns,
+                          crossAxisSpacing: spacing,
+                          mainAxisSpacing: spacing,
+                          children: [
+                            ...dashboardState.dashboardWidgets
+                                .where(
+                                  (item) => item.platforms.contains(
+                                    SupportPlatform.currentPlatform,
                                   ),
-                            ],
-                            onUpdate: () {
-                              _handleSave();
-                            },
-                          ),
-                          onPop: () {
-                            _handleUpdateIsEdit();
-                            return false;
+                                )
+                                .map(
+                                  (item) => item.widget,
+                                ),
+                          ],
+                          onUpdate: () {
+                            _handleSave();
                           },
                         ),
-                      )
-                    : Grid(
-                        crossAxisCount: columns,
-                        crossAxisSpacing: spacing,
-                        mainAxisSpacing: spacing,
-                        children: children,
-                      );
-              }),
-            ],
-          ),
+                        onPop: () {
+                          _handleUpdateIsEdit();
+                          return false;
+                        },
+                      ),
+                    )
+                  : Grid(
+                      crossAxisCount: columns,
+                      crossAxisSpacing: spacing,
+                      mainAxisSpacing: spacing,
+                      children: children,
+                    );
+            }),
+          ],
+        ),
       ),
     );
   }

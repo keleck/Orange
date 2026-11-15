@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fl_clash/common/common.dart';
 import '../models/update_check_state.dart';
+import 'package:fl_clash/common/app_localizations.dart';
+
 class UpdateDialog extends ConsumerWidget {
   final UpdateCheckState state;
   const UpdateDialog({super.key, required this.state});
@@ -16,16 +18,18 @@ class UpdateDialog extends ConsumerWidget {
         children: [
           Icon(
             state.forceUpdate ? Icons.warning : Icons.system_update,
-            color: state.forceUpdate 
-                ? Colors.red 
+            color: state.forceUpdate
+                ? Colors.red
                 : Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              state.forceUpdate 
-                  ? appLocalizations.updateCheckForceUpdate(state.latestVersion ?? '')
-                  : appLocalizations.updateCheckNewVersionFound(state.latestVersion ?? ''),
+              state.forceUpdate
+                  ? appLocalizations
+                      .updateCheckForceUpdate(state.latestVersion ?? '')
+                  : appLocalizations
+                      .updateCheckNewVersionFound(state.latestVersion ?? ''),
               style: TextStyle(
                 color: state.forceUpdate ? Colors.red : null,
               ),
@@ -40,7 +44,10 @@ class UpdateDialog extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .primaryContainer
+                  .withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -48,11 +55,15 @@ class UpdateDialog extends ConsumerWidget {
                 Icon(
                   Icons.info_outline,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  appLocalizations.updateCheckCurrentVersion(state.currentVersion ?? ''),
+                  appLocalizations
+                      .updateCheckCurrentVersion(state.currentVersion ?? ''),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -63,18 +74,24 @@ class UpdateDialog extends ConsumerWidget {
             Text(
               appLocalizations.updateCheckReleaseNotes,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
               constraints: const BoxConstraints(maxHeight: 120),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest
+                    .withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .outline
+                      .withValues(alpha: 0.2),
                 ),
               ),
               padding: const EdgeInsets.all(12),
@@ -82,8 +99,8 @@ class UpdateDialog extends ConsumerWidget {
                 child: Text(
                   state.releaseNotes!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    height: 1.4,
-                  ),
+                        height: 1.4,
+                      ),
                 ),
               ),
             ),
@@ -106,8 +123,10 @@ class UpdateDialog extends ConsumerWidget {
             }
           },
           icon: const Icon(Icons.download, size: 18),
-          label: Text(state.forceUpdate ? appLocalizations.updateCheckMustUpdate : appLocalizations.updateCheckUpdateNow),
-          style: state.forceUpdate 
+          label: Text(state.forceUpdate
+              ? appLocalizations.updateCheckMustUpdate
+              : appLocalizations.updateCheckUpdateNow),
+          style: state.forceUpdate
               ? ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -117,6 +136,7 @@ class UpdateDialog extends ConsumerWidget {
       ],
     );
   }
+
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {

@@ -5,6 +5,7 @@ import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class TicketsPage extends ConsumerWidget {
   const TicketsPage({super.key});
@@ -85,7 +86,7 @@ class TicketsPage extends ConsumerWidget {
                             size: 40,
                             color: Colors.white.withValues(alpha: 0.25),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           Text(
                             appLocalizations.xboardTicketLoadFailed,
                             style: TextStyle(
@@ -181,7 +182,7 @@ class _HeaderSummary extends StatelessWidget {
               children: [
                 Icon(Icons.support_agent_rounded, size: 18, color: primary),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   appLocalizations.xboardTicketOverview,
                   style: TextStyle(
                     fontSize: 14.5,
@@ -201,7 +202,7 @@ class _HeaderSummary extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             Row(
               children: [
                 _StatItem(
@@ -312,7 +313,7 @@ class _EmptyState extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             appLocalizations.xboardNoTickets,
             style: TextStyle(
               fontSize: 15,
@@ -321,7 +322,7 @@ class _EmptyState extends StatelessWidget {
               decoration: TextDecoration.none,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(
             appLocalizations.xboardTicketEmptyHint,
             textAlign: TextAlign.center,
@@ -514,7 +515,7 @@ class _ReplyTag extends StatelessWidget {
           size: 13,
           color: color,
         ),
-        const SizedBox(width: 4),
+        SizedBox(width: 4),
         Text(
           isWaiting
               ? appLocalizations.xboardAwaitingReply
@@ -558,7 +559,7 @@ class _CreateTicketButton extends StatelessWidget {
             ),
           ],
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.add_rounded, size: 18, color: Colors.white),

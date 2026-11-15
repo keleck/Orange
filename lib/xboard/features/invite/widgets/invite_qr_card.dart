@@ -7,6 +7,7 @@ import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
 import 'package:fl_clash/xboard/config/xboard_config.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/qr_code_widget.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class InviteQrCard extends ConsumerStatefulWidget {
   const InviteQrCard({super.key});
@@ -28,7 +29,8 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
   @override
   Widget build(BuildContext context) {
     final inviteState = ref.watch(inviteProvider);
-    final codes = inviteState.hasInviteData ? inviteState.inviteData!.codes : [];
+    final codes =
+        inviteState.hasInviteData ? inviteState.inviteData!.codes : [];
     final baseUrl = _getSdkBaseUrl();
 
     return ClipRRect(
@@ -74,11 +76,13 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                             const SizedBox(height: 16),
                             SelectableText(
                               code.code,
-                              style:
-                                  Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 1.5,
-                                      ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                  ),
                             ),
                           ],
                         );
@@ -118,26 +122,30 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                         children: [
                           ElevatedButton.icon(
                             onPressed: () => _saveQrCode(context, inviteUrl),
-                            icon: const Icon(Icons.save_alt, color: Colors.white),
+                            icon:
+                                const Icon(Icons.save_alt, color: Colors.white),
                             label: Text(
                               appLocalizations.saveQr,
                               style: const TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                             ),
                           ),
                           ElevatedButton.icon(
-                            onPressed: () => _copyToClipboard(context, inviteUrl),
+                            onPressed: () =>
+                                _copyToClipboard(context, inviteUrl),
                             icon: const Icon(Icons.link, color: Colors.white),
                             label: Text(
                               appLocalizations.copyInviteLink,
                               style: const TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                             ),
@@ -151,7 +159,9 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                     onPressed: inviteState.isGenerating
                         ? null
                         : () {
-                            ref.read(inviteProvider.notifier).generateInviteCode();
+                            ref
+                                .read(inviteProvider.notifier)
+                                .generateInviteCode();
                           },
                     icon: inviteState.isGenerating
                         ? const SizedBox(
@@ -161,67 +171,73 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                               strokeWidth: 2,
                             ),
                           )
-                    : const Icon(Icons.add_circle_outline),
-                  label: const Text("生成邀请码"),
-                  style: FilledButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                        : const Icon(Icons.add_circle_outline),
+                    label: const Text("生成邀请码"),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 12),
+                    ),
                   ),
-                ),
-              ] else if (inviteState.isLoading || inviteState.isGenerating) ...[
-                Container(
-                  padding: const EdgeInsets.all(40),
-                  child: Column(
-                    children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 16),
-                      Text(
-                        appLocalizations.generatingInviteCode,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ] else if (inviteState.isLoading ||
+                    inviteState.isGenerating) ...[
+                  Container(
+                    padding: const EdgeInsets.all(40),
+                    child: Column(
+                      children: [
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: 16),
+                        Text(
+                          appLocalizations.generatingInviteCode,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ] else ...[
-                Container(
-                  padding: const EdgeInsets.all(40),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.qr_code_2,
-                        size: 64,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.4),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "暂无邀请码",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                ] else ...[
+                  Container(
+                    padding: const EdgeInsets.all(40),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.qr_code_2,
+                          size: 64,
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.6),
+                              .withOpacity(0.4),
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      FilledButton.icon(
-                        onPressed: () {
-                          ref.read(inviteProvider.notifier).generateInviteCode();
-                        },
-                        icon: const Icon(Icons.add_circle_outline),
-                        label: const Text("生成邀请码"),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        Text(
+                          "暂无邀请码",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        FilledButton.icon(
+                          onPressed: () {
+                            ref
+                                .read(inviteProvider.notifier)
+                                .generateInviteCode();
+                          },
+                          icon: const Icon(Icons.add_circle_outline),
+                          label: const Text("生成邀请码"),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
               ],
             ),
           ),

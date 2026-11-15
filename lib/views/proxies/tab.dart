@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/common.dart';
 import 'card.dart';
 import 'common.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 typedef GroupNameKeyMap = Map<String, GlobalObjectKey<ProxyGroupViewState>>;
 

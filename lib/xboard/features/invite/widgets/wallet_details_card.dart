@@ -7,6 +7,7 @@ import 'package:fl_clash/xboard/features/invite/widgets/stat_item_widget.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/transfer_dialog.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/withdraw_dialog.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class WalletDetailsCard extends ConsumerWidget {
   const WalletDetailsCard({super.key});

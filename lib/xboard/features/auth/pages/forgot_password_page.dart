@@ -206,7 +206,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 if (value == null || value.isEmpty) {
                   return AppLocalizations.of(context).pleaseEnterEmail;
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                    .hasMatch(value)) {
                   return AppLocalizations.of(context).pleaseEnterValidEmail;
                 }
                 return null;
@@ -274,7 +275,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
               ),
               decoration: InputDecoration(
                 labelText: null,
-                hintText: AppLocalizations.of(context).pleaseEnterVerificationCode,
+                hintText:
+                    AppLocalizations.of(context).pleaseEnterVerificationCode,
                 hintStyle: TextStyle(
                   color: Colors.white.withValues(alpha: 0.5),
                 ),
@@ -305,7 +307,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
               enabled: !_isLoading,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context).pleaseEnterVerificationCode;
+                  return AppLocalizations.of(context)
+                      .pleaseEnterVerificationCode;
                 }
                 if (value.length < 4) {
                   return AppLocalizations.of(context)
@@ -656,12 +659,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             ),
             const SizedBox(height: 48),
           ],
-
           if (_currentStep == ResetPasswordStep.sendCode)
             _buildSendCodeStep(isDesktop: isDesktop)
           else
             _buildResetPasswordStep(isDesktop: isDesktop),
-
           const SizedBox(height: 24),
           Wrap(
             alignment: WrapAlignment.center,
@@ -690,4 +691,3 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     );
   }
 }
- 

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
 import 'chip.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class CommonScaffold extends StatefulWidget {
   final AppBar? appBar;
@@ -265,7 +266,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
     if (_appBarState.value.leading != null && !_isSearch && !_isEdit) {
       return const SizedBox.shrink();
     }
-    
+
     return _isSearch
         ? TextField(
             autofocus: true,
@@ -407,7 +408,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
   @override
   Widget build(BuildContext context) {
     assert(widget.appBar != null || widget.title != null);
-    
+
     final bodyContent = SafeArea(
       top: false, // AppBar 已经处理了
       bottom: false, // extendBody 会处理
@@ -453,13 +454,13 @@ class CommonScaffoldState extends State<CommonScaffold> {
         ],
       ),
     );
-    
+
     // 将渐变背景直接应用到 body - 深色模式紫色和海军蓝渐变
     final body = Container(
       decoration: AppColors.getBackgroundDecoration(),
       child: bodyContent,
     );
-    
+
     final scaffold = Scaffold(
       appBar: _buildAppBar(),
       body: body,

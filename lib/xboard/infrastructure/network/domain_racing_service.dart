@@ -17,7 +17,7 @@ final _logger = FileLogger('domain_racing_service.dart');
 class DomainRacingService {
   static const Duration _connectionTimeout = Duration(seconds: 5);
   static const Duration _responseTimeout = Duration(seconds: 8);
-  
+
   /// 设置证书路径（由配置加载器调用）
   static void setCertificatePath(String path) {
     _configuredCertPath = path;
@@ -79,11 +79,12 @@ class DomainRacingService {
     List<String>? proxyUrls,
   }) async {
     if (domains.isEmpty) return null;
-    
+
     final proxies = proxyUrls ?? [];
     final testCount = domains.length * (1 + proxies.length);
-    
-    _logger.info('[域名竞速] 开始竞速测试 ${domains.length} 个域名${proxies.isNotEmpty ? '（每个测试直连+${proxies.length}个代理）' : ''}，共 $testCount 个测试');
+
+    _logger.info(
+        '[域名竞速] 开始竞速测试 ${domains.length} 个域名${proxies.isNotEmpty ? '（每个测试直连+${proxies.length}个代理）' : ''}，共 $testCount 个测试');
 
     // 创建并发测试任务
     final List<Future<DomainTestResult>> futures = [];
@@ -92,17 +93,19 @@ class DomainRacingService {
     int taskIndex = 0;
     for (int i = 0; i < domains.length; i++) {
       final domain = domains[i];
-      
+
       // 测试直连
       final directToken = CancelToken();
       cancelTokens.add(directToken);
-      futures.add(_testSingleDomain(domain, testPath, directToken, taskIndex++, useProxy: false));
-      
+      futures.add(_testSingleDomain(domain, testPath, directToken, taskIndex++,
+          useProxy: false));
+
       // 测试所有代理
       for (final proxyUrl in proxies) {
         final proxyToken = CancelToken();
         cancelTokens.add(proxyToken);
-        futures.add(_testSingleDomain(domain, testPath, proxyToken, taskIndex++, useProxy: true, proxyUrl: proxyUrl));
+        futures.add(_testSingleDomain(domain, testPath, proxyToken, taskIndex++,
+            useProxy: true, proxyUrl: proxyUrl));
       }
     }
 
@@ -116,10 +119,11 @@ class DomainRacingService {
         futures[i].then((result) {
           if (!completer.isCompleted && result.success) {
             // 第一个成功的获胜
-            final connectionType = result.useProxy ? '代理: ${result.proxyUrl}' : '直连';
+            final connectionType =
+                result.useProxy ? '代理: ${result.proxyUrl}' : '直连';
             _logger.info(
                 '[域名竞速] 🏆 域名 #$i (${result.domain}) [$connectionType] 获胜！响应时间: ${result.responseTime}ms');
-            
+
             // 保存获胜结果（包含域名和代理信息）
             final racingResult = DomainRacingResult(
               domain: result.domain,
@@ -136,10 +140,12 @@ class DomainRacingService {
           } else {
             completedCount++;
             if (result.error != null) {
-              final connectionType = result.useProxy ? '代理: ${result.proxyUrl}' : '直连';
+              final connectionType =
+                  result.useProxy ? '代理: ${result.proxyUrl}' : '直连';
               _logger.info(
                   '[域名竞速] ❌ 域名 #$i (${result.domain}) [$connectionType] 失败: ${result.error}, 用时: ${result.responseTime}ms');
-              errors.add('域名#$i (${result.domain}) [$connectionType]: ${result.error}');
+              errors.add(
+                  '域名#$i (${result.domain}) [$connectionType]: ${result.error}');
             }
 
             // 如果所有测试都完成且都失败了
@@ -202,7 +208,7 @@ class DomainRacingService {
       // 根据域名类型选择HttpClient配置
       final withoutProtocol = domain.replaceFirst(RegExp(r'^https?://'), '');
       final isIpWithPort = _isIpWithPort(withoutProtocol);
-      
+
       HttpClient client;
 
       if (isIpWithPort && !useProxy) {
@@ -225,11 +231,12 @@ class DomainRacingService {
           username: proxyConfig['username'],
           password: proxyConfig['password'],
         );
-        
+
         SocksTCPClient.assignToHttpClient(client, [proxySettings]);
-        _logger.info('[域名竞速] 域名 #$index 配置SOCKS5代理: ${proxyConfig['host']}:${proxyConfig['port']}');
+        _logger.info(
+            '[域名竞速] 域名 #$index 配置SOCKS5代理: ${proxyConfig['host']}:${proxyConfig['port']}');
       }
-      
+
       // 配置证书验证（必须在配置代理之后设置）
       if (isIpWithPort) {
         // IP+端口：完全忽略证书验证
@@ -248,12 +255,14 @@ class DomainRacingService {
       // 设置请求头
       if (_isIpWithPort(withoutProtocol)) {
         // IP+端口：使用加密User-Agent（Caddy认证）
-        final apiUserAgent = await UserAgentConfig.get(UserAgentScenario.apiEncrypted);
+        final apiUserAgent =
+            await UserAgentConfig.get(UserAgentScenario.apiEncrypted);
         request.headers.set(HttpHeaders.userAgentHeader, apiUserAgent);
         _logger.info('[域名竞速] 域名 #$index 使用加密User-Agent（Caddy认证）');
       } else {
         // 域名：使用域名竞速测试User-Agent
-        final domainUserAgent = await UserAgentConfig.get(UserAgentScenario.domainRacingTest);
+        final domainUserAgent =
+            await UserAgentConfig.get(UserAgentScenario.domainRacingTest);
         request.headers.set(HttpHeaders.userAgentHeader, domainUserAgent);
         _logger.info('[域名竞速] 域名 #$index 使用域名竞速测试User-Agent');
       }
@@ -267,35 +276,42 @@ class DomainRacingService {
       if (cancelToken.isCancelled) {
         _logger.info('[域名竞速] 域名 #$index 测试完成但已被取消');
         return DomainTestResult.failure(
-            domain, '测试被取消', stopwatch.elapsedMilliseconds, useProxy: useProxy, proxyUrl: proxyUrl);
+            domain, '测试被取消', stopwatch.elapsedMilliseconds,
+            useProxy: useProxy, proxyUrl: proxyUrl);
       }
 
       if (response.statusCode >= 200 && response.statusCode < 400) {
         final connectionType = useProxy ? '代理: $proxyUrl' : '直连';
         _logger.info(
             '[域名竞速] 🏆 域名 #$index ($domain) [$connectionType] 测试成功，响应时间: ${stopwatch.elapsedMilliseconds}ms');
-        return DomainTestResult.success(domain, stopwatch.elapsedMilliseconds, useProxy: useProxy, proxyUrl: proxyUrl);
+        return DomainTestResult.success(domain, stopwatch.elapsedMilliseconds,
+            useProxy: useProxy, proxyUrl: proxyUrl);
       } else {
-        _logger.info('[域名竞速] 域名 #$index ($domain) 返回状态码: ${response.statusCode}');
-        return DomainTestResult.failure(
-            domain, 'HTTP ${response.statusCode}', stopwatch.elapsedMilliseconds, useProxy: useProxy, proxyUrl: proxyUrl);
+        _logger
+            .info('[域名竞速] 域名 #$index ($domain) 返回状态码: ${response.statusCode}');
+        return DomainTestResult.failure(domain, 'HTTP ${response.statusCode}',
+            stopwatch.elapsedMilliseconds,
+            useProxy: useProxy, proxyUrl: proxyUrl);
       }
     } on TimeoutException {
       stopwatch.stop();
       _logger.info('[域名竞速] 域名 #$index ($domain) 超时');
       return DomainTestResult.failure(
-          domain, '连接超时', stopwatch.elapsedMilliseconds, useProxy: useProxy, proxyUrl: proxyUrl);
+          domain, '连接超时', stopwatch.elapsedMilliseconds,
+          useProxy: useProxy, proxyUrl: proxyUrl);
     } catch (e) {
       stopwatch.stop();
       if (cancelToken.isCancelled) {
         _logger.info('[域名竞速] 域名 #$index ($domain) 被正常取消');
         return DomainTestResult.failure(
-            domain, '测试被取消', stopwatch.elapsedMilliseconds, useProxy: useProxy, proxyUrl: proxyUrl);
+            domain, '测试被取消', stopwatch.elapsedMilliseconds,
+            useProxy: useProxy, proxyUrl: proxyUrl);
       }
 
       _logger.info('[域名竞速] 域名 #$index ($domain) 测试失败: $e');
       return DomainTestResult.failure(
-          domain, '连接失败: $e', stopwatch.elapsedMilliseconds, useProxy: useProxy, proxyUrl: proxyUrl);
+          domain, '连接失败: $e', stopwatch.elapsedMilliseconds,
+          useProxy: useProxy, proxyUrl: proxyUrl);
     }
   }
 
@@ -493,7 +509,8 @@ class DomainTestResult {
     this.proxyUrl,
   });
 
-  factory DomainTestResult.success(String domain, int responseTime, {bool useProxy = false, String? proxyUrl}) {
+  factory DomainTestResult.success(String domain, int responseTime,
+      {bool useProxy = false, String? proxyUrl}) {
     return DomainTestResult._(
       domain: domain,
       success: true,
@@ -504,7 +521,8 @@ class DomainTestResult {
   }
 
   factory DomainTestResult.failure(
-      String domain, String error, int responseTime, {bool useProxy = false, String? proxyUrl}) {
+      String domain, String error, int responseTime,
+      {bool useProxy = false, String? proxyUrl}) {
     return DomainTestResult._(
       domain: domain,
       success: false,
@@ -536,4 +554,3 @@ class CancelToken {
     _isCancelled = true;
   }
 }
-

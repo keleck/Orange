@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/utils.dart';
 import 'package:flutter/material.dart';
+
 class LatencyIndicator extends StatelessWidget {
   final int? delayValue;
   final VoidCallback? onTap;
@@ -22,6 +23,7 @@ class LatencyIndicator extends StatelessWidget {
     }
     return _buildTestedState(context);
   }
+
   Widget _buildTestingState(BuildContext context) {
     if (isCompact) {
       return SizedBox(
@@ -51,15 +53,16 @@ class LatencyIndicator extends StatelessWidget {
             Text(
               '测试中',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w500,
-              ),
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ],
         ],
       ),
     );
   }
+
   Widget _buildUntestedState(BuildContext context) {
     if (isCompact) {
       return GestureDetector(
@@ -95,13 +98,14 @@ class LatencyIndicator extends StatelessWidget {
           Text(
             '自动测试中',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
         ],
       ),
     );
   }
+
   Widget _buildTestedState(BuildContext context) {
     final displayText = delayValue! < 0 ? 'Timeout' : '${delayValue}ms';
     final color = utils.getDelayColor(delayValue!);
@@ -111,17 +115,20 @@ class LatencyIndicator extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
           decoration: BoxDecoration(
-            color: color?.withValues(alpha: 0.1) ?? Colors.grey.withValues(alpha: 0.1),
+            color: color?.withValues(alpha: 0.1) ??
+                Colors.grey.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: color?.withValues(alpha: 0.3) ?? Colors.grey.withValues(alpha: 0.3)),
+            border: Border.all(
+                color: color?.withValues(alpha: 0.3) ??
+                    Colors.grey.withValues(alpha: 0.3)),
           ),
           child: Text(
             delayValue! < 0 ? '超时' : '$delayValue',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: 10,
-            ),
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10,
+                ),
           ),
         ),
       );
@@ -139,7 +146,8 @@ class LatencyIndicator extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: color?.withValues(alpha: 0.3) ?? Colors.grey.withValues(alpha: 0.3),
+                  color: color?.withValues(alpha: 0.3) ??
+                      Colors.grey.withValues(alpha: 0.3),
                   blurRadius: 2,
                   spreadRadius: 1,
                 ),
@@ -150,15 +158,16 @@ class LatencyIndicator extends StatelessWidget {
           Text(
             displayText,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ],
       ),
     );
   }
 }
+
 class LatencyQuality {
   static const int excellent = 50;
   static const int good = 100;
@@ -172,6 +181,7 @@ class LatencyQuality {
     if (delay <= poor) return '较差';
     return '很差';
   }
+
   static String getQualityDescription(int delay) {
     if (delay < 0) return '连接超时，请检查网络';
     if (delay <= excellent) return '网络质量优秀，适合所有应用';
@@ -180,6 +190,7 @@ class LatencyQuality {
     if (delay <= poor) return '网络质量较差，可能影响体验';
     return '网络质量很差，建议更换节点';
   }
+
   static IconData getQualityIcon(int delay) {
     if (delay < 0) return Icons.signal_wifi_off;
     if (delay <= excellent) return Icons.signal_wifi_4_bar;

@@ -48,7 +48,8 @@ class Navigation {
         modes: [NavigationItemMode.desktop, NavigationItemMode.mobile],
       ),
     ];
-    debugPrint('[Navigation] getItems 返回 ${items.length} 个导航项: ${items.map((e) => e.label.name).toList()}');
+    debugPrint(
+        '[Navigation] getItems 返回 ${items.length} 个导航项: ${items.map((e) => e.label.name).toList()}');
     return items;
   }
 

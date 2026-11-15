@@ -6,6 +6,7 @@ import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class TrafficLogPage extends ConsumerWidget {
   const TrafficLogPage({super.key});
@@ -59,7 +60,7 @@ class TrafficLogPage extends ConsumerWidget {
                           size: 80,
                           color: Colors.white.withValues(alpha: 0.2),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         Text(
                           appLocalizations.xboardNoTrafficRecords,
                           style: TextStyle(
@@ -92,7 +93,7 @@ class TrafficLogPage extends ConsumerWidget {
                       size: 64,
                       color: Colors.red.shade300,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Text(
                       appLocalizations.xboardLoadingFailed,
                       style: TextStyle(
@@ -186,7 +187,7 @@ class TrafficLogPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -15,14 +15,14 @@ import 'package:fl_clash/xboard/features/subscription/utils/utils.dart';
 final _logger = FileLogger('subscription_downloader.dart');
 
 /// XBoard 订阅下载服务
-/// 
+///
 /// 并发下载（直连 + 所有代理），第一个成功就获胜
 /// 支持订阅下载失败时自动切换 API 链接
 class SubscriptionDownloader {
   static const Duration _downloadTimeout = Duration(seconds: 30);
-  
+
   /// 下载订阅并返回 Profile（并发竞速）
-  /// 
+  ///
   /// [url] 订阅URL
   /// [enableRacing] 是否启用竞速（默认 true，false时只使用直连）
   /// [autoSwitchApi] 是否在失败时自动切换API链接（默认 true）
@@ -38,7 +38,7 @@ class SubscriptionDownloader {
       final normalizedUrl = _ensureProtocol(url);
       _logger.info('原始URL: ${UrlMasker.mask(url)}');
       _logger.info('规范化URL: ${UrlMasker.mask(normalizedUrl)}');
-      _logger.info('开始下载订阅: ${UrlMasker.mask(normalizedUrl)}');      
+      _logger.info('开始下载订阅: ${UrlMasker.mask(normalizedUrl)}');
       // 尝试使用当前 URL 下载
       try {
         return await _downloadWithUrl(
@@ -48,16 +48,17 @@ class SubscriptionDownloader {
         );
       } catch (e) {
         _logger.warning('使用当前URL下载失败: $e');
-        
+
         // 如果启用了自动切换API且当前URL失败，尝试切换到其他API
         if (autoSwitchApi) {
           _logger.info('🔄 开始尝试切换到其他API链接...');
-          final alternativeUrl = await _getAlternativeSubscriptionUrl(normalizedUrl);
-          
+          final alternativeUrl =
+              await _getAlternativeSubscriptionUrl(normalizedUrl);
+
           if (alternativeUrl != null && alternativeUrl != normalizedUrl) {
             _logger.info('✅ 找到备用API链接: ${UrlMasker.mask(alternativeUrl)}');
             _logger.info('🔄 使用备用API重新下载订阅...');
-            
+
             try {
               return await _downloadWithUrl(
                 alternativeUrl,
@@ -76,7 +77,6 @@ class SubscriptionDownloader {
           rethrow;
         }
       }
-      
     } on TimeoutException catch (e) {
       _logger.error('订阅下载超时', e);
       throw Exception('下载超时: ${e.message}');
@@ -91,7 +91,7 @@ class SubscriptionDownloader {
       rethrow;
     }
   }
-  
+
   /// 本地内核的 socks5 入口（mixed-port 同时兼容 socks5），
   /// 仅在代理正在运行时返回，否则返回 null（说明没有可用的「上次连接节点」）。
   static String? _localProxyUrl() {
@@ -144,10 +144,10 @@ class SubscriptionDownloader {
         ...XBoardConfig.allProxyUrls,
       ];
       _logger.info('开始并发下载 (${proxies.length + 1}种方式)');
-      
+
       final cancelTokens = <_CancelToken>[];
       final tasks = <Future<_DownloadResult>>[];
-      
+
       try {
         // 任务0: 直连下载
         final directToken = _CancelToken();
@@ -158,7 +158,7 @@ class SubscriptionDownloader {
           cancelToken: directToken,
           taskIndex: 0,
         ));
-        
+
         // 任务1+: 所有代理下载（含本地节点代理）
         for (int i = 0; i < proxies.length; i++) {
           final proxyToken = _CancelToken();
@@ -171,16 +171,15 @@ class SubscriptionDownloader {
             taskIndex: i + 1,
           ));
         }
-        
+
         // 等待第一个成功的任务（忽略失败的）
         result = await _waitForFirstSuccess(tasks);
-        
+
         // 取消其他所有任务
         _logger.info('🏆 ${result.connectionType} 获胜！');
         for (final token in cancelTokens) {
           token.cancel();
         }
-        
       } catch (e) {
         // 取消所有任务
         for (final token in cancelTokens) {
@@ -189,15 +188,15 @@ class SubscriptionDownloader {
         rethrow;
       }
     }
-    
+
     // 尝试转换订阅格式（支持节点链接列表和YAML）
     _logger.info('处理订阅内容...');
     String content = result.content;
-    
+
     if (content.trim().isEmpty) {
       throw Exception('下载的内容为空');
     }
-    
+
     // 先尝试直接验证（可能已经是有效的YAML）
     final directValidation = await clashCore.validateConfig(content);
     if (directValidation.isNotEmpty) {
@@ -209,7 +208,7 @@ class SubscriptionDownloader {
       }
       content = convertedContent;
       _logger.info('✅ 节点链接转换成功');
-      
+
       // 验证转换后的内容
       final convertedValidation = await clashCore.validateConfig(content);
       if (convertedValidation.isNotEmpty) {
@@ -217,26 +216,27 @@ class SubscriptionDownloader {
       }
     }
     _logger.info('✅ 订阅配置验证通过');
-    
+
     // 创建并保存 Profile
     final profile = Profile.normal(url: url);
     final savedProfile = await profile.saveFileWithString(content);
-    
+
     // 更新订阅信息
     final finalProfile = savedProfile.copyWith(
       label: result.label ?? savedProfile.id,
       subscriptionInfo: result.subscriptionInfo,
       lastUpdateDate: DateTime.now(),
     );
-    
+
     _logger.info('✅ 订阅下载成功: ${finalProfile.label}');
     return finalProfile;
   }
-  
+
   /// 获取备用的订阅URL（切换到不同的API域名）
-  /// 
+  ///
   /// 从配置中获取所有订阅API链接，选择一个与当前URL不同的链接
-  static Future<String?> _getAlternativeSubscriptionUrl(String currentUrl) async {
+  static Future<String?> _getAlternativeSubscriptionUrl(
+      String currentUrl) async {
     try {
       // 从当前URL提取token
       final token = SubscriptionUrlHelper.extractTokenFromUrl(currentUrl);
@@ -244,53 +244,55 @@ class SubscriptionDownloader {
         _logger.warning('无法从URL中提取token: ${UrlMasker.mask(currentUrl)}');
         return null;
       }
-      
+
       // 获取所有订阅配置
       final subscriptionConfigs = XBoardConfig.subscriptionUrlList;
       if (subscriptionConfigs.isEmpty) {
         _logger.warning('配置中没有订阅API链接');
         return null;
       }
-      
+
       _logger.info('找到 ${subscriptionConfigs.length} 个订阅API配置');
-      
+
       // 解析当前URL的基础域名
       final currentUri = Uri.parse(currentUrl);
       final currentBase = '${currentUri.scheme}://${currentUri.host}';
-      
+
       // 查找不同的API链接
       for (final config in subscriptionConfigs) {
         final configBase = _ensureProtocol(config.url);
-        
+
         // 跳过与当前URL相同的API
         if (configBase == currentBase || currentUrl.startsWith(configBase)) {
           _logger.debug('跳过当前API: ${config.description}');
           continue;
         }
-        
+
         // 构建新的订阅URL
         // 假设使用 v2 端点
         if (config.endpoints.containsKey('v2')) {
           final endpoint = config.endpoints['v2']!;
           final path = endpoint.path.replaceAll('{token}', token);
-          final normalizedConfigBase = configBase.endsWith('/') ? configBase.substring(0, configBase.length - 1) : configBase;
+          final normalizedConfigBase = configBase.endsWith('/')
+              ? configBase.substring(0, configBase.length - 1)
+              : configBase;
           final normalizedPath = path.startsWith('/') ? path : '/$path';
           final newUrl = '$normalizedConfigBase$normalizedPath';
-          
-          _logger.info('✅ 选择备用API: ${config.description} - ${UrlMasker.mask(newUrl)}');
+
+          _logger.info(
+              '✅ 选择备用API: ${config.description} - ${UrlMasker.mask(newUrl)}');
           return newUrl;
         }
       }
-      
+
       _logger.warning('没有找到可用的备用API链接');
       return null;
-      
     } catch (e) {
       _logger.error('获取备用订阅URL失败', e);
       return null;
     }
   }
-  
+
   /// 确保URL包含协议前缀
   static String _ensureProtocol(String url) {
     if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -299,7 +301,7 @@ class SubscriptionDownloader {
     // 默认使用 https://
     return 'https://$url';
   }
-  
+
   /// 等待第一个成功的任务（忽略失败的）
   static Future<_DownloadResult> _waitForFirstSuccess(
     List<Future<_DownloadResult>> tasks,
@@ -307,7 +309,7 @@ class SubscriptionDownloader {
     final completer = Completer<_DownloadResult>();
     int failedCount = 0;
     final errors = <Object>[];
-    
+
     for (final task in tasks) {
       task.then((result) {
         if (!completer.isCompleted) {
@@ -316,7 +318,7 @@ class SubscriptionDownloader {
       }).catchError((e) {
         failedCount++;
         errors.add(e);
-        
+
         // 如果所有任务都失败了，抛出第一个错误
         if (failedCount == tasks.length && !completer.isCompleted) {
           _logger.error('所有下载任务都失败了', errors.first);
@@ -324,10 +326,10 @@ class SubscriptionDownloader {
         }
       });
     }
-    
+
     return completer.future;
   }
-  
+
   /// 使用指定方式下载完整订阅内容
   static Future<_DownloadResult> _downloadWithMethod(
     String url, {
@@ -338,11 +340,11 @@ class SubscriptionDownloader {
   }) async {
     final connectionType = useProxy ? '代理($proxyUrl)' : '直连';
     _logger.info('[任务$taskIndex] 开始下载: $connectionType');
-    
+
     // 对单个下载任务添加内部重试机制
     const int internalRetries = 3;
     Exception? lastError;
-    
+
     for (int attempt = 1; attempt <= internalRetries; attempt++) {
       try {
         final result = await _downloadWithProxy(
@@ -351,9 +353,10 @@ class SubscriptionDownloader {
           proxyUrl: proxyUrl,
           cancelToken: cancelToken,
         );
-        
-        _logger.info('[任务$taskIndex] 下载成功 (第$attempt次): $connectionType，大小: ${result.bytes.length} bytes');
-        
+
+        _logger.info(
+            '[任务$taskIndex] 下载成功 (第$attempt次): $connectionType，大小: ${result.bytes.length} bytes');
+
         return _DownloadResult(
           content: result.content,
           connectionType: connectionType,
@@ -361,15 +364,15 @@ class SubscriptionDownloader {
           subscriptionInfo: result.subscriptionInfo,
           bytes: result.bytes,
         );
-        
       } catch (e) {
         if (cancelToken.isCancelled) {
           _logger.info('[任务$taskIndex] 已取消: $connectionType');
           rethrow;
         } else {
-          _logger.warning('[任务$taskIndex] 下载失败 (尝试$attempt/$internalRetries): $connectionType - $e');
+          _logger.warning(
+              '[任务$taskIndex] 下载失败 (尝试$attempt/$internalRetries): $connectionType - $e');
           lastError = e is Exception ? e : Exception(e.toString());
-          
+
           if (attempt < internalRetries) {
             // 等待后重试
             _logger.info('[任务$taskIndex] 等待1秒后重试...');
@@ -378,11 +381,11 @@ class SubscriptionDownloader {
         }
       }
     }
-    
+
     // 所有重试都失败了，抛出最后的错误
     throw lastError ?? Exception('下载失败');
   }
-  
+
   /// 使用代理下载订阅内容
   static Future<_DownloadRawResult> _downloadWithProxy(
     String url, {
@@ -391,18 +394,18 @@ class SubscriptionDownloader {
     required _CancelToken cancelToken,
   }) async {
     HttpClient? client;
-    
+
     try {
       // 检查是否已取消
       if (cancelToken.isCancelled) {
         throw Exception('任务已取消');
       }
-      
+
       // 创建 HttpClient
       client = HttpClient();
       client.connectionTimeout = _downloadTimeout;
       client.badCertificateCallback = (cert, host, port) => true;
-      
+
       // 如果使用代理，配置 SOCKS5 代理
       if (useProxy && proxyUrl != null) {
         final proxyConfig = _parseProxyConfig(proxyUrl);
@@ -412,30 +415,31 @@ class SubscriptionDownloader {
           username: proxyConfig['username'],
           password: proxyConfig['password'],
         );
-        
+
         SocksTCPClient.assignToHttpClient(client, [proxySettings]);
       }
-      
+
       // 发起请求
       final uri = Uri.parse(url);
       final request = await client.getUrl(uri);
-      
+
       // 检查是否已取消
       if (cancelToken.isCancelled) {
         client.close(force: true);
         throw Exception('任务已取消');
       }
-      
+
       // 设置请求头
-      final userAgent = await UserAgentConfig.get(UserAgentScenario.subscription);
+      final userAgent =
+          await UserAgentConfig.get(UserAgentScenario.subscription);
       request.headers.set(HttpHeaders.userAgentHeader, userAgent);
-      
+
       // 检查是否已取消
       if (cancelToken.isCancelled) {
         client.close(force: true);
         throw Exception('任务已取消');
       }
-      
+
       // 获取响应
       final response = await request.close().timeout(
         _downloadTimeout,
@@ -443,17 +447,17 @@ class SubscriptionDownloader {
           throw TimeoutException('下载超时', _downloadTimeout);
         },
       );
-      
+
       if (response.statusCode < 200 || response.statusCode >= 400) {
         throw HttpException('HTTP ${response.statusCode}');
       }
-      
+
       // 检查是否已取消
       if (cancelToken.isCancelled) {
         client.close(force: true);
         throw Exception('任务已取消');
       }
-      
+
       // 读取响应内容
       final bytes = await response.fold<List<int>>(
         <int>[],
@@ -465,31 +469,30 @@ class SubscriptionDownloader {
         },
       );
       final content = utf8.decode(bytes);
-      
+
       // 解析响应头
       final disposition = response.headers.value('content-disposition');
       final userinfo = response.headers.value('subscription-userinfo');
-      
+
       String? label;
       if (disposition != null) {
         // 从 content-disposition 提取文件名
-        final match = RegExp(r'filename="?([^";\n]+)"?').firstMatch(disposition);
+        final match =
+            RegExp(r'filename="?([^";\n]+)"?').firstMatch(disposition);
         if (match != null) {
           label = match.group(1)?.trim();
         }
       }
-      
-      final subscriptionInfo = userinfo != null 
-          ? SubscriptionInfo.formHString(userinfo) 
-          : null;
-      
+
+      final subscriptionInfo =
+          userinfo != null ? SubscriptionInfo.formHString(userinfo) : null;
+
       return _DownloadRawResult(
         content: content,
         label: label,
         subscriptionInfo: subscriptionInfo,
         bytes: bytes,
       );
-      
     } finally {
       if (cancelToken.isCancelled) {
         client?.close(force: true);
@@ -498,7 +501,7 @@ class SubscriptionDownloader {
       }
     }
   }
-  
+
   /// 解析代理配置
   ///
   /// 输入格式:
@@ -561,9 +564,9 @@ class SubscriptionDownloader {
 /// 取消令牌
 class _CancelToken {
   bool _isCancelled = false;
-  
+
   bool get isCancelled => _isCancelled;
-  
+
   void cancel() {
     _isCancelled = true;
   }
@@ -576,7 +579,7 @@ class _DownloadResult {
   final String? label;
   final SubscriptionInfo? subscriptionInfo;
   final List<int> bytes;
-  
+
   _DownloadResult({
     required this.content,
     required this.connectionType,
@@ -592,7 +595,7 @@ class _DownloadRawResult {
   final String? label;
   final SubscriptionInfo? subscriptionInfo;
   final List<int> bytes;
-  
+
   _DownloadRawResult({
     required this.content,
     this.label,

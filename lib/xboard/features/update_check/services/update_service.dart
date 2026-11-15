@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('update_service.dart');
@@ -18,18 +19,18 @@ class UpdateService {
       _logger.info('从配置获取更新URL: $updateUrl');
       return updateUrl;
     }
-    
+
     throw Exception(appLocalizations.updateCheckServerUrlNotConfigured);
   }
 
   /// 获取所有可用的更新服务器URL
   Future<List<String>> _getAllServerUrls() async {
     final configUrls = XBoardConfig.allUpdateUrls;
-    
+
     if (configUrls.isEmpty) {
       throw Exception(appLocalizations.updateCheckNoServerUrlsConfigured);
     }
-    
+
     _logger.info('从配置获取到 ${configUrls.length} 个更新URL');
     return configUrls;
   }
@@ -37,7 +38,7 @@ class UpdateService {
   /// 检查更新（使用配置的更新服务器）
   Future<Map<String, dynamic>> checkForUpdatesWithFallback() async {
     final serverUrls = await _getAllServerUrls();
-    
+
     for (int i = 0; i < serverUrls.length; i++) {
       try {
         _logger.info('尝试更新服务器 ${i + 1}/${serverUrls.length}: ${serverUrls[i]}');
@@ -52,7 +53,7 @@ class UpdateService {
         continue;
       }
     }
-    
+
     throw Exception(appLocalizations.updateCheckAllServersUnavailable);
   }
 
@@ -61,26 +62,28 @@ class UpdateService {
     final currentVersion = await getCurrentVersion();
     final platform = _getPlatformName();
     final dio = Dio();
-    final requestUrl = '$serverUrl/api/v1/check-update?version=$currentVersion&platform=$platform';
-    
+    final requestUrl =
+        '$serverUrl/api/v1/check-update?version=$currentVersion&platform=$platform';
+
     _logger.info('发送更新检查请求: $requestUrl');
     dio.options.connectTimeout = const Duration(seconds: 15);
     dio.options.receiveTimeout = const Duration(seconds: 15);
     dio.options.validateStatus = (status) {
       return status != null && status < 600; // 接受所有小于600的状态码
     };
-    
+
     (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
       final client = HttpClient();
       if (kDebugMode) {
-        client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) {
           _logger.debug('忽略SSL证书验证: $host:$port');
           return true;
         };
       }
       return client;
     };
-    
+
     final response = await dio.get(
       requestUrl,
       options: Options(
@@ -89,16 +92,18 @@ class UpdateService {
         },
       ),
     );
-    
+
     if (response.statusCode != 200) {
-      final errorMessage = appLocalizations.updateCheckServerError(response.statusCode!);
+      final errorMessage =
+          appLocalizations.updateCheckServerError(response.statusCode!);
       if (response.statusCode == 530) {
-        throw Exception('$errorMessage - ${appLocalizations.updateCheckServerTemporarilyUnavailable}');
+        throw Exception(
+            '$errorMessage - ${appLocalizations.updateCheckServerTemporarilyUnavailable}');
       } else {
         throw Exception('$errorMessage: ${response.data}');
       }
     }
-    
+
     final responseData = response.data as Map<String, dynamic>;
     return {
       "currentVersion": currentVersion,
@@ -109,14 +114,17 @@ class UpdateService {
       "forceUpdate": responseData["force_update"] == true,
     };
   }
+
   Future<String> getCurrentVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
     return packageInfo.version;
   }
+
   Future<Map<String, dynamic>> checkForUpdates() async {
     final serverUrl = await _getServerUrl();
     return await _checkForUpdatesFromUrl(serverUrl);
   }
+
   String _getPlatformName() {
     if (Platform.isAndroid) return "android";
     if (Platform.isIOS) return "ios";

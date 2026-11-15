@@ -6,7 +6,7 @@ import 'app_colors.dart';
 class GradientBackground extends StatelessWidget {
   final Widget child;
   final bool animated;
-  
+
   const GradientBackground({
     super.key,
     required this.child,
@@ -25,14 +25,15 @@ class GradientBackground extends StatelessWidget {
 /// 带有微妙动画效果的渐变背景
 class AnimatedGradientBackground extends StatefulWidget {
   final Widget child;
-  
+
   const AnimatedGradientBackground({
     super.key,
     required this.child,
   });
 
   @override
-  State<AnimatedGradientBackground> createState() => _AnimatedGradientBackgroundState();
+  State<AnimatedGradientBackground> createState() =>
+      _AnimatedGradientBackgroundState();
 }
 
 class _AnimatedGradientBackgroundState extends State<AnimatedGradientBackground>
@@ -93,7 +94,7 @@ class CardGradientBackground extends StatelessWidget {
   final Widget child;
   final EdgeInsets? padding;
   final BorderRadius? borderRadius;
-  
+
   const CardGradientBackground({
     super.key,
     required this.child,

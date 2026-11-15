@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 /// 移动端底部导航栏（带滑动效果）
 class MobileNavigationBar extends StatefulWidget {

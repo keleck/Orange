@@ -2,7 +2,7 @@ import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/xboard/domain/models/models.dart';
 
 /// 用户仓储接口
-/// 
+///
 /// 定义用户相关数据访问的契约
 /// 具体实现由基础设施层提供（XBoard、V2Board等）
 abstract class UserRepository {

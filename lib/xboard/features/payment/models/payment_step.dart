@@ -6,6 +6,7 @@ enum PaymentStep {
   waitingPayment,
   paymentSuccess,
 }
+
 extension PaymentStepExtension on PaymentStep {
   String get description {
     switch (this) {
@@ -23,6 +24,7 @@ extension PaymentStepExtension on PaymentStep {
         return '支付成功';
     }
   }
+
   bool get isFinal {
     return this == PaymentStep.paymentSuccess;
   }

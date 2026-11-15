@@ -8,49 +8,49 @@ final _logger = FileLogger('xboard_http_client.dart');
 /// XBoard 统一 HTTP 客户端配置
 class XBoardHttpConfig {
   // ========== 超时配置 ==========
-  
+
   /// 快速操作超时（本地缓存、健康检查）
   static const quickTimeout = Duration(seconds: 5);
-  
+
   /// 标准 API 请求超时
   static const standardTimeout = Duration(seconds: 15);
-  
+
   /// 下载操作超时（订阅、配置文件）
   static const downloadTimeout = Duration(seconds: 30);
-  
+
   /// 上传操作超时（文件上传、日志上传）
   static const uploadTimeout = Duration(seconds: 60);
-  
+
   /// 长轮询超时（WebSocket 备用方案）
   static const longPollTimeout = Duration(seconds: 90);
-  
+
   // ========== User-Agent 配置 ==========
   // 注意：不同的 UA 是有意设计的，服务端会根据 UA 返回不同格式的数据
   // ⚠️ 重要：所有 UA 必须和原始代码完全一致，特别是加密部分用于 Caddy 认证
-  
+
   /// User-Agent 配置说明
-  /// 
+  ///
   /// ⚠️ 所有 User-Agent 从配置文件读取，不再有默认值
-  /// 
+  ///
   /// 使用方式：
   /// ```dart
   /// final ua = await UserAgentConfig.get(UserAgentScenario.subscription);
   /// ```
-  /// 
+  ///
   /// 常用场景：
   /// - 订阅下载：UserAgentScenario.subscription
   /// - API/域名竞速：UserAgentScenario.apiEncrypted
   /// - 并发订阅：UserAgentScenario.subscriptionRacing
   /// - 消息附件：UserAgentScenario.attachment
-  
+
   // ========== 重试配置 ==========
-  
+
   /// 默认重试次数
   static const int defaultRetries = 3;
-  
+
   /// 重试延迟（指数退避）
   static Duration retryDelay(int attempt) => Duration(seconds: attempt * 2);
-  
+
   /// 是否应该重试（根据状态码判断）
   static bool shouldRetry(int? statusCode) {
     if (statusCode == null) return true;
@@ -65,7 +65,7 @@ class XBoardHttpConfig {
 }
 
 /// XBoard 统一 HTTP 客户端
-/// 
+///
 /// 功能特性：
 /// - 统一的超时配置
 /// - 统一的错误处理
@@ -75,7 +75,7 @@ class XBoardHttpConfig {
 class XBoardHttpClient {
   final Dio _dio;
   final String? _baseUrl;
-  
+
   XBoardHttpClient({
     String? baseUrl,
     Duration? timeout,
@@ -86,7 +86,7 @@ class XBoardHttpClient {
           timeout: timeout,
           headers: headers,
         );
-  
+
   /// 创建 Dio 实例
   static Dio _createDio({
     String? baseUrl,
@@ -106,7 +106,7 @@ class XBoardHttpClient {
       },
       validateStatus: (status) => status != null && status < 500,
     ));
-    
+
     // 添加日志拦截器（仅在 Debug 模式）
     dio.interceptors.add(LogInterceptor(
       requestHeader: true,
@@ -116,13 +116,13 @@ class XBoardHttpClient {
       error: true,
       logPrint: (obj) => _logger.debug('[HTTP] $obj'),
     ));
-    
+
     // 添加重试拦截器
     dio.interceptors.add(_RetryInterceptor(dio));
-    
+
     return dio;
   }
-  
+
   /// GET 请求
   Future<HttpResult<T>> get<T>(
     String path, {
@@ -142,7 +142,7 @@ class XBoardHttpClient {
       return _handleError(e);
     }
   }
-  
+
   /// POST 请求
   Future<HttpResult<T>> post<T>(
     String path, {
@@ -164,7 +164,7 @@ class XBoardHttpClient {
       return _handleError(e);
     }
   }
-  
+
   /// PUT 请求
   Future<HttpResult<T>> put<T>(
     String path, {
@@ -186,7 +186,7 @@ class XBoardHttpClient {
       return _handleError(e);
     }
   }
-  
+
   /// DELETE 请求
   Future<HttpResult<T>> delete<T>(
     String path, {
@@ -208,7 +208,7 @@ class XBoardHttpClient {
       return _handleError(e);
     }
   }
-  
+
   /// 下载文件
   Future<HttpResult<void>> download(
     String urlPath,
@@ -231,7 +231,7 @@ class XBoardHttpClient {
       return _handleError(e);
     }
   }
-  
+
   /// 上传文件
   Future<HttpResult<T>> upload<T>(
     String path,
@@ -254,11 +254,11 @@ class XBoardHttpClient {
       return _handleError(e);
     }
   }
-  
+
   /// 处理响应
   HttpResult<T> _handleResponse<T>(Response<T> response) {
     final statusCode = response.statusCode ?? 0;
-    
+
     if (statusCode >= 200 && statusCode < 300) {
       return HttpSuccess(
         response.data as T,
@@ -273,7 +273,7 @@ class XBoardHttpClient {
       );
     }
   }
-  
+
   /// 处理错误
   HttpResult<T> _handleError<T>(dynamic error) {
     if (error is DioException) {
@@ -323,13 +323,13 @@ class XBoardHttpClient {
           );
       }
     }
-    
+
     return HttpFailure(
       '请求异常: $error',
       errorType: HttpErrorType.unknown,
     );
   }
-  
+
   /// 转换 Headers
   Map<String, String> _convertHeaders(Headers headers) {
     final result = <String, String>{};
@@ -340,7 +340,7 @@ class XBoardHttpClient {
     });
     return result;
   }
-  
+
   /// 关闭客户端
   void close({bool force = false}) {
     _dio.close(force: force);
@@ -350,39 +350,39 @@ class XBoardHttpClient {
 /// 重试拦截器
 class _RetryInterceptor extends Interceptor {
   final Dio _dio;
-  
+
   _RetryInterceptor(this._dio);
-  
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // 检查是否应该重试
     final extra = err.requestOptions.extra;
     final retries = extra['retries'] ?? XBoardHttpConfig.defaultRetries;
     final attempt = extra['attempt'] ?? 0;
-    
+
     if (attempt >= retries) {
       // 已达到最大重试次数
       return handler.next(err);
     }
-    
+
     // 检查错误类型是否应该重试
     final shouldRetry = _shouldRetry(err);
     if (!shouldRetry) {
       return handler.next(err);
     }
-    
+
     // 计算延迟
     final delay = XBoardHttpConfig.retryDelay(attempt + 1);
     _logger.warning(
       '[HTTP] 请求失败，${delay.inSeconds}秒后进行第${attempt + 1}次重试: ${err.requestOptions.uri}',
     );
-    
+
     // 延迟后重试
     await Future.delayed(delay);
-    
+
     // 更新重试次数
     err.requestOptions.extra['attempt'] = attempt + 1;
-    
+
     try {
       final response = await _dio.fetch(err.requestOptions);
       return handler.resolve(response);
@@ -393,19 +393,19 @@ class _RetryInterceptor extends Interceptor {
       return handler.next(err);
     }
   }
-  
+
   bool _shouldRetry(DioException err) {
     // 超时应该重试
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout) {
       return true;
     }
-    
+
     // 网络错误应该重试
     if (err.type == DioExceptionType.connectionError) {
       return true;
     }
-    
+
     // 根据状态码判断
     final statusCode = err.response?.statusCode;
     return XBoardHttpConfig.shouldRetry(statusCode);
@@ -415,26 +415,33 @@ class _RetryInterceptor extends Interceptor {
 /// HTTP 结果类型
 sealed class HttpResult<T> {
   const HttpResult();
-  
+
   /// 是否成功
   bool get isSuccess => this is HttpSuccess<T>;
-  
+
   /// 是否失败
   bool get isFailure => this is HttpFailure<T>;
-  
+
   /// 获取数据（如果成功）
   T? get dataOrNull => switch (this) {
-    HttpSuccess(data: final data) => data,
-    _ => null,
-  };
-  
+        HttpSuccess(data: final data) => data,
+        _ => null,
+      };
+
   /// 模式匹配
   R when<R>({
-    required R Function(T data, int statusCode, Map<String, String> headers) success,
-    required R Function(String message, HttpErrorType errorType, int? statusCode, dynamic data) failure,
+    required R Function(T data, int statusCode, Map<String, String> headers)
+        success,
+    required R Function(String message, HttpErrorType errorType,
+            int? statusCode, dynamic data)
+        failure,
   }) {
     return switch (this) {
-      HttpSuccess(data: final data, statusCode: final code, headers: final headers) =>
+      HttpSuccess(
+        data: final data,
+        statusCode: final code,
+        headers: final headers
+      ) =>
         success(data, code, headers),
       HttpFailure(
         message: final msg,
@@ -452,7 +459,7 @@ class HttpSuccess<T> extends HttpResult<T> {
   final T data;
   final int statusCode;
   final Map<String, String> headers;
-  
+
   const HttpSuccess(this.data, this.statusCode, this.headers);
 }
 
@@ -462,7 +469,7 @@ class HttpFailure<T> extends HttpResult<T> {
   final HttpErrorType errorType;
   final int? statusCode;
   final dynamic data;
-  
+
   const HttpFailure(
     this.message, {
     this.errorType = HttpErrorType.unknown,
@@ -475,20 +482,19 @@ class HttpFailure<T> extends HttpResult<T> {
 enum HttpErrorType {
   /// 网络错误
   network,
-  
+
   /// 超时
   timeout,
-  
+
   /// 服务器错误
   server,
-  
+
   /// 证书错误
   certificate,
-  
+
   /// 请求取消
   cancel,
-  
+
   /// 未知错误
   unknown,
 }
-

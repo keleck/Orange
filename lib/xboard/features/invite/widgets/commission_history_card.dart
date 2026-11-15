@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/commission_history_dialog.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class CommissionHistoryCard extends ConsumerWidget {
   const CommissionHistoryCard({super.key});
@@ -12,7 +13,7 @@ class CommissionHistoryCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final inviteState = ref.watch(inviteProvider);
-    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
@@ -44,22 +45,27 @@ class CommissionHistoryCard extends ConsumerWidget {
                         Icon(
                           Icons.history,
                           size: 48,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.4),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           appLocalizations.noCommissionRecord,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
                           ),
                         ),
                       ],
                     ),
                   )
                 else
-                  ...inviteState.commissionHistory.take(5).map((commission) => 
-                    _buildCommissionItem(context, commission)
-                  ),
+                  ...inviteState.commissionHistory.take(5).map((commission) =>
+                      _buildCommissionItem(context, commission)),
                 if (inviteState.commissionHistory.length >= 5)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -71,15 +77,19 @@ class CommissionHistoryCard extends ConsumerWidget {
                       ),
                       if (inviteState.commissionHistory.length >= 5)
                         TextButton.icon(
-                          onPressed: () => ref.read(inviteProvider.notifier).loadNextHistoryPage(),
-                          icon: inviteState.isLoadingHistory 
-                            ? const SizedBox(
-                                width: 16, 
-                                height: 16, 
-                                child: CircularProgressIndicator(strokeWidth: 2)
-                              )
-                            : const Icon(Icons.refresh),
-                          label: Text(inviteState.isLoadingHistory ? appLocalizations.loading : appLocalizations.loadMore),
+                          onPressed: () => ref
+                              .read(inviteProvider.notifier)
+                              .loadNextHistoryPage(),
+                          icon: inviteState.isLoadingHistory
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2))
+                              : const Icon(Icons.refresh),
+                          label: Text(inviteState.isLoadingHistory
+                              ? appLocalizations.loading
+                              : appLocalizations.loadMore),
                         ),
                     ],
                   ),
@@ -91,7 +101,8 @@ class CommissionHistoryCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildCommissionItem(BuildContext context, DomainCommission commission) {
+  Widget _buildCommissionItem(
+      BuildContext context, DomainCommission commission) {
     final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 8),

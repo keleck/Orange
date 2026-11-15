@@ -12,12 +12,14 @@ import 'package:go_router/go_router.dart';
 import 'dart:async';
 import 'package:fl_clash/xboard/config/utils/config_file_loader.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
   @override
   ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
+
 class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -306,13 +308,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     color: Colors.white, // Right side background
                     child: Center(
                       child: SingleChildScrollView(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 48.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 48.0),
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 400),
                           child: configAsync.when(
-                            loading: () =>
-                                const Center(child: CircularProgressIndicator()),
+                            loading: () => const Center(
+                                child: CircularProgressIndicator()),
                             error: (error, stack) => Center(
                                 child: Text('Error loading config: $error')),
                             data: (config) => _buildRegisterForm(
@@ -340,10 +341,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     child: configAsync.when(
                       loading: () =>
                           const Center(child: CircularProgressIndicator()),
-                      error: (error, stack) => Center(
-                          child: Text('Error loading config: $error')),
-                      data: (config) => _buildRegisterForm(context, config,
-                          isDesktop: false),
+                      error: (error, stack) =>
+                          Center(child: Text('Error loading config: $error')),
+                      data: (config) =>
+                          _buildRegisterForm(context, config, isDesktop: false),
                     ),
                   ),
                 ),
@@ -355,8 +356,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     );
   }
 
-  Widget _buildRegisterForm(
-      BuildContext context, ConfigModel? config, {required bool isDesktop}) {
+  Widget _buildRegisterForm(BuildContext context, ConfigModel? config,
+      {required bool isDesktop}) {
     final textTheme = Theme.of(context).textTheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -811,4 +812,3 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     );
   }
 }
- 

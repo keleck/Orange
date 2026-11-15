@@ -42,7 +42,9 @@ class MemoryCache<K, V> implements CacheInterface<K, V> {
   @override
   void set(K key, V value, {Duration? ttl}) {
     // 如果达到最大容量，移除最旧的条目
-    if (maxSize != null && _cache.length >= maxSize! && !_cache.containsKey(key)) {
+    if (maxSize != null &&
+        _cache.length >= maxSize! &&
+        !_cache.containsKey(key)) {
       final oldestKey = _cache.keys.first;
       _cache.remove(oldestKey);
     }
@@ -92,4 +94,3 @@ class MemoryCache<K, V> implements CacheInterface<K, V> {
     }
   }
 }
-

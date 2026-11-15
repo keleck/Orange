@@ -3,6 +3,7 @@ import 'package:fl_clash/pages/scan.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class AddProfileView extends StatelessWidget {
   final BuildContext context;

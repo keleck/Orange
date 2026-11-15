@@ -50,7 +50,7 @@ class AdaptiveShellLayout extends ConsumerWidget {
 
   int _getCurrentIndex(BuildContext context, bool isDesktop) {
     final location = GoRouterState.of(context).uri.path;
-    
+
     if (isDesktop) {
       // 桌面端导航栏索引：首页(0)、套餐(1)、我的(2)
       if (location == '/') return 0;
@@ -71,14 +71,15 @@ class AdaptiveShellLayout extends ConsumerWidget {
     final viewMode = ref.watch(viewModeProvider);
     final isDesktop = viewMode != ViewMode.mobile;
     final currentIndex = _getCurrentIndex(context, isDesktop);
-    
+
     if (isDesktop) {
       // 桌面端：侧边栏 + 内容区（无外层 Scaffold）
       return Row(
         children: [
           DesktopNavigationRail(
             selectedIndex: currentIndex,
-            onDestinationSelected: (index) => _onDestinationSelected(context, index, true),
+            onDestinationSelected: (index) =>
+                _onDestinationSelected(context, index, true),
           ),
           Expanded(
             child: child,
@@ -90,18 +91,18 @@ class AdaptiveShellLayout extends ConsumerWidget {
       // Support 页面不显示底部导航栏
       final location = GoRouterState.of(context).uri.path;
       final hideBottomNav = location.startsWith('/support');
-      
+
       return Scaffold(
         extendBody: true, // 让内容延伸到底部导航栏下方，实现悬浮效果
         body: child,
-        bottomNavigationBar: hideBottomNav 
-            ? null 
+        bottomNavigationBar: hideBottomNav
+            ? null
             : MobileNavigationBar(
                 selectedIndex: currentIndex,
-                onDestinationSelected: (index) => _onDestinationSelected(context, index, false),
+                onDestinationSelected: (index) =>
+                    _onDestinationSelected(context, index, false),
               ),
       );
     }
   }
 }
-

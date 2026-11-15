@@ -7,6 +7,7 @@ import 'package:fl_clash/xboard/features/order/providers/order_provider.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class OrderPage extends ConsumerWidget {
   const OrderPage({super.key});
@@ -132,7 +133,7 @@ class _OrderCard extends ConsumerWidget {
               decoration: TextDecoration.none,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           Divider(
             height: 1,
             thickness: 1,
@@ -160,7 +161,7 @@ class _OrderCard extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 2),
+                SizedBox(width: 2),
               ],
               GestureDetector(
                 onTap: () => _showDetails(context),
@@ -258,7 +259,7 @@ class _OrderCard extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
               Text(
                 appLocalizations.xboardBasicInfo,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -266,7 +267,7 @@ class _OrderCard extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: BackdropFilter(
@@ -291,7 +292,7 @@ class _OrderCard extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               Text(
                 appLocalizations.xboardTimeInfo,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -299,7 +300,7 @@ class _OrderCard extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: BackdropFilter(

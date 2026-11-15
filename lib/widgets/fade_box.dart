@@ -38,12 +38,8 @@ class FadeThroughBox extends StatelessWidget {
   final Alignment? alignment;
   final EdgeInsets? margin;
 
-  const FadeThroughBox({
-    super.key,
-    required this.child,
-    this.alignment,
-    this.margin
-  });
+  const FadeThroughBox(
+      {super.key, required this.child, this.alignment, this.margin});
 
   @override
   Widget build(BuildContext context) {

@@ -5,13 +5,13 @@ import 'package:fl_clash/xboard/xboard.dart';
 
 class LatencyService {
   LatencyService();
-  
+
   Future<Map<String, int>> testNodes(List<Proxy> nodes) async {
     final Map<String, int> latencies = {};
     if (nodes.isEmpty) {
       return latencies;
     }
-    
+
     // 从配置文件获取延迟测试URL（开源友好：可在 xboard.config.json 中配置）
     final testUrl = await ConfigFileLoaderHelper.getLatencyTestUrl();
     final List<Future> tasks = [];
@@ -28,6 +28,7 @@ class LatencyService {
     return latencies;
   }
 }
+
 final latencyServiceProvider = Provider<LatencyService>((ref) {
   return LatencyService();
 });

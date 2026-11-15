@@ -7,7 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
-import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, CouponModel;
+import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart'
+    show XBoardSDK, CouponModel;
 import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'package:fl_clash/xboard/features/payment/providers/xboard_payment_provider.dart';
@@ -67,10 +68,10 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
     super.initState();
     // 确保 PaymentProvider 被初始化，以便开始加载支付方式
     ref.read(xboardPaymentProvider);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final periods = _getAvailablePeriods(context);
-      if (periods.isNotEmpty && _selectedPeriod == null) {  
+      if (periods.isNotEmpty && _selectedPeriod == null) {
         setState(() {
           _selectedPeriod = periods.first['period'];
         });
@@ -92,7 +93,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
     try {
       // 使用 xboardUserProvider 获取用户信息
       final userInfo = ref.read(xboardUserProvider).userInfo;
-      
+
       if (mounted) {
         setState(() => _userBalance = userInfo?.balanceInYuan);
       }
@@ -211,7 +212,8 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
       if (mounted) {
         setState(() {
           _isCouponValid = false;
-          _couponErrorMessage = '${AppLocalizations.of(context).xboardValidationFailed}: ${e.toString()}';
+          _couponErrorMessage =
+              '${AppLocalizations.of(context).xboardValidationFailed}: ${e.toString()}';
           _clearCouponData();
         });
       }
@@ -245,7 +247,8 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
   void _setCouponInvalid() {
     setState(() {
       _isCouponValid = false;
-      _couponErrorMessage = AppLocalizations.of(context).xboardInvalidOrExpiredCoupon;
+      _couponErrorMessage =
+          AppLocalizations.of(context).xboardInvalidOrExpiredCoupon;
       _clearCouponData();
     });
   }
@@ -292,13 +295,15 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
   Future<void> _proceedToPurchase() async {
     if (_selectedPeriod == null) {
-      XBoardNotification.showError(AppLocalizations.of(context).xboardPleaseSelectPaymentPeriod);
+      XBoardNotification.showError(
+          AppLocalizations.of(context).xboardPleaseSelectPaymentPeriod);
       return;
     }
 
     try {
       String? tradeNo;
-      _logger.debug('[购买] 开始购买流程，套餐ID: ${widget.plan.id}, 周期: $_selectedPeriod');
+      _logger
+          .debug('[购买] 开始购买流程，套餐ID: ${widget.plan.id}, 周期: $_selectedPeriod');
 
       // 在购买前刷新用户余额，确保金额显示最新
       await _loadUserBalance();
@@ -312,7 +317,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
       // 创建订单
       _logger.debug('[购买] 创建订单');
       PaymentWaitingManager.updateStep(PaymentStep.createOrder);
-      
+
       final paymentNotifier = ref.read(xboardPaymentProvider.notifier);
       tradeNo = await paymentNotifier.createOrder(
         planId: widget.plan.id,
@@ -322,7 +327,8 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
       if (tradeNo == null) {
         final errorMessage = ref.read(userUIStateProvider).errorMessage;
-        throw Exception('${AppLocalizations.of(context).xboardOrderCreationFailed}: $errorMessage');
+        throw Exception(
+            '${AppLocalizations.of(context).xboardOrderCreationFailed}: $errorMessage');
       }
 
       _logger.debug('[购买] 订单创建成功: $tradeNo');
@@ -334,15 +340,18 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
       final userInfo = ref.read(userInfoProvider);
       final latestBalance = userInfo?.balanceInYuan ?? _userBalance ?? 0.0;
       final balanceToUse = latestBalance > 0
-          ? (latestBalance > displayFinalPrice ? displayFinalPrice : latestBalance)
+          ? (latestBalance > displayFinalPrice
+              ? displayFinalPrice
+              : latestBalance)
           : 0.0;
       final actualPayAmount = displayFinalPrice - balanceToUse;
 
-      _logger.debug('[购买] 实付金额: $actualPayAmount (优惠后价格: $displayFinalPrice, 余额抵扣: $balanceToUse, 当前余额: $latestBalance)');
+      _logger.debug(
+          '[购买] 实付金额: $actualPayAmount (优惠后价格: $displayFinalPrice, 余额抵扣: $balanceToUse, 当前余额: $latestBalance)');
 
       // 使用 xboardAvailablePaymentMethodsProvider 获取支付方式
       final paymentMethods = ref.read(xboardAvailablePaymentMethodsProvider);
-      
+
       _logger.info('[购买] 获取到的支付方式数量: ${paymentMethods.length}');
       if (paymentMethods.isNotEmpty) {
         _logger.info('[购买] 支付方式列表:');
@@ -352,13 +361,13 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
       } else {
         _logger.error('[购买] ⚠️ 支付方式列表为空！');
       }
-      
+
       if (paymentMethods.isEmpty) {
         throw Exception('暂无可用的支付方式');
       }
-      
+
       DomainPaymentMethod? selectedMethod;
-      
+
       // 如果实付金额为0（余额完全抵扣），自动选择第一个支付方式，跳过用户选择
       if (actualPayAmount <= 0) {
         _logger.debug('[购买] 实付金额为0，自动选择第一个支付方式');
@@ -377,7 +386,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
       await _submitPayment(tradeNo, selectedMethod);
     } catch (e) {
       _logger.error('购买流程出错: $e');
-        if (mounted) {
+      if (mounted) {
         PaymentWaitingManager.hide();
         XBoardNotification.showError('操作失败: ${e.toString()}');
       }
@@ -385,8 +394,8 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
   }
 
   void _showPaymentWaiting(String? tradeNo) {
-          PaymentWaitingManager.show(
-            context,
+    PaymentWaitingManager.show(
+      context,
       onClose: () => Navigator.of(context).pop(),
       onPaymentSuccess: _handlePaymentSuccess,
       tradeNo: tradeNo,
@@ -403,7 +412,8 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
     }
 
     if (mounted) {
-      XBoardNotification.showSuccess(AppLocalizations.of(context).xboardPaymentSuccess);
+      XBoardNotification.showSuccess(
+          AppLocalizations.of(context).xboardPaymentSuccess);
     }
 
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -449,7 +459,8 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
     return selected;
   }
 
-  Future<void> _submitPayment(String tradeNo, DomainPaymentMethod method) async {
+  Future<void> _submitPayment(
+      String tradeNo, DomainPaymentMethod method) async {
     try {
       _logger.debug('[支付] 提交支付: $tradeNo, 方式: ${method.id}');
       PaymentWaitingManager.updateStep(PaymentStep.loadingPayment);
@@ -513,16 +524,16 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
     // - https://pay.weixin.qq.com/xxx (微信扫码)
     // - 包含 qr, qrcode, 二维码 等关键字
     final lowerUrl = url.toLowerCase();
-    
-    return lowerUrl.contains('qr.alipay.com') ||  // 支付宝二维码链接
-        lowerUrl.contains('mclient.alipay.com') ||  // 支付宝移动端（会唤起客户端）
-        lowerUrl.contains('pay.weixin.qq.com') ||  // 微信支付链接
-        lowerUrl.contains('qr') ||                  // 通用二维码标识
-        lowerUrl.contains('qrcode') ||              // 二维码代码
-        lowerUrl.contains('二维码') ||              // 中文二维码
-        lowerUrl.contains('alipay_qr') ||           // 支付宝二维码
-        lowerUrl.contains('wechat_qr') ||           // 微信二维码
-        lowerUrl.startsWith('data:image');          // Base64 图像数据
+
+    return lowerUrl.contains('qr.alipay.com') || // 支付宝二维码链接
+        lowerUrl.contains('mclient.alipay.com') || // 支付宝移动端（会唤起客户端）
+        lowerUrl.contains('pay.weixin.qq.com') || // 微信支付链接
+        lowerUrl.contains('qr') || // 通用二维码标识
+        lowerUrl.contains('qrcode') || // 二维码代码
+        lowerUrl.contains('二维码') || // 中文二维码
+        lowerUrl.contains('alipay_qr') || // 支付宝二维码
+        lowerUrl.contains('wechat_qr') || // 微信二维码
+        lowerUrl.startsWith('data:image'); // Base64 图像数据
   }
 
   /// 显示二维码支付页面
@@ -537,14 +548,16 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
       // 导航到二维码支付页面
       _logger.info('[支付] 导航到二维码支付页面 - TradeNo: $tradeNo');
-      Navigator.of(context).push(
+      Navigator.of(context)
+          .push(
         MaterialPageRoute(
           builder: (context) => QRCodePaymentPage(
             qrCodeData: qrData,
             tradeNo: tradeNo,
           ),
         ),
-      ).then((_) {
+      )
+          .then((_) {
         _logger.info('[支付] 二维码支付页面返回 - TradeNo: $tradeNo');
       });
 
@@ -559,27 +572,28 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
   Future<void> _handleBalancePaymentSuccess() async {
     _logger.debug('[支付] 余额支付成功');
-          PaymentWaitingManager.hide();
-          
-          try {
-            final userProvider = ref.read(xboardUserProvider.notifier);
-            userProvider.refreshSubscriptionInfoAfterPayment();
-          } catch (e) {
+    PaymentWaitingManager.hide();
+
+    try {
+      final userProvider = ref.read(xboardUserProvider.notifier);
+      userProvider.refreshSubscriptionInfoAfterPayment();
+    } catch (e) {
       _logger.debug('[余额支付] 刷新订阅信息失败: $e');
-          }
-          
-          if (mounted) {
-            XBoardNotification.showSuccess(AppLocalizations.of(context).xboardPaymentSuccess);
-            
-            Future.delayed(const Duration(milliseconds: 500), () {
-              if (mounted) {
-                try {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                } catch (e) {
+    }
+
+    if (mounted) {
+      XBoardNotification.showSuccess(
+          AppLocalizations.of(context).xboardPaymentSuccess);
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          try {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          } catch (e) {
             _logger.debug('[余额支付] 导航失败: $e');
-                }
-              }
-            });
+          }
+        }
+      });
     }
   }
 
@@ -590,7 +604,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
         _logger.warning('[支付] 页面已销毁，取消启动 - TradeNo: $tradeNo');
         return;
       }
-      
+
       // 验证 URL 有效性
       if (url.isEmpty) {
         _logger.error('[支付] 支付 URL 为空 - TradeNo: $tradeNo');
@@ -603,15 +617,15 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
 
       // 复制支付链接到剪贴板
       await Clipboard.setData(ClipboardData(text: url));
-      
+
       // 隐藏支付等待窗口
       PaymentWaitingManager.hide();
-      
+
       if (!mounted) {
         _logger.warning('[支付] 隐藏等待窗口后页面已销毁 - TradeNo: $tradeNo');
         return;
       }
-      
+
       // 使用 go_router 导航到支付网关页面
       if (context.mounted) {
         _logger.info('[支付] 开始导航到客户端支付页面 - TradeNo: $tradeNo');
@@ -628,7 +642,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
         _logger.error('[支付] Context 已销毁 - TradeNo: $tradeNo');
         XBoardNotification.showError('页面已关闭，请重试');
       }
-      
+
       _logger.debug('[支付] 导航到客户端支付页面成功 - TradeNo: $tradeNo');
     } catch (e) {
       _logger.error('[支付] 打开支付页面异常: $e');
@@ -646,7 +660,8 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
     final periods = _getAvailablePeriods(context);
     final currentPrice = _getCurrentPrice();
     // 用于判断平台类型
-    final isPlatformDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+    final isPlatformDesktop =
+        Platform.isLinux || Platform.isWindows || Platform.isMacOS;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // 从 Provider 中实时获取用户余额
@@ -660,10 +675,11 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
           maxWidth: 700,
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               // 套餐信息卡片
               PlanHeaderCard(plan: widget.plan),
               const SizedBox(height: 16),
@@ -673,7 +689,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
                 periods: periods,
                 selectedPeriod: _selectedPeriod,
                 onPeriodSelected: (period) {
-                          setState(() {
+                  setState(() {
                     _selectedPeriod = period;
                     if (_couponCode != null) {
                       _recalculateDiscount();
@@ -708,55 +724,58 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
               const SizedBox(height: 20),
 
               // 确认购买按钮
-            SizedBox(
-              width: double.infinity,
+              SizedBox(
+                width: double.infinity,
                 height: 54,
-              child: Consumer(
-                builder: (context, ref, child) {
-                  final paymentState = ref.watch(userUIStateProvider);
-                  return ElevatedButton(
-                      onPressed: paymentState.isLoading ? null : _proceedToPurchase,
-                    style: ElevatedButton.styleFrom(
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    final paymentState = ref.watch(userUIStateProvider);
+                    return ElevatedButton(
+                      onPressed:
+                          paymentState.isLoading ? null : _proceedToPurchase,
+                      style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue.shade600,
-                      foregroundColor: Colors.white,
+                        foregroundColor: Colors.white,
                         elevation: 0,
-                      shape: RoundedRectangleBorder(
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
-                    ),
-                    child: paymentState.isLoading
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      child: paymentState.isLoading
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
                                 ),
-                              ),
                                 const SizedBox(width: 12),
                                 Text(
                                   AppLocalizations.of(context).xboardProcessing,
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                            ],
-                          )
-                        : Text(
-                            AppLocalizations.of(context).xboardConfirmPurchase,
-                            style: const TextStyle(
+                              ],
+                            )
+                          : Text(
+                              AppLocalizations.of(context)
+                                  .xboardConfirmPurchase,
+                              style: const TextStyle(
                                 fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
               const SizedBox(height: 16),
-          ],
+            ],
           ),
         ),
       ),
@@ -793,5 +812,4 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
       ),
     );
   }
-} 
-
+}

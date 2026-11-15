@@ -23,7 +23,8 @@ Future<List<InviteCodeModel>> getInviteCodes(Ref ref) async {
 
 /// 获取佣金详情
 @riverpod
-Future<List<CommissionDetailModel>> getCommissionDetails(Ref ref, {int page = 1}) async {
+Future<List<CommissionDetailModel>> getCommissionDetails(Ref ref,
+    {int page = 1}) async {
   final sdk = await ref.watch(xboardSdkProvider.future);
   return await sdk.invite.getCommissionDetails(page: page);
 }

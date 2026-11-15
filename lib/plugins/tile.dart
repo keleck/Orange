@@ -9,13 +9,10 @@ abstract mixin class TileListener {
 
   void onStop() {}
 
-  void onDetached(){
-
-  }
+  void onDetached() {}
 }
 
 class Tile {
-
   final MethodChannel _channel = const MethodChannel('tile');
 
   Tile._() {
@@ -55,4 +52,4 @@ class Tile {
   }
 }
 
-final tile =  Platform.isAndroid ? Tile.instance : null;
+final tile = Platform.isAndroid ? Tile.instance : null;

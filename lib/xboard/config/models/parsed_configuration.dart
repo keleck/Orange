@@ -7,25 +7,25 @@ import 'subscription_info.dart';
 import 'crisp_info.dart';
 
 /// 解析后的配置数据
-/// 
+///
 /// 包含所有类型的配置信息
 class ParsedConfiguration {
-  final String panelType;  // 面板类型：xboard 或 v2board
+  final String panelType; // 面板类型：xboard 或 v2board
   final PanelConfiguration panels;
   final List<ProxyInfo> proxies;
   final List<WebSocketInfo> webSockets;
   final List<UpdateInfo> updates;
   final List<OnlineSupportInfo> onlineSupport;
-  final CrispInfo? crisp;  // Crisp 客服系统配置
+  final CrispInfo? crisp; // Crisp 客服系统配置
   final SubscriptionInfo? subscription;
-  final String? telegramDiscussLink;  // Telegram 讨论组链接
-  final String? websiteUrl;  // 官网地址
-  final bool showWallet;  // 是否显示"我的钱包"按钮
-  final bool showGiftCard;  // 是否显示"礼品卡兑换"按钮
+  final String? telegramDiscussLink; // Telegram 讨论组链接
+  final String? websiteUrl; // 官网地址
+  final bool showWallet; // 是否显示"我的钱包"按钮
+  final bool showGiftCard; // 是否显示"礼品卡兑换"按钮
   final DateTime parsedAt;
   final String sourceHash;
   final ConfigMetadata metadata;
-  final Map<String, dynamic>? rawRemoteData;  // 原始远程配置数据，用于访问额外字段如 campusHosts
+  final Map<String, dynamic>? rawRemoteData; // 原始远程配置数据，用于访问额外字段如 campusHosts
 
   const ParsedConfiguration({
     required this.panelType,
@@ -70,7 +70,7 @@ class ParsedConfiguration {
     final showGiftCard = json['showGiftCard'] as bool? ?? true;
 
     return ParsedConfiguration(
-      panelType: panelType,  // 面板类型
+      panelType: panelType, // 面板类型
       panels: PanelConfiguration.fromJson(panelsData, currentProvider),
       proxies: proxyList
           .map((item) => ProxyInfo.fromJson(item as Map<String, dynamic>))
@@ -82,18 +82,22 @@ class ParsedConfiguration {
           .map((item) => UpdateInfo.fromJson(item as Map<String, dynamic>))
           .toList(),
       onlineSupport: onlineSupportList
-          .map((item) => OnlineSupportInfo.fromJson(item as Map<String, dynamic>))
+          .map((item) =>
+              OnlineSupportInfo.fromJson(item as Map<String, dynamic>))
           .toList(),
       crisp: crispData != null ? CrispInfo.fromJson(crispData) : null,
-      subscription: subscriptionData != null ? SubscriptionInfo.fromJson(subscriptionData) : null,
+      subscription: subscriptionData != null
+          ? SubscriptionInfo.fromJson(subscriptionData)
+          : null,
       telegramDiscussLink: telegramLink,
       websiteUrl: websiteLink,
       showWallet: showWallet,
       showGiftCard: showGiftCard,
       parsedAt: DateTime.now(),
       sourceHash: json.hashCode.toString(),
-      metadata: ConfigMetadata.fromJson(json['metadata'] as Map<String, dynamic>? ?? {}),
-      rawRemoteData: json,  // 保存原始远程配置数据
+      metadata: ConfigMetadata.fromJson(
+          json['metadata'] as Map<String, dynamic>? ?? {}),
+      rawRemoteData: json, // 保存原始远程配置数据
     );
   }
 
@@ -149,7 +153,8 @@ class ParsedConfiguration {
 
   /// 构建订阅URL
   String? buildSubscriptionUrl(String token, {bool preferEncrypt = true}) {
-    return subscription?.buildSubscriptionUrl(token, forceEncrypt: preferEncrypt);
+    return subscription?.buildSubscriptionUrl(token,
+        forceEncrypt: preferEncrypt);
   }
 
   /// 转换为JSON
@@ -162,7 +167,8 @@ class ParsedConfiguration {
       'onlineSupport': onlineSupport.map((e) => e.toJson()).toList(),
       if (crisp != null) 'crisp': crisp!.toJson(),
       if (subscription != null) 'subscription': subscription!.toJson(),
-      if (telegramDiscussLink != null) 'telegramDiscussLink': telegramDiscussLink,
+      if (telegramDiscussLink != null)
+        'telegramDiscussLink': telegramDiscussLink,
       if (websiteUrl != null) 'websiteUrl': websiteUrl,
       'showWallet': showWallet,
       'showGiftCard': showGiftCard,
@@ -175,9 +181,9 @@ class ParsedConfiguration {
   @override
   String toString() {
     return 'ParsedConfiguration(panels: $panels, proxies: ${proxies.length}, '
-           'ws: ${webSockets.length}, updates: ${updates.length}, '
-           'onlineSupport: ${onlineSupport.length}, '
-           'subscription: ${subscription != null ? subscription!.urls.length : 0})';
+        'ws: ${webSockets.length}, updates: ${updates.length}, '
+        'onlineSupport: ${onlineSupport.length}, '
+        'subscription: ${subscription != null ? subscription!.urls.length : 0})';
   }
 }
 
@@ -198,7 +204,8 @@ class ConfigMetadata {
   factory ConfigMetadata.fromJson(Map<String, dynamic> json) {
     return ConfigMetadata(
       sources: (json['sources'] as List<dynamic>?)?.cast<String>() ?? [],
-      lastUpdated: DateTime.tryParse(json['lastUpdated'] as String? ?? '') ?? DateTime.now(),
+      lastUpdated: DateTime.tryParse(json['lastUpdated'] as String? ?? '') ??
+          DateTime.now(),
       version: json['version'] as String? ?? '1.0.0',
       statistics: json['statistics'] as Map<String, dynamic>? ?? {},
     );

@@ -80,4 +80,3 @@ extension NullableStringExtensions on String? {
     return isNullOrEmpty ? defaultValue : this!;
   }
 }
-

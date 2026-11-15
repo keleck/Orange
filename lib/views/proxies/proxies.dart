@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'common.dart';
 import 'setting.dart';
 import 'tab.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class ProxiesView extends ConsumerStatefulWidget {
   const ProxiesView({super.key});

@@ -12,6 +12,7 @@ import 'package:fl_clash/xboard/features/invite/widgets/invite_stats_card.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/wallet_details_card.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/commission_history_card.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class InvitePage extends ConsumerStatefulWidget {
   const InvitePage({super.key});
@@ -20,31 +21,31 @@ class InvitePage extends ConsumerStatefulWidget {
   ConsumerState<InvitePage> createState() => _InvitePageState();
 }
 
-class _InvitePageState extends ConsumerState<InvitePage> 
+class _InvitePageState extends ConsumerState<InvitePage>
     with AutomaticKeepAliveClientMixin {
   bool _hasInitialized = false;
-  
+
   @override
-  bool get wantKeepAlive => true;  // 保持页面状态，防止重建
-  
+  bool get wantKeepAlive => true; // 保持页面状态，防止重建
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_hasInitialized) return;
       _hasInitialized = true;
-      
+
       await ref.read(inviteProvider.notifier).refresh();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);  // 必须调用，配合 AutomaticKeepAliveClientMixin
-    
+    super.build(context); // 必须调用，配合 AutomaticKeepAliveClientMixin
+
     final appLocalizations = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -64,32 +65,28 @@ class _InvitePageState extends ConsumerState<InvitePage>
           child: Consumer(
             builder: (_, ref, __) {
               return RefreshIndicator(
-              onRefresh: () => ref.read(inviteProvider.notifier).refresh(),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), // 增加底部 padding 避免被导航栏遮挡
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const ErrorCard(),
-                    
-                    const InviteRulesCard(),
-                    const SizedBox(height: 16),
-                    
-                    const InviteQrCard(),
-                    const SizedBox(height: 16),
-                    
-                    const InviteStatsCard(),
-                    const SizedBox(height: 16),
-                    
-                    const WalletDetailsCard(),
-                    const SizedBox(height: 16),
-                    
-                    const CommissionHistoryCard(),
-                  ],
+                onRefresh: () => ref.read(inviteProvider.notifier).refresh(),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(
+                      16, 16, 16, 100), // 增加底部 padding 避免被导航栏遮挡
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const ErrorCard(),
+                      const InviteRulesCard(),
+                      const SizedBox(height: 16),
+                      const InviteQrCard(),
+                      const SizedBox(height: 16),
+                      const InviteStatsCard(),
+                      const SizedBox(height: 16),
+                      const WalletDetailsCard(),
+                      const SizedBox(height: 16),
+                      const CommissionHistoryCard(),
+                    ],
+                  ),
                 ),
-              ),
-            );
+              );
             },
           ),
         ),
@@ -114,7 +111,7 @@ class GlassmorphicCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
   final VoidCallback? onTap;
-  
+
   const GlassmorphicCard({
     super.key,
     required this.child,

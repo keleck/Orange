@@ -6,6 +6,7 @@ import 'package:fl_clash/xboard/features/shared/services/service_probe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 const _amber = Color(0xFFF59E0B);
 const _green = Color(0xFF22C55E);
@@ -257,7 +258,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                   color: Colors.white.withValues(alpha: 0.8),
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   appLocalizations.xboardServiceStatus,
                   style: TextStyle(
                     fontSize: 15,
@@ -275,7 +276,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             if (_targets.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -491,7 +492,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Container(
             width: 36,
             height: 4,
@@ -592,7 +593,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
             size: 16,
             color: Colors.white.withValues(alpha: 0.55),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(
             appLocalizations.xboardOutboundIp,
             style: TextStyle(
@@ -815,7 +816,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
             padding: const EdgeInsets.fromLTRB(16, 10, 8, 4),
             child: Row(
               children: [
-                const Text(
+                Text(
                   appLocalizations.xboardManageServices,
                   style: TextStyle(
                     fontSize: 17,
@@ -823,7 +824,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   '${_selected.length}/${ServiceTarget.values.length}',
                   style: TextStyle(

@@ -11,6 +11,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:webview_windows/webview_windows.dart' as win;
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 /// Crisp 在线客服页面
 class CrispSupportPage extends ConsumerStatefulWidget {

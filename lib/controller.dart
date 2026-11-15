@@ -21,6 +21,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'common/common.dart';
 import 'models/models.dart';
 import 'views/profiles/override_profile.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class AppController {
   int? lastProfileModified;
@@ -91,8 +92,8 @@ class AppController {
       if (mode == Mode.global) {
         final currentProfile = _ref.read(currentProfileProvider);
         final groups = _ref.read(groupsProvider);
-        final globalGroup = groups
-            .firstWhereOrNull((e) => e.name == GroupName.GLOBAL.name);
+        final globalGroup =
+            groups.firstWhereOrNull((e) => e.name == GroupName.GLOBAL.name);
         if (currentProfile != null && globalGroup != null) {
           final selected = currentProfile.selectedMap[GroupName.GLOBAL.name];
           if (selected == null || selected.isEmpty) {
@@ -443,11 +444,11 @@ class AppController {
 
     // 2. Synchronize other groups
     final groups = getCurrentGroups();
-    
+
     // Allow syncing between Global and Rule groups, and between Rule groups
     for (final group in groups) {
       if (group.name == groupName) continue;
-      
+
       // If the other group contains this proxy, switch it too
       if (group.all.any((p) => p.name == proxyName)) {
         await clashCore.changeProxy(
@@ -707,8 +708,8 @@ class AppController {
     // 跳过重要提示弹窗，直接标记为已接受
     if (!_ref.read(appSettingProvider).disclaimerAccepted) {
       _ref.read(appSettingProvider.notifier).updateState(
-        (state) => state.copyWith(disclaimerAccepted: true),
-      );
+            (state) => state.copyWith(disclaimerAccepted: true),
+          );
     }
     return;
   }
@@ -717,13 +718,15 @@ class AppController {
     try {
       // 先删除所有现有的URL订阅（非文件类型的订阅）
       final profiles = globalState.config.profiles;
-      final urlProfiles = profiles.where((profile) => profile.type == ProfileType.url).toList();
-      
+      final urlProfiles =
+          profiles.where((profile) => profile.type == ProfileType.url).toList();
+
       for (final profile in urlProfiles) {
-        commonPrint.log('Removing existing URL profile: ${profile.label ?? profile.id}');
+        commonPrint.log(
+            'Removing existing URL profile: ${profile.label ?? profile.id}');
         deleteProfile(profile.id);
       }
-      
+
       // 然后添加新的订阅
       final profile = await Profile.normal(
         url: url,
@@ -867,7 +870,7 @@ class AppController {
   updateTun() async {
     final currentEnable = _ref.read(patchClashConfigProvider).tun.enable;
     final willEnable = !currentEnable;
-    
+
     // 切换 TUN 前先刷新当前订阅
     final currentProfile = _ref.read(currentProfileProvider);
     if (currentProfile != null && currentProfile.url.isNotEmpty) {
@@ -878,7 +881,7 @@ class AppController {
         commonPrint.log("刷新订阅失败: $e");
       }
     }
-    
+
     _ref.read(patchClashConfigProvider.notifier).updateState(
           (state) => state.copyWith.tun(enable: willEnable),
         );
@@ -911,7 +914,7 @@ class AppController {
   updateCurrentSelectedMap(String groupName, String proxyName) {
     final currentProfile = _ref.read(currentProfileProvider);
     if (currentProfile == null) return;
-    
+
     // Copy current map
     final SelectedMap selectedMap = Map.from(currentProfile.selectedMap);
     bool changed = false;
@@ -924,7 +927,7 @@ class AppController {
 
     // Synchronize with other groups
     final groups = getCurrentGroups();
-    
+
     if (groupName == GroupName.GLOBAL.name) {
       // If updating GLOBAL, sync to all other groups containing this proxy
       for (final group in groups) {
@@ -939,24 +942,27 @@ class AppController {
       }
     } else {
       // If updating other group, sync to GLOBAL if it contains this proxy
-      final globalGroup = groups.firstWhereOrNull((g) => g.name == GroupName.GLOBAL.name);
-      if (globalGroup != null && globalGroup.all.any((p) => p.name == proxyName)) {
+      final globalGroup =
+          groups.firstWhereOrNull((g) => g.name == GroupName.GLOBAL.name);
+      if (globalGroup != null &&
+          globalGroup.all.any((p) => p.name == proxyName)) {
         if (selectedMap[GroupName.GLOBAL.name] != proxyName) {
           selectedMap[GroupName.GLOBAL.name] = proxyName;
           changed = true;
         }
       }
-      
-      // OPTIONAL: Sync to other rule groups as well? 
-      // User request "chooses a node", implies global uniqueness preference. 
+
+      // OPTIONAL: Sync to other rule groups as well?
+      // User request "chooses a node", implies global uniqueness preference.
       // Let's sync to ALL groups that have this node.
       for (final group in groups) {
-        if (group.name == groupName || group.name == GroupName.GLOBAL.name) continue;
+        if (group.name == groupName || group.name == GroupName.GLOBAL.name)
+          continue;
         if (group.all.any((p) => p.name == proxyName)) {
-           if (selectedMap[group.name] != proxyName) {
+          if (selectedMap[group.name] != proxyName) {
             selectedMap[group.name] = proxyName;
             changed = true;
-           }
+          }
         }
       }
     }
@@ -985,7 +991,7 @@ class AppController {
   changeMode(Mode mode) async {
     final currentMode = _ref.read(patchClashConfigProvider).mode;
     if (currentMode == mode) return;
-    
+
     _ref.read(patchClashConfigProvider.notifier).updateState(
           (state) => state.copyWith(mode: mode),
         );
@@ -995,15 +1001,15 @@ class AppController {
       // 切换到全局模式时，同步规则模式下的节点选择
       final currentProfile = _ref.read(currentProfileProvider);
       final groups = _ref.read(groupsProvider);
-      final globalGroup = groups
-          .firstWhereOrNull((e) => e.name == GroupName.GLOBAL.name);
-      
+      final globalGroup =
+          groups.firstWhereOrNull((e) => e.name == GroupName.GLOBAL.name);
+
       if (currentProfile != null && globalGroup != null) {
         final selected = currentProfile.selectedMap[GroupName.GLOBAL.name];
         if (selected == null || selected.isEmpty) {
           // 首先尝试获取规则模式下选中的节点
           String? targetProxyName;
-          
+
           // 遍历规则组，找到第一个有选中节点的规则组
           for (final group in groups) {
             if (group.hidden == true) continue;
@@ -1020,12 +1026,12 @@ class AppController {
               }
             }
           }
-          
+
           // 如果规则模式中没有找到节点，则优先寻找自动选择
           if (targetProxyName == null) {
             final auto = globalGroup.all.firstWhereOrNull(
                 (e) => e.name.contains("自动") || e.name.contains("Auto"));
-            
+
             if (auto != null) {
               targetProxyName = auto.name;
             } else if (globalGroup.all.isNotEmpty) {
@@ -1041,14 +1047,14 @@ class AppController {
         }
       }
     }
-    
+
     // 直接更新模式到核心，不触发完整的配置更新流程
     final updateParams = _ref.read(updateParamsProvider);
     await clashCore.updateConfig(updateParams);
-    
+
     // 关闭所有现有连接，强制使用新模式重新建立连接
     clashCore.closeConnections();
-    
+
     addCheckIpNumDebounce();
   }
 

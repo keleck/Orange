@@ -49,4 +49,3 @@ class XBoardLogger {
     _instance.error(message, error, stackTrace);
   }
 }
-

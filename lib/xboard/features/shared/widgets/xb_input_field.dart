@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class XBInputField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
@@ -34,8 +35,8 @@ class XBInputField extends StatelessWidget {
       onChanged: onChanged,
       enabled: enabled,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-        color: colorScheme.onSurface,
-      ),
+            color: colorScheme.onSurface,
+          ),
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,

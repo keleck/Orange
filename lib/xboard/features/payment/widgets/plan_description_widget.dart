@@ -8,19 +8,19 @@ class PlanDescriptionWidget extends StatelessWidget {
     super.key,
     required this.content,
   });
-  
+
   /// 检查内容是否为HTML格式
   bool _isHtmlContent(String content) {
     return content.contains(RegExp(r'<[^>]+>', multiLine: true));
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     final isHtml = _isHtmlContent(content);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

@@ -13,7 +13,8 @@ final domainStatusServiceProvider = Provider<DomainStatusService>((ref) {
 });
 
 /// 域名状态提供者
-final domainStatusProvider = StateNotifierProvider<DomainStatusNotifier, DomainStatusState>((ref) {
+final domainStatusProvider =
+    StateNotifierProvider<DomainStatusNotifier, DomainStatusState>((ref) {
   final service = ref.watch(domainStatusServiceProvider);
   return DomainStatusNotifier(service: service);
 });
@@ -36,8 +37,8 @@ class DomainStatusNotifier extends StateNotifier<DomainStatusState> {
 
   DomainStatusNotifier({
     required DomainStatusService service,
-  }) : _service = service,
-       super(const DomainStatusState()) {
+  })  : _service = service,
+        super(const DomainStatusState()) {
     _initialize();
   }
 
@@ -70,9 +71,9 @@ class DomainStatusNotifier extends StateNotifier<DomainStatusState> {
 
     try {
       _logger.info('开始检查域名');
-      
+
       final result = await _service.checkDomainStatus();
-      
+
       if (!mounted) return;
 
       if (result['success'] == true) {
@@ -81,7 +82,9 @@ class DomainStatusNotifier extends StateNotifier<DomainStatusState> {
           currentDomain: result['domain'] as String?,
           latency: result['latency'] as int?,
           availableDomains: (result['availableDomains'] as List<dynamic>?)
-              ?.map((e) => e.toString()).toList() ?? [],
+                  ?.map((e) => e.toString())
+                  .toList() ??
+              [],
           lastChecked: DateTime.now(),
           errorMessage: null,
         );
@@ -96,7 +99,7 @@ class DomainStatusNotifier extends StateNotifier<DomainStatusState> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       _logger.error('域名检查异常', e);
       state = state.copyWith(
         status: DomainStatus.failed,

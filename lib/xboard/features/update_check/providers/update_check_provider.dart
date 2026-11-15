@@ -12,6 +12,7 @@ final updateCheckProvider =
   final updateService = ref.watch(updateServiceProvider);
   return UpdateCheckNotifier(updateService: updateService);
 });
+
 class UpdateCheckNotifier extends StateNotifier<UpdateCheckState> {
   final UpdateService _updateService;
   UpdateCheckNotifier({
@@ -22,10 +23,12 @@ class UpdateCheckNotifier extends StateNotifier<UpdateCheckState> {
     _logger.info('开始检查更新');
     await checkForUpdates();
   }
+
   Future<void> refresh() async {
     _logger.info('刷新检查更新');
     await checkForUpdates();
   }
+
   Future<void> checkForUpdates() async {
     if (!mounted) return;
     state = state.copyWith(

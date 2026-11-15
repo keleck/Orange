@@ -365,4 +365,3 @@ class XBoardErrorCodes {
   static const String configNotInitialized = 'CONFIG_NOT_INITIALIZED';
   static const String configInvalid = 'CONFIG_INVALID';
 }
-

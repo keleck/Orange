@@ -1,5 +1,5 @@
 /// 敏感数据加密工具
-/// 
+///
 /// 用于加密本地存储中的敏感信息（如订阅 URL、token 等）
 /// 防止 shared_preferences.json 文件泄露敏感数据
 library;
@@ -17,11 +17,11 @@ class SensitiveDataEncryptor {
     final keyBytes = utf8.encode(key);
     final keyLength = keyBytes.length;
     final result = Uint8List(data.length);
-    
+
     for (int i = 0; i < data.length; i++) {
       result[i] = data[i] ^ keyBytes[i % keyLength];
     }
-    
+
     return result;
   }
 
@@ -30,7 +30,8 @@ class SensitiveDataEncryptor {
     if (plainText.isEmpty) return plainText;
     try {
       final plainBytes = utf8.encode(plainText);
-      final encryptedBytes = _xorCipher(Uint8List.fromList(plainBytes), _encryptionKey);
+      final encryptedBytes =
+          _xorCipher(Uint8List.fromList(plainBytes), _encryptionKey);
       return '$_encryptedPrefix${base64.encode(encryptedBytes)}';
     } catch (e) {
       return plainText;
@@ -45,7 +46,7 @@ class SensitiveDataEncryptor {
         // 没有标记，说明是旧的明文数据，直接返回
         return encryptedText;
       }
-      
+
       final encoded = encryptedText.substring(_encryptedPrefix.length);
       final encryptedBytes = base64.decode(encoded);
       final decryptedBytes = _xorCipher(encryptedBytes, _encryptionKey);
@@ -64,7 +65,7 @@ class SensitiveDataEncryptor {
   static String encryptUrl(String url) {
     if (url.isEmpty) return url;
     // 只加密 HTTP/HTTPS URL
-    if (url.toLowerCase().startsWith('http://') || 
+    if (url.toLowerCase().startsWith('http://') ||
         url.toLowerCase().startsWith('https://')) {
       return encrypt(url);
     }

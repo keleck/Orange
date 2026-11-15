@@ -19,19 +19,23 @@ class Window {
       protocol.register("flclash");
     }
     await windowManager.ensureInitialized();
-    
+
     // 获取主屏幕信息
     final primaryDisplay = await screenRetriever.getPrimaryDisplay();
     final screenSize = primaryDisplay.size;
-    
+
     // 固定手机风格的窗口尺寸 (类似 iPhone 比例)
     const double fixedWidth = 420;
     const double fixedHeight = 780;
-    
+
     // 确保不超过屏幕尺寸
-    final windowWidth = fixedWidth > screenSize.width * 0.9 ? screenSize.width * 0.9 : fixedWidth;
-    final windowHeight = fixedHeight > screenSize.height * 0.9 ? screenSize.height * 0.9 : fixedHeight;
-    
+    final windowWidth = fixedWidth > screenSize.width * 0.9
+        ? screenSize.width * 0.9
+        : fixedWidth;
+    final windowHeight = fixedHeight > screenSize.height * 0.9
+        ? screenSize.height * 0.9
+        : fixedHeight;
+
     WindowOptions windowOptions = WindowOptions(
       size: Size(windowWidth, windowHeight),
       minimumSize: Size(windowWidth, windowHeight), // 固定最小尺寸等于窗口尺寸

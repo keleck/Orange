@@ -31,4 +31,3 @@ class PaymentProcessState {
     return isProcessingPayment.hashCode ^ currentOrderTradeNo.hashCode;
   }
 }
-

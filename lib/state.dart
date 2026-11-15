@@ -23,6 +23,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'common/common.dart';
 import 'controller.dart';
 import 'models/models.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 typedef UpdateTasks = List<FutureOr Function()>;
 
@@ -30,6 +31,7 @@ class GlobalState {
   static GlobalState? _instance;
   Map<CacheTag, double> cacheScrollPosition = {};
   Map<CacheTag, FixedMap<String, double>> cacheHeightMap = {};
+
   /// 内存中的配置缓存，key 为 profileId，value 为配置内容
   Map<String, Uint8List> profileConfigCache = {};
   bool isService = false;
@@ -97,14 +99,14 @@ class GlobalState {
         Config(
           themeProps: defaultThemeProps,
         );
-    
+
     // 强制使用新的默认主题色
     config = config.copyWith(
       themeProps: config.themeProps.copyWith(
         primaryColor: defaultPrimaryColor,
       ),
     );
-    
+
     await globalState.migrateOldData(config);
     await AppLocalizations.load(
       utils.getLocaleForString(config.appSetting.locale) ??
@@ -435,7 +437,8 @@ class GlobalState {
     } else {
       // 即使不覆盖DNS，也要确保fake-ip-filter包含必要的国内域名过滤
       // 这样GEOIP,CN,DIRECT规则才能在fake-ip模式下正常工作
-      final existingFilter = (rawConfig["dns"]["fake-ip-filter"] as List?)?.cast<String>() ?? [];
+      final existingFilter =
+          (rawConfig["dns"]["fake-ip-filter"] as List?)?.cast<String>() ?? [];
       final defaultFilter = realPatchConfig.dns.fakeIpFilter;
       // 旧版本把 `ntp*.*.com` 这类部分通配写进过配置，mihomo 1.19.33 起
       // 会直接拒绝整份配置，这里统一过滤掉，避免老配置继续报错。
@@ -458,12 +461,12 @@ class GlobalState {
         rules = [...overrideData.runningRule, ...rules];
       }
     }
-    
+
     // 合并自定义规则到规则列表（优先级：自定义规则 > 原有规则）
     if (realPatchConfig.customRules.isNotEmpty) {
       rules = [...realPatchConfig.customRules, ...rules];
     }
-    
+
     rawConfig["rule"] = rules;
     return rawConfig;
   }

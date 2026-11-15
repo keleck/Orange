@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class ThemeDialog extends ConsumerWidget {
   const ThemeDialog({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentThemeMode = ref.read(themeSettingProvider.select((state) => state.themeMode));
-    
+    final currentThemeMode =
+        ref.read(themeSettingProvider.select((state) => state.themeMode));
+
     return AlertDialog(
       title: Text(appLocalizations.selectTheme),
       content: Column(
@@ -28,8 +30,8 @@ class ThemeDialog extends ConsumerWidget {
             onChanged: (value) {
               if (value != null) {
                 ref.read(themeSettingProvider.notifier).updateState(
-                  (state) => state.copyWith(themeMode: value),
-                );
+                      (state) => state.copyWith(themeMode: value),
+                    );
                 Navigator.of(context).pop();
               }
             },
@@ -47,8 +49,8 @@ class ThemeDialog extends ConsumerWidget {
             onChanged: (value) {
               if (value != null) {
                 ref.read(themeSettingProvider.notifier).updateState(
-                  (state) => state.copyWith(themeMode: value),
-                );
+                      (state) => state.copyWith(themeMode: value),
+                    );
                 Navigator.of(context).pop();
               }
             },
@@ -66,8 +68,8 @@ class ThemeDialog extends ConsumerWidget {
             onChanged: (value) {
               if (value != null) {
                 ref.read(themeSettingProvider.notifier).updateState(
-                  (state) => state.copyWith(themeMode: value),
-                );
+                      (state) => state.copyWith(themeMode: value),
+                    );
                 Navigator.of(context).pop();
               }
             },

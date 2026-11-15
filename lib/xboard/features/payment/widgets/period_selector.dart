@@ -52,7 +52,7 @@ class PeriodSelector extends StatelessWidget {
     final baseWidth = 800.0; // 统一基准宽度
     final scaleFactor = (screenWidth / baseWidth).clamp(0.8, 1.5);
     final horizontalPadding = (3 * scaleFactor).clamp(2.0, 6.0);
-    
+
     return Row(
       children: periods.map((period) {
         final isSelected = selectedPeriod == period['period'];
@@ -77,16 +77,16 @@ class PeriodSelector extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final baseWidth = 800.0; // 统一基准宽度
     final scaleFactor = (screenWidth / baseWidth).clamp(0.8, 1.5);
-    
+
     // 根据屏幕宽度动态调整列数
     final crossAxisCount = screenWidth > 600 ? 3 : 2;
-    
+
     // 根据屏幕大小动态调整间距
     final spacing = (6 * scaleFactor).clamp(4.0, 12.0);
-    
+
     // 根据屏幕大小动态调整宽高比
     final aspectRatio = (3.0 * scaleFactor).clamp(2.5, 3.5);
-    
+
     return GridView.builder(
       padding: EdgeInsets.zero, // 移除 GridView 的默认 padding
       shrinkWrap: true,
@@ -142,9 +142,8 @@ class _PeriodCard extends StatelessWidget {
           )
         : periodPrice;
 
-    final hasDiscount = isSelected && 
-        couponType != null && 
-        displayPrice < periodPrice;
+    final hasDiscount =
+        isSelected && couponType != null && displayPrice < periodPrice;
 
     // 根据屏幕大小动态调整尺寸
     final padding = (6 * scaleFactor).clamp(4.0, 10.0);
@@ -259,4 +258,3 @@ class _PeriodCard extends StatelessWidget {
     );
   }
 }
-

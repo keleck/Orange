@@ -61,16 +61,20 @@ class InviteState {
   }
 
   bool get hasInviteData => inviteData != null;
-  bool get hasActiveCodes => inviteData?.codes.any((code) => code.isAvailable) ?? false;
+  bool get hasActiveCodes =>
+      inviteData?.codes.any((code) => code.isAvailable) ?? false;
   int get totalInvites => inviteData?.stats.invitedCount ?? 0;
   double get totalCommission => inviteData?.stats.totalCommission ?? 0.0;
   double get pendingCommission => inviteData?.stats.pendingCommission ?? 0.0;
   double get commissionRate => inviteData?.stats.commissionRate ?? 0.0;
-  double get availableCommission => inviteData?.stats.availableCommission ?? 0.0;
+  double get availableCommission =>
+      inviteData?.stats.availableCommission ?? 0.0;
   double get walletBalance => (userInfo?.balanceInCents ?? 0) / 100.0;
   String get formattedCommission => _formatCommissionAmount(totalCommission);
-  String get formattedPendingCommission => _formatCommissionAmount(pendingCommission);
-  String get formattedAvailableCommission => _formatCommissionAmount(availableCommission);
+  String get formattedPendingCommission =>
+      _formatCommissionAmount(pendingCommission);
+  String get formattedAvailableCommission =>
+      _formatCommissionAmount(availableCommission);
   String get formattedWalletBalance => _formatCommissionAmount(walletBalance);
 
   String _formatCommissionAmount(double amount) {
@@ -110,7 +114,8 @@ class InviteNotifier extends Notifier<InviteState> {
     }
   }
 
-  Future<void> loadCommissionHistory({int page = 1, bool append = false}) async {
+  Future<void> loadCommissionHistory(
+      {int page = 1, bool append = false}) async {
     if (state.isLoadingHistory) return;
 
     state = state.copyWith(isLoadingHistory: true);
@@ -118,9 +123,9 @@ class InviteNotifier extends Notifier<InviteState> {
     try {
       _logger.info('加载佣金历史... 页码: $page');
       // 强制刷新佣金历史
-      final commissionList = await ref.refresh(getCommissionDetailsProvider(page: page).future);
+      final commissionList =
+          await ref.refresh(getCommissionDetailsProvider(page: page).future);
       final newHistory = commissionList.map(_mapCommission).toList();
-
 
       List<DomainCommission> updatedHistory;
       if (append && newHistory.isNotEmpty) {
@@ -144,12 +149,13 @@ class InviteNotifier extends Notifier<InviteState> {
       state = state.copyWith(isLoadingHistory: false);
     }
   }
-  
+
   Future<void> loadNextHistoryPage() async {
     if (!state.hasMoreHistory || state.isLoadingHistory) return;
-    await loadCommissionHistory(page: state.currentHistoryPage + 1, append: true);
+    await loadCommissionHistory(
+        page: state.currentHistoryPage + 1, append: true);
   }
-  
+
   Future<void> refreshCommissionHistory() async {
     await loadCommissionHistory(page: 1, append: false);
   }
@@ -161,11 +167,12 @@ class InviteNotifier extends Notifier<InviteState> {
       final userModel = await ref.refresh(getUserInfoProvider.future);
       final userInfo = _mapUser(userModel);
       state = state.copyWith(userInfo: userInfo);
-      
+
       // 同步更新全局用户信息
       ref.read(userInfoProvider.notifier).state = userInfo;
-      
-      _logger.info('用户信息加载成功: 钱包余额 ¥${(userInfo?.balanceInCents ?? 0) / 100.0}');
+
+      _logger
+          .info('用户信息加载成功: 钱包余额 ¥${(userInfo?.balanceInCents ?? 0) / 100.0}');
     } catch (e) {
       _logger.info('加载用户信息失败: $e');
     }
@@ -180,7 +187,7 @@ class InviteNotifier extends Notifier<InviteState> {
       _logger.info('生成邀请码...');
       _logger.info('生成邀请码...');
       final codeString = await XBoardSDK.instance.invite.generateInviteCode();
-      
+
       // SDK returns String, we need to wrap it or reload data
       // Assuming generateInviteCode returns the code string
       // But DomainInviteCode is an object.
@@ -216,7 +223,8 @@ class InviteNotifier extends Notifier<InviteState> {
 
     try {
       _logger.info('提现佣金: 方式=$withdrawMethod, 账号=$withdrawAccount');
-      final availableAmount = state.inviteData?.stats.availableCommission ?? 0.0;
+      final availableAmount =
+          state.inviteData?.stats.availableCommission ?? 0.0;
       if (availableAmount <= 0) {
         throw Exception('可提现金额不足');
       }
@@ -236,7 +244,7 @@ class InviteNotifier extends Notifier<InviteState> {
         final inviteData = _mapInviteInfo(inviteInfoModel);
         state = state.copyWith(inviteData: inviteData);
       });
-      
+
       await refreshCommissionHistory();
 
       state = state.copyWith(isLoading: false);
@@ -254,17 +262,18 @@ class InviteNotifier extends Notifier<InviteState> {
 
   Future<bool> transferCommission(double amount) async {
     if (state.isLoading) return false;
-    
+
     state = state.copyWith(isLoading: true, errorMessage: null);
-    
+
     try {
       _logger.info('划转佣金到钱包: ¥$amount');
-      final success = await XBoardSDK.instance.invite.transferCommissionToBalance(amount);
-      
+      final success =
+          await XBoardSDK.instance.invite.transferCommissionToBalance(amount);
+
       if (!success) {
         throw Exception('划转失败');
       }
-      
+
       await Future.wait([
         // 手动刷新邀请数据，避免 loadInviteData 的 isLoading 检查冲突
         ref.refresh(getInviteInfoProvider.future).then((inviteInfoModel) {
@@ -273,7 +282,7 @@ class InviteNotifier extends Notifier<InviteState> {
         }),
         loadUserInfo(),
       ]);
-      
+
       state = state.copyWith(isLoading: false);
       _logger.info('划转成功');
       return true;
@@ -318,7 +327,7 @@ DomainInvite _mapInviteInfo(InviteInfoModel info) {
       invitedCount: info.totalInvites,
       totalCommission: info.totalCommission / 100.0,
       pendingCommission: info.pendingCommission / 100.0,
-      commissionRate: info.commissionRatePercent,  // 已经是百分比，不需要再除以 100
+      commissionRate: info.commissionRatePercent, // 已经是百分比，不需要再除以 100
       availableCommission: info.availableCommission / 100.0,
     ),
   );

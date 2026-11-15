@@ -1,7 +1,7 @@
 import 'config_entry.dart';
 
 /// 在线客服信息
-/// 
+///
 /// 扩展ConfigEntry，添加在线客服特有的属性
 class OnlineSupportInfo extends ConfigEntry {
   final String apiBaseUrl;
@@ -38,8 +38,10 @@ class OnlineSupportInfo extends ConfigEntry {
 
   /// 验证URL格式
   bool validate() {
-    return _isValidUrl(apiBaseUrl) && _isValidUrl(wsBaseUrl) && 
-           _isValidHttpUrl(apiBaseUrl) && _isValidWebSocketUrl(wsBaseUrl);
+    return _isValidUrl(apiBaseUrl) &&
+        _isValidUrl(wsBaseUrl) &&
+        _isValidHttpUrl(apiBaseUrl) &&
+        _isValidWebSocketUrl(wsBaseUrl);
   }
 
   /// 获取验证错误信息

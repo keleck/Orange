@@ -39,9 +39,7 @@ class UIState {
 
   @override
   int get hashCode {
-    return isLoading.hashCode ^
-        errorMessage.hashCode ^
-        lastUpdated.hashCode;
+    return isLoading.hashCode ^ errorMessage.hashCode ^ lastUpdated.hashCode;
   }
 }
 
@@ -113,4 +111,3 @@ class UserAuthState {
         subscriptionInfo.hashCode;
   }
 }
-

@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart'
     show XBoardSDK, NoticeModel;
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 /// 首页右上角铃铛点击后弹出的「系统公告」浮层。
 ///
@@ -143,7 +144,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
             size: 19,
             color: primary,
           ),
-          const SizedBox(width: 9),
+          SizedBox(width: 9),
           const Expanded(
             child: Text(
               appLocalizations.xboardSystemNotice,
@@ -237,7 +238,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
               size: 30,
               color: Colors.white.withValues(alpha: 0.25),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Text(
               appLocalizations.xboardNoNotices,
               style: TextStyle(

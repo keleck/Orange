@@ -213,4 +213,3 @@ extension FunctionResultExtension<T> on T Function() {
     }
   }
 }
-

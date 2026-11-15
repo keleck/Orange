@@ -19,6 +19,7 @@ import 'package:path/path.dart' show dirname, join;
 import 'backup_and_recovery.dart';
 import 'developer.dart';
 import 'theme.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class ToolsView extends ConsumerStatefulWidget {
   const ToolsView({super.key});

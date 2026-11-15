@@ -7,7 +7,7 @@ abstract class PaymentRepository {
   Future<Result<List<DomainPaymentMethod>>> getPaymentMethods();
 
   /// 提交支付
-  /// 
+  ///
   /// 返回支付结果：
   /// - type: -1=余额支付成功, 0=跳转支付, 1=二维码支付
   /// - data: 支付 URL 或其他数据
@@ -17,7 +17,7 @@ abstract class PaymentRepository {
   });
 
   /// 查询支付状态
-  /// 
+  ///
   /// 返回订单状态码
   Future<Result<int>> checkPaymentStatus(String tradeNo);
 }
@@ -49,7 +49,7 @@ class PaymentResult {
 
   /// 是否二维码支付
   bool get isQRCodePayment => type == 1;
-  
+
   /// 获取支付 URL（用于跳转支付和二维码支付）
   String? get paymentUrl => data is String ? data as String : null;
 }

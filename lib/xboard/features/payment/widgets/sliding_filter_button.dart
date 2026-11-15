@@ -174,14 +174,14 @@ class _SlidingFilterButtonState extends State<SlidingFilterButton>
                   }
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: Center(
                     child: AnimatedBuilder(
                       animation: _slideAnimation,
                       builder: (context, _) {
                         // 计算当前索引与目标索引的距离
-                        final distance =
-                            (_slideAnimation.value - index).abs();
+                        final distance = (_slideAnimation.value - index).abs();
                         // 根据距离计算透明度和颜色
                         final opacity = (1 - (distance * 0.3)).clamp(0.0, 1.0);
                         final textColor = Color.lerp(
@@ -194,9 +194,8 @@ class _SlidingFilterButtonState extends State<SlidingFilterButton>
                           widget.labels[index],
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w500,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: textColor,
                             letterSpacing: isSelected ? 0.3 : 0,
                           ),

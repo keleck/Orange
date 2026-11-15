@@ -19,7 +19,8 @@ typedef SelectedMap = Map<String, String>;
 
 /// URL 加密转换器 - 保存时加密，读取时解密
 String _encryptUrl(String url) => SensitiveDataEncryptor.encryptUrl(url);
-String _decryptUrl(dynamic url) => SensitiveDataEncryptor.decryptUrl(url as String? ?? '');
+String _decryptUrl(dynamic url) =>
+    SensitiveDataEncryptor.decryptUrl(url as String? ?? '');
 
 @freezed
 class SubscriptionInfo with _$SubscriptionInfo {
@@ -57,7 +58,8 @@ class Profile with _$Profile {
     String? label,
     String? currentGroupName,
     @JsonKey(fromJson: _decryptUrl, toJson: _encryptUrl)
-    @Default("") String url,
+    @Default("")
+    String url,
     DateTime? lastUpdateDate,
     required Duration autoUpdateDuration,
     SubscriptionInfo? subscriptionInfo,

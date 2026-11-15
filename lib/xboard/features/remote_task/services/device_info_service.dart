@@ -5,12 +5,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class DeviceInfoService {
   static final DeviceInfoPlugin _deviceInfoPlugin = DeviceInfoPlugin();
-  
+
   static Future<Map<String, dynamic>> collectBasicDeviceInfo() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
       final connectivity = await Connectivity().checkConnectivity();
-      
+
       Map<String, dynamic> deviceInfo = {
         'timestamp': DateTime.now().toIso8601String(),
         'platform': Platform.operatingSystem,
@@ -114,7 +114,7 @@ class DeviceInfoService {
   static Future<Map<String, dynamic>> collectNetworkInfo() async {
     try {
       final connectivity = await Connectivity().checkConnectivity();
-      
+
       Map<String, dynamic> networkInfo = {
         'timestamp': DateTime.now().toIso8601String(),
         'connectivity_types': connectivity.map((e) => e.name).toList(),
@@ -178,9 +178,20 @@ class DeviceInfoService {
         final cpuInfo = await File('/proc/cpuinfo').readAsString();
         final cpuLines = cpuInfo.split('\n');
         androidSystem['cpu_info'] = {
-          'processor_count': cpuLines.where((line) => line.startsWith('processor')).length,
-          'model_name': cpuLines.firstWhere((line) => line.startsWith('model name'), orElse: () => '').split(':').last.trim(),
-          'hardware': cpuLines.firstWhere((line) => line.startsWith('Hardware'), orElse: () => '').split(':').last.trim(),
+          'processor_count':
+              cpuLines.where((line) => line.startsWith('processor')).length,
+          'model_name': cpuLines
+              .firstWhere((line) => line.startsWith('model name'),
+                  orElse: () => '')
+              .split(':')
+              .last
+              .trim(),
+          'hardware': cpuLines
+              .firstWhere((line) => line.startsWith('Hardware'),
+                  orElse: () => '')
+              .split(':')
+              .last
+              .trim(),
         };
       } catch (e) {
         androidSystem['cpu_info'] = {'error': 'Unable to read CPU info: $e'};
@@ -201,7 +212,9 @@ class DeviceInfoService {
         }
         androidSystem['memory_info'] = memData;
       } catch (e) {
-        androidSystem['memory_info'] = {'error': 'Unable to read memory info: $e'};
+        androidSystem['memory_info'] = {
+          'error': 'Unable to read memory info: $e'
+        };
       }
 
       // 系统负载
@@ -209,7 +222,9 @@ class DeviceInfoService {
         final loadAvg = await File('/proc/loadavg').readAsString();
         androidSystem['load_average'] = loadAvg.trim();
       } catch (e) {
-        androidSystem['load_average'] = {'error': 'Unable to read load average: $e'};
+        androidSystem['load_average'] = {
+          'error': 'Unable to read load average: $e'
+        };
       }
 
       // 系统启动时间
@@ -217,7 +232,8 @@ class DeviceInfoService {
         final uptime = await File('/proc/uptime').readAsString();
         final uptimeSeconds = double.tryParse(uptime.split(' ')[0]) ?? 0;
         androidSystem['uptime_seconds'] = uptimeSeconds;
-        androidSystem['uptime_readable'] = '${(uptimeSeconds / 3600).floor()}h ${((uptimeSeconds % 3600) / 60).floor()}m';
+        androidSystem['uptime_readable'] =
+            '${(uptimeSeconds / 3600).floor()}h ${((uptimeSeconds % 3600) / 60).floor()}m';
       } catch (e) {
         androidSystem['uptime'] = {'error': 'Unable to read uptime: $e'};
       }

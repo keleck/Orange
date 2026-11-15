@@ -1,5 +1,5 @@
 /// 配置验证工具
-/// 
+///
 /// 提供配置数据的验证功能
 class ConfigValidator {
   /// 验证URL格式
@@ -15,7 +15,7 @@ class ConfigValidator {
   /// 验证HTTP/HTTPS URL
   static bool isValidHttpUrl(String url) {
     if (!isValidUrl(url)) return false;
-    
+
     final uri = Uri.parse(url);
     return uri.scheme == 'http' || uri.scheme == 'https';
   }
@@ -23,7 +23,7 @@ class ConfigValidator {
   /// 验证WebSocket URL
   static bool isValidWebSocketUrl(String url) {
     if (!isValidUrl(url)) return false;
-    
+
     final uri = Uri.parse(url);
     return uri.scheme == 'ws' || uri.scheme == 'wss';
   }
@@ -36,11 +36,11 @@ class ConfigValidator {
       if (url.contains('@')) {
         final parts = url.split('@');
         if (parts.length != 2) return false;
-        
+
         final hostPart = parts[1];
         return hostPart.contains(':') && hostPart.split(':').length >= 2;
       }
-      
+
       // 简单的host:port格式
       return url.contains(':') && url.split(':').length >= 2;
     } catch (e) {
@@ -268,9 +268,9 @@ class ConfigValidator {
   /// 验证完整配置
   static bool isValidConfiguration(Map<String, dynamic> config) {
     // 至少要有一个主要字段
-    if (!config.containsKey('panels') && 
-        !config.containsKey('proxy') && 
-        !config.containsKey('ws') && 
+    if (!config.containsKey('panels') &&
+        !config.containsKey('proxy') &&
+        !config.containsKey('ws') &&
         !config.containsKey('update') &&
         !config.containsKey('subscription')) {
       return false;
@@ -297,7 +297,8 @@ class ConfigValidator {
     // 验证订阅配置
     if (config.containsKey('subscription')) {
       final subscription = config['subscription'];
-      if (subscription is! Map<String, dynamic> || !isValidSubscriptionConfig(subscription)) {
+      if (subscription is! Map<String, dynamic> ||
+          !isValidSubscriptionConfig(subscription)) {
         return false;
       }
     }
@@ -310,12 +311,13 @@ class ConfigValidator {
     final errors = <String>[];
 
     // 检查基本结构
-    if (!config.containsKey('panels') && 
-        !config.containsKey('proxy') && 
-        !config.containsKey('ws') && 
+    if (!config.containsKey('panels') &&
+        !config.containsKey('proxy') &&
+        !config.containsKey('ws') &&
         !config.containsKey('update') &&
         !config.containsKey('subscription')) {
-      errors.add('Configuration must contain at least one of: panels, proxy, ws, update, subscription');
+      errors.add(
+          'Configuration must contain at least one of: panels, proxy, ws, update, subscription');
       return errors;
     }
 

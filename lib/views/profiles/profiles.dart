@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'add_profile.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class ProfilesView extends StatefulWidget {
   const ProfilesView({super.key});

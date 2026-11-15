@@ -26,4 +26,3 @@ abstract interface class CacheInterface<K, V> {
   /// 获取缓存大小
   int get size;
 }
-

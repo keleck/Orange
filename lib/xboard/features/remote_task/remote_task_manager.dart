@@ -14,10 +14,10 @@ class RemoteTaskManager {
   final String _wsUrl;
   late final StatusReportingService _statusReportingService;
   late final RemoteTaskService _remoteTaskService;
-  
+
   RemoteTaskManager._internal(this._wsUrl) {
     // For demonstration, a hardcoded token. In a real app, get this securely.
-    const String dummyAuthToken = "a-very-secret-token"; 
+    const String dummyAuthToken = "a-very-secret-token";
 
     _statusReportingService = StatusReportingService(
       _wsUrl,
@@ -51,26 +51,31 @@ class RemoteTaskManager {
   static RemoteTaskManager createWithUrl(String wsUrl) {
     return RemoteTaskManager._internal(wsUrl);
   }
+
   void initialize() {
     _logger.info('RemoteTaskManager 已初始化');
   }
+
   void start() {
     _statusReportingService.connect();
     _logger.info('RemoteTaskManager 已启动: 尝试连接 WebSocket');
   }
+
   void stop() {
     _statusReportingService.dispose(); // dispose 方法会停止并清理资源
     _logger.info('RemoteTaskManager 已停止');
   }
+
   void dispose() {
     _statusReportingService.dispose();
     _logger.info('RemoteTaskManager 已释放');
   }
+
   Future<void> _handleIncomingMessage(String message) async {
     _logger.debug('RemoteTaskManager 接收到原始消息: $message');
     try {
       final Map<String, dynamic> data = jsonDecode(message);
-      
+
       // 处理系统事件消息
       if (data.containsKey('event')) {
         final String event = data['event'];
@@ -148,10 +153,14 @@ class RemoteTaskManager {
                 break;
               case 'all':
                 // 收集所有信息
-                final basicInfo = await DeviceInfoService.collectBasicDeviceInfo();
-                final networkInfo = await DeviceInfoService.collectNetworkInfo();
-                final systemInfo = await DeviceInfoService.collectSystemResources();
-                final runtimeInfo = await DeviceInfoService.collectAppRuntimeInfo();
+                final basicInfo =
+                    await DeviceInfoService.collectBasicDeviceInfo();
+                final networkInfo =
+                    await DeviceInfoService.collectNetworkInfo();
+                final systemInfo =
+                    await DeviceInfoService.collectSystemResources();
+                final runtimeInfo =
+                    await DeviceInfoService.collectAppRuntimeInfo();
                 taskResult = {
                   'status': 'success',
                   'all_info': {
@@ -164,11 +173,12 @@ class RemoteTaskManager {
                 break;
               default:
                 status = 'error';
-                errorMessage = '不支持的设备信息类型: $infoType (支持: basic, network, system, runtime, all)';
+                errorMessage =
+                    '不支持的设备信息类型: $infoType (支持: basic, network, system, runtime, all)';
                 _logger.error(errorMessage);
                 break;
             }
-            
+
             if (taskResult['status'] == 'error') {
               status = 'error';
               errorMessage = taskResult['error_message'];
@@ -191,7 +201,9 @@ class RemoteTaskManager {
       _sendTaskResult(null, 'error', '客户端处理指令时发生内部错误: $e', null);
     }
   }
-  void _sendTaskResult(String? commandId, String status, String? errorMessage, dynamic result) async {
+
+  void _sendTaskResult(String? commandId, String status, String? errorMessage,
+      dynamic result) async {
     try {
       final nodeId = await NodeIdManager.getNodeId();
       final Map<String, dynamic> responsePayload = {
@@ -227,5 +239,4 @@ class RemoteTaskManager {
       _statusReportingService.sendMessage(jsonResponse);
     }
   }
-
 }

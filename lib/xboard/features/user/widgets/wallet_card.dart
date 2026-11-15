@@ -14,6 +14,7 @@ import 'package:fl_clash/xboard/features/payment/pages/payment_gateway_page.dart
 import 'package:fl_clash/xboard/features/payment/pages/qrcode_payment_page.dart';
 import 'package:fl_clash/xboard/domain/models/payment_method.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class WalletCard extends ConsumerStatefulWidget {
   const WalletCard({super.key});
@@ -228,7 +229,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
+                        Text(
                           appLocalizations.xboardCustomAmount,
                           style: TextStyle(
                             fontSize: 18,
@@ -238,7 +239,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Text(
                       appLocalizations.xboardEnterTopupAmount,
                       style: TextStyle(
@@ -399,7 +400,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                       ),
                                     ],
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     appLocalizations.xboardConfirmTopup,
                                     style: TextStyle(
                                       fontSize: 15,
@@ -496,7 +497,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                     color: theme.colorScheme.primary,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Text(
                   appLocalizations.xboardAccountBalance,
                   style: TextStyle(
@@ -548,7 +549,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         size: 14,
                         color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         appLocalizations.xboardBalanceUsableHint,
                         style: TextStyle(
@@ -598,7 +599,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             appLocalizations.xboardAutoRenew,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
@@ -606,7 +607,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           Text(
                             appLocalizations.xboardAutoRenewHint,
                             style: TextStyle(
@@ -696,7 +697,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
+                        Text(
                           appLocalizations.xboardAccountTopup,
                           style: TextStyle(
                             fontSize: 16,
@@ -732,7 +733,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               color: theme.colorScheme.primary,
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           Expanded(
                             child: Text(
                               appLocalizations.xboardTopupInstantHint,
@@ -810,7 +811,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               Icons.edit_rounded,
                               size: 20,
                             ),
-                            label: const Text(
+                            label: Text(
                               appLocalizations.xboardCustomAmount,
                               style: TextStyle(
                                 fontSize: 15,

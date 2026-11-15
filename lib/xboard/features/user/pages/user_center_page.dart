@@ -13,6 +13,7 @@ import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dar
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/xboard/features/shared/widgets/app_icon_tile.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class UserCenterPage extends ConsumerStatefulWidget {
   const UserCenterPage({super.key});
@@ -50,7 +51,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   16, 0, 16, 100), // 底部增加 padding 避免被导航栏遮挡
               children: [
                 _buildTrafficUsageCard(context),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _buildSectionHeader(context, appLocalizations.xboardQuickAccess,
                     icon: Icons.grid_view_rounded),
                 const SizedBox(height: 12),
@@ -193,7 +194,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4),
                                   Text(
                                     appLocalizations.xboardLogoutHint,
                                     style: TextStyle(
@@ -319,7 +320,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,7 +356,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     color: const Color(0xFFFF6B6B).withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(7),
                   ),
-                  child: const Text(
+                  child: Text(
                     appLocalizations.xboardExpired,
                     style: TextStyle(
                       fontSize: 10.5,
@@ -494,7 +495,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   ),
                   borderRadius: BorderRadius.circular(11),
                 ),
-                child: const Text(
+                child: Text(
                   appLocalizations.xboardPurchaseSubscription,
                   style: TextStyle(
                     fontSize: 13,
@@ -617,7 +618,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
             },
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         // 右边：更新检查
         Expanded(
           child: _SmallActionTile(
@@ -676,7 +677,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     children: [
                       Icon(Icons.info_outline,
                           size: 16, color: Colors.orange.shade700),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         appLocalizations.xboardNotes,
                         style: TextStyle(
@@ -687,7 +688,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '• 此操作会立即重置当前流量\n'
                     '• 会影响下次流量重置时间\n'
                     appLocalizations.xboardSomePlansUnsupported,
@@ -856,7 +857,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     color: AppIconColors.purple,
                     size: 42,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -868,7 +869,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         appLocalizations.xboardTopupOrUnlock,
                         style: TextStyle(

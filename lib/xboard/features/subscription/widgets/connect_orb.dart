@@ -68,8 +68,7 @@ class ConnectRingPainter extends CustomPainter {
       canvas.drawCircle(
         center + orbit,
         discSize * 0.5 + _radiusStep[i],
-        Paint()
-          ..color = colors[i].withValues(alpha: _alpha[i] * opacity),
+        Paint()..color = colors[i].withValues(alpha: _alpha[i] * opacity),
       );
     }
   }

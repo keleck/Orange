@@ -8,7 +8,8 @@ extension BuildContextExtension on BuildContext {
   }
 
   showNotifier(String text, {VoidCallback? onTap}) {
-    return findAncestorStateOfType<MessageManagerState>()?.message(text, onTap: onTap);
+    return findAncestorStateOfType<MessageManagerState>()
+        ?.message(text, onTap: onTap);
   }
 
   showSnackBar(

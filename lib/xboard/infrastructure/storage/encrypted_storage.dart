@@ -1,5 +1,5 @@
 /// 加密存储装饰器
-/// 
+///
 /// 对敏感数据进行加密后存储，防止本地文件（如 shared_preferences.json）
 /// 泄露敏感信息（如订阅地址、token 等）
 library;
@@ -10,9 +10,9 @@ import 'package:fl_clash/xboard/core/core.dart';
 import 'storage_interface.dart';
 
 /// 加密存储装饰器
-/// 
+///
 /// 包装原有的 StorageInterface 实现，对指定的敏感 key 进行加密存储
-/// 
+///
 /// 使用示例：
 /// ```dart
 /// final baseStorage = await SharedPrefsStorage.create();
@@ -25,20 +25,20 @@ class EncryptedStorage implements StorageInterface {
   final StorageInterface _baseStorage;
   final Set<String> _sensitiveKeys;
   final String _encryptionKey;
-  
+
   /// 需要加密存储的敏感 key 列表
   static const Set<String> defaultSensitiveKeys = {
-    'xboard_domain_subscription',  // 订阅信息（包含 subscribeUrl）
-    'xboard_saved_password',       // 保存的密码
-    'xboard_domain_user',          // 用户信息（可能包含 token）
+    'xboard_domain_subscription', // 订阅信息（包含 subscribeUrl）
+    'xboard_saved_password', // 保存的密码
+    'xboard_domain_user', // 用户信息（可能包含 token）
   };
 
   EncryptedStorage(
     this._baseStorage, {
     Set<String>? sensitiveKeys,
     String? encryptionKey,
-  }) : _sensitiveKeys = sensitiveKeys ?? defaultSensitiveKeys,
-       _encryptionKey = encryptionKey ?? _generateDeviceKey();
+  })  : _sensitiveKeys = sensitiveKeys ?? defaultSensitiveKeys,
+        _encryptionKey = encryptionKey ?? _generateDeviceKey();
 
   /// 生成基于设备的加密密钥
   /// 使用固定前缀 + 时间戳哈希，确保同一设备上密钥一致
@@ -58,11 +58,11 @@ class EncryptedStorage implements StorageInterface {
     final keyBytes = utf8.encode(key);
     final keyLength = keyBytes.length;
     final result = Uint8List(data.length);
-    
+
     for (int i = 0; i < data.length; i++) {
       result[i] = data[i] ^ keyBytes[i % keyLength];
     }
-    
+
     return result;
   }
 
@@ -70,7 +70,8 @@ class EncryptedStorage implements StorageInterface {
   String _encrypt(String plainText) {
     try {
       final plainBytes = utf8.encode(plainText);
-      final encryptedBytes = _xorCipher(Uint8List.fromList(plainBytes), _encryptionKey);
+      final encryptedBytes =
+          _xorCipher(Uint8List.fromList(plainBytes), _encryptionKey);
       // 添加标记前缀，用于识别已加密的数据
       return 'ENC:${base64.encode(encryptedBytes)}';
     } catch (e) {
@@ -87,7 +88,7 @@ class EncryptedStorage implements StorageInterface {
         // 没有标记，说明是旧的明文数据，直接返回
         return encryptedText;
       }
-      
+
       final encoded = encryptedText.substring(4); // 移除 'ENC:' 前缀
       final encryptedBytes = base64.decode(encoded);
       final decryptedBytes = _xorCipher(encryptedBytes, _encryptionKey);
@@ -117,24 +118,27 @@ class EncryptedStorage implements StorageInterface {
   }
 
   // 以下方法直接委托给基础存储（非字符串类型通常不包含敏感 URL）
-  
+
   @override
   Future<Result<int?>> getInt(String key) => _baseStorage.getInt(key);
 
   @override
-  Future<Result<bool>> setInt(String key, int value) => _baseStorage.setInt(key, value);
+  Future<Result<bool>> setInt(String key, int value) =>
+      _baseStorage.setInt(key, value);
 
   @override
   Future<Result<bool?>> getBool(String key) => _baseStorage.getBool(key);
 
   @override
-  Future<Result<bool>> setBool(String key, bool value) => _baseStorage.setBool(key, value);
+  Future<Result<bool>> setBool(String key, bool value) =>
+      _baseStorage.setBool(key, value);
 
   @override
   Future<Result<double?>> getDouble(String key) => _baseStorage.getDouble(key);
 
   @override
-  Future<Result<bool>> setDouble(String key, double value) => _baseStorage.setDouble(key, value);
+  Future<Result<bool>> setDouble(String key, double value) =>
+      _baseStorage.setDouble(key, value);
 
   @override
   Future<Result<List<String>?>> getStringList(String key) async {
@@ -150,9 +154,8 @@ class EncryptedStorage implements StorageInterface {
 
   @override
   Future<Result<bool>> setStringList(String key, List<String> value) async {
-    final valueToStore = _isSensitive(key) 
-        ? value.map(_encrypt).toList() 
-        : value;
+    final valueToStore =
+        _isSensitive(key) ? value.map(_encrypt).toList() : value;
     return await _baseStorage.setStringList(key, valueToStore);
   }
 

@@ -23,14 +23,16 @@ Future<OrderModel?> getOrder(Ref ref, String tradeNo) async {
 
 /// 获取订单支付方式
 @riverpod
-Future<List<PaymentMethodModel>> getOrderPaymentMethods(Ref ref, String tradeNo) async {
+Future<List<PaymentMethodModel>> getOrderPaymentMethods(
+    Ref ref, String tradeNo) async {
   final sdk = await ref.watch(xboardSdkProvider.future);
   return await sdk.order.getPaymentMethods(tradeNo);
 }
 
 /// 检查优惠券
 @riverpod
-Future<CouponModel?> checkCoupon(Ref ref, {required String code, required int planId}) async {
+Future<CouponModel?> checkCoupon(Ref ref,
+    {required String code, required int planId}) async {
   final sdk = await ref.watch(xboardSdkProvider.future);
   return await sdk.order.checkCoupon(code, planId);
 }

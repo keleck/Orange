@@ -83,7 +83,7 @@ class Windows {
     //   return WindowsHelperServiceStatus.none;
     // }
     final result = await Process.run('sc', ['query', appHelperService]);
-    if(result.exitCode != 0){
+    if (result.exitCode != 0) {
       return WindowsHelperServiceStatus.none;
     }
     final output = result.stdout.toString();

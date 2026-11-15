@@ -10,7 +10,7 @@ import '../../core/core.dart';
 final _logger = FileLogger('module_initializer.dart');
 
 /// 模块初始化器（内部类）
-/// 
+///
 /// 负责初始化所有模块和依赖注入
 /// 注意：这个类不应该被外部直接使用，请使用XBoardConfig
 class ModuleInitializer {
@@ -24,7 +24,7 @@ class ModuleInitializer {
     }
 
     final config = settings ?? const ConfigSettings();
-    
+
     try {
       // 验证配置
       if (!config.validate()) {
@@ -87,7 +87,8 @@ class ModuleInitializer {
 
     // 注册远程配置管理器
     ServiceLocator.registerLazySingleton<RemoteConfigManager>(() {
-      _logger.info('Creating RemoteConfigManager with ${config.remoteConfig.sources.length} sources');
+      _logger.info(
+          'Creating RemoteConfigManager with ${config.remoteConfig.sources.length} sources');
       return RemoteConfigManager.fromSettings(config.remoteConfig);
     });
 
@@ -116,7 +117,8 @@ class ModuleInitializer {
         final configs = accessor.getOnlineSupportConfigs();
         return OnlineSupportService(configs);
       } catch (e) {
-        _logger.warning('Failed to initialize OnlineSupportService, using empty config', e);
+        _logger.warning(
+            'Failed to initialize OnlineSupportService, using empty config', e);
         return OnlineSupportService([]);
       }
     });
@@ -150,9 +152,9 @@ class ModuleInitializer {
     bool autoWarmUp = true,
   }) async {
     await initialize(settings: settings);
-    
+
     final accessor = ServiceLocator.get<XBoardConfigAccessor>();
-    
+
     if (autoWarmUp) {
       // 预热会发起远程配置请求（含域名竞速）。无网络时如果无限等待，
       // 会把整个启动流程卡住几十秒（表现为白窗口长时间不消失）。
@@ -162,10 +164,11 @@ class ModuleInitializer {
             .refreshConfiguration()
             .timeout(const Duration(seconds: 4));
       } catch (e) {
-        _logger.warning('Config warm-up timed out or failed, continuing in background', e);
+        _logger.warning(
+            'Config warm-up timed out or failed, continuing in background', e);
       }
     }
-    
+
     return accessor;
   }
 }

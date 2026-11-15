@@ -159,29 +159,29 @@ class ClashCore {
       final group = proxies[groupName];
       final allProxies = ((group["all"] ?? []) as List)
           .map(
-            (name) => proxies[name],
-          )
+        (name) => proxies[name],
+      )
           .where((proxy) {
-            if (proxy == null) return false;
-            // 过滤掉需要隐藏的节点
-            return !_shouldHideProxy(proxy['name'] as String?);
-          })
-          .toList();
-      
+        if (proxy == null) return false;
+        // 过滤掉需要隐藏的节点
+        return !_shouldHideProxy(proxy['name'] as String?);
+      }).toList();
+
       // 分离优先级节点和普通节点，保持各自的原始顺序
       final priorityProxies = <dynamic>[];
       final normalProxies = <dynamic>[];
-      
+
       for (final proxy in allProxies) {
         final name = (proxy['name'] as String? ?? '').toLowerCase();
-        final isPriority = _priorityProxyKeywords.any((k) => name.contains(k.toLowerCase()));
+        final isPriority =
+            _priorityProxyKeywords.any((k) => name.contains(k.toLowerCase()));
         if (isPriority) {
           priorityProxies.add(proxy);
         } else {
           normalProxies.add(proxy);
         }
       }
-      
+
       // 优先级节点在前，普通节点在后，各自保持原始顺序
       group["all"] = [...priorityProxies, ...normalProxies];
       return group;

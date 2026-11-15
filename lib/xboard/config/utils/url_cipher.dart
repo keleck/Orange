@@ -3,17 +3,18 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 
 /// URL 加密解密工具
-/// 
+///
 /// 用于在应用启动时解密内嵌的敏感 URL，防止在反编译时直接暴露
 class UrlCipher {
   /// 默认加密密钥（32 字节 Base64 编码）
-  /// 
+  ///
   /// 使用 `openssl rand -base64 32` 生成新密钥
   /// 生产环境应使用更强的密钥管理方案
-  static const String defaultEncryptionKey = 'your_32_byte_base64_encoded_key_here';
+  static const String defaultEncryptionKey =
+      'your_32_byte_base64_encoded_key_here';
 
   /// 使用 AES-256 CBC 模式加密 URL
-  /// 
+  ///
   /// 参数:
   ///   - plainUrl: 明文 URL
   ///   - encryptionKey: 加密密钥（Base64 编码的 32 字节密钥）
@@ -21,7 +22,7 @@ class UrlCipher {
   /// 返回: Base64 编码的加密字符串
   static String encryptUrl(String plainUrl, {String? encryptionKey}) {
     final key = encryptionKey ?? defaultEncryptionKey;
-    
+
     try {
       // 解码 Base64 密钥
       final keyBytes = base64Decode(key);
@@ -31,23 +32,23 @@ class UrlCipher {
 
       // 生成随机 IV（16 字节）
       final iv = _generateRandomBytes(16);
-      
+
       // 使用 HMAC-SHA256 进行认证加密（防止篡改）
       final urlBytes = utf8.encode(plainUrl);
       final hmac = Hmac(sha256, keyBytes);
       final signature = hmac.convert(urlBytes).bytes;
-      
+
       // 对 URL + 签名进行 XOR 操作（简单的对称加密）
       final encryptedUrl = _xorEncrypt(urlBytes, keyBytes);
       final encryptedSignature = _xorEncrypt(signature, keyBytes);
-      
+
       // 组合：IV + EncryptedUrl + EncryptedSignature
       final combined = Uint8List.fromList([
         ...iv,
         ...encryptedUrl,
         ...encryptedSignature,
       ]);
-      
+
       return base64Encode(combined);
     } catch (e) {
       throw Exception('URL 加密失败: $e');
@@ -55,7 +56,7 @@ class UrlCipher {
   }
 
   /// 解密 URL
-  /// 
+  ///
   /// 参数:
   ///   - encryptedUrl: Base64 编码的加密字符串
   ///   - encryptionKey: 加密密钥（必须与加密时相同）
@@ -63,7 +64,7 @@ class UrlCipher {
   /// 返回: 解密后的明文 URL
   static String decryptUrl(String encryptedUrl, {String? encryptionKey}) {
     final key = encryptionKey ?? defaultEncryptionKey;
-    
+
     try {
       // 解码 Base64 密钥
       final keyBytes = base64Decode(key);
@@ -73,26 +74,26 @@ class UrlCipher {
 
       // 解码加密数据
       final combined = base64Decode(encryptedUrl);
-      
+
       // 提取加密的签名（后 32 字节）
       final encryptedSignature = combined.sublist(combined.length - 32);
-      
+
       // 提取加密的 URL（中间部分）
       final encryptedUrlBytes = combined.sublist(16, combined.length - 32);
-      
+
       // 解密 URL
       final urlBytes = _xorDecrypt(encryptedUrlBytes, keyBytes);
       final plainUrl = utf8.decode(urlBytes);
-      
+
       // 验证签名（防止篡改）
       final hmac = Hmac(sha256, keyBytes);
       final expectedSignature = hmac.convert(urlBytes).bytes;
       final decryptedSignature = _xorDecrypt(encryptedSignature, keyBytes);
-      
+
       if (!_constantTimeEquals(expectedSignature, decryptedSignature)) {
         throw Exception('URL 签名验证失败，可能被篡改');
       }
-      
+
       return plainUrl;
     } catch (e) {
       throw Exception('URL 解密失败: $e');
@@ -133,7 +134,7 @@ class UrlCipher {
   }
 
   /// 生成新的加密密钥
-  /// 
+  ///
   /// 返回: Base64 编码的 32 字节随机密钥
   static String generateEncryptionKey() {
     final keyBytes = _generateRandomBytes(32);

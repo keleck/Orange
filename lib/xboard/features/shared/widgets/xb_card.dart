@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class XBCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -28,10 +29,10 @@ class XBCard extends StatelessWidget {
       child: Material(
         elevation: elevation ?? (isSelected ? 4 : 2),
         borderRadius: borderRadius ?? defaultBorderRadius,
-        color: backgroundColor ?? 
-               (isSelected 
-                 ? colorScheme.primaryContainer 
-                 : colorScheme.surfaceContainer),
+        color: backgroundColor ??
+            (isSelected
+                ? colorScheme.primaryContainer
+                : colorScheme.surfaceContainer),
         child: InkWell(
           onTap: onTap,
           borderRadius: borderRadius ?? defaultBorderRadius,

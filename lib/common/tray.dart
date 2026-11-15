@@ -12,6 +12,7 @@ import 'package:tray_manager/tray_manager.dart';
 import 'app_localizations.dart';
 import 'constant.dart';
 import 'window.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class Tray {
   Future _updateSystemTray({

@@ -41,4 +41,5 @@ class Service {
   }
 }
 
-Service? get service => Platform.isAndroid && !globalState.isService ? Service() : null;
+Service? get service =>
+    Platform.isAndroid && !globalState.isService ? Service() : null;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/theme_dialog.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class UserMenuWidget extends ConsumerWidget {
   const UserMenuWidget({super.key});
@@ -43,7 +44,8 @@ class UserMenuWidget extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.brightness_6, color: Colors.white, size: 20),
+                    const Icon(Icons.brightness_6,
+                        color: Colors.white, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       appLocalizations.switchTheme,

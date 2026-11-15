@@ -10,7 +10,7 @@ abstract class OrderRepository {
   Future<Result<DomainOrder>> getOrderByTradeNo(String tradeNo);
 
   /// 创建订单
-  /// 
+  ///
   /// 返回订单的交易号（tradeNo）
   Future<Result<String>> createOrder({
     required int planId,

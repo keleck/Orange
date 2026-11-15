@@ -99,4 +99,3 @@ class ConsoleLogger implements LoggerInterface {
         '${now.second.toString().padLeft(2, '0')}]';
   }
 }
-

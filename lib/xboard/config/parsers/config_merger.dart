@@ -2,10 +2,13 @@
 enum MergeStrategy {
   /// 后面的配置覆盖前面的
   override,
+
   /// 合并所有配置项
   merge,
+
   /// 只保留第一个配置
   first,
+
   /// 只保留最后一个配置
   last,
 }
@@ -28,12 +31,12 @@ class MergeOptions {
 }
 
 /// 配置合并器
-/// 
+///
 /// 负责合并多个配置源的数据，处理冲突和重复项
 class ConfigMerger {
   final MergeOptions _options;
 
-  ConfigMerger({MergeOptions? options}) 
+  ConfigMerger({MergeOptions? options})
       : _options = options ?? const MergeOptions();
 
   /// 合并多个配置
@@ -53,7 +56,7 @@ class ConfigMerger {
         .where((config) => config.containsKey('panels'))
         .map((config) => config['panels'] as Map<String, dynamic>)
         .toList();
-    
+
     if (panelConfigs.isNotEmpty) {
       merged['panels'] = _mergePanels(panelConfigs);
     }
@@ -64,7 +67,7 @@ class ConfigMerger {
           .where((config) => config.containsKey(serviceType))
           .map((config) => config[serviceType] as List<dynamic>)
           .toList();
-      
+
       if (serviceLists.isNotEmpty) {
         merged[serviceType] = _mergeServiceLists(serviceLists, serviceType);
       }
@@ -75,7 +78,7 @@ class ConfigMerger {
         .where((config) => config.containsKey('metadata'))
         .map((config) => config['metadata'] as Map<String, dynamic>)
         .toList();
-    
+
     if (metadataConfigs.isNotEmpty) {
       merged['metadata'] = _mergeMetadata(metadataConfigs);
     }
@@ -88,24 +91,25 @@ class ConfigMerger {
     switch (_options.panelStrategy) {
       case MergeStrategy.first:
         return Map<String, dynamic>.from(panelConfigs.first);
-      
+
       case MergeStrategy.last:
         return Map<String, dynamic>.from(panelConfigs.last);
-      
+
       case MergeStrategy.override:
         final merged = <String, dynamic>{};
         for (final config in panelConfigs) {
           merged.addAll(config);
         }
         return merged;
-      
+
       case MergeStrategy.merge:
         return _mergeProviderPanels(panelConfigs);
     }
   }
 
   /// 合并提供商面板
-  Map<String, dynamic> _mergeProviderPanels(List<Map<String, dynamic>> panelConfigs) {
+  Map<String, dynamic> _mergeProviderPanels(
+      List<Map<String, dynamic>> panelConfigs) {
     final merged = <String, List<dynamic>>{};
 
     for (final config in panelConfigs) {
@@ -113,20 +117,21 @@ class ConfigMerger {
         if (panelList is List) {
           final existingList = merged[provider] ?? [];
           final newList = List<dynamic>.from(panelList);
-          
+
           if (_options.removeDuplicates) {
             // 根据URL去重
             final existingUrls = existingList
                 .where((item) => item is Map && item.containsKey('url'))
                 .map((item) => item['url'])
                 .toSet();
-            
+
             final uniqueNewItems = newList
-                .where((item) => item is Map && 
-                       item.containsKey('url') && 
-                       !existingUrls.contains(item['url']))
+                .where((item) =>
+                    item is Map &&
+                    item.containsKey('url') &&
+                    !existingUrls.contains(item['url']))
                 .toList();
-            
+
             merged[provider] = [...existingList, ...uniqueNewItems];
           } else {
             merged[provider] = [...existingList, ...newList];
@@ -139,28 +144,30 @@ class ConfigMerger {
   }
 
   /// 合并服务列表
-  List<dynamic> _mergeServiceLists(List<List<dynamic>> serviceLists, String serviceType) {
+  List<dynamic> _mergeServiceLists(
+      List<List<dynamic>> serviceLists, String serviceType) {
     switch (_options.serviceStrategy) {
       case MergeStrategy.first:
         return List<dynamic>.from(serviceLists.first);
-      
+
       case MergeStrategy.last:
         return List<dynamic>.from(serviceLists.last);
-      
+
       case MergeStrategy.override:
         final merged = <dynamic>[];
         for (final list in serviceLists) {
           merged.addAll(list);
         }
         return merged;
-      
+
       case MergeStrategy.merge:
         return _mergeServiceItems(serviceLists, serviceType);
     }
   }
 
   /// 合并服务项
-  List<dynamic> _mergeServiceItems(List<List<dynamic>> serviceLists, String serviceType) {
+  List<dynamic> _mergeServiceItems(
+      List<List<dynamic>> serviceLists, String serviceType) {
     final merged = <dynamic>[];
     final seenUrls = <String>{};
 
@@ -168,7 +175,7 @@ class ConfigMerger {
       for (final item in list) {
         if (item is Map<String, dynamic> && item.containsKey('url')) {
           final url = item['url'] as String;
-          
+
           if (_options.removeDuplicates) {
             if (!seenUrls.contains(url)) {
               seenUrls.add(url);
@@ -188,21 +195,22 @@ class ConfigMerger {
   }
 
   /// 合并元数据
-  Map<String, dynamic> _mergeMetadata(List<Map<String, dynamic>> metadataConfigs) {
+  Map<String, dynamic> _mergeMetadata(
+      List<Map<String, dynamic>> metadataConfigs) {
     switch (_options.metadataStrategy) {
       case MergeStrategy.first:
         return Map<String, dynamic>.from(metadataConfigs.first);
-      
+
       case MergeStrategy.last:
         return Map<String, dynamic>.from(metadataConfigs.last);
-      
+
       case MergeStrategy.override:
       case MergeStrategy.merge:
         final merged = <String, dynamic>{};
         for (final config in metadataConfigs) {
           merged.addAll(config);
         }
-        
+
         // 合并sources列表
         if (merged.containsKey('sources')) {
           final allSources = <String>[];
@@ -212,11 +220,11 @@ class ConfigMerger {
               allSources.addAll(sources);
             }
           }
-          merged['sources'] = _options.removeDuplicates 
-              ? allSources.toSet().toList() 
+          merged['sources'] = _options.removeDuplicates
+              ? allSources.toSet().toList()
               : allSources;
         }
-        
+
         return merged;
     }
   }
@@ -224,9 +232,9 @@ class ConfigMerger {
   /// 验证合并结果
   bool validateMergedConfig(Map<String, dynamic> mergedConfig) {
     // 检查基本结构
-    if (!mergedConfig.containsKey('panels') && 
-        !mergedConfig.containsKey('proxy') && 
-        !mergedConfig.containsKey('ws') && 
+    if (!mergedConfig.containsKey('panels') &&
+        !mergedConfig.containsKey('proxy') &&
+        !mergedConfig.containsKey('ws') &&
         !mergedConfig.containsKey('update')) {
       return false;
     }
@@ -237,7 +245,7 @@ class ConfigMerger {
       if (panels is! Map<String, dynamic>) {
         return false;
       }
-      
+
       for (final entry in panels.entries) {
         if (entry.value is! List) {
           return false;

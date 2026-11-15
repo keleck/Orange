@@ -32,6 +32,7 @@ import '../widgets/connect_orb.dart';
 import '../widgets/subscription_usage_card.dart';
 import '../widgets/xboard_connect_button.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 final _logger = FileLogger('xboard_home_page.dart');
 
@@ -882,7 +883,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           color: Colors.white,
                                         ),
                                       ),
-                                const SizedBox(width: 4),
+                                SizedBox(width: 4),
                                 AnimatedDefaultTextStyle(
                                   duration: const Duration(milliseconds: 200),
                                   style: TextStyle(
@@ -1011,7 +1012,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       color: Colors.white,
                                       size: 22,
                                     ),
-                                    const SizedBox(width: 12),
+                                    SizedBox(width: 12),
                                     Text(
                                       domainSubscription?.planId != null &&
                                               domainSubscription!.planId != 0
@@ -1046,7 +1047,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                   ),
                                 ],
                                 if (isTrafficExhausted && !isExpired) ...[
-                                  const SizedBox(height: 6),
+                                  SizedBox(height: 6),
                                   Text(
                                     appLocalizations.xboardTrafficExhaustedRenew,
                                     style: TextStyle(
@@ -1102,7 +1103,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           size: 22,
                                         ),
                                         const SizedBox(width: 12),
-                                        const Text(
+                                        Text(
                                           appLocalizations.xboardConfirmNextCycle,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -1119,7 +1120,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 6),
+                                    SizedBox(height: 6),
                                     Text(
                                       appLocalizations.xboardTrafficExhaustedAdvance,
                                       style: TextStyle(
@@ -1154,7 +1155,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       size: 16,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12),
                                   Text(
                                     importState.message ?? appLocalizations.xboardFetchNodesFailed,
                                     style: const TextStyle(
@@ -1218,7 +1219,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           size: 24,
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -1289,7 +1290,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                                 ],
                                               ],
                                             ),
-                                            const SizedBox(height: 2),
+                                            SizedBox(height: 2),
                                             // 节点名称 + 延迟
                                             Row(
                                               children: [
@@ -1367,7 +1368,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             ),
                                             // 固定高度的第三行：未连接也占位，
                                             // 连接后只是把标签填进来，卡片高度不变、不会跳动
-                                            const SizedBox(height: 5),
+                                            SizedBox(height: 5),
                                             SizedBox(
                                               height: 18,
                                               child: Align(
@@ -1927,7 +1928,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                     children: [
                       Icon(Icons.info_outline,
                           size: 16, color: Colors.orange.shade700),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         appLocalizations.xboardNotes,
                         style: TextStyle(
@@ -1938,7 +1939,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '• 此操作会立即重置当前流量\n'
                     '• 会影响下次流量重置时间\n'
                     appLocalizations.xboardSomePlansUnsupported,

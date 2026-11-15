@@ -12,7 +12,7 @@ final campusHostsProvider = FutureProvider<List<String>>((ref) async {
   try {
     // 通过 ServiceLocator 获取配置访问器
     final configAccessor = ServiceLocator.get<XBoardConfigAccessor>();
-    
+
     final config = await configAccessor.getConfiguration();
     if (config == null) {
       _logger.warning('Configuration is null');
@@ -74,8 +74,8 @@ Future<void> applyCampusHosts(WidgetRef ref, List<String> hosts) async {
 
     // 更新配置
     ref.read(patchClashConfigProvider.notifier).updateState(
-      (state) => state.copyWith(hosts: updatedHosts),
-    );
+          (state) => state.copyWith(hosts: updatedHosts),
+        );
 
     _logger.info('Campus hosts applied successfully');
   } catch (e) {
@@ -107,8 +107,8 @@ Future<void> clearCampusHosts(WidgetRef ref, List<String> campusHosts) async {
 
     // 更新配置
     ref.read(patchClashConfigProvider.notifier).updateState(
-      (state) => state.copyWith(hosts: updatedHosts),
-    );
+          (state) => state.copyWith(hosts: updatedHosts),
+        );
 
     _logger.info('Campus hosts cleared successfully');
   } catch (e) {
@@ -133,7 +133,7 @@ bool isCampusHostsEnabled(WidgetRef ref, List<String> campusHosts) {
       if (parts.length >= 2) {
         final hostname = parts[1];
         final ip = parts[0];
-        
+
         // 如果找到匹配的 hostname 和 IP，说明已启用
         if (currentHosts[hostname] == ip) {
           return true;

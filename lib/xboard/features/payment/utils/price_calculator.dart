@@ -1,7 +1,7 @@
 /// 价格计算工具类
 class PriceCalculator {
   /// 根据优惠券类型和值计算折扣金额
-  /// 
+  ///
   /// [originalPrice] 原价
   /// [couponType] 优惠券类型：1-金额折扣，2-百分比折扣
   /// [couponValue] 优惠券值（金额类型为分，百分比类型为百分比）
@@ -15,7 +15,7 @@ class PriceCalculator {
     }
 
     double discountAmount = 0.0;
-    
+
     if (couponType == 1) {
       // 金额折扣：value 是分，需要转换为元
       discountAmount = couponValue / 100.0;
@@ -43,7 +43,7 @@ class PriceCalculator {
       couponType,
       couponValue,
     );
-    
+
     final finalPrice = originalPrice - discountAmount;
     return finalPrice > 0 ? finalPrice : 0;
   }
@@ -62,4 +62,3 @@ class PriceCalculator {
     return '${transferEnable.toStringAsFixed(0)}GB';
   }
 }
-

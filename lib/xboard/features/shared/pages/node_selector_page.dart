@@ -25,12 +25,13 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final groups = ref.watch(groupsProvider);
-    final mode = ref.watch(patchClashConfigProvider.select((state) => state.mode));
+    final mode =
+        ref.watch(patchClashConfigProvider.select((state) => state.mode));
     final selectedMap = ref.watch(selectedMapProvider);
-    
+
     // 获取当前组
     Group? currentGroup = _getCurrentGroup(groups, mode, selectedMap);
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
@@ -47,22 +48,22 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             bottom: MediaQuery.of(context).padding.bottom + 8,
           ),
           child: Column(
-          children: [
-            // 服务状态卡片（替代原来的「当前节点」卡片）
-            // nodeName 用于感知节点切换：组名不变时也能触发重新探测
-            if (currentGroup != null && currentGroup.all.isNotEmpty)
-              ServiceStatusCard(
-                proxyName: currentGroup.name,
-                nodeName: currentGroup.getCurrentSelectedName(
-                  selectedMap[currentGroup.name] ?? '',
+            children: [
+              // 服务状态卡片（替代原来的「当前节点」卡片）
+              // nodeName 用于感知节点切换：组名不变时也能触发重新探测
+              if (currentGroup != null && currentGroup.all.isNotEmpty)
+                ServiceStatusCard(
+                  proxyName: currentGroup.name,
+                  nodeName: currentGroup.getCurrentSelectedName(
+                    selectedMap[currentGroup.name] ?? '',
+                  ),
                 ),
+              // 用剩余空间自适应，写死高度会在不同屏幕上溢出到导航栏下面
+              Expanded(
+                child: _buildNodeList(context, currentGroup, selectedMap),
               ),
-            // 用剩余空间自适应，写死高度会在不同屏幕上溢出到导航栏下面
-            Expanded(
-              child: _buildNodeList(context, currentGroup, selectedMap),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -71,17 +72,18 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
   PreferredSizeWidget _buildAppBar(BuildContext context, Group? currentGroup) {
     final theme = Theme.of(context);
     final selectedMap = ref.watch(selectedMapProvider);
-    
+
     String title = AppLocalizations.of(context).xboardProxy;
     if (currentGroup != null) {
       final selectedProxyName = selectedMap[currentGroup.name] ?? "";
-      String realNodeName = currentGroup.getCurrentSelectedName(selectedProxyName);
+      String realNodeName =
+          currentGroup.getCurrentSelectedName(selectedProxyName);
       if (realNodeName.isEmpty && currentGroup.all.isNotEmpty) {
         realNodeName = currentGroup.all.first.name;
       }
       title = '${currentGroup.name} -> $realNodeName';
     }
-    
+
     return AppBar(
       title: Text(
         title,
@@ -116,7 +118,8 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             if (groups.isNotEmpty) {
               final currentGroup = _getCurrentGroup(
                 groups,
-                ref.read(patchClashConfigProvider.select((state) => state.mode)),
+                ref.read(
+                    patchClashConfigProvider.select((state) => state.mode)),
                 ref.read(selectedMapProvider),
               );
               if (currentGroup != null && currentGroup.all.isNotEmpty) {
@@ -129,9 +132,8 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
     );
   }
 
-
-
-  Widget _buildNodeList(BuildContext context, Group? currentGroup, Map<String, String> selectedMap) {
+  Widget _buildNodeList(BuildContext context, Group? currentGroup,
+      Map<String, String> selectedMap) {
     if (currentGroup == null || currentGroup.all.isEmpty) {
       return Center(
         child: Column(
@@ -140,33 +142,41 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             Icon(
               Icons.router_outlined,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context).xboardNoAvailableNodes,
               style: TextStyle(
                 fontSize: 16,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
               ),
             ),
           ],
         ),
       );
     }
-    
+
     final theme = Theme.of(context);
     final allGroups = ref.watch(groupsProvider);
-    
+
     // 如果选中的是 URLTest 或 Fallback 组，需要找到原始的规则组
     Group? displayGroup = currentGroup;
-    if (currentGroup.type == GroupType.URLTest || currentGroup.type == GroupType.Fallback) {
+    if (currentGroup.type == GroupType.URLTest ||
+        currentGroup.type == GroupType.Fallback) {
       // 从选中的特殊组返回到原始规则组
       for (final group in allGroups) {
         if (group.hidden == true) continue;
         if (group.name == GroupName.GLOBAL.name) continue;
-        if (group.type == GroupType.URLTest || group.type == GroupType.Fallback) continue;
-        
+        if (group.type == GroupType.URLTest || group.type == GroupType.Fallback)
+          continue;
+
         // 检查这个规则组是否引用了当前选中的特殊组
         final selectedProxyName = selectedMap[group.name];
         if (selectedProxyName == currentGroup.name) {
@@ -174,30 +184,31 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
           break;
         }
       }
-      
+
       // 如果没找到，就用第一个规则组
       if (displayGroup == currentGroup) {
         try {
           displayGroup = allGroups.firstWhere(
-            (group) => group.hidden != true && 
-                       group.name != GroupName.GLOBAL.name &&
-                       group.type != GroupType.URLTest &&
-                       group.type != GroupType.Fallback,
+            (group) =>
+                group.hidden != true &&
+                group.name != GroupName.GLOBAL.name &&
+                group.type != GroupType.URLTest &&
+                group.type != GroupType.Fallback,
           );
         } catch (e) {
           displayGroup = currentGroup;
         }
       }
     }
-    
+
     // 确保 displayGroup 不为 null
     if (displayGroup == null) {
       displayGroup = currentGroup;
     }
-    
+
     final selectedProxyName = selectedMap[displayGroup.name] ?? "";
     final realNodeName = displayGroup.getCurrentSelectedName(selectedProxyName);
-    
+
     // 过滤掉 Selector 类型的组引用，但保留 URLTest 和 Fallback 等特殊节点
     final filteredProxies = displayGroup.all.where((proxy) {
       // 查找是否存在同名的组
@@ -207,17 +218,17 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
       } catch (e) {
         referencedGroup = null;
       }
-      
+
       if (referencedGroup != null) {
         // 如果找到同名组，只在它是 Selector 类型时才过滤（即过滤掉普通组引用）
         // 但保留 URLTest 和 Fallback 等特殊节点
         return referencedGroup.type != GroupType.Selector;
       }
-      
+
       // 如果没有同名组，说明这是真实代理节点，保留
       return true;
     }).toList();
-    
+
     if (filteredProxies.isEmpty) {
       return Center(
         child: Column(
@@ -226,21 +237,27 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             Icon(
               Icons.router_outlined,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context).xboardNoAvailableNodes,
               style: TextStyle(
                 fontSize: 16,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
               ),
             ),
           ],
         ),
       );
     }
-    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
@@ -284,7 +301,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             itemBuilder: (context, index) {
               final proxy = filteredProxies[index];
               final isSelected = proxy.name == realNodeName;
-              
+
               return _buildNodeItem(
                 context,
                 proxy: proxy,
@@ -307,14 +324,15 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
     String? testUrl,
   }) {
     final theme = Theme.of(context);
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () async {
           final appController = globalState.appController;
-          final mode = ref.read(patchClashConfigProvider.select((state) => state.mode));
-          
+          final mode =
+              ref.read(patchClashConfigProvider.select((state) => state.mode));
+
           // 更新规则模式下的选择
           appController.updateCurrentSelectedMap(
             groupName,
@@ -324,7 +342,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             groupName: groupName,
             proxyName: proxy.name,
           );
-          
+
           // 如果是规则模式，同时将节点同步到全局模式的 GLOBAL 组
           if (mode == Mode.rule) {
             appController.updateCurrentSelectedMap(
@@ -336,7 +354,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
               proxyName: proxy.name,
             );
           }
-          
+
           if (mounted) {
             setState(() {});
           }
@@ -411,7 +429,8 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
                       proxy.name,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w500,
                         color: Colors.white,
                       ),
                       maxLines: 1,
@@ -473,172 +492,311 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
 
   String _getCountryFlag(String nodeName) {
     final lowerName = nodeName.toLowerCase();
-    
+
     // 亚洲
-    if (lowerName.contains('hk') || lowerName.contains('hong kong') || lowerName.contains('香港')) {
+    if (lowerName.contains('hk') ||
+        lowerName.contains('hong kong') ||
+        lowerName.contains('香港')) {
       return '🇭🇰';
-    } else if (lowerName.contains('tw') || lowerName.contains('taiwan') || lowerName.contains('台湾')) {
+    } else if (lowerName.contains('tw') ||
+        lowerName.contains('taiwan') ||
+        lowerName.contains('台湾')) {
       return '🇨🇳';
-    } else if (lowerName.contains('sg') || lowerName.contains('singapore') || lowerName.contains('新加坡')) {
+    } else if (lowerName.contains('sg') ||
+        lowerName.contains('singapore') ||
+        lowerName.contains('新加坡')) {
       return '🇸🇬';
-    } else if (lowerName.contains('jp') || lowerName.contains('japan') || lowerName.contains('日本')) {
+    } else if (lowerName.contains('jp') ||
+        lowerName.contains('japan') ||
+        lowerName.contains('日本')) {
       return '🇯🇵';
-    } else if (lowerName.contains('kr') || lowerName.contains('korea') || lowerName.contains('韩国') || lowerName.contains('south korea')) {
+    } else if (lowerName.contains('kr') ||
+        lowerName.contains('korea') ||
+        lowerName.contains('韩国') ||
+        lowerName.contains('south korea')) {
       return '🇰🇷';
-    } else if (lowerName.contains('kp') || lowerName.contains('north korea') || lowerName.contains('朝鲜')) {
+    } else if (lowerName.contains('kp') ||
+        lowerName.contains('north korea') ||
+        lowerName.contains('朝鲜')) {
       return '🇰🇵';
-    } else if (lowerName.contains('th') || lowerName.contains('thailand') || lowerName.contains('泰国')) {
+    } else if (lowerName.contains('th') ||
+        lowerName.contains('thailand') ||
+        lowerName.contains('泰国')) {
       return '🇹🇭';
-    } else if (lowerName.contains('kh') || lowerName.contains('cambodia') || lowerName.contains('柬埔寨')) {
+    } else if (lowerName.contains('kh') ||
+        lowerName.contains('cambodia') ||
+        lowerName.contains('柬埔寨')) {
       return '🇰🇭';
-    } else if (lowerName.contains('la') || lowerName.contains('laos') || lowerName.contains('老挝')) {
+    } else if (lowerName.contains('la') ||
+        lowerName.contains('laos') ||
+        lowerName.contains('老挝')) {
       return '🇱🇦';
-    } else if (lowerName.contains('vn') || lowerName.contains('vietnam') || lowerName.contains('越南')) {
+    } else if (lowerName.contains('vn') ||
+        lowerName.contains('vietnam') ||
+        lowerName.contains('越南')) {
       return '🇻🇳';
-    } else if (lowerName.contains('my') || lowerName.contains('malaysia') || lowerName.contains('马来西亚')) {
+    } else if (lowerName.contains('my') ||
+        lowerName.contains('malaysia') ||
+        lowerName.contains('马来西亚')) {
       return '🇲🇾';
-    } else if (lowerName.contains('ph') || lowerName.contains('philippines') || lowerName.contains('菲律宾')) {
+    } else if (lowerName.contains('ph') ||
+        lowerName.contains('philippines') ||
+        lowerName.contains('菲律宾')) {
       return '🇵🇭';
-    } else if (lowerName.contains('id') || lowerName.contains('indonesia') || lowerName.contains('印度尼西亚')) {
+    } else if (lowerName.contains('id') ||
+        lowerName.contains('indonesia') ||
+        lowerName.contains('印度尼西亚')) {
       return '🇮🇩';
-    } else if (lowerName.contains('in') || lowerName.contains('india') || lowerName.contains('印度')) {
+    } else if (lowerName.contains('in') ||
+        lowerName.contains('india') ||
+        lowerName.contains('印度')) {
       return '🇮🇳';
-    } else if (lowerName.contains('pk') || lowerName.contains('pakistan') || lowerName.contains('巴基斯坦')) {
+    } else if (lowerName.contains('pk') ||
+        lowerName.contains('pakistan') ||
+        lowerName.contains('巴基斯坦')) {
       return '🇵🇰';
-    } else if (lowerName.contains('bd') || lowerName.contains('bangladesh') || lowerName.contains('孟加拉')) {
+    } else if (lowerName.contains('bd') ||
+        lowerName.contains('bangladesh') ||
+        lowerName.contains('孟加拉')) {
       return '🇧🇩';
-    } else if (lowerName.contains('lk') || lowerName.contains('sri lanka') || lowerName.contains('斯里兰卡')) {
+    } else if (lowerName.contains('lk') ||
+        lowerName.contains('sri lanka') ||
+        lowerName.contains('斯里兰卡')) {
       return '🇱🇰';
-    } else if (lowerName.contains('mm') || lowerName.contains('myanmar') || lowerName.contains('缅甸')) {
+    } else if (lowerName.contains('mm') ||
+        lowerName.contains('myanmar') ||
+        lowerName.contains('缅甸')) {
       return '🇲🇲';
-    } else if (lowerName.contains('cn') || lowerName.contains('china') || lowerName.contains('中国')) {
+    } else if (lowerName.contains('cn') ||
+        lowerName.contains('china') ||
+        lowerName.contains('中国')) {
       return '🇨🇳';
-    } else if (lowerName.contains('mo') || lowerName.contains('macau') || lowerName.contains('澳门')) {
+    } else if (lowerName.contains('mo') ||
+        lowerName.contains('macau') ||
+        lowerName.contains('澳门')) {
       return '🇲🇴';
-    } else if (lowerName.contains('mn') || lowerName.contains('mongolia') || lowerName.contains('蒙古')) {
+    } else if (lowerName.contains('mn') ||
+        lowerName.contains('mongolia') ||
+        lowerName.contains('蒙古')) {
       return '🇲🇳';
     }
-    
+
     // 欧洲
-    else if (lowerName.contains('de') || lowerName.contains('germany') || lowerName.contains('德国')) {
+    else if (lowerName.contains('de') ||
+        lowerName.contains('germany') ||
+        lowerName.contains('德国')) {
       return '🇩🇪';
-    } else if (lowerName.contains('fr') || lowerName.contains('france') || lowerName.contains('法国')) {
+    } else if (lowerName.contains('fr') ||
+        lowerName.contains('france') ||
+        lowerName.contains('法国')) {
       return '🇫🇷';
-    } else if (lowerName.contains('uk') || lowerName.contains('britain') || lowerName.contains('england') || lowerName.contains('英国')) {
+    } else if (lowerName.contains('uk') ||
+        lowerName.contains('britain') ||
+        lowerName.contains('england') ||
+        lowerName.contains('英国')) {
       return '🇬🇧';
-    } else if (lowerName.contains('ie') || lowerName.contains('ireland') || lowerName.contains('爱尔兰')) {
+    } else if (lowerName.contains('ie') ||
+        lowerName.contains('ireland') ||
+        lowerName.contains('爱尔兰')) {
       return '🇮🇪';
-    } else if (lowerName.contains('it') || lowerName.contains('italy') || lowerName.contains('意大利')) {
+    } else if (lowerName.contains('it') ||
+        lowerName.contains('italy') ||
+        lowerName.contains('意大利')) {
       return '🇮🇹';
-    } else if (lowerName.contains('es') || lowerName.contains('spain') || lowerName.contains('西班牙')) {
+    } else if (lowerName.contains('es') ||
+        lowerName.contains('spain') ||
+        lowerName.contains('西班牙')) {
       return '🇪🇸';
-    } else if (lowerName.contains('pt') || lowerName.contains('portugal') || lowerName.contains('葡萄牙')) {
+    } else if (lowerName.contains('pt') ||
+        lowerName.contains('portugal') ||
+        lowerName.contains('葡萄牙')) {
       return '🇵🇹';
-    } else if (lowerName.contains('nl') || lowerName.contains('netherlands') || lowerName.contains('荷兰')) {
+    } else if (lowerName.contains('nl') ||
+        lowerName.contains('netherlands') ||
+        lowerName.contains('荷兰')) {
       return '🇳🇱';
-    } else if (lowerName.contains('be') || lowerName.contains('belgium') || lowerName.contains('比利时')) {
+    } else if (lowerName.contains('be') ||
+        lowerName.contains('belgium') ||
+        lowerName.contains('比利时')) {
       return '🇧🇪';
-    } else if (lowerName.contains('ch') || lowerName.contains('switzerland') || lowerName.contains('瑞士')) {
+    } else if (lowerName.contains('ch') ||
+        lowerName.contains('switzerland') ||
+        lowerName.contains('瑞士')) {
       return '🇨🇭';
-    } else if (lowerName.contains('se') || lowerName.contains('sweden') || lowerName.contains('瑞典')) {
+    } else if (lowerName.contains('se') ||
+        lowerName.contains('sweden') ||
+        lowerName.contains('瑞典')) {
       return '🇸🇪';
-    } else if (lowerName.contains('no') || lowerName.contains('norway') || lowerName.contains('挪威')) {
+    } else if (lowerName.contains('no') ||
+        lowerName.contains('norway') ||
+        lowerName.contains('挪威')) {
       return '🇳🇴';
-    } else if (lowerName.contains('dk') || lowerName.contains('denmark') || lowerName.contains('丹麦')) {
+    } else if (lowerName.contains('dk') ||
+        lowerName.contains('denmark') ||
+        lowerName.contains('丹麦')) {
       return '🇩🇰';
-    } else if (lowerName.contains('fi') || lowerName.contains('finland') || lowerName.contains('芬兰')) {
+    } else if (lowerName.contains('fi') ||
+        lowerName.contains('finland') ||
+        lowerName.contains('芬兰')) {
       return '🇫🇮';
-    } else if (lowerName.contains('pl') || lowerName.contains('poland') || lowerName.contains('波兰')) {
+    } else if (lowerName.contains('pl') ||
+        lowerName.contains('poland') ||
+        lowerName.contains('波兰')) {
       return '🇵🇱';
-    } else if (lowerName.contains('cz') || lowerName.contains('czech') || lowerName.contains('捷克')) {
+    } else if (lowerName.contains('cz') ||
+        lowerName.contains('czech') ||
+        lowerName.contains('捷克')) {
       return '🇨🇿';
-    } else if (lowerName.contains('sk') || lowerName.contains('slovakia') || lowerName.contains('斯洛伐克')) {
+    } else if (lowerName.contains('sk') ||
+        lowerName.contains('slovakia') ||
+        lowerName.contains('斯洛伐克')) {
       return '🇸🇰';
-    } else if (lowerName.contains('hu') || lowerName.contains('hungary') || lowerName.contains('匈牙利')) {
+    } else if (lowerName.contains('hu') ||
+        lowerName.contains('hungary') ||
+        lowerName.contains('匈牙利')) {
       return '🇭🇺';
-    } else if (lowerName.contains('ro') || lowerName.contains('romania') || lowerName.contains('罗马尼亚')) {
+    } else if (lowerName.contains('ro') ||
+        lowerName.contains('romania') ||
+        lowerName.contains('罗马尼亚')) {
       return '🇷🇴';
-    } else if (lowerName.contains('bg') || lowerName.contains('bulgaria') || lowerName.contains('保加利亚')) {
+    } else if (lowerName.contains('bg') ||
+        lowerName.contains('bulgaria') ||
+        lowerName.contains('保加利亚')) {
       return '🇧🇬';
-    } else if (lowerName.contains('gr') || lowerName.contains('greece') || lowerName.contains('希腊')) {
+    } else if (lowerName.contains('gr') ||
+        lowerName.contains('greece') ||
+        lowerName.contains('希腊')) {
       return '🇬🇷';
-    } else if (lowerName.contains('at') || lowerName.contains('austria') || lowerName.contains('奥地利')) {
+    } else if (lowerName.contains('at') ||
+        lowerName.contains('austria') ||
+        lowerName.contains('奥地利')) {
       return '🇦🇹';
-    } else if (lowerName.contains('ru') || lowerName.contains('russia') || lowerName.contains('俄罗斯')) {
+    } else if (lowerName.contains('ru') ||
+        lowerName.contains('russia') ||
+        lowerName.contains('俄罗斯')) {
       return '🇷🇺';
-    } else if (lowerName.contains('ua') || lowerName.contains('ukraine') || lowerName.contains('乌克兰')) {
+    } else if (lowerName.contains('ua') ||
+        lowerName.contains('ukraine') ||
+        lowerName.contains('乌克兰')) {
       return '🇺🇦';
-    } else if (lowerName.contains('by') || lowerName.contains('belarus') || lowerName.contains('白俄罗斯')) {
+    } else if (lowerName.contains('by') ||
+        lowerName.contains('belarus') ||
+        lowerName.contains('白俄罗斯')) {
       return '🇧🇾';
-    } else if (lowerName.contains('tr') || lowerName.contains('turkey') || lowerName.contains('土耳其')) {
+    } else if (lowerName.contains('tr') ||
+        lowerName.contains('turkey') ||
+        lowerName.contains('土耳其')) {
       return '🇹🇷';
     }
-    
+
     // 北美洲
-    else if (lowerName.contains('us') || lowerName.contains('united states') || lowerName.contains('美国')) {
+    else if (lowerName.contains('us') ||
+        lowerName.contains('united states') ||
+        lowerName.contains('美国')) {
       return '🇺🇸';
-    } else if (lowerName.contains('ca') || lowerName.contains('canada') || lowerName.contains('加拿大')) {
+    } else if (lowerName.contains('ca') ||
+        lowerName.contains('canada') ||
+        lowerName.contains('加拿大')) {
       return '🇨🇦';
-    } else if (lowerName.contains('mx') || lowerName.contains('mexico') || lowerName.contains('墨西哥')) {
+    } else if (lowerName.contains('mx') ||
+        lowerName.contains('mexico') ||
+        lowerName.contains('墨西哥')) {
       return '🇲🇽';
     }
-    
+
     // 南美洲
-    else if (lowerName.contains('br') || lowerName.contains('brazil') || lowerName.contains('巴西')) {
+    else if (lowerName.contains('br') ||
+        lowerName.contains('brazil') ||
+        lowerName.contains('巴西')) {
       return '🇧🇷';
-    } else if (lowerName.contains('ar') || lowerName.contains('argentina') || lowerName.contains('阿根廷')) {
+    } else if (lowerName.contains('ar') ||
+        lowerName.contains('argentina') ||
+        lowerName.contains('阿根廷')) {
       return '🇦🇷';
-    } else if (lowerName.contains('cl') || lowerName.contains('chile') || lowerName.contains('智利')) {
+    } else if (lowerName.contains('cl') ||
+        lowerName.contains('chile') ||
+        lowerName.contains('智利')) {
       return '🇨🇱';
-    } else if (lowerName.contains('pe') || lowerName.contains('peru') || lowerName.contains('秘鲁')) {
+    } else if (lowerName.contains('pe') ||
+        lowerName.contains('peru') ||
+        lowerName.contains('秘鲁')) {
       return '🇵🇪';
-    } else if (lowerName.contains('co') || lowerName.contains('colombia') || lowerName.contains('哥伦比亚')) {
+    } else if (lowerName.contains('co') ||
+        lowerName.contains('colombia') ||
+        lowerName.contains('哥伦比亚')) {
       return '🇨🇴';
-    } else if (lowerName.contains('ve') || lowerName.contains('venezuela') || lowerName.contains('委内瑞拉')) {
+    } else if (lowerName.contains('ve') ||
+        lowerName.contains('venezuela') ||
+        lowerName.contains('委内瑞拉')) {
       return '🇻🇪';
     }
-    
+
     // 非洲
-    else if (lowerName.contains('za') || lowerName.contains('south africa') || lowerName.contains('南非')) {
+    else if (lowerName.contains('za') ||
+        lowerName.contains('south africa') ||
+        lowerName.contains('南非')) {
       return '🇿🇦';
-    } else if (lowerName.contains('eg') || lowerName.contains('egypt') || lowerName.contains('埃及')) {
+    } else if (lowerName.contains('eg') ||
+        lowerName.contains('egypt') ||
+        lowerName.contains('埃及')) {
       return '🇪🇬';
-    } else if (lowerName.contains('ng') || lowerName.contains('nigeria') || lowerName.contains('尼日利亚')) {
+    } else if (lowerName.contains('ng') ||
+        lowerName.contains('nigeria') ||
+        lowerName.contains('尼日利亚')) {
       return '🇳🇬';
-    } else if (lowerName.contains('ke') || lowerName.contains('kenya') || lowerName.contains('肯尼亚')) {
+    } else if (lowerName.contains('ke') ||
+        lowerName.contains('kenya') ||
+        lowerName.contains('肯尼亚')) {
       return '🇰🇪';
-    } else if (lowerName.contains('tz') || lowerName.contains('tanzania') || lowerName.contains('坦桑尼亚')) {
+    } else if (lowerName.contains('tz') ||
+        lowerName.contains('tanzania') ||
+        lowerName.contains('坦桑尼亚')) {
       return '🇹🇿';
     }
-    
+
     // 大洋洲
-    else if (lowerName.contains('au') || lowerName.contains('australia') || lowerName.contains('澳大利亚')) {
+    else if (lowerName.contains('au') ||
+        lowerName.contains('australia') ||
+        lowerName.contains('澳大利亚')) {
       return '🇦🇺';
-    } else if (lowerName.contains('nz') || lowerName.contains('new zealand') || lowerName.contains('新西兰')) {
+    } else if (lowerName.contains('nz') ||
+        lowerName.contains('new zealand') ||
+        lowerName.contains('新西兰')) {
       return '🇳🇿';
     }
-    
+
     // 中东
-    else if (lowerName.contains('ae') || lowerName.contains('emirates') || lowerName.contains('阿联酋')) {
+    else if (lowerName.contains('ae') ||
+        lowerName.contains('emirates') ||
+        lowerName.contains('阿联酋')) {
       return '🇦🇪';
-    } else if (lowerName.contains('sa') || lowerName.contains('saudi') || lowerName.contains('沙特')) {
+    } else if (lowerName.contains('sa') ||
+        lowerName.contains('saudi') ||
+        lowerName.contains('沙特')) {
       return '🇸🇦';
-    } else if (lowerName.contains('il') || lowerName.contains('israel') || lowerName.contains('以色列')) {
+    } else if (lowerName.contains('il') ||
+        lowerName.contains('israel') ||
+        lowerName.contains('以色列')) {
       return '🇮🇱';
-    } else if (lowerName.contains('ir') || lowerName.contains('iran') || lowerName.contains('伊朗')) {
+    } else if (lowerName.contains('ir') ||
+        lowerName.contains('iran') ||
+        lowerName.contains('伊朗')) {
       return '🇮🇷';
-    } else if (lowerName.contains('iq') || lowerName.contains('iraq') || lowerName.contains('伊拉克')) {
+    } else if (lowerName.contains('iq') ||
+        lowerName.contains('iraq') ||
+        lowerName.contains('伊拉克')) {
       return '🇮🇶';
     }
-    
+
     return '🌐';
   }
 
-  Group? _getCurrentGroup(List<Group> groups, Mode mode, Map<String, String> selectedMap) {
+  Group? _getCurrentGroup(
+      List<Group> groups, Mode mode, Map<String, String> selectedMap) {
     if (groups.isEmpty) return null;
-    
+
     Group? currentGroup;
-    
+
     if (mode == Mode.global) {
       currentGroup = groups.firstWhere(
         (group) => group.name == GroupName.GLOBAL.name,
@@ -648,15 +806,15 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
       for (final group in groups) {
         if (group.hidden == true) continue;
         if (group.name == GroupName.GLOBAL.name) continue;
-        
+
         final selectedProxyName = selectedMap[group.name];
         if (selectedProxyName != null && selectedProxyName.isNotEmpty) {
           final referencedGroup = groups.firstWhere(
             (g) => g.name == selectedProxyName,
             orElse: () => group,
           );
-          
-          if (referencedGroup.name == selectedProxyName && 
+
+          if (referencedGroup.name == selectedProxyName &&
               referencedGroup.type == GroupType.URLTest) {
             currentGroup = referencedGroup;
             break;
@@ -666,28 +824,29 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
           }
         }
       }
-      
+
       if (currentGroup == null) {
         currentGroup = groups.firstWhere(
-          (group) => group.hidden != true && group.name != GroupName.GLOBAL.name,
+          (group) =>
+              group.hidden != true && group.name != GroupName.GLOBAL.name,
           orElse: () => groups.first,
         );
-        
+
         if (currentGroup.now != null && currentGroup.now!.isNotEmpty) {
           final nowValue = currentGroup.now!;
           final referencedGroup = groups.firstWhere(
             (g) => g.name == nowValue,
             orElse: () => currentGroup!,
           );
-          
-          if (referencedGroup.name == nowValue && 
+
+          if (referencedGroup.name == nowValue &&
               referencedGroup.type == GroupType.URLTest) {
             currentGroup = referencedGroup;
           }
         }
       }
     }
-    
+
     return currentGroup;
   }
 }

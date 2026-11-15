@@ -13,6 +13,7 @@ import 'package:fl_clash/l10n/l10n.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('xboard_outbound_mode.dart');
+
 class XBoardOutboundMode extends StatelessWidget {
   const XBoardOutboundMode({super.key});
 
@@ -23,13 +24,15 @@ class XBoardOutboundMode extends StatelessWidget {
       _logger.error('[XBoardOutboundMode] 刷新订阅失败: $e', e, st);
     }
   }
-  
+
   void _handleModeChange(WidgetRef ref, Mode modeOption) {
     _logger.debug('[XBoardOutboundMode] 切换模式到: $modeOption');
     globalState.appController.changeMode(modeOption);
     // controller.changeMode 已经处理了全局模式的自动节点选择
   }
-  Future<void> _handleTunToggle(BuildContext context, WidgetRef ref, bool selected) async {
+
+  Future<void> _handleTunToggle(
+      BuildContext context, WidgetRef ref, bool selected) async {
     if (selected) {
       final storageService = ref.read(storageServiceProvider);
       final hasShownResult = await storageService.hasTunFirstUseShown();
@@ -55,19 +58,24 @@ class XBoardOutboundMode extends StatelessWidget {
           );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final tunSelectedColor = isDark 
+    final tunSelectedColor = isDark
         ? Colors.green.shade800.withValues(alpha: 0.4)
         : Colors.green.withValues(alpha: 0.2);
-    final tunCheckmarkColor = isDark ? Colors.green.shade300 : Colors.green.shade700;
-    final tunBorderColor = isDark ? Colors.green.shade600 : Colors.green.shade300;
-    
+    final tunCheckmarkColor =
+        isDark ? Colors.green.shade300 : Colors.green.shade700;
+    final tunBorderColor =
+        isDark ? Colors.green.shade600 : Colors.green.shade300;
+
     return Consumer(
       builder: (context, ref, child) {
-        final mode = ref.watch(patchClashConfigProvider.select((state) => state.mode));
-        final tunEnabled = ref.watch(patchClashConfigProvider.select((state) => state.tun.enable));
+        final mode =
+            ref.watch(patchClashConfigProvider.select((state) => state.mode));
+        final tunEnabled = ref.watch(
+            patchClashConfigProvider.select((state) => state.tun.enable));
         return GlassContainer(
           borderRadius: BorderRadius.circular(16),
           padding: const EdgeInsets.all(14.0),
@@ -87,8 +95,8 @@ class XBoardOutboundMode extends StatelessWidget {
                   Text(
                     AppLocalizations.of(context).xboardProxyMode,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ],
               ),
@@ -100,13 +108,18 @@ class XBoardOutboundMode extends StatelessWidget {
                     width: 160,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Stack(
                       children: [
                         AnimatedAlign(
-                          alignment: mode == Mode.rule ? Alignment.centerLeft : Alignment.centerRight,
+                          alignment: mode == Mode.rule
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
                           duration: const Duration(milliseconds: 200),
                           curve: Curves.easeInOut,
                           child: Container(
@@ -131,8 +144,12 @@ class XBoardOutboundMode extends StatelessWidget {
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       color: mode == Mode.rule
-                                          ? Theme.of(context).colorScheme.onPrimary
-                                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
                                     ),
                                   ),
                                 ),
@@ -141,7 +158,8 @@ class XBoardOutboundMode extends StatelessWidget {
                             Expanded(
                               child: GestureDetector(
                                 behavior: HitTestBehavior.translucent,
-                                onTap: () => _handleModeChange(ref, Mode.global),
+                                onTap: () =>
+                                    _handleModeChange(ref, Mode.global),
                                 child: Center(
                                   child: Text(
                                     Intl.message(Mode.global.name),
@@ -149,8 +167,12 @@ class XBoardOutboundMode extends StatelessWidget {
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       color: mode == Mode.global
-                                          ? Theme.of(context).colorScheme.onPrimary
-                                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
                                     ),
                                   ),
                                 ),
@@ -163,16 +185,16 @@ class XBoardOutboundMode extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   FilterChip(
-                        label: const Text("TUN"),
-                        selected: tunEnabled,
-                        onSelected: (selected) {
-                          _handleTunToggle(context, ref, selected);
-                        },
-                        selectedColor: tunSelectedColor,
-                        checkmarkColor: tunCheckmarkColor,
-                        side: tunEnabled
-                            ? BorderSide(color: tunBorderColor, width: 1)
-                            : null,
+                    label: const Text("TUN"),
+                    selected: tunEnabled,
+                    onSelected: (selected) {
+                      _handleTunToggle(context, ref, selected);
+                    },
+                    selectedColor: tunSelectedColor,
+                    checkmarkColor: tunCheckmarkColor,
+                    side: tunEnabled
+                        ? BorderSide(color: tunBorderColor, width: 1)
+                        : null,
                     labelStyle: const TextStyle(fontSize: 13),
                   ),
                 ],
@@ -181,9 +203,12 @@ class XBoardOutboundMode extends StatelessWidget {
               Text(
                 _getModeDescription(mode, tunEnabled, context),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
-                  fontSize: 12,
-                ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.65),
+                      fontSize: 12,
+                    ),
               ),
             ],
           ),
@@ -191,8 +216,10 @@ class XBoardOutboundMode extends StatelessWidget {
       },
     );
   }
+
   String _getModeDescription(Mode mode, bool tunEnabled, BuildContext context) {
-    final tunStatus = tunEnabled ? ' | ${AppLocalizations.of(context).xboardTunEnabled}' : '';
+    final tunStatus =
+        tunEnabled ? ' | ${AppLocalizations.of(context).xboardTunEnabled}' : '';
     switch (mode) {
       case Mode.rule:
         return '${AppLocalizations.of(context).xboardProxyModeRuleDescription}$tunStatus';

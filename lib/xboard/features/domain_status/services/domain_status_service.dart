@@ -5,9 +5,8 @@ import 'package:fl_clash/xboard/config/xboard_config.dart';
 // 初始化文件级日志器
 final _logger = FileLogger('domain_status_service.dart');
 
-
 /// 域名状态服务
-/// 
+///
 /// 负责域名检测、状态管理和XBoard服务初始化
 class DomainStatusService {
   // 使用V2配置模块
@@ -19,7 +18,7 @@ class DomainStatusService {
 
     try {
       _logger.info('开始初始化');
-      
+
       // 确保V2配置模块已初始化
       if (!XBoardConfig.isInitialized) {
         await XBoardConfig.initialize();
@@ -52,12 +51,11 @@ class DomainStatusService {
       final latency = endTime.difference(startTime).inMilliseconds;
 
       if (bestDomain != null && bestDomain.isNotEmpty) {
-
         // 初始化XBoard服务
         await _initializeXBoardService(bestDomain);
 
         _logger.info('域名检查成功: $bestDomain (${latency}ms)');
-        
+
         return {
           'success': true,
           'domain': bestDomain,
