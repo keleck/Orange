@@ -243,7 +243,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
           color: AppColors.surface(context, 0.06),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: AppColors.surface(context, 0.12),
+            color: AppColors.outline(context),
             width: 1,
           ),
         ),
@@ -565,7 +565,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                       separatorBuilder: (_, __) => Divider(
                         height: 1,
                         indent: 60,
-                        color: AppColors.surface(context, 0.07),
+                        color: AppColors.divider(context),
                       ),
                       itemBuilder: (_, index) => _buildRow(_enabled[index]),
                     ),
@@ -855,7 +855,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
               separatorBuilder: (_, __) => Divider(
                 height: 1,
                 indent: 60,
-                color: AppColors.surface(context, 0.07),
+                color: AppColors.divider(context),
               ),
               itemBuilder: (_, index) {
                 final target = ServiceTarget.values[index];
