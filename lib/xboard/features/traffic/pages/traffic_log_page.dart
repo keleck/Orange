@@ -146,7 +146,7 @@ class TrafficLogPage extends ConsumerWidget {
         color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.fg(context).withValues(alpha: 0.06),
+          color: AppColors.surface(context, 0.06),
         ),
       ),
       child: Column(
@@ -289,7 +289,7 @@ class _TrafficDivider extends StatelessWidget {
       width: 1,
       height: 30,
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      color: AppColors.fg(context).withValues(alpha: 0.06),
+      color: AppColors.surface(context, 0.06),
     );
   }
 }

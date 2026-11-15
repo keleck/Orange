@@ -437,8 +437,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      AppColors.fg(context).withValues(alpha: 0.08),
-                      AppColors.fg(context).withValues(alpha: 0.04),
+                      AppColors.surface(context, 0.08),
+                      AppColors.surface(context, 0.04),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
@@ -499,7 +499,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                   filled: true,
-                  fillColor: AppColors.fg(context).withValues(alpha: 0.04),
+                  fillColor: AppColors.surface(context, 0.04),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
@@ -570,7 +570,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                   filled: true,
-                  fillColor: AppColors.fg(context).withValues(alpha: 0.04),
+                  fillColor: AppColors.surface(context, 0.04),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
@@ -644,8 +644,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             color: AppColors.fg(context).withValues(alpha: 0.5),
                           ),
                           filled: true,
-                          fillColor:
-                              AppColors.fg(context).withValues(alpha: 0.04),
+                          fillColor: AppColors.surface(context, 0.04),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide(
@@ -732,7 +731,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                   filled: true,
-                  fillColor: AppColors.fg(context).withValues(alpha: 0.04),
+                  fillColor: AppColors.surface(context, 0.04),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(

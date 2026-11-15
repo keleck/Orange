@@ -59,7 +59,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                 end: Alignment.bottomRight,
                 colors: [
                   Colors.blue.withValues(alpha: 0.15),
-                  AppColors.fg(context).withValues(alpha: 0.08),
+                  AppColors.surface(context, 0.08),
                 ],
               ),
               borderRadius: BorderRadius.circular(24),
@@ -94,7 +94,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                     ),
                     border: Border(
                       bottom: BorderSide(
-                        color: AppColors.fg(context).withValues(alpha: 0.1),
+                        color: AppColors.surface(context, 0.1),
                         width: 1,
                       ),
                     ),
@@ -305,7 +305,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                   decoration: BoxDecoration(
                     border: Border(
                       top: BorderSide(
-                        color: AppColors.fg(context).withValues(alpha: 0.1),
+                        color: AppColors.surface(context, 0.1),
                         width: 1,
                       ),
                     ),
@@ -467,7 +467,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                   end: Alignment.bottomRight,
                   colors: [
                     Colors.blue.withValues(alpha: 0.15),
-                    AppColors.fg(context).withValues(alpha: 0.08),
+                    AppColors.surface(context, 0.08),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -501,7 +501,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                       ),
                       border: Border(
                         bottom: BorderSide(
-                          color: AppColors.fg(context).withValues(alpha: 0.1),
+                          color: AppColors.surface(context, 0.1),
                           width: 1,
                         ),
                       ),

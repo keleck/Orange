@@ -252,7 +252,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                 color: AppColors.surface(context, 0.06),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.fg(context).withValues(alpha: 0.08),
+                  color: AppColors.surface(context, 0.08),
                 ),
               ),
               child: Icon(
@@ -429,7 +429,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
         color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: AppColors.fg(context).withValues(alpha: 0.06),
+          color: AppColors.surface(context, 0.06),
         ),
       ),
       child: Row(
@@ -522,7 +522,7 @@ class _Panel extends StatelessWidget {
         color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.fg(context).withValues(alpha: 0.07),
+          color: AppColors.surface(context, 0.07),
         ),
       ),
       child: child,
@@ -556,7 +556,7 @@ class _InputField extends StatelessWidget {
         decoration: InputDecoration(
           isDense: true,
           filled: true,
-          fillColor: AppColors.fg(context).withValues(alpha: 0.05),
+          fillColor: AppColors.surface(context, 0.05),
           hintText: hint,
           hintStyle: TextStyle(
             fontSize: 13,
@@ -569,7 +569,7 @@ class _InputField extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: AppColors.fg(context).withValues(alpha: 0.07),
+              color: AppColors.surface(context, 0.07),
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -665,7 +665,7 @@ class _PickerField extends StatelessWidget {
           color: AppColors.surface(context, 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.fg(context).withValues(alpha: 0.07),
+            color: AppColors.surface(context, 0.07),
           ),
         ),
         child: Row(
@@ -754,20 +754,25 @@ class _OptionSheet<T> extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color.alphaBlend(
-              primary.withValues(alpha: 0.10),
-              const Color(0xFF1B2030),
-            ),
-            const Color(0xFF14161F),
-          ],
+          colors: AppColors.isDark(context)
+              ? [
+                  Color.alphaBlend(
+                    primary.withValues(alpha: 0.10),
+                    const Color(0xFF1B2030),
+                  ),
+                  const Color(0xFF14161F),
+                ]
+              : [
+                  Colors.white,
+                  const Color(0xFFF7FAFF),
+                ],
         ),
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(24),
         ),
         border: Border(
           top: BorderSide(
-            color: AppColors.fg(context).withValues(alpha: 0.08),
+            color: AppColors.surface(context, 0.08),
           ),
         ),
       ),
@@ -791,7 +796,7 @@ class _OptionSheet<T> extends StatelessWidget {
             Divider(
               height: 1,
               thickness: 1,
-              color: AppColors.fg(context).withValues(alpha: 0.06),
+              color: AppColors.surface(context, 0.06),
             ),
             Flexible(
               child: ListView.builder(

@@ -167,7 +167,7 @@ class _HeaderSummary extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: AppColors.fg(context).withValues(alpha: 0.07),
+            color: AppColors.surface(context, 0.07),
           ),
         ),
         child: Column(
@@ -274,7 +274,7 @@ class _StatDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 22,
-      color: AppColors.fg(context).withValues(alpha: 0.07),
+      color: AppColors.surface(context, 0.07),
     );
   }
 }
@@ -349,7 +349,7 @@ class _TicketCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
       child: Material(
-        color: AppColors.fg(context).withValues(alpha: 0.035),
+        color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () => context.push('/user/tickets/${ticket.id}'),
@@ -359,7 +359,7 @@ class _TicketCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.fg(context).withValues(alpha: 0.06),
+                color: AppColors.surface(context, 0.06),
               ),
             ),
             child: Column(

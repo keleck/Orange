@@ -125,7 +125,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
             if (usage != IpUsageType.unknown) ...[
               _pill(
                 text: usage.label,
-                background: AppColors.fg(context).withValues(alpha: 0.10),
+                background: AppColors.surface(context, 0.10),
                 foreground: AppColors.fg(context).withValues(alpha: 0.75),
               ),
               const SizedBox(width: 6),
@@ -257,7 +257,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
           const Color(0xFF3A0A0A),
         ),
       IpQualityLevel.unknown => (
-          AppColors.fg(context).withValues(alpha: 0.12),
+          AppColors.surface(context, 0.12),
           AppColors.fg(context).withValues(alpha: 0.62),
         ),
     };

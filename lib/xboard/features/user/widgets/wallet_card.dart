@@ -176,8 +176,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.fg(context).withValues(alpha: 0.10),
-                    AppColors.fg(context).withValues(alpha: 0.04),
+                    AppColors.surface(context, 0.10),
+                    AppColors.surface(context, 0.04),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -256,8 +256,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                AppColors.fg(context).withValues(alpha: 0.06),
-                                AppColors.fg(context).withValues(alpha: 0.03),
+                                AppColors.surface(context, 0.06),
+                                AppColors.surface(context, 0.03),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -432,10 +432,10 @@ class _WalletCardState extends ConsumerState<WalletCard> {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: AppColors.fg(context).withValues(alpha: 0.035),
+      color: AppColors.surface(context, 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: AppColors.fg(context).withValues(alpha: 0.07),
+        color: AppColors.surface(context, 0.07),
       ),
     );
   }
@@ -461,7 +461,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
             ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: AppColors.fg(context).withValues(alpha: 0.07),
+              color: AppColors.surface(context, 0.07),
             ),
           ),
           child: Padding(
@@ -712,7 +712,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         color: AppColors.surface(context, 0.04),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppColors.fg(context).withValues(alpha: 0.06),
+                          color: AppColors.surface(context, 0.06),
                           width: 1,
                         ),
                       ),

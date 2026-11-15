@@ -270,7 +270,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
               end: Alignment.bottomRight,
               colors: [
                 AppColors.fg(context).withValues(alpha: 0.15),
-                AppColors.fg(context).withValues(alpha: 0.05),
+                AppColors.surface(context, 0.05),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
@@ -296,7 +296,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             itemCount: filteredProxies.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,
-              color: AppColors.fg(context).withValues(alpha: 0.1),
+              color: AppColors.surface(context, 0.1),
             ),
             itemBuilder: (context, index) {
               final proxy = filteredProxies[index];
@@ -397,7 +397,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
                   gradient: LinearGradient(
                     colors: [
                       AppColors.fg(context).withValues(alpha: 0.15),
-                      AppColors.fg(context).withValues(alpha: 0.08),
+                      AppColors.surface(context, 0.08),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(4),

@@ -427,7 +427,7 @@ class _MessageBubble extends StatelessWidget {
                   ],
                 )
               : null,
-          color: isMe ? null : AppColors.fg(context).withValues(alpha: 0.05),
+          color: isMe ? null : AppColors.surface(context, 0.05),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(14),
             topRight: const Radius.circular(14),

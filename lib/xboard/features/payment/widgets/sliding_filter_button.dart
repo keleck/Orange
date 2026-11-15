@@ -71,8 +71,8 @@ class _SlidingFilterButtonState extends State<SlidingFilterButton>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.fg(context).withValues(alpha: 0.08),
-            AppColors.fg(context).withValues(alpha: 0.05),
+            AppColors.surface(context, 0.08),
+            AppColors.surface(context, 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(50),

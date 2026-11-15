@@ -40,7 +40,7 @@ class UserMenuWidget extends ConsumerWidget {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: AppColors.fg(context).withValues(alpha: 0.1),
+                    color: AppColors.surface(context, 0.1),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),

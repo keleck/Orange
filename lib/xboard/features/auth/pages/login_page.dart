@@ -415,11 +415,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? AppColors.fg(context).withValues(alpha: 0.08)
-                  : AppColors.fg(context).withValues(alpha: 0.1),
+                  ? AppColors.surface(context, 0.08)
+                  : AppColors.surface(context, 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.fg(context).withValues(alpha: 0.1),
+                color: AppColors.surface(context, 0.1),
                 width: 1,
               ),
             ),
@@ -460,11 +460,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? AppColors.fg(context).withValues(alpha: 0.08)
-                  : AppColors.fg(context).withValues(alpha: 0.1),
+                  ? AppColors.surface(context, 0.08)
+                  : AppColors.surface(context, 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.fg(context).withValues(alpha: 0.1),
+                color: AppColors.surface(context, 0.1),
                 width: 1,
               ),
             ),

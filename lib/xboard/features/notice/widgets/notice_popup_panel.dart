@@ -100,7 +100,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
                     gradient: panelGradient,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: AppColors.fg(context).withValues(alpha: 0.10),
+                      color: AppColors.surface(context, 0.10),
                       width: 1,
                     ),
                     boxShadow: [
@@ -394,7 +394,7 @@ class _PanelDivider extends StatelessWidget {
       thickness: 1,
       indent: indent,
       endIndent: endIndent,
-      color: AppColors.fg(context).withValues(alpha: 0.07),
+      color: AppColors.surface(context, 0.07),
     );
   }
 }
@@ -580,7 +580,7 @@ Future<void> showNoticeDetailDialog(
             gradient: noticePanelGradient(context),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: AppColors.fg(context).withValues(alpha: 0.10),
+              color: AppColors.surface(context, 0.10),
             ),
             boxShadow: [
               BoxShadow(
@@ -772,11 +772,11 @@ class _NoticeDialogButton extends StatelessWidget {
                   ],
                 )
               : null,
-          color: filled ? null : AppColors.fg(context).withValues(alpha: 0.06),
+          color: filled ? null : AppColors.surface(context, 0.06),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: filled
-                ? AppColors.fg(context).withValues(alpha: 0.12)
+                ? AppColors.surface(context, 0.12)
                 : AppColors.fg(context).withValues(alpha: 0.14),
           ),
         ),

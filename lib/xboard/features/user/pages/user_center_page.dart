@@ -61,7 +61,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     color: AppColors.surface(context, 0.035),
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: AppColors.fg(context).withValues(alpha: 0.07),
+                      color: AppColors.surface(context, 0.07),
                       width: 1,
                     ),
                   ),
@@ -156,7 +156,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     color: AppColors.surface(context, 0.035),
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: AppColors.fg(context).withValues(alpha: 0.07),
+                      color: AppColors.surface(context, 0.07),
                     ),
                   ),
                   child: Material(
@@ -299,7 +299,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         ),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.fg(context).withValues(alpha: 0.07),
+          color: AppColors.surface(context, 0.07),
         ),
       ),
       child: Column(
@@ -373,7 +373,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
           Divider(
             height: 1,
             thickness: 1,
-            color: AppColors.fg(context).withValues(alpha: 0.06),
+            color: AppColors.surface(context, 0.06),
           ),
           const SizedBox(height: 14),
           Row(
@@ -429,7 +429,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 width: 1,
                 height: 34,
                 margin: const EdgeInsets.symmetric(horizontal: 14),
-                color: AppColors.fg(context).withValues(alpha: 0.07),
+                color: AppColors.surface(context, 0.07),
               ),
               Expanded(
                 flex: 2,
@@ -470,7 +470,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
               child: LinearProgressIndicator(
                 value: ratio,
                 minHeight: 5,
-                backgroundColor: AppColors.fg(context).withValues(alpha: 0.08),
+                backgroundColor: AppColors.surface(context, 0.08),
                 valueColor: AlwaysStoppedAnimation<Color>(
                   isExpired ? const Color(0xFFFF6B6B) : primary,
                 ),

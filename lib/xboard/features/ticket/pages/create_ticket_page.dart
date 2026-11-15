@@ -188,7 +188,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            AppColors.fg(context).withValues(alpha: 0.1),
+                            AppColors.surface(context, 0.1),
                             Colors.blue.withValues(alpha: 0.05),
                           ],
                         ),
@@ -235,7 +235,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            AppColors.fg(context).withValues(alpha: 0.1),
+                            AppColors.surface(context, 0.1),
                             Colors.blue.withValues(alpha: 0.05),
                           ],
                         ),

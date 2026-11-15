@@ -137,7 +137,7 @@ class _OrderCard extends ConsumerWidget {
           Divider(
             height: 1,
             thickness: 1,
-            color: AppColors.fg(context).withValues(alpha: 0.06),
+            color: AppColors.surface(context, 0.06),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -198,20 +198,20 @@ class _OrderCard extends ConsumerWidget {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: AppColors.fg(context).withValues(alpha: 0.035),
+      color: AppColors.surface(context, 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: AppColors.fg(context).withValues(alpha: 0.07),
+        color: AppColors.surface(context, 0.07),
       ),
     );
   }
 
   BoxDecoration _detailGlassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: AppColors.fg(context).withValues(alpha: 0.04),
+      color: AppColors.surface(context, 0.04),
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: AppColors.fg(context).withValues(alpha: 0.06),
+        color: AppColors.surface(context, 0.06),
       ),
     );
   }

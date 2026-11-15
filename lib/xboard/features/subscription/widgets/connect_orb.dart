@@ -229,18 +229,21 @@ class ConnectActiveDisc extends StatelessWidget {
 /// 未连接的圆盘：深灰蓝实色 + 内缩一圈细白线
 class ConnectIdleDisc extends StatelessWidget {
   final double size;
-  final Color color;
+  final Color? color;
   final double progress;
 
   const ConnectIdleDisc({
     super.key,
     this.size = kConnectDiscSize,
-    this.color = const Color(0xFF1D2229),
+    this.color,
     this.progress = 0,
   });
 
   @override
   Widget build(BuildContext context) {
+    // 白天用白盘 + 深色描边，夜间保持深灰蓝
+    final discColor = color ??
+        (AppColors.isDark(context) ? const Color(0xFF1D2229) : Colors.white);
     return SizedBox(
       width: size,
       height: size,
@@ -250,7 +253,7 @@ class ConnectIdleDisc extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: color,
+              color: discColor,
             ),
           ),
           // 内缩的细白圈（正圆）

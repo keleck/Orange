@@ -71,10 +71,10 @@ class InviteStatsCard extends ConsumerWidget {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: AppColors.fg(context).withValues(alpha: 0.035),
+      color: AppColors.surface(context, 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: AppColors.fg(context).withValues(alpha: 0.07),
+        color: AppColors.surface(context, 0.07),
       ),
     );
   }

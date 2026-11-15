@@ -83,12 +83,12 @@ class _MobileNavigationBarState extends State<MobileNavigationBar>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.fg(context).withValues(alpha: 0.08), // 降低不透明度，更透明
-                  AppColors.fg(context).withValues(alpha: 0.03),
+                  AppColors.surface(context, 0.08), // 降低不透明度，更透明
+                  AppColors.surface(context, 0.03),
                 ],
               ),
               border: Border.all(
-                color: AppColors.fg(context).withValues(alpha: 0.1), // 降低边框不透明度
+                color: AppColors.surface(context, 0.1), // 降低边框不透明度
                 width: 1.5,
               ),
               borderRadius: BorderRadius.circular(24),

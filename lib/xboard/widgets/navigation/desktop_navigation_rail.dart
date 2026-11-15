@@ -36,13 +36,13 @@ class DesktopNavigationRail extends ConsumerWidget {
           decoration: BoxDecoration(
             border: Border(
               right: BorderSide(
-                color: AppColors.fg(context).withValues(alpha: 0.1),
+                color: AppColors.surface(context, 0.1),
               ),
               top: BorderSide(
-                color: AppColors.fg(context).withValues(alpha: 0.1),
+                color: AppColors.surface(context, 0.1),
               ),
               bottom: BorderSide(
-                color: AppColors.fg(context).withValues(alpha: 0.1),
+                color: AppColors.surface(context, 0.1),
               ),
             ),
             boxShadow: [

@@ -13,8 +13,6 @@ const _amber = Color(0xFFF59E0B);
 const _green = Color(0xFF22C55E);
 const _red = Color(0xFFEF4444);
 
-const _sheetSurface = Color(0xFF0F0E1D);
-
 /// 卡片上展示的数量
 const _cardServiceCount = 2;
 
@@ -245,7 +243,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
           color: AppColors.surface(context, 0.06),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: AppColors.fg(context).withValues(alpha: 0.12),
+            color: AppColors.surface(context, 0.12),
             width: 1,
           ),
         ),
@@ -567,7 +565,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                       separatorBuilder: (_, __) => Divider(
                         height: 1,
                         indent: 60,
-                        color: AppColors.fg(context).withValues(alpha: 0.07),
+                        color: AppColors.surface(context, 0.07),
                       ),
                       itemBuilder: (_, index) => _buildRow(_enabled[index]),
                     ),
@@ -801,9 +799,9 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
     final allSelected = _selected.length == ServiceTarget.values.length;
     return Container(
       height: media.size.height * 0.75,
-      decoration: const BoxDecoration(
-        color: _sheetSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: AppColors.panel(context),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
@@ -857,7 +855,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
               separatorBuilder: (_, __) => Divider(
                 height: 1,
                 indent: 60,
-                color: AppColors.fg(context).withValues(alpha: 0.07),
+                color: AppColors.surface(context, 0.07),
               ),
               itemBuilder: (_, index) {
                 final target = ServiceTarget.values[index];
