@@ -23,7 +23,8 @@ import 'package:fl_clash/xboard/features/shared/pages/node_selector_page.dart';
 import 'package:fl_clash/xboard/features/notice/widgets/notice_popup_panel.dart';
 import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, NoticeModel;
+import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart'
+    show XBoardSDK, NoticeModel;
 import 'package:fl_clash/xboard/core/core.dart';
 import '../../shared/widgets/glass_container.dart';
 import '../widgets/core_status_button.dart';
@@ -33,12 +34,14 @@ import '../widgets/xboard_connect_button.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 
 final _logger = FileLogger('xboard_home_page.dart');
+
 class XBoardHomePage extends ConsumerStatefulWidget {
   const XBoardHomePage({super.key});
   @override
   ConsumerState<XBoardHomePage> createState() => _XBoardHomePageState();
 }
-class _XBoardHomePageState extends ConsumerState<XBoardHomePage> 
+
+class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   late AnimationController _refreshController;
   late AnimationController _scaleController;
@@ -47,23 +50,23 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   late AnimationController _nodeLoadingController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _nodeLoadingOpacity;
-  
+
   bool _hasInitialized = false;
   bool _hasStartedLatencyTesting = false;
   bool _hasCheckedSubscriptionStatus = false;
   bool _isTunLoading = false;
   bool _showTrafficHint = true;
-  bool _isManualRefresh = false;  // 标记是否为手动刷新（仅手动刷新时触发测速）
-  
+  bool _isManualRefresh = false; // 标记是否为手动刷新（仅手动刷新时触发测速）
+
   @override
-  bool get wantKeepAlive => true;  // 保持页面状态，防止重建
-  
+  bool get wantKeepAlive => true; // 保持页面状态，防止重建
+
   @override
   void initState() {
     super.initState();
     _refreshController = AnimationController(
-        vsync: this,
-        duration: const Duration(seconds: 1),
+      vsync: this,
+      duration: const Duration(seconds: 1),
     );
     _scaleController = AnimationController(
       vsync: this,
@@ -77,12 +80,12 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       curve: Curves.easeInOut,
     );
     _pulseController = AnimationController(
-        vsync: this,
-        duration: const Duration(seconds: 6),
+      vsync: this,
+      duration: const Duration(seconds: 6),
     )..repeat();
     _tunLoadingController = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 800),
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
     );
     _nodeLoadingController = AnimationController(
       vsync: this,
@@ -113,7 +116,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         });
       }
     });
-    
+
     // 监听用户信息变化，如果被封禁则自动退出登录
     ref.listenManual(userInfoProvider, (previous, next) {
       if (next != null && next.banned && (previous?.banned != true)) {
@@ -123,7 +126,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         });
       }
     });
-    
+
     // 监听订阅导入完成事件
     ref.listenManual(profileImportProvider, (previous, next) {
       // 从导入中变为完成（成功或失败）
@@ -133,14 +136,15 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         }
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
-            subscriptionStatusChecker.checkSubscriptionStatusOnStartup(context, ref);
+            subscriptionStatusChecker.checkSubscriptionStatusOnStartup(
+                context, ref);
             // 仅在手动刷新时触发测速
             if (_isManualRefresh) {
               Future.delayed(const Duration(milliseconds: 1500), () {
                 if (mounted) {
                   _logger.info('手动刷新导入完成，触发自动测速');
                   _performInitialLatencyTest();
-                  _isManualRefresh = false;  // 重置标志
+                  _isManualRefresh = false; // 重置标志
                 }
               });
             }
@@ -148,7 +152,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         });
       }
     });
-    
+
     ref.listenManual(currentProfileProvider, (previous, next) {
       if (previous?.label != next?.label && previous != null) {
         Future.delayed(const Duration(milliseconds: 1500), () {
@@ -159,7 +163,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       }
     });
     ref.listenManual(groupsProvider, (previous, next) {
-      if ((previous?.isEmpty ?? true) && next.isNotEmpty && !_hasStartedLatencyTesting) {
+      if ((previous?.isEmpty ?? true) &&
+          next.isNotEmpty &&
+          !_hasStartedLatencyTesting) {
         _hasStartedLatencyTesting = true;
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
@@ -168,7 +174,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         });
       }
     });
-    
+
     // 监听订阅有效期变化，当到期时间有变化时重新显示提示
     ref.listenManual(
       subscriptionInfoProvider.select((sub) => sub?.expiredAt),
@@ -183,20 +189,20 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         }
       },
     );
-    
+
     // 监听流量百分比变化，在80%、90%、100%时重新显示提示
     ref.listenManual(
       subscriptionInfoProvider.select((sub) => sub?.usagePercentage),
       (previous, current) {
         if (current == null) return;
         final prevPercentage = previous ?? 0;
-        
+
         // 检查是否跨越了关键阶段：80%、90%、100%
         final reachedStages = <double>[];
         if (prevPercentage < 80 && current >= 80) reachedStages.add(80);
         if (prevPercentage < 90 && current >= 90) reachedStages.add(90);
         if (prevPercentage < 100 && current >= 100) reachedStages.add(100);
-        
+
         // 如果达到了任何关键阶段，重新显示提示
         if (reachedStages.isNotEmpty && mounted) {
           setState(() => _showTrafficHint = true);
@@ -217,11 +223,12 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);  // 必须调用，配合 AutomaticKeepAliveClientMixin
-    
+    super.build(context); // 必须调用，配合 AutomaticKeepAliveClientMixin
+
     // 根据操作系统平台判断设备类型
-    final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
-    
+    final isDesktop =
+        Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+
     // 直接返回内容，外层 CommonScaffold 已有统一渐变背景
     return Container(
       height: double.infinity,
@@ -275,10 +282,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     );
   }
 
-  Widget _buildHeader(BuildContext context, WidgetRef ref, double horizontalPadding) {
+  Widget _buildHeader(
+      BuildContext context, WidgetRef ref, double horizontalPadding) {
     final userInfo = ref.userInfo;
     final theme = Theme.of(context);
-    
+
     if (userInfo == null) return const SizedBox.shrink();
 
     return Padding(
@@ -296,7 +304,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
               backgroundImage: NetworkImage(userInfo.avatarUrl),
               onBackgroundImageError: (_, __) {},
               child: Text(
-                userInfo.email.isNotEmpty ? userInfo.email.substring(0, 1).toUpperCase() : 'U',
+                userInfo.email.isNotEmpty
+                    ? userInfo.email.substring(0, 1).toUpperCase()
+                    : 'U',
                 style: TextStyle(
                   color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -338,14 +348,15 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   bool _calculateIsNodeLoading(WidgetRef ref) {
     final groups = ref.watch(groupsProvider);
     final importState = ref.watch(profileImportProvider);
-    
+
     if (groups.isEmpty || importState.isImporting) {
       return true;
     }
-    
+
     final selectedMap = ref.watch(selectedMapProvider);
-    final mode = ref.watch(patchClashConfigProvider.select((state) => state.mode));
-    
+    final mode =
+        ref.watch(patchClashConfigProvider.select((state) => state.mode));
+
     Group? currentGroup;
     if (mode == Mode.global) {
       currentGroup = groups.firstWhere(
@@ -364,12 +375,13 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       }
       if (currentGroup == null) {
         currentGroup = groups.firstWhere(
-          (group) => group.hidden != true && group.name != GroupName.GLOBAL.name,
+          (group) =>
+              group.hidden != true && group.name != GroupName.GLOBAL.name,
           orElse: () => groups.first,
         );
       }
     }
-    
+
     return currentGroup == null || currentGroup.all.isEmpty;
   }
 
@@ -449,9 +461,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                           isDisabled ? null : (_) => _scaleController.reverse(),
                       onTapUp:
                           isDisabled ? null : (_) => _scaleController.forward(),
-                      onTapCancel: isDisabled
-                          ? null
-                          : () => _scaleController.forward(),
+                      onTapCancel:
+                          isDisabled ? null : () => _scaleController.forward(),
                       child: ClipOval(
                         child: SizedBox(
                           width: _discSize,
@@ -569,41 +580,47 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   Widget _buildCurrentNodeCard(BuildContext context, WidgetRef ref) {
     final groups = ref.watch(groupsProvider);
     final selectedMap = ref.watch(selectedMapProvider);
-    final mode = ref.watch(patchClashConfigProvider.select((state) => state.mode));
+    final mode =
+        ref.watch(patchClashConfigProvider.select((state) => state.mode));
     final tunEnable = ref.watch(
       patchClashConfigProvider.select((state) => state.tun.enable),
     );
     final userState = ref.watch(xboardUserProvider);
     final domainSubscription = ref.watch(subscriptionInfoProvider);
-    final profileSubscriptionInfo = ref.watch(currentProfileProvider)?.subscriptionInfo;
+    final profileSubscriptionInfo =
+        ref.watch(currentProfileProvider)?.subscriptionInfo;
     final importState = ref.watch(profileImportProvider);
-    final subscriptionStatus = subscriptionStatusService.checkSubscriptionStatus(
+    final subscriptionStatus =
+        subscriptionStatusService.checkSubscriptionStatus(
       userState: userState,
       profileSubscriptionInfo: profileSubscriptionInfo,
       isRefreshing: userState.isLoading,
     );
     // 获取实时流量数据
     final traffics = ref.watch(trafficsProvider);
-    final lastTraffic = traffics.length > 0 ? traffics[traffics.length - 1] : null;
-    
+    final lastTraffic =
+        traffics.length > 0 ? traffics[traffics.length - 1] : null;
+
     // 检查流量是否耗尽（达到100%）
-    final bool isTrafficExhausted = domainSubscription?.isTrafficExhausted ?? false;
-    
+    final bool isTrafficExhausted =
+        domainSubscription?.isTrafficExhausted ?? false;
+
     // 只有真正过期后才显示购买按钮（精确到时间点）
     final bool isExpired = domainSubscription?.isExpired ?? false;
-    
+
     // 检查是否即将过期（7天内）
     final bool isExpiringSoon = domainSubscription?.isExpiringSoon ?? false;
-    
+
     // 流量耗尽且未过期时，显示续费按钮购买流量
-    final bool shouldShowPurchaseButton = isExpired || (isTrafficExhausted && !isExpired);
-    
+    final bool shouldShowPurchaseButton =
+        isExpired || (isTrafficExhausted && !isExpired);
+
     // 只在流量耗尽但账号未过期时，才显示"提前开启流量周期"按钮（作为备选）
     final bool shouldShowFetchTransferButton = false; // 暂时禁用，优先引导用户购买流量
-    
+
     Group? currentGroup;
     String displayName = '未选择';
-    
+
     if (groups.isNotEmpty) {
       if (mode == Mode.global) {
         currentGroup = groups.firstWhere(
@@ -622,12 +639,13 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         }
         if (currentGroup == null) {
           currentGroup = groups.firstWhere(
-            (group) => group.hidden != true && group.name != GroupName.GLOBAL.name,
+            (group) =>
+                group.hidden != true && group.name != GroupName.GLOBAL.name,
             orElse: () => groups.first,
           );
         }
       }
-      
+
       if (currentGroup != null) {
         final selectedProxyName = selectedMap[currentGroup.name];
         if (selectedProxyName != null && selectedProxyName.isNotEmpty) {
@@ -639,7 +657,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     }
 
     final bool isNodeLoading = _calculateIsNodeLoading(ref);
-    final bool isStart = ref.watch(runTimeProvider.select((state) => state != null));
+    final bool isStart =
+        ref.watch(runTimeProvider.select((state) => state != null));
     final bool hasImportError = importState.lastResult?.isSuccess == false;
     final bool isNodeInteractive = !shouldShowPurchaseButton && !isNodeLoading;
     if (isNodeLoading && !_nodeLoadingController.isAnimating) {
@@ -683,7 +702,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                             return Stack(
                               children: [
                                 AnimatedAlign(
-                                  alignment: mode == Mode.rule ? Alignment.centerLeft : Alignment.centerRight,
+                                  alignment: mode == Mode.rule
+                                      ? Alignment.centerLeft
+                                      : Alignment.centerRight,
                                   duration: const Duration(milliseconds: 250),
                                   curve: Curves.easeOutBack,
                                   child: Container(
@@ -694,7 +715,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       borderRadius: BorderRadius.circular(14),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.2),
+                                          color: Colors.black
+                                              .withValues(alpha: 0.2),
                                           blurRadius: 4,
                                           offset: const Offset(0, 2),
                                         ),
@@ -707,24 +729,32 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     Expanded(
                                       child: GestureDetector(
                                         behavior: HitTestBehavior.opaque,
-                                        onTap: isNodeLoading ? null : () {
-                                          globalState.appController.changeMode(Mode.rule);
-                                        },
+                                        onTap: isNodeLoading
+                                            ? null
+                                            : () {
+                                                globalState.appController
+                                                    .changeMode(Mode.rule);
+                                              },
                                         child: Center(
                                           child: AnimatedDefaultTextStyle(
-                                            duration: const Duration(milliseconds: 200),
+                                            duration: const Duration(
+                                                milliseconds: 200),
                                             style: TextStyle(
                                               color: Colors.white.withValues(
-                                                alpha: isNodeLoading 
-                                                  ? 0.4
-                                                  : (mode == Mode.rule ? 1.0 : 0.6),
+                                                alpha: isNodeLoading
+                                                    ? 0.4
+                                                    : (mode == Mode.rule
+                                                        ? 1.0
+                                                        : 0.6),
                                               ),
                                               fontSize: 12,
                                               fontWeight: mode == Mode.rule
                                                   ? FontWeight.w600
                                                   : FontWeight.w500,
                                             ),
-                                            child: const Text('规则'),
+                                            child: Text(
+                                                AppLocalizations.of(context)
+                                                    .rule),
                                           ),
                                         ),
                                       ),
@@ -732,24 +762,32 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     Expanded(
                                       child: GestureDetector(
                                         behavior: HitTestBehavior.opaque,
-                                        onTap: isNodeLoading ? null : () {
-                                          globalState.appController.changeMode(Mode.global);
-                                        },
+                                        onTap: isNodeLoading
+                                            ? null
+                                            : () {
+                                                globalState.appController
+                                                    .changeMode(Mode.global);
+                                              },
                                         child: Center(
                                           child: AnimatedDefaultTextStyle(
-                                            duration: const Duration(milliseconds: 200),
+                                            duration: const Duration(
+                                                milliseconds: 200),
                                             style: TextStyle(
                                               color: Colors.white.withValues(
-                                                alpha: isNodeLoading 
-                                                  ? 0.4
-                                                  : (mode == Mode.global ? 1.0 : 0.6),
+                                                alpha: isNodeLoading
+                                                    ? 0.4
+                                                    : (mode == Mode.global
+                                                        ? 1.0
+                                                        : 0.6),
                                               ),
                                               fontSize: 12,
                                               fontWeight: mode == Mode.global
                                                   ? FontWeight.w600
                                                   : FontWeight.w500,
                                             ),
-                                            child: const Text('全局'),
+                                            child: Text(
+                                                AppLocalizations.of(context)
+                                                    .global),
                                           ),
                                         ),
                                       ),
@@ -764,50 +802,55 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                       if (!Platform.isAndroid) ...[
                         const SizedBox(width: 8),
                         GestureDetector(
-                          onTap: _isTunLoading || isNodeLoading ? null : () async {
-                            setState(() => _isTunLoading = true);
-                            _tunLoadingController.repeat();
-                            try {
-                              await globalState.appController.updateTun();
-                            } finally {
-                              if (mounted) {
-                                _tunLoadingController.stop();
-                                _tunLoadingController.reset();
-                                setState(() => _isTunLoading = false);
-                              }
-                            }
-                          },
+                          onTap: _isTunLoading || isNodeLoading
+                              ? null
+                              : () async {
+                                  setState(() => _isTunLoading = true);
+                                  _tunLoadingController.repeat();
+                                  try {
+                                    await globalState.appController.updateTun();
+                                  } finally {
+                                    if (mounted) {
+                                      _tunLoadingController.stop();
+                                      _tunLoadingController.reset();
+                                      setState(() => _isTunLoading = false);
+                                    }
+                                  }
+                                },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: isNodeLoading 
-                                ? Colors.grey.shade600
-                                : _isTunLoading
-                                  ? Colors.orange.shade600
-                                  : tunEnable 
-                                    ? Colors.green.shade600
-                                    : Colors.white.withValues(alpha: 0.1),
+                              color: isNodeLoading
+                                  ? Colors.grey.shade600
+                                  : _isTunLoading
+                                      ? Colors.orange.shade600
+                                      : tunEnable
+                                          ? Colors.green.shade600
+                                          : Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
-                                color: isNodeLoading 
-                                  ? Colors.grey.shade400
-                                  : _isTunLoading
-                                    ? Colors.orange.shade400
-                                    : tunEnable 
-                                      ? Colors.green.shade400
-                                      : Colors.white.withValues(alpha: 0.2),
+                                color: isNodeLoading
+                                    ? Colors.grey.shade400
+                                    : _isTunLoading
+                                        ? Colors.orange.shade400
+                                        : tunEnable
+                                            ? Colors.green.shade400
+                                            : Colors.white
+                                                .withValues(alpha: 0.2),
                                 width: 1,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: isNodeLoading 
-                                    ? Colors.grey.withValues(alpha: 0.2)
-                                    : _isTunLoading
-                                      ? Colors.orange.withValues(alpha: 0.4)
-                                      : tunEnable 
-                                        ? Colors.green.withValues(alpha: 0.4)
-                                        : Colors.transparent,
+                                  color: isNodeLoading
+                                      ? Colors.grey.withValues(alpha: 0.2)
+                                      : _isTunLoading
+                                          ? Colors.orange.withValues(alpha: 0.4)
+                                          : tunEnable
+                                              ? Colors.green
+                                                  .withValues(alpha: 0.4)
+                                              : Colors.transparent,
                                   blurRadius: 8,
                                   spreadRadius: 0,
                                 ),
@@ -817,36 +860,42 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 _isTunLoading
-                                  ? RotationTransition(
-                                      turns: _tunLoadingController,
-                                      child: Icon(
-                                        Icons.sync_rounded,
-                                        size: 14,
-                                        color: Colors.white.withValues(
-                                          alpha: isNodeLoading ? 0.5 : 1.0,
+                                    ? RotationTransition(
+                                        turns: _tunLoadingController,
+                                        child: Icon(
+                                          Icons.sync_rounded,
+                                          size: 14,
+                                          color: Colors.white.withValues(
+                                            alpha: isNodeLoading ? 0.5 : 1.0,
+                                          ),
+                                        ),
+                                      )
+                                    : AnimatedOpacity(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        opacity: isNodeLoading
+                                            ? 0.4
+                                            : (tunEnable ? 1.0 : 0.6),
+                                        child: const Icon(
+                                          Icons.vpn_key_rounded,
+                                          size: 14,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                    )
-                                  : AnimatedOpacity(
-                                      duration: const Duration(milliseconds: 200),
-                                      opacity: isNodeLoading ? 0.4 : (tunEnable ? 1.0 : 0.6),
-                                      child: const Icon(
-                                        Icons.vpn_key_rounded,
-                                        size: 14,
-                                        color: Colors.white,
-                                      ),
-                                    ),
                                 const SizedBox(width: 4),
                                 AnimatedDefaultTextStyle(
                                   duration: const Duration(milliseconds: 200),
                                   style: TextStyle(
                                     color: Colors.white.withValues(
-                                      alpha: isNodeLoading ? 0.4 : (_isTunLoading ? 1.0 : (tunEnable ? 1.0 : 0.6))
-                                    ),
+                                        alpha: isNodeLoading
+                                            ? 0.4
+                                            : (_isTunLoading
+                                                ? 1.0
+                                                : (tunEnable ? 1.0 : 0.6))),
                                     fontSize: 12,
-                                    fontWeight: _isTunLoading || tunEnable 
-                                      ? FontWeight.w600 
-                                      : FontWeight.w500,
+                                    fontWeight: _isTunLoading || tunEnable
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
                                   ),
                                   child: Text(_isTunLoading ? '加载中..' : 'TUN'),
                                 ),
@@ -872,14 +921,16 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                           // 标记为手动刷新，使得导入完成后会触发测速
                           _isManualRefresh = true;
                           // 先断开连接
-                          final isStart = ref.read(runTimeProvider.select((state) => state != null));
+                          final isStart = ref.read(
+                              runTimeProvider.select((state) => state != null));
                           if (isStart) {
                             await globalState.appController.updateStatus(false);
                             // 等待断开连接完成
                             await Future.delayed(const Duration(seconds: 1));
                           }
                           // 然后刷新订阅信息
-                          await subscriptionStatusChecker.forceRefreshSubscriptionInfo(
+                          await subscriptionStatusChecker
+                              .forceRefreshSubscriptionInfo(
                             context,
                             ref,
                           );
@@ -892,7 +943,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                       },
                       icon: const Icon(Icons.refresh, size: 20),
                       color: Colors.white,
-                      tooltip: '刷新订阅',
+                      tooltip: AppLocalizations.of(context)
+                          .xboardRefreshSubscription,
                     ),
                   ),
                 ),
@@ -902,9 +954,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         ),
         const SizedBox(height: 12),
         GestureDetector(
-          onTap: isNodeInteractive ? () {
-            _showProxySelector(context, ref);
-          } : null,
+          onTap: isNodeInteractive
+              ? () {
+                  _showProxySelector(context, ref);
+                }
+              : null,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.all(16),
@@ -912,9 +966,10 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
               color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isExpiringSoon 
-                  ? const Color.fromARGB(255, 255, 110, 38).withValues(alpha: 0.4)
-                  : Colors.white.withValues(alpha: 0.2),
+                color: isExpiringSoon
+                    ? const Color.fromARGB(255, 255, 110, 38)
+                        .withValues(alpha: 0.4)
+                    : Colors.white.withValues(alpha: 0.2),
                 width: isExpiringSoon ? 1.5 : 1,
               ),
             ),
@@ -943,7 +998,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                           onTap: () => _navigateToPlans(context),
                           borderRadius: BorderRadius.circular(12),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 14),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -957,9 +1013,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
-                                      domainSubscription?.planId != null && domainSubscription!.planId != 0
+                                      domainSubscription?.planId != null &&
+                                              domainSubscription!.planId != 0
                                           ? '续费套餐'
-                                          : AppLocalizations.of(context).xboardPurchasePlan,
+                                          : AppLocalizations.of(context)
+                                              .xboardPurchasePlan,
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
@@ -975,12 +1033,14 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     ),
                                   ],
                                 ),
-                                if (domainSubscription?.expiredAt != null && isExpired) ...[
+                                if (domainSubscription?.expiredAt != null &&
+                                    isExpired) ...[
                                   const SizedBox(height: 6),
                                   Text(
                                     '已于 ${_formatExpiredDate(domainSubscription!.expiredAt!)} 到期',
                                     style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.8),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.8),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -990,7 +1050,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                   Text(
                                     '流量已用尽，续费可获得更多流量',
                                     style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.8),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.8),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -1027,7 +1088,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                               onTap: () => _handleFetchTransfer(context),
                               borderRadius: BorderRadius.circular(12),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 14),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -1061,7 +1123,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     Text(
                                       '流量已用尽，可提前透支下月流量',
                                       style: TextStyle(
-                                        color: Colors.white.withValues(alpha: 0.8),
+                                        color:
+                                            Colors.white.withValues(alpha: 0.8),
                                         fontSize: 12,
                                       ),
                                     ),
@@ -1103,189 +1166,231 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                 ],
                               )
                             : isNodeLoading
-                            ? Row(
-                                key: const ValueKey('node-loading'),
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation(
-                                        Colors.white,
-                                      ),
-                                      backgroundColor: Colors.white.withValues(alpha: 0.2),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  FadeTransition(
-                                    opacity: _nodeLoadingOpacity,
-                                    child: Text(
-                                      AppLocalizations.of(context).xboardLoadingNodes,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Row(
-                                key: const ValueKey('node-loaded'),
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  // 固定正方形，避免多行内容把图标拉长变形
-                                  Container(
-                                    width: 48,
-                                    height: 48,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.shade700,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const Icon(
-                                      Icons.public,
-                                      color: Colors.white,
-                                      size: 24,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        // 当前节点标签 + 流量显示
-                                        Row(
-                                          children: [
-                                            Text(
-                                              '当前节点',
-                                              style: TextStyle(
-                                                color: Colors.white.withValues(alpha: 0.7),
-                                                fontSize: 11,
-                                              ),
-                                            ),
-                                            if (lastTraffic != null) ...[
-                                              const SizedBox(width: 8),
-                                              Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    Icons.arrow_upward,
-                                                    size: 11,
-                                                    color: Colors.green.shade400,
-                                                  ),
-                                                  const SizedBox(width: 2),
-                                                  Text(
-                                                    lastTraffic.up.shortShow,
-                                                    style: TextStyle(
-                                                      color: Colors.green.shade400,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    Icons.arrow_downward,
-                                                    size: 11,
-                                                    color: Colors.blue.shade400,
-                                                  ),
-                                                  const SizedBox(width: 2),
-                                                  Text(
-                                                    lastTraffic.down.shortShow,
-                                                    style: TextStyle(
-                                                      color: Colors.blue.shade400,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ],
+                                ? Row(
+                                    key: const ValueKey('node-loading'),
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation(
+                                            Colors.white,
+                                          ),
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.2),
                                         ),
-                                        const SizedBox(height: 2),
-                                        // 节点名称 + 延迟
-                                        Row(
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                displayName,
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            if (currentGroup != null && displayName != '未选择')
-                                              Consumer(
-                                                builder: (context, ref, _) {
-                                                  final delay = ref.watch(getDelayProvider(
-                                                    proxyName: displayName,
-                                                    testUrl: currentGroup?.testUrl,
-                                                  ));
-                                                  
-                                                  if (delay == null || delay == 0) return const SizedBox.shrink();
-                                                  final delayColor = utils.getDelayColor(delay) ?? Colors.green;
-                                                  
-                                                  return Container(
-                                                    margin: const EdgeInsets.only(left: 8),
-                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                                    decoration: BoxDecoration(
-                                                      color: delayColor.withValues(alpha: 0.2),
-                                                      borderRadius: BorderRadius.circular(6),
-                                                      border: Border.all(
-                                                        color: delayColor.withValues(alpha: 0.3),
-                                                        width: 0.5,
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      '${delay}ms',
-                                                      style: TextStyle(
-                                                        color: delayColor,
-                                                        fontSize: 11,
-                                                        fontWeight: FontWeight.w600,
-                                                        height: 1.1,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                          ],
-                                        ),
-                                        // 固定高度的第三行：未连接也占位，
-                                        // 连接后只是把标签填进来，卡片高度不变、不会跳动
-                                        const SizedBox(height: 5),
-                                        SizedBox(
-                                          height: 18,
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: isStart && displayName != '未选择'
-                                                ? IpQualityBadge(
-                                                    proxyName: displayName,
-                                                    enabled: isStart,
-                                                  )
-                                                : const SizedBox.shrink(),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      FadeTransition(
+                                        opacity: _nodeLoadingOpacity,
+                                        child: Text(
+                                          AppLocalizations.of(context)
+                                              .xboardLoadingNodes,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    key: const ValueKey('node-loaded'),
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      // 固定正方形，避免多行内容把图标拉长变形
+                                      Container(
+                                        width: 48,
+                                        height: 48,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade700,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: const Icon(
+                                          Icons.public,
+                                          color: Colors.white,
+                                          size: 24,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // 当前节点标签 + 流量显示
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '当前节点',
+                                                  style: TextStyle(
+                                                    color: Colors.white
+                                                        .withValues(alpha: 0.7),
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                                if (lastTraffic != null) ...[
+                                                  const SizedBox(width: 8),
+                                                  Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.arrow_upward,
+                                                        size: 11,
+                                                        color: Colors
+                                                            .green.shade400,
+                                                      ),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        lastTraffic
+                                                            .up.shortShow,
+                                                        style: TextStyle(
+                                                          color: Colors
+                                                              .green.shade400,
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.arrow_downward,
+                                                        size: 11,
+                                                        color: Colors
+                                                            .blue.shade400,
+                                                      ),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        lastTraffic
+                                                            .down.shortShow,
+                                                        style: TextStyle(
+                                                          color: Colors
+                                                              .blue.shade400,
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                            const SizedBox(height: 2),
+                                            // 节点名称 + 延迟
+                                            Row(
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    displayName,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                if (currentGroup != null &&
+                                                    displayName != '未选择')
+                                                  Consumer(
+                                                    builder: (context, ref, _) {
+                                                      final delay = ref.watch(
+                                                          getDelayProvider(
+                                                        proxyName: displayName,
+                                                        testUrl: currentGroup
+                                                            ?.testUrl,
+                                                      ));
+
+                                                      if (delay == null ||
+                                                          delay == 0)
+                                                        return const SizedBox
+                                                            .shrink();
+                                                      final delayColor =
+                                                          utils.getDelayColor(
+                                                                  delay) ??
+                                                              Colors.green;
+
+                                                      return Container(
+                                                        margin: const EdgeInsets
+                                                            .only(left: 8),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 6,
+                                                                vertical: 2),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: delayColor
+                                                              .withValues(
+                                                                  alpha: 0.2),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(6),
+                                                          border: Border.all(
+                                                            color: delayColor
+                                                                .withValues(
+                                                                    alpha: 0.3),
+                                                            width: 0.5,
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          '${delay}ms',
+                                                          style: TextStyle(
+                                                            color: delayColor,
+                                                            fontSize: 11,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            height: 1.1,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                              ],
+                                            ),
+                                            // 固定高度的第三行：未连接也占位，
+                                            // 连接后只是把标签填进来，卡片高度不变、不会跳动
+                                            const SizedBox(height: 5),
+                                            SizedBox(
+                                              height: 18,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: isStart &&
+                                                        displayName != '未选择'
+                                                    ? IpQualityBadge(
+                                                        proxyName: displayName,
+                                                        enabled: isStart,
+                                                      )
+                                                    : const SizedBox.shrink(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color:
+                                            Colors.white.withValues(alpha: 0.5),
+                                      ),
+                                    ],
                                   ),
-                                  Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.white.withValues(alpha: 0.5),
-                                  ),
-                                ],
-                              ),
                       ),
           ),
         ),
@@ -1315,19 +1420,19 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   /// 构建工单等待回复提醒按钮
   Widget _buildTicketReminder(BuildContext context, WidgetRef ref) {
     final ticketsAsync = ref.watch(getTicketsProvider);
-    
+
     return ticketsAsync.when(
       data: (tickets) {
         // 计算等待回复且处理中的工单数量 (reply_status = 1 且 status = 0)
         final pendingCount = tickets
-          .where((ticket) => ticket.replyStatus == 1 && ticket.status == 0)
-          .length;
-        
+            .where((ticket) => ticket.replyStatus == 1 && ticket.status == 0)
+            .length;
+
         // 如果没有等待回复的工单，不显示
         if (pendingCount == 0) {
           return const SizedBox.shrink();
         }
-        
+
         return Container(
           decoration: BoxDecoration(
             color: Colors.red.withValues(alpha: 0.15),
@@ -1346,7 +1451,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
               },
               borderRadius: BorderRadius.circular(12),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -1379,22 +1485,22 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   /// 构建流量使用提示
   Widget _buildTrafficUsageHint(BuildContext context, WidgetRef ref) {
     final domainSubscription = ref.watch(subscriptionInfoProvider);
-    
+
     // 计算流量使用百分比
     final trafficPercentage = domainSubscription?.usagePercentage ?? 0;
     final isExpiringSoon = domainSubscription?.isExpiringSoon ?? false;
-    
+
     // 低于70%且不是即将到期，不显示；或用户关闭了提示
     if ((trafficPercentage < 70 && !isExpiringSoon) || !_showTrafficHint) {
       return const SizedBox.shrink();
     }
-    
+
     // 根据条件返回不同的提示
     // 如果即将到期，优先显示到期提示；否则显示流量提示
     final hintData = isExpiringSoon
         ? _getExpiringHint(domainSubscription)
         : _getTrafficHint(trafficPercentage);
-    
+
     return Center(
       child: AnimatedOpacity(
         opacity: _showTrafficHint ? 1.0 : 0.0,
@@ -1506,11 +1612,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         'color': Colors.purple,
       };
     }
-    
+
     final now = DateTime.now();
     final expiredAt = subscription!.expiredAt!;
     final difference = expiredAt.difference(now);
-    
+
     // 如果已经过期
     if (difference.isNegative) {
       return {
@@ -1520,11 +1626,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         'color': Colors.red,
       };
     }
-    
+
     final days = difference.inDays;
     final hours = difference.inHours % 24;
     final minutes = difference.inMinutes % 60;
-    
+
     String timeStr = '';
     if (days > 0) {
       timeStr = '$days 天 $hours 小时 $minutes 分钟';
@@ -1533,7 +1639,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     } else {
       timeStr = '$minutes 分钟';
     }
-    
+
     return {
       'title': '⏰ 订阅即将到期',
       'message': '还剩 $timeStr，记得及时续费！',
@@ -1589,6 +1695,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       },
     );
   }
+
   Widget _buildConnectionSection() {
     return Consumer(
       builder: (context, ref, child) {
@@ -1601,18 +1708,18 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   /// 如果3秒后还没有触发导入完成监听器，则主动检查
   void _waitForSubscriptionImportThenCheck() async {
     await Future.delayed(const Duration(seconds: 3));
-    
+
     // 如果已经通过监听器检查过了，就不再检查
     if (_hasCheckedSubscriptionStatus) {
       return;
     }
-    
+
     _hasCheckedSubscriptionStatus = true;
     if (mounted) {
       subscriptionStatusChecker.checkSubscriptionStatusOnStartup(context, ref);
     }
   }
-  
+
   void _showTokenExpiredDialog() {
     if (!mounted) return;
     showDialog(
@@ -1628,17 +1735,17 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
               if (dialogContext.mounted) {
                 Navigator.of(dialogContext).pop();
               }
-              
+
               // 在下一帧执行，避免widget已dispose的问题
               if (!mounted) return;
-              
+
               try {
                 final userNotifier = ref.read(xboardUserProvider.notifier);
                 // 清除错误状态
                 userNotifier.clearTokenExpiredError();
                 // 处理 Token 过期（清除数据）
                 await userNotifier.handleTokenExpired();
-                
+
                 // 使用 go_router 导航到登录页（会清除所有路由）
                 if (mounted && context.mounted) {
                   context.go('/login');
@@ -1657,28 +1764,28 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   /// 处理账号被封禁的情况，自动退出登录
   void _handleAccountBanned() {
     if (!mounted) return;
-    
+
     _logger.info('显示账号被封禁对话框');
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('账号已被封禁'),
-        content: const Text('您的账号已被封禁，无法继续使用。'),
+        title: Text(AppLocalizations.of(context).xboardAccountBanned),
+        content: Text(AppLocalizations.of(context).xboardAccountBannedDesc),
         actions: [
           TextButton(
             onPressed: () async {
               _logger.info('用户点击确认，执行退出登录');
-              
+
               // 先关闭对话框
               if (dialogContext.mounted) {
                 Navigator.of(dialogContext).pop();
               }
-              
+
               // 检查state widget是否还有效
               if (!mounted) return;
-              
+
               try {
                 final userNotifier = ref.read(xboardUserProvider.notifier);
                 // 执行退出登录
@@ -1687,13 +1794,13 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
               } catch (e) {
                 _logger.info('退出登录出错: $e');
               }
-              
+
               // 导航到登录页
               if (mounted && context.mounted) {
                 context.go('/login');
               }
             },
-            child: const Text('确定'),
+            child: Text(AppLocalizations.of(context).confirm),
           ),
         ],
       ),
@@ -1720,10 +1827,10 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             }
           });
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     });
   }
+
   void _performInitialLatencyTest() {
     if (!mounted) return;
     autoLatencyService.testCurrentNode();
@@ -1746,10 +1853,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   }
 
   Future<void> _navigateToPlans(BuildContext context) async {
-    final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+    final isDesktop =
+        Platform.isLinux || Platform.isWindows || Platform.isMacOS;
     final domainSubscription = ref.read(subscriptionInfoProvider);
     final currentPlanId = domainSubscription?.planId;
-    
+
     // 如果有订阅记录（planId），直接跳转到该套餐的购买页面
     if (currentPlanId != null && currentPlanId != 0) {
       // 确保套餐列表已加载
@@ -1758,14 +1866,14 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         await ref.read(xboardSubscriptionProvider.notifier).loadPlans();
         plans = ref.read(xboardSubscriptionProvider);
       }
-      
+
       DomainPlan? currentPlan;
       try {
         currentPlan = plans.firstWhere((plan) => plan.id == currentPlanId);
       } catch (e) {
         currentPlan = null;
       }
-      
+
       if (currentPlan != null && context.mounted) {
         // 直接导航到购买页面（导入 PlanPurchasePage）
         Navigator.of(context).push(
@@ -1776,7 +1884,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         return;
       }
     }
-    
+
     // 没有订阅记录或未找到套餐：跳转到套餐列表页面
     if (context.mounted) {
       if (isDesktop) {
@@ -1796,12 +1904,12 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('提前开启流量周期'),
+        title: Text(AppLocalizations.of(context).xboardStartDataCycleEarly),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('确认要提前开启下个月的流量周期吗？'),
+            Text(AppLocalizations.of(context).xboardConfirmStartDataCycle),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
@@ -1817,7 +1925,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.info_outline, size: 16, color: Colors.orange.shade700),
+                      Icon(Icons.info_outline,
+                          size: 16, color: Colors.orange.shade700),
                       const SizedBox(width: 6),
                       Text(
                         '注意事项',
@@ -1843,11 +1952,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('确认开启'),
+            child: Text(AppLocalizations.of(context).xboardConfirmStart),
           ),
         ],
       ),
@@ -1864,10 +1973,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
               SizedBox(
                 width: 16,
                 height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white),
               ),
               SizedBox(width: 12),
-              Text('正在重置流量周期...'),
+              Text(AppLocalizations.of(context).xboardResettingDataCycle),
             ],
           ),
           duration: Duration(seconds: 30),
@@ -1877,26 +1987,27 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
 
     try {
       final success = await XBoardSDK.instance.user.fetchTransfer();
-      
+
       // 移除加载提示
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-      
+
       if (success && context.mounted) {
         // 刷新用户信息
         await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('流量周期已重置'),
+            content: Text(AppLocalizations.of(context).xboardDataCycleReset),
             backgroundColor: Colors.green,
           ),
         );
       } else if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('操作失败，请稍后重试'),
+            content:
+                Text(AppLocalizations.of(context).xboardOperationFailedRetry),
             backgroundColor: Colors.red,
           ),
         );
@@ -1906,11 +2017,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-      
+
       if (context.mounted) {
         String errorMessage = '操作失败';
         final errorStr = e.toString();
-        
+
         // 提取错误信息
         if (errorStr.contains('Renewal is not allowed')) {
           errorMessage = '当前套餐不支持提前开启流量周期';
@@ -1919,9 +2030,10 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         } else if (errorStr.contains('insufficient')) {
           errorMessage = '余额不足，无法执行此操作';
         } else {
-          errorMessage = '操作失败: ${errorStr.length > 50 ? errorStr.substring(0, 50) : errorStr}';
+          errorMessage =
+              '操作失败: ${errorStr.length > 50 ? errorStr.substring(0, 50) : errorStr}';
         }
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
@@ -1938,9 +2050,10 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     try {
       final notices = await XBoardSDK.instance.notice.getNotices();
       if (!mounted) return;
-      
-      final popupNotices = notices.where((notice) => _isPopupNotice(notice)).toList();
-      
+
+      final popupNotices =
+          notices.where((notice) => _isPopupNotice(notice)).toList();
+
       if (popupNotices.isNotEmpty) {
         // 延迟显示，确保页面已完全加载
         Future.delayed(const Duration(milliseconds: 500), () {
@@ -1957,7 +2070,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   /// 检查通知是否为弹窗类型
   bool _isPopupNotice(NoticeModel notice) {
     if (notice.tags == null || notice.tags!.isEmpty) return false;
-    return notice.tags!.any((tag) => tag.toLowerCase().contains('弹窗') || tag.toLowerCase().contains('popup'));
+    return notice.tags!.any((tag) =>
+        tag.toLowerCase().contains('弹窗') ||
+        tag.toLowerCase().contains('popup'));
   }
 
   /// 依次显示弹窗通知
@@ -1974,4 +2089,4 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
           : null,
     );
   }
-} 
+}

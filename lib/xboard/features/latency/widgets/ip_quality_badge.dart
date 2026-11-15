@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/ip_quality_service.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 /// 出口 IP 质量标签
 ///
@@ -204,7 +205,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('知道了'),
+            child: Text(AppLocalizations.of(context).xboardGotIt),
           ),
         ],
       ),

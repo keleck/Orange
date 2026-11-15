@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/price_calculator.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 /// 价格汇总卡片
 class PriceSummaryCard extends StatelessWidget {
@@ -21,9 +22,9 @@ class PriceSummaryCard extends StatelessWidget {
     final displayFinalPrice = finalPrice ?? originalPrice;
     final hasDiscount = discountAmount != null && discountAmount! > 0;
     final hasBalance = userBalance != null && userBalance! > 0;
-    
+
     // 计算余额抵扣
-    final balanceToUse = hasBalance 
+    final balanceToUse = hasBalance
         ? (userBalance! > displayFinalPrice ? displayFinalPrice : userBalance!)
         : 0.0;
     final actualPayAmount = displayFinalPrice - balanceToUse;
@@ -44,13 +45,13 @@ class PriceSummaryCard extends StatelessWidget {
           // 原价和优惠（如果有折扣）
           if (hasDiscount) ...[
             _PriceRow(
-              label: '原价',
+              label: AppLocalizations.of(context).xboardOriginalPrice,
               price: originalPrice,
               isStrikethrough: true,
             ),
             const SizedBox(height: 6),
             _PriceRow(
-              label: '优惠',
+              label: AppLocalizations.of(context).xboardDiscount,
               price: discountAmount!,
               isDiscount: true,
             ),
@@ -60,7 +61,7 @@ class PriceSummaryCard extends StatelessWidget {
           // 优惠后价格（如果有折扣）
           if (hasDiscount) ...[
             _PriceRow(
-              label: '优惠后',
+              label: AppLocalizations.of(context).xboardAfterDiscount,
               price: displayFinalPrice,
             ),
             Divider(height: 16, color: Colors.blue.shade200),
@@ -70,8 +71,8 @@ class PriceSummaryCard extends StatelessWidget {
           _FinalPriceRow(
             price: actualPayAmount,
             balanceDeducted: balanceToUse > 0 ? balanceToUse : null,
-            remainingBalance: hasBalance && userBalance! > displayFinalPrice 
-                ? userBalance! - displayFinalPrice 
+            remainingBalance: hasBalance && userBalance! > displayFinalPrice
+                ? userBalance! - displayFinalPrice
                 : null,
           ),
         ],
@@ -100,7 +101,7 @@ class _PriceRow extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,  // 减小字体
+            fontSize: 12, // 减小字体
             color: isDiscount ? Colors.green.shade700 : Colors.grey.shade600,
           ),
         ),
@@ -110,7 +111,7 @@ class _PriceRow extends StatelessWidget {
               ? '-${PriceCalculator.formatPrice(price)}'
               : PriceCalculator.formatPrice(price),
           style: TextStyle(
-            fontSize: 13,  // 减小字体
+            fontSize: 13, // 减小字体
             decoration: isStrikethrough ? TextDecoration.lineThrough : null,
             fontWeight: isDiscount ? FontWeight.w600 : null,
             color: isDiscount

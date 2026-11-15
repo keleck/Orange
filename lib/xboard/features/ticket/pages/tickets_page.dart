@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class TicketsPage extends ConsumerWidget {
   const TicketsPage({super.key});
@@ -15,7 +16,7 @@ class TicketsPage extends ConsumerWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('我的工单'),
+        title: Text(AppLocalizations.of(context).xboardMyTickets),
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -94,8 +95,7 @@ class TicketsPage extends ConsumerWidget {
                           ),
                           const SizedBox(height: 6),
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 40),
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
                             child: Text(
                               '$error',
                               maxLines: 3,
@@ -110,7 +110,8 @@ class TicketsPage extends ConsumerWidget {
                           const SizedBox(height: 14),
                           TextButton(
                             onPressed: () => ref.invalidate(getTicketsProvider),
-                            child: const Text('重试'),
+                            child:
+                                Text(AppLocalizations.of(context).xboardRetry),
                           ),
                         ],
                       ),
@@ -217,7 +218,7 @@ class _HeaderSummary extends StatelessWidget {
                 const _StatDivider(),
                 _StatItem(
                   value: closedCount,
-                  label: '已关闭',
+                  label: AppLocalizations.of(context).xboardClosed,
                   color: Colors.white.withValues(alpha: 0.45),
                 ),
               ],
@@ -345,9 +346,8 @@ class _TicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-    final statusColor = ticket.status == 0
-        ? primary
-        : Colors.white.withValues(alpha: 0.35);
+    final statusColor =
+        ticket.status == 0 ? primary : Colors.white.withValues(alpha: 0.35);
     final messagePreview = (ticket.message ?? '').trim();
 
     return Padding(
@@ -432,7 +432,7 @@ class _TicketCard extends StatelessWidget {
                     const Spacer(),
                     if (ticket.level == 2)
                       const _MiniTag(
-                        label: '高优先级',
+                        label: AppLocalizations.of(context).xboardHighPriority,
                         color: Color(0xFFFF6B6B),
                       ),
                     if (ticket.level == 2) const SizedBox(width: 6),
@@ -508,7 +508,9 @@ class _ReplyTag extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
-          isWaiting ? Icons.mark_chat_unread_outlined : Icons.mark_chat_read_outlined,
+          isWaiting
+              ? Icons.mark_chat_unread_outlined
+              : Icons.mark_chat_read_outlined,
           size: 13,
           color: color,
         ),

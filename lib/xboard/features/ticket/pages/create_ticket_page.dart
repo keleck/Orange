@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class CreateTicketPage extends ConsumerStatefulWidget {
   const CreateTicketPage({super.key});
@@ -27,19 +28,23 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
 
   Widget _buildLevelButton(BuildContext context, int level, String label) {
     final isSelected = _level == level;
-    
+
     // 根据优先级返回对应的颜色
     Color getPrimaryColor(int lv) {
       switch (lv) {
-        case 0: return Colors.green; // 低
-        case 1: return Colors.amber; // 中
-        case 2: return Colors.red;   // 高
-        default: return Colors.blue;
+        case 0:
+          return Colors.green; // 低
+        case 1:
+          return Colors.amber; // 中
+        case 2:
+          return Colors.red; // 高
+        default:
+          return Colors.blue;
       }
     }
-    
+
     final primaryColor = getPrimaryColor(level);
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -100,10 +105,10 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
     if (_formKey.currentState!.validate()) {
       try {
         await ref.read(ticketControllerProvider.notifier).createTicket(
-          subject: _subjectController.text,
-          message: _messageController.text,
-          level: _level,
-        );
+              subject: _subjectController.text,
+              message: _messageController.text,
+              level: _level,
+            );
         if (mounted) {
           context.pop();
         }
@@ -125,7 +130,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('创建工单'),
+        title: Text(AppLocalizations.of(context).xboardCreateTicket),
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -142,164 +147,171 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
             key: _formKey,
             child: ListView(
               padding: const EdgeInsets.all(16),
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '优先级',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '优先级',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildLevelButton(context, 0, '低'),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _buildLevelButton(context, 1, '中'),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _buildLevelButton(context, 2, '高'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withValues(alpha: 0.1),
-                          Colors.blue.withValues(alpha: 0.05),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildLevelButton(context, 0, '低'),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildLevelButton(context, 1, '中'),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildLevelButton(context, 2, '高'),
+                          ),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: TextFormField(
-                        controller: _subjectController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: '标题',
-                          labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '请输入标题';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withValues(alpha: 0.1),
-                          Colors.blue.withValues(alpha: 0.05),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: TextFormField(
-                        controller: _messageController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: '内容',
-                          labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-                          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        ),
-                        maxLines: 5,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '请输入内容';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: isLoading ? null : _submit,
+                ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.blue.shade400.withValues(alpha: 0.7),
-                          Colors.blue.shade600.withValues(alpha: 0.5),
-                        ],
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withValues(alpha: 0.1),
+                            Colors.blue.withValues(alpha: 0.05),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          width: 1.5,
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.blue.withValues(alpha: 0.3),
-                        width: 1.5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: TextFormField(
+                          controller: _subjectController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context).xboardTitle,
+                            labelStyle: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7)),
+                            hintStyle: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.5)),
+                            border: InputBorder.none,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 12),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '请输入标题';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                          : const Text(
-                              '提交',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withValues(alpha: 0.1),
+                            Colors.blue.withValues(alpha: 0.05),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: TextFormField(
+                          controller: _messageController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context).content,
+                            labelStyle: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7)),
+                            hintStyle: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.5)),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                          ),
+                          maxLines: 5,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '请输入内容';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: isLoading ? null : _submit,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.blue.shade400.withValues(alpha: 0.7),
+                            Colors.blue.shade600.withValues(alpha: 0.5),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.blue.withValues(alpha: 0.3),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Center(
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white),
+                              )
+                            : const Text(
+                                '提交',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

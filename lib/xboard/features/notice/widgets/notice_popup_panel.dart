@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, NoticeModel;
+import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart'
+    show XBoardSDK, NoticeModel;
+import 'package:fl_clash/l10n/l10n.dart';
 
 /// 首页右上角铃铛点击后弹出的「系统公告」浮层。
 ///
@@ -217,7 +219,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
                 });
                 _load();
               },
-              child: const Text('重试'),
+              child: Text(AppLocalizations.of(context).xboardRetry),
             ),
           ],
         ),
@@ -252,7 +254,8 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
       shrinkWrap: true,
       padding: EdgeInsets.zero,
       itemCount: _notices.length,
-      separatorBuilder: (_, __) => const _PanelDivider(indent: 18, endIndent: 18),
+      separatorBuilder: (_, __) =>
+          const _PanelDivider(indent: 18, endIndent: 18),
       itemBuilder: (context, index) {
         return _NoticeRow(
           notice: _notices[index],
@@ -401,8 +404,7 @@ bool _isUnread(NoticeModel notice) {
   if (tags == null || tags.isEmpty) return false;
   return tags.any(
     (tag) =>
-        tag.toLowerCase().contains('弹窗') ||
-        tag.toLowerCase().contains('popup'),
+        tag.toLowerCase().contains('弹窗') || tag.toLowerCase().contains('popup'),
   );
 }
 
@@ -710,7 +712,7 @@ Future<void> showNoticeDetailDialog(
                     children: [
                       if (onNext != null) ...[
                         _NoticeDialogButton(
-                          label: '下一条',
+                          label: AppLocalizations.of(context).xboardNext,
                           filled: false,
                           onTap: () {
                             Navigator.of(dialogContext).pop();
@@ -720,7 +722,7 @@ Future<void> showNoticeDetailDialog(
                         const SizedBox(width: 10),
                       ],
                       _NoticeDialogButton(
-                        label: '关闭',
+                        label: AppLocalizations.of(context).close,
                         filled: true,
                         onTap: () => Navigator.of(dialogContext).pop(),
                       ),

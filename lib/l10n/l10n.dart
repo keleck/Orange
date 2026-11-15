@@ -3259,6 +3259,916 @@ class AppLocalizations {
     );
   }
 
+  /// `Mine`
+  String get xboardMine {
+    return Intl.message(
+      'Mine',
+      name: 'xboardMine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Telegram Group`
+  String get xboardTelegramGroup {
+    return Intl.message(
+      'Telegram Group',
+      name: 'xboardTelegramGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close Ticket`
+  String get xboardCloseTicket {
+    return Intl.message(
+      'Close Ticket',
+      name: 'xboardCloseTicket',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh Subscription`
+  String get xboardRefreshSubscriptionInfo {
+    return Intl.message(
+      'Refresh Subscription',
+      name: 'xboardRefreshSubscriptionInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Join the community`
+  String get xboardJoinCommunity {
+    return Intl.message(
+      'Join the community',
+      name: 'xboardJoinCommunity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closed`
+  String get xboardClosed {
+    return Intl.message(
+      'Closed',
+      name: 'xboardClosed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Tickets`
+  String get xboardMyTickets {
+    return Intl.message(
+      'My Tickets',
+      name: 'xboardMyTickets',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Wallet`
+  String get xboardMyWallet {
+    return Intl.message(
+      'My Wallet',
+      name: 'xboardMyWallet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Data Cycle Early`
+  String get xboardStartDataCycleEarly {
+    return Intl.message(
+      'Start Data Cycle Early',
+      name: 'xboardStartDataCycleEarly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resetting data cycle...`
+  String get xboardResettingDataCycle {
+    return Intl.message(
+      'Resetting data cycle...',
+      name: 'xboardResettingDataCycle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data Usage Details`
+  String get xboardTrafficDetails {
+    return Intl.message(
+      'Data Usage Details',
+      name: 'xboardTrafficDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Start`
+  String get xboardConfirmStart {
+    return Intl.message(
+      'Confirm Start',
+      name: 'xboardConfirmStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start next month's data cycle now?`
+  String get xboardConfirmStartDataCycle {
+    return Intl.message(
+      'Start next month\'s data cycle now?',
+      name: 'xboardConfirmStartDataCycle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No plans in this category`
+  String get xboardNoPlansInCategory {
+    return Intl.message(
+      'No plans in this category',
+      name: 'xboardNoPlansInCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `High Priority`
+  String get xboardHighPriority {
+    return Intl.message(
+      'High Priority',
+      name: 'xboardHighPriority',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1. Scan the QR code on the left with Alipay or WeChat`
+  String get xboardQrPayStep1 {
+    return Intl.message(
+      '1. Scan the QR code on the left with Alipay or WeChat',
+      name: 'xboardQrPayStep1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `2. Complete payment following the prompts`
+  String get xboardQrPayStep2 {
+    return Intl.message(
+      '2. Complete payment following the prompts',
+      name: 'xboardQrPayStep2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3. The app detects payment automatically and returns`
+  String get xboardQrPayStep3 {
+    return Intl.message(
+      '3. The app detects payment automatically and returns',
+      name: 'xboardQrPayStep3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IPv6 Support`
+  String get xboardIpv6Support {
+    return Intl.message(
+      'IPv6 Support',
+      name: 'xboardIpv6Support',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Medium Priority`
+  String get xboardMediumPriority {
+    return Intl.message(
+      'Medium Priority',
+      name: 'xboardMediumPriority',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `QR Code Payment`
+  String get xboardQrCodePayment {
+    return Intl.message(
+      'QR Code Payment',
+      name: 'xboardQrCodePayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discount`
+  String get xboardDiscount {
+    return Intl.message(
+      'Discount',
+      name: 'xboardDiscount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After Discount`
+  String get xboardAfterDiscount {
+    return Intl.message(
+      'After Discount',
+      name: 'xboardAfterDiscount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Low Priority`
+  String get xboardLowPriority {
+    return Intl.message(
+      'Low Priority',
+      name: 'xboardLowPriority',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance and Top-up`
+  String get xboardBalanceAndTopup {
+    return Intl.message(
+      'Balance and Top-up',
+      name: 'xboardBalanceAndTopup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fetch updates via the last connected node`
+  String get xboardUpdateViaLastNode {
+    return Intl.message(
+      'Fetch updates via the last connected node',
+      name: 'xboardUpdateViaLastNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow LAN devices to use this proxy`
+  String get xboardAllowLanDevices {
+    return Intl.message(
+      'Allow LAN devices to use this proxy',
+      name: 'xboardAllowLanDevices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Top-up Amount`
+  String get xboardTopupAmount {
+    return Intl.message(
+      'Top-up Amount',
+      name: 'xboardTopupAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All OK`
+  String get xboardAllNormal {
+    return Intl.message(
+      'All OK',
+      name: 'xboardAllNormal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch Language`
+  String get xboardSwitchLanguage {
+    return Intl.message(
+      'Switch Language',
+      name: 'xboardSwitchLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Ticket`
+  String get xboardCreateTicket {
+    return Intl.message(
+      'Create Ticket',
+      name: 'xboardCreateTicket',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Initializing payment page...`
+  String get xboardInitializingPayment {
+    return Intl.message(
+      'Initializing payment page...',
+      name: 'xboardInitializingPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh Subscription`
+  String get xboardRefreshSubscription {
+    return Intl.message(
+      'Refresh Subscription',
+      name: 'xboardRefreshSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Match Type`
+  String get xboardMatchType {
+    return Intl.message(
+      'Match Type',
+      name: 'xboardMatchType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Instant help and support`
+  String get xboardInstantSupport {
+    return Intl.message(
+      'Instant help and support',
+      name: 'xboardInstantSupport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Original Price`
+  String get xboardOriginalPrice {
+    return Intl.message(
+      'Original Price',
+      name: 'xboardOriginalPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Configure`
+  String get xboardConfigure {
+    return Intl.message(
+      'Configure',
+      name: 'xboardConfigure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel failed, please retry`
+  String get xboardCancelFailedRetry {
+    return Intl.message(
+      'Cancel failed, please retry',
+      name: 'xboardCancelFailedRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel Import`
+  String get xboardCancelImport {
+    return Intl.message(
+      'Cancel Import',
+      name: 'xboardCancelImport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel Order`
+  String get xboardCancelOrder {
+    return Intl.message(
+      'Cancel Order',
+      name: 'xboardCancelOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reply sent`
+  String get xboardReplySent {
+    return Intl.message(
+      'Reply sent',
+      name: 'xboardReplySent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open in Browser`
+  String get xboardOpenInBrowser {
+    return Intl.message(
+      'Open in Browser',
+      name: 'xboardOpenInBrowser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geo Database`
+  String get xboardGeoDatabase {
+    return Intl.message(
+      'Geo Database',
+      name: 'xboardGeoDatabase',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy QR Code`
+  String get xboardCopyQrCode {
+    return Intl.message(
+      'Copy QR Code',
+      name: 'xboardCopyQrCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Website`
+  String get xboardWebsite {
+    return Intl.message(
+      'Website',
+      name: 'xboardWebsite',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tickets, website, advanced features`
+  String get xboardTicketsAndMore {
+    return Intl.message(
+      'Tickets, website, advanced features',
+      name: 'xboardTicketsAndMore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ticket closed`
+  String get xboardTicketClosed {
+    return Intl.message(
+      'Ticket closed',
+      name: 'xboardTicketClosed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ticket Details`
+  String get xboardTicketDetails {
+    return Intl.message(
+      'Ticket Details',
+      name: 'xboardTicketDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Replied`
+  String get xboardReplied {
+    return Intl.message(
+      'Replied',
+      name: 'xboardReplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copied`
+  String get xboardCopied {
+    return Intl.message(
+      'Copied',
+      name: 'xboardCopied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already up to date`
+  String get xboardAlreadyLatest {
+    return Intl.message(
+      'Already up to date',
+      name: 'xboardAlreadyLatest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable to receive IPv6 traffic`
+  String get xboardIpv6Hint {
+    return Intl.message(
+      'Enable to receive IPv6 traffic',
+      name: 'xboardIpv6Hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Awaiting Reply`
+  String get xboardAwaitingReply {
+    return Intl.message(
+      'Awaiting Reply',
+      name: 'xboardAwaitingReply',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending`
+  String get xboardPending {
+    return Intl.message(
+      'Pending',
+      name: 'xboardPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your account is banned and cannot be used.`
+  String get xboardAccountBannedDesc {
+    return Intl.message(
+      'Your account is banned and cannot be used.',
+      name: 'xboardAccountBannedDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Withdrawal Account`
+  String get xboardWithdrawAccount {
+    return Intl.message(
+      'Withdrawal Account',
+      name: 'xboardWithdrawAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Operation failed, please retry`
+  String get xboardOperationFailedRetry {
+    return Intl.message(
+      'Operation failed, please retry',
+      name: 'xboardOperationFailedRetry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cannot open browser`
+  String get xboardCannotOpenBrowser {
+    return Intl.message(
+      'Cannot open browser',
+      name: 'xboardCannotOpenBrowser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep Order`
+  String get xboardKeepOrder {
+    return Intl.message(
+      'Keep Order',
+      name: 'xboardKeepOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No orders yet`
+  String get xboardNoOrders {
+    return Intl.message(
+      'No orders yet',
+      name: 'xboardNoOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Geo Database`
+  String get xboardUpdateGeoDatabase {
+    return Intl.message(
+      'Update Geo Database',
+      name: 'xboardUpdateGeoDatabase',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimize`
+  String get xboardMinimize {
+    return Intl.message(
+      'Minimize',
+      name: 'xboardMinimize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disabled`
+  String get xboardDisabled {
+    return Intl.message(
+      'Disabled',
+      name: 'xboardDisabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown Priority`
+  String get xboardUnknownPriority {
+    return Intl.message(
+      'Unknown Priority',
+      name: 'xboardUnknownPriority',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown Status`
+  String get xboardUnknownReplyStatus {
+    return Intl.message(
+      'Unknown Status',
+      name: 'xboardUnknownReplyStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Order History`
+  String get xboardViewOrderHistory {
+    return Intl.message(
+      'View Order History',
+      name: 'xboardViewOrderHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Daily Usage`
+  String get xboardViewDailyUsage {
+    return Intl.message(
+      'View Daily Usage',
+      name: 'xboardViewDailyUsage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Title`
+  String get xboardTitle {
+    return Intl.message(
+      'Title',
+      name: 'xboardTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One rule per line...`
+  String get xboardRulesPerLineHint {
+    return Intl.message(
+      'One rule per line...',
+      name: 'xboardRulesPerLineHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data cycle reset`
+  String get xboardDataCycleReset {
+    return Intl.message(
+      'Data cycle reset',
+      name: 'xboardDataCycleReset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Used for IP geolocation; affects rule accuracy`
+  String get xboardGeoDatabaseHint {
+    return Intl.message(
+      'Used for IP geolocation; affects rule accuracy',
+      name: 'xboardGeoDatabaseHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Target Policy`
+  String get xboardTargetPolicy {
+    return Intl.message(
+      'Target Policy',
+      name: 'xboardTargetPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Got it`
+  String get xboardGotIt {
+    return Intl.message(
+      'Got it',
+      name: 'xboardGotIt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close this ticket? You cannot interact afterwards.`
+  String get xboardCloseTicketConfirm {
+    return Intl.message(
+      'Close this ticket? You cannot interact afterwards.',
+      name: 'xboardCloseTicketConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel this order? This cannot be undone.`
+  String get xboardCancelOrderConfirm {
+    return Intl.message(
+      'Cancel this order? This cannot be undone.',
+      name: 'xboardCancelOrderConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Cancel`
+  String get xboardConfirmCancel {
+    return Intl.message(
+      'Confirm Cancel',
+      name: 'xboardConfirmCancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeem Now`
+  String get xboardRedeemNow {
+    return Intl.message(
+      'Redeem Now',
+      name: 'xboardRedeemNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage Services`
+  String get xboardManageServices {
+    return Intl.message(
+      'Manage Services',
+      name: 'xboardManageServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom Routing Rules`
+  String get xboardCustomRoutingRules {
+    return Intl.message(
+      'Custom Routing Rules',
+      name: 'xboardCustomRoutingRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order cancelled`
+  String get xboardOrderCancelled {
+    return Intl.message(
+      'Order cancelled',
+      name: 'xboardOrderCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order History`
+  String get xboardOrderHistory {
+    return Intl.message(
+      'Order History',
+      name: 'xboardOrderHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your reply...`
+  String get xboardReplyHint {
+    return Intl.message(
+      'Enter your reply...',
+      name: 'xboardReplyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your account`
+  String get xboardEnterAccount {
+    return Intl.message(
+      'Enter your account',
+      name: 'xboardEnterAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter gift card code`
+  String get xboardEnterGiftCardCode {
+    return Intl.message(
+      'Enter gift card code',
+      name: 'xboardEnterGiftCardCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account Banned`
+  String get xboardAccountBanned {
+    return Intl.message(
+      'Account Banned',
+      name: 'xboardAccountBanned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose which apps use the proxy`
+  String get xboardSelectAppsHint {
+    return Intl.message(
+      'Choose which apps use the proxy',
+      name: 'xboardSelectAppsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notices`
+  String get xboardNotices {
+    return Intl.message(
+      'Notices',
+      name: 'xboardNotices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update subscription via proxy`
+  String get xboardUpdateSubscriptionViaProxy {
+    return Intl.message(
+      'Update subscription via proxy',
+      name: 'xboardUpdateSubscriptionViaProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invite Friends`
+  String get xboardInviteFriends {
+    return Intl.message(
+      'Invite Friends',
+      name: 'xboardInviteFriends',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invite friends and earn commission`
+  String get xboardInviteFriendsEarn {
+    return Intl.message(
+      'Invite friends and earn commission',
+      name: 'xboardInviteFriendsEarn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recheck`
+  String get xboardRecheck {
+    return Intl.message(
+      'Recheck',
+      name: 'xboardRecheck',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remember Password`
   String get xboardRememberPassword {
     return Intl.message(

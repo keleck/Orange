@@ -12,6 +12,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/xboard/features/shared/widgets/app_icon_tile.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class UserCenterPage extends ConsumerStatefulWidget {
   const UserCenterPage({super.key});
@@ -29,7 +30,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         children: [
           // 固定的 AppBar
           AppBar(
-            title: const Text('我的'),
+            title: Text(AppLocalizations.of(context).xboardMine),
             elevation: 0,
             scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
@@ -45,161 +46,175 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
           // 可滚动内容
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 100), // 底部增加 padding 避免被导航栏遮挡
+              padding: const EdgeInsets.fromLTRB(
+                  16, 0, 16, 100), // 底部增加 padding 避免被导航栏遮挡
               children: [
-              _buildTrafficUsageCard(context),
-              const SizedBox(height: 16),
-              _buildSectionHeader(context, '快捷入口', icon: Icons.grid_view_rounded),
-              const SizedBox(height: 12),
-              // 垂直列表样式的快捷入口 - 包装在一个容器中
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.035),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.07),
-                    width: 1,
+                _buildTrafficUsageCard(context),
+                const SizedBox(height: 16),
+                _buildSectionHeader(context, '快捷入口',
+                    icon: Icons.grid_view_rounded),
+                const SizedBox(height: 12),
+                // 垂直列表样式的快捷入口 - 包装在一个容器中
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.035),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.07),
+                      width: 1,
+                    ),
                   ),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Column(
-                  children: [
-                    _ActionTile(
-                      icon: Icons.people,
-                      title: '邀请好友',
-                      subtitle: '邀请好友获得佣金',
-                      tone: _TileTone.neutral,
-                      color: AppIconColors.purple,
-                      onTap: () => context.push('/user/invite'),
-                    ),
-                    _ActionTile(
-                      icon: Icons.receipt_long,
-                      title: '订单记录',
-                      subtitle: '查看历史订单',
-                      tone: _TileTone.neutral,
-                      color: AppIconColors.blue,
-                      onTap: () => context.push('/user/orders'),
-                    ),
-                    _ActionTile(
-                      icon: Icons.data_usage,
-                      title: '流量明细',
-                      subtitle: '查看每日流量使用',
-                      tone: _TileTone.neutral,
-                      color: AppIconColors.teal,
-                      onTap: () => context.push('/user/traffic-log'),
-                    ),
-                    if (XBoardConfig.showWallet)
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
                       _ActionTile(
-                        icon: Icons.account_balance_wallet,
-                        title: '我的钱包',
-                        subtitle: '余额与充值管理',
+                        icon: Icons.people,
+                        title: AppLocalizations.of(context).xboardInviteFriends,
+                        subtitle: AppLocalizations.of(context)
+                            .xboardInviteFriendsEarn,
+                        tone: _TileTone.neutral,
+                        color: AppIconColors.purple,
+                        onTap: () => context.push('/user/invite'),
+                      ),
+                      _ActionTile(
+                        icon: Icons.receipt_long,
+                        title: AppLocalizations.of(context).xboardOrderHistory,
+                        subtitle:
+                            AppLocalizations.of(context).xboardViewOrderHistory,
                         tone: _TileTone.neutral,
                         color: AppIconColors.blue,
-                        onTap: () => context.push('/user/wallet'),
+                        onTap: () => context.push('/user/orders'),
                       ),
-                    _ActionTile(
-                      icon: Icons.support_agent,
-                      title: '我的工单',
-                      subtitle: '工单、官网、高阶功能等',
-                      tone: _TileTone.neutral,
-                      color: AppIconColors.green,
-                      onTap: () => context.push('/user/tickets'),
-                    ),
-                    _ActionTile(
-                      icon: Icons.headset_mic,
-                      title: '在线客服',
-                      subtitle: '即时咨询与帮助',
-                      tone: _TileTone.neutral,
-                      color: AppIconColors.purple,
-                      onTap: () => context.push('/user/support'),
-                    ),
-                    if (_shouldShowTelegram())
                       _ActionTile(
-                        icon: Icons.telegram,
-                        title: 'Telegram 讨论组',
-                        subtitle: '加入社区交流讨论',
+                        icon: Icons.data_usage,
+                        title:
+                            AppLocalizations.of(context).xboardTrafficDetails,
+                        subtitle:
+                            AppLocalizations.of(context).xboardViewDailyUsage,
                         tone: _TileTone.neutral,
-                        color: AppIconColors.blue,
-                        onTap: () => _openTelegramLink(context),
+                        color: AppIconColors.teal,
+                        onTap: () => context.push('/user/traffic-log'),
                       ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildGiftCardSection(context),
-              const SizedBox(height: 12),
-              _buildWebsiteAndUpdateSection(context),
-              const SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.035),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.07),
+                      if (XBoardConfig.showWallet)
+                        _ActionTile(
+                          icon: Icons.account_balance_wallet,
+                          title: AppLocalizations.of(context).xboardMyWallet,
+                          subtitle: AppLocalizations.of(context)
+                              .xboardBalanceAndTopup,
+                          tone: _TileTone.neutral,
+                          color: AppIconColors.blue,
+                          onTap: () => context.push('/user/wallet'),
+                        ),
+                      _ActionTile(
+                        icon: Icons.support_agent,
+                        title: AppLocalizations.of(context).xboardMyTickets,
+                        subtitle:
+                            AppLocalizations.of(context).xboardTicketsAndMore,
+                        tone: _TileTone.neutral,
+                        color: AppIconColors.green,
+                        onTap: () => context.push('/user/tickets'),
+                      ),
+                      _ActionTile(
+                        icon: Icons.headset_mic,
+                        title: AppLocalizations.of(context).onlineSupport,
+                        subtitle:
+                            AppLocalizations.of(context).xboardInstantSupport,
+                        tone: _TileTone.neutral,
+                        color: AppIconColors.purple,
+                        onTap: () => context.push('/user/support'),
+                      ),
+                      if (_shouldShowTelegram())
+                        _ActionTile(
+                          icon: Icons.telegram,
+                          title:
+                              AppLocalizations.of(context).xboardTelegramGroup,
+                          subtitle:
+                              AppLocalizations.of(context).xboardJoinCommunity,
+                          tone: _TileTone.neutral,
+                          color: AppIconColors.blue,
+                          onTap: () => _openTelegramLink(context),
+                        ),
+                    ],
                   ),
                 ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const LogoutDialog(),
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(16),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 38,
-                            height: 38,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFF6B6B).withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(11),
+                const SizedBox(height: 16),
+                _buildGiftCardSection(context),
+                const SizedBox(height: 12),
+                _buildWebsiteAndUpdateSection(context),
+                const SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.035),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.07),
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const LogoutDialog(),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 18, horizontal: 16),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 38,
+                              height: 38,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFF6B6B)
+                                    .withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(11),
+                              ),
+                              child: const Icon(
+                                Icons.logout_rounded,
+                                size: 18,
+                                color: Color(0xFFFF6B6B),
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.logout_rounded,
-                              size: 18,
-                              color: Color(0xFFFF6B6B),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  '退出登录',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    '退出登录',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '安全退出当前账号',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.85),
-                                    fontSize: 12,
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '安全退出当前账号',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.85),
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.9)),
-                        ],
+                            Icon(Icons.chevron_right,
+                                color: Colors.white.withOpacity(0.9)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         ],
       ),
     );
@@ -388,7 +403,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              color: isExpired ? const Color(0xFFFF6B6B) : primary,
+                              color:
+                                  isExpired ? const Color(0xFFFF6B6B) : primary,
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -507,7 +523,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, {required IconData icon}) {
+  Widget _buildSectionHeader(BuildContext context, String title,
+      {required IconData icon}) {
     return Row(
       children: [
         Icon(icon, size: 20, color: Colors.white),
@@ -534,7 +551,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     if (telegramLink == null || telegramLink.isEmpty) {
       return;
     }
-    
+
     final uri = Uri.parse(telegramLink);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -552,16 +569,16 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
 
   Widget _buildTelegramSection(BuildContext context) {
     final telegramLink = XBoardConfig.telegramDiscussLink;
-    
+
     // 如果没有配置 Telegram 链接,则不显示
     if (telegramLink == null || telegramLink.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     return _ActionTile(
       icon: Icons.telegram,
-      title: 'Telegram 讨论组',
-      subtitle: '加入社区交流讨论',
+      title: AppLocalizations.of(context).xboardTelegramGroup,
+      subtitle: AppLocalizations.of(context).xboardJoinCommunity,
       tone: _TileTone.neutral,
       onTap: () async {
         final uri = Uri.parse(telegramLink);
@@ -577,14 +594,14 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
   Widget _buildWebsiteAndUpdateSection(BuildContext context) {
     final websiteUrl = XBoardConfig.websiteUrl;
     final updateState = ref.watch(updateCheckProvider);
-    
+
     return Row(
       children: [
         // 左边：官网地址
         Expanded(
           child: _SmallActionTile(
             icon: Icons.language,
-            title: '官网',
+            title: AppLocalizations.of(context).xboardWebsite,
             iconColor: AppIconColors.blue,
             onTap: () async {
               if (websiteUrl == null || websiteUrl.isEmpty) {
@@ -605,7 +622,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         Expanded(
           child: _SmallActionTile(
             icon: Icons.system_update,
-            title: '检查更新',
+            title: AppLocalizations.of(context).checkUpdate,
             iconColor: AppIconColors.teal,
             badge: updateState.hasUpdate ? '新' : null,
             isLoading: updateState.isChecking,
@@ -636,12 +653,12 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('提前开启流量周期'),
+        title: Text(AppLocalizations.of(context).xboardStartDataCycleEarly),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('确认要提前开启下个月的流量周期吗？'),
+            Text(AppLocalizations.of(context).xboardConfirmStartDataCycle),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
@@ -657,7 +674,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.info_outline, size: 16, color: Colors.orange.shade700),
+                      Icon(Icons.info_outline,
+                          size: 16, color: Colors.orange.shade700),
                       const SizedBox(width: 6),
                       Text(
                         '注意事项',
@@ -683,11 +701,11 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('确认开启'),
+            child: Text(AppLocalizations.of(context).xboardConfirmStart),
           ),
         ],
       ),
@@ -704,10 +722,11 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
               SizedBox(
                 width: 16,
                 height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white),
               ),
               SizedBox(width: 12),
-              Text('正在重置流量周期...'),
+              Text(AppLocalizations.of(context).xboardResettingDataCycle),
             ],
           ),
           duration: Duration(seconds: 30),
@@ -717,12 +736,12 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
 
     try {
       final success = await XBoardSDK.instance.user.fetchTransfer();
-      
+
       // 移除加载提示
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-      
+
       if (success && context.mounted) {
         // 刷新订阅信息
         await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
@@ -735,11 +754,11 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-      
+
       if (context.mounted) {
         String errorMessage = '操作失败';
         final errorStr = e.toString();
-        
+
         // 提取错误信息
         if (errorStr.contains('Renewal is not allowed')) {
           errorMessage = '当前套餐不支持提前开启流量周期';
@@ -748,9 +767,10 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         } else if (errorStr.contains('insufficient')) {
           errorMessage = '余额不足，无法执行此操作';
         } else {
-          errorMessage = '操作失败: ${errorStr.length > 50 ? errorStr.substring(0, 50) : errorStr}';
+          errorMessage =
+              '操作失败: ${errorStr.length > 50 ? errorStr.substring(0, 50) : errorStr}';
         }
-        
+
         XBoardNotification.showError(errorMessage);
       }
     }
@@ -759,7 +779,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
 
 class _GiftCardRedeemWidget extends ConsumerStatefulWidget {
   @override
-  ConsumerState<_GiftCardRedeemWidget> createState() => _GiftCardRedeemWidgetState();
+  ConsumerState<_GiftCardRedeemWidget> createState() =>
+      _GiftCardRedeemWidgetState();
 }
 
 class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
@@ -785,7 +806,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
     try {
       // 调用礼品卡兑换 API
       await XBoardSDK.instance.coupon.redeemGiftCard(code);
-      
+
       if (mounted) {
         XBoardNotification.showSuccess('礼品卡兑换成功！');
         _codeController.clear();
@@ -861,7 +882,8 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                   AnimatedRotation(
                     turns: _isExpanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
-                    child: Icon(Icons.expand_more, color: Colors.white.withOpacity(0.7)),
+                    child: Icon(Icons.expand_more,
+                        color: Colors.white.withOpacity(0.7)),
                   ),
                 ],
               ),
@@ -879,14 +901,19 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.1),
-                      hintText: '请输入礼品卡兑换码',
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                      hintText:
+                          AppLocalizations.of(context).xboardEnterGiftCardCode,
+                      hintStyle:
+                          TextStyle(color: Colors.white.withOpacity(0.5)),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.white.withOpacity(0.15)),
+                        borderSide:
+                            BorderSide(color: Colors.white.withOpacity(0.15)),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      prefixIcon: Icon(Icons.code, color: Colors.white.withOpacity(0.7)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
+                      prefixIcon: Icon(Icons.code,
+                          color: Colors.white.withOpacity(0.7)),
                     ),
                     style: const TextStyle(color: Colors.white),
                     enabled: !_isRedeeming,
@@ -911,13 +938,15 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('立即兑换'),
+                          : Text(AppLocalizations.of(context).xboardRedeemNow),
                     ),
                   ),
                 ],
               ),
             ),
-            crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
             duration: const Duration(milliseconds: 200),
           ),
         ],
@@ -986,7 +1015,8 @@ class _SmallActionTile extends StatelessWidget {
               if (badge != null) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(8),
@@ -1090,7 +1120,8 @@ class _ActionTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: palette.textColor.withOpacity(0.5), size: 20),
+              Icon(Icons.chevron_right,
+                  color: palette.textColor.withOpacity(0.5), size: 20),
             ],
           ),
         ),
@@ -1104,7 +1135,8 @@ class _CircleIcon extends StatelessWidget {
   final Color background;
   final Color? iconColor;
 
-  const _CircleIcon({required this.icon, required this.background, this.iconColor});
+  const _CircleIcon(
+      {required this.icon, required this.background, this.iconColor});
 
   @override
   Widget build(BuildContext context) {
@@ -1160,4 +1192,3 @@ _Palette _palette(ThemeData theme, _TileTone tone, {bool danger = false}) {
     iconColor: accent,
   );
 }
-

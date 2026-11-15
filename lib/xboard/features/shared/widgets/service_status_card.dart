@@ -5,6 +5,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/xboard/features/shared/services/service_probe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 const _amber = Color(0xFFF59E0B);
 const _green = Color(0xFF22C55E);
@@ -97,8 +98,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   /// 探测进行中又切了节点时记下来，等这一轮结束再补测一次。
   bool _pendingProbe = false;
 
-  List<ServiceTarget> get _targets =>
-      _enabled.take(_cardServiceCount).toList();
+  List<ServiceTarget> get _targets => _enabled.take(_cardServiceCount).toList();
 
   String get _storeKey => '${widget.proxyName}|${widget.nodeName ?? ''}';
 
@@ -123,9 +123,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   Future<void> _bootstrap() async {
     ServiceStatusStore.bind(_storeKey);
     await _syncEnabled();
-    final missing = _targets
-        .where((target) => !_checks.containsKey(target))
-        .toList();
+    final missing =
+        _targets.where((target) => !_checks.containsKey(target)).toList();
     if (missing.isNotEmpty) {
       await _probe(missing);
     }
@@ -182,7 +181,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
   Widget _buildVerdict() {
     if (_targets.isEmpty) {
       return _Verdict(
-        label: '未启用',
+        label: AppLocalizations.of(context).xboardDisabled,
         color: Colors.white.withValues(alpha: 0.55),
       );
     }
@@ -195,7 +194,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     final done = _targets.where((t) => _checks.containsKey(t)).toList();
     if (done.isEmpty) {
       return _Verdict(
-        label: '待检测',
+        label: AppLocalizations.of(context).xboardPending,
         color: Colors.white.withValues(alpha: 0.55),
       );
     }
@@ -209,7 +208,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
         color: _amber,
       );
     }
-    return const _Verdict(label: '全部正常', color: _green);
+    return const _Verdict(
+        label: AppLocalizations.of(context).xboardAllNormal, color: _green);
   }
 
   Future<void> _openSheet() async {
@@ -310,8 +310,8 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     final dotColor = loading
         ? null
         : (check == null
-              ? Colors.white.withValues(alpha: 0.3)
-              : (check.isOk ? _green : _red));
+            ? Colors.white.withValues(alpha: 0.3)
+            : (check.isOk ? _green : _red));
 
     return Container(
       height: 44,
@@ -391,9 +391,8 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
       _checks = Map.of(ServiceStatusStore.checks);
       _ipInfo = ServiceStatusStore.ipInfo;
     });
-    final missing = _enabled
-        .where((target) => !_checks.containsKey(target))
-        .toList();
+    final missing =
+        _enabled.where((target) => !_checks.containsKey(target)).toList();
     if (missing.isNotEmpty) {
       await _probe(missing, clear: false);
     }
@@ -526,7 +525,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                 ),
                 IconButton(
                   onPressed: _openManager,
-                  tooltip: '管理服务',
+                  tooltip: AppLocalizations.of(context).xboardManageServices,
                   icon: Icon(
                     Icons.tune,
                     color: Colors.white.withValues(alpha: 0.9),
@@ -534,7 +533,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                 ),
                 IconButton(
                   onPressed: _probing ? null : _refresh,
-                  tooltip: '重新检测',
+                  tooltip: AppLocalizations.of(context).xboardRecheck,
                   icon: _probing
                       ? const SizedBox(
                           width: 18,
@@ -621,9 +620,8 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: info == null
-                    ? Colors.white.withValues(alpha: 0.4)
-                    : _green,
+                color:
+                    info == null ? Colors.white.withValues(alpha: 0.4) : _green,
               ),
             ),
           ],
@@ -647,7 +645,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
           const SizedBox(height: 12),
           TextButton(
             onPressed: _openManager,
-            child: const Text('去配置'),
+            child: Text(AppLocalizations.of(context).xboardConfigure),
           ),
         ],
       ),
@@ -662,8 +660,8 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
     final dotColor = loading
         ? null
         : (check == null
-              ? Colors.white.withValues(alpha: 0.3)
-              : (check.isOk ? _green : _red));
+            ? Colors.white.withValues(alpha: 0.3)
+            : (check.isOk ? _green : _red));
     // Google / GitHub 只判连通性、TikTok 的页面解析也可能拿不到地区，
     // 这类服务用出口 IP 的归属地兜底，保证每行都有旗帜。
     final region = check?.region ?? _ipInfo?.countryCode;
@@ -840,7 +838,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                 ),
                 TextButton(
                   onPressed: _save,
-                  child: const Text('完成'),
+                  child: Text(AppLocalizations.of(context).complete),
                 ),
               ],
             ),
@@ -883,7 +881,8 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                         ),
                         Checkbox(
                           value: checked,
-                          onChanged: (value) => _toggle(target.id, value ?? false),
+                          onChanged: (value) =>
+                              _toggle(target.id, value ?? false),
                         ),
                       ],
                     ),

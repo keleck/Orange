@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fl_clash/l10n/l10n.dart';
+
 class TunIntroductionDialog extends StatelessWidget {
   const TunIntroductionDialog({super.key});
   static Future<bool?> show(BuildContext context) {
@@ -8,6 +10,7 @@ class TunIntroductionDialog extends StatelessWidget {
       builder: (context) => const TunIntroductionDialog(),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -42,8 +45,11 @@ class TunIntroductionDialog extends StatelessWidget {
             Text(
               'TUN 模式是一种高级网络代理技术，通过虚拟网络接口实现更完整的流量代理。',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.8),
+                  ),
             ),
             const SizedBox(height: 16),
             _buildFeatureItem(
@@ -70,7 +76,10 @@ class TunIntroductionDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest
+                    .withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -87,9 +96,9 @@ class TunIntroductionDialog extends StatelessWidget {
                       Text(
                         '推荐使用方式',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.amber.shade700,
-                        ),
+                              fontWeight: FontWeight.w600,
+                              color: Colors.amber.shade700,
+                            ),
                       ),
                     ],
                   ),
@@ -97,15 +106,21 @@ class TunIntroductionDialog extends StatelessWidget {
                   Text(
                     '• 日常使用：规则 + TUN（智能分流，性能最佳）',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.8),
+                        ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '• 备用方案：全局 + TUN（如规则模式异常时使用）',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.8),
+                        ),
                   ),
                 ],
               ),
@@ -119,7 +134,10 @@ class TunIntroductionDialog extends StatelessWidget {
           child: Text(
             '稍后再说',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -129,11 +147,12 @@ class TunIntroductionDialog extends StatelessWidget {
             backgroundColor: Colors.green.shade600,
             foregroundColor: Colors.white,
           ),
-          child: const Text('开启 TUN'),
+          child: Text(AppLocalizations.of(context).xboardEnableTun),
         ),
       ],
     );
   }
+
   Widget _buildFeatureItem(
     BuildContext context,
     IconData icon,
@@ -159,14 +178,17 @@ class TunIntroductionDialog extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
               Text(
                 description,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.7),
+                    ),
               ),
             ],
           ),

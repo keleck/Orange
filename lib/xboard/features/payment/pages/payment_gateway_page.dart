@@ -11,6 +11,7 @@ import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dar
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class PaymentGatewayPage extends ConsumerStatefulWidget {
   final String paymentUrl;
@@ -31,10 +32,10 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
   bool _isCheckingPayment = false;
   bool _autoPollingEnabled = false;
   late WebViewController _webViewController;
-  win.WebviewController? _winWebViewController;  // Windows 原生 WebView 控制器
+  win.WebviewController? _winWebViewController; // Windows 原生 WebView 控制器
   Timer? _pollingTimer;
-  bool _isWebViewInitialized = false;  // 追踪WebView初始化状态
-  bool _isUsingWindowsWebView = false;  // 标记是否使用 Windows 原生 WebView
+  bool _isWebViewInitialized = false; // 追踪WebView初始化状态
+  bool _isUsingWindowsWebView = false; // 标记是否使用 Windows 原生 WebView
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
     debugPrint('[PaymentGateway] 停止轮询标志: $_autoPollingEnabled -> false');
     _autoPollingEnabled = false;
     _isWebViewInitialized = false;
-    _winWebViewController?.dispose();  // 清理 Windows WebView
+    _winWebViewController?.dispose(); // 清理 Windows WebView
     if (_pollingTimer != null) {
       debugPrint('[PaymentGateway] 取消定时器');
       _pollingTimer?.cancel();
@@ -80,17 +81,17 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
     try {
       final controller = win.WebviewController();
       await controller.initialize();
-      
+
       debugPrint('[PaymentGateway] Windows WebView 初始化成功');
-      
+
       // 设置背景透明（可选）
       await controller.setBackgroundColor(Colors.transparent);
-      
+
       // 加载 URL
       await controller.loadUrl(widget.paymentUrl);
-      
+
       debugPrint('[PaymentGateway] Windows WebView 开始加载: ${widget.paymentUrl}');
-      
+
       // 监听加载完成
       controller.loadingState.listen((state) {
         if (state == win.LoadingState.navigationCompleted) {
@@ -147,9 +148,11 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
       // webview_flutter 在 Windows 上的平台实现由 Flutter 引擎自动提供
       final platformInstance = WebViewPlatform.instance;
       if (platformInstance != null) {
-        debugPrint('[PaymentGateway] WebViewPlatform 已初始化: ${platformInstance.runtimeType}');
+        debugPrint(
+            '[PaymentGateway] WebViewPlatform 已初始化: ${platformInstance.runtimeType}');
       } else {
-        debugPrint('[PaymentGateway] 警告: WebViewPlatform 为 null - 这可能导致 WebView 初始化失败');
+        debugPrint(
+            '[PaymentGateway] 警告: WebViewPlatform 为 null - 这可能导致 WebView 初始化失败');
       }
     } catch (e) {
       debugPrint('[PaymentGateway] WebView Platform 检查异常: $e');
@@ -171,11 +174,12 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
     try {
       debugPrint('[PaymentGateway] 创建 WebViewController');
       debugPrint('[PaymentGateway] 平台: ${Platform.operatingSystem}');
-      debugPrint('[PaymentGateway] WebViewPlatform.instance: ${WebViewPlatform.instance}');
-      
+      debugPrint(
+          '[PaymentGateway] WebViewPlatform.instance: ${WebViewPlatform.instance}');
+
       final controller = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted);
-      
+
       // 只在Android和iOS上设置背景色，macOS不支持
       if (Platform.isAndroid || Platform.isIOS) {
         try {
@@ -185,137 +189,142 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
           debugPrint('[PaymentGateway] 设置背景色失败（非关键）: $e');
         }
       }
-      
+
       controller.setNavigationDelegate(
-          NavigationDelegate(
-            onPageStarted: (String url) {
-              debugPrint('[PaymentGateway] 页面开始加载 - URL: $url');
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            debugPrint('[PaymentGateway] 页面开始加载 - URL: $url');
+            if (mounted) {
+              setState(() {
+                _isLoading = true;
+                _errorMessage = null;
+              });
+            }
+          },
+          onPageFinished: (String url) {
+            debugPrint('[PaymentGateway] 页面加载完成 - URL: $url');
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+            if (mounted) {
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  XBoardNotification.showInfo('支付页面已加载');
+                }
+              });
+            }
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint(
+                '[PaymentGateway] WebView 资源错误 - Type: ${error.errorType}, Code: ${error.errorCode}, Description: ${error.description}');
+            // 只在主资源加载失败时显示错误，忽略子资源错误
+            if (error.isForMainFrame ?? true) {
               if (mounted) {
                 setState(() {
-                  _isLoading = true;
-                  _errorMessage = null;
-                });
-              }
-            },
-            onPageFinished: (String url) {
-              debugPrint('[PaymentGateway] 页面加载完成 - URL: $url');
-              if (mounted) {
-                setState(() {
+                  _errorMessage =
+                      '加载失败: ${error.description}\n错误代码: ${error.errorCode}';
                   _isLoading = false;
                 });
               }
               if (mounted) {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
                   if (mounted) {
-                    XBoardNotification.showInfo('支付页面已加载');
+                    XBoardNotification.showError(
+                        '加载支付页面失败: ${error.description}');
                   }
                 });
               }
-            },
-            onWebResourceError: (WebResourceError error) {
-              debugPrint('[PaymentGateway] WebView 资源错误 - Type: ${error.errorType}, Code: ${error.errorCode}, Description: ${error.description}');
-              // 只在主资源加载失败时显示错误，忽略子资源错误
-              if (error.isForMainFrame ?? true) {
+            } else {
+              debugPrint('[PaymentGateway] 忽略子资源错误');
+            }
+          },
+          onHttpError: (HttpResponseError error) {
+            debugPrint(
+                '[PaymentGateway] HTTP 错误 - StatusCode: ${error.response?.statusCode}');
+            if (mounted) {
+              setState(() {
+                _errorMessage = 'HTTP 错误 ${error.response?.statusCode}';
+                _isLoading = false;
+              });
+            }
+            if (mounted) {
+              SchedulerBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {
-                  setState(() {
-                    _errorMessage = '加载失败: ${error.description}\n错误代码: ${error.errorCode}';
-                    _isLoading = false;
-                  });
+                  XBoardNotification.showError(
+                      'HTTP 错误: ${error.response?.statusCode}');
                 }
-                if (mounted) {
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) {
-                      XBoardNotification.showError('加载支付页面失败: ${error.description}');
-                    }
-                  });
-                }
-              } else {
-                debugPrint('[PaymentGateway] 忽略子资源错误');
-              }
-            },
-            onHttpError: (HttpResponseError error) {
-              debugPrint('[PaymentGateway] HTTP 错误 - StatusCode: ${error.response?.statusCode}');
-              if (mounted) {
-                setState(() {
-                  _errorMessage = 'HTTP 错误 ${error.response?.statusCode}';
-                  _isLoading = false;
-                });
-              }
-              if (mounted) {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    XBoardNotification.showError('HTTP 错误: ${error.response?.statusCode}');
-                  }
-                });
-              }
-            },
-            onNavigationRequest: (NavigationRequest request) {
-              debugPrint('[PaymentGateway] 导航请求 - URL: ${request.url}');
-              
-              // 检查是否是特殊的URL scheme
-              final uri = Uri.parse(request.url);
-              final scheme = uri.scheme.toLowerCase();
-              
-              // 支付相关的URL scheme列表
-              final paymentSchemes = [
-                'alipay',      // 支付宝
-                'alipays',     // 支付宝安全协议
-                'weixin',      // 微信
-                'wechat',      // 微信
-                'mqqapi',      // QQ
-                'mqq',         // QQ
-                'unionpay',    // 银联
-                'uppaywallet', // 银联钱包
-                'baiduboxapp', // 百度
-                'sinaweibo',   // 微博
-                'taobao',      // 淘宝
-                'tmall',       // 天猫
-                'jdmobile',    // 京东
-                'pinduoduo',   // 拼多多
-                'suning',      // 苏宁
-                'openapp.jdmobile', // 京东
-                'tbopen',      // 淘宝开放平台
-              ];
-              
-              if (paymentSchemes.contains(scheme)) {
-                debugPrint('[PaymentGateway] 检测到支付应用URL scheme: $scheme');
-                
-                // 尝试启动外部应用
-                _launchExternalApp(request.url);
-                
-                // 阻止WebView导航，因为我们要用外部应用处理
-                return NavigationDecision.prevent;
-              }
-              
-              // 对于普通的HTTP/HTTPS链接，允许导航
-              if (scheme == 'http' || scheme == 'https') {
-                return NavigationDecision.navigate;
-              }
-              
-              // 对于其他未知scheme，尝试启动外部应用
-              if (scheme != 'about' && scheme != 'data') {
-                debugPrint('[PaymentGateway] 检测到未知URL scheme: $scheme，尝试启动外部应用');
-                _launchExternalApp(request.url);
-                return NavigationDecision.prevent;
-              }
-              
-              // 默认允许导航
+              });
+            }
+          },
+          onNavigationRequest: (NavigationRequest request) {
+            debugPrint('[PaymentGateway] 导航请求 - URL: ${request.url}');
+
+            // 检查是否是特殊的URL scheme
+            final uri = Uri.parse(request.url);
+            final scheme = uri.scheme.toLowerCase();
+
+            // 支付相关的URL scheme列表
+            final paymentSchemes = [
+              'alipay', // 支付宝
+              'alipays', // 支付宝安全协议
+              'weixin', // 微信
+              'wechat', // 微信
+              'mqqapi', // QQ
+              'mqq', // QQ
+              'unionpay', // 银联
+              'uppaywallet', // 银联钱包
+              'baiduboxapp', // 百度
+              'sinaweibo', // 微博
+              'taobao', // 淘宝
+              'tmall', // 天猫
+              'jdmobile', // 京东
+              'pinduoduo', // 拼多多
+              'suning', // 苏宁
+              'openapp.jdmobile', // 京东
+              'tbopen', // 淘宝开放平台
+            ];
+
+            if (paymentSchemes.contains(scheme)) {
+              debugPrint('[PaymentGateway] 检测到支付应用URL scheme: $scheme');
+
+              // 尝试启动外部应用
+              _launchExternalApp(request.url);
+
+              // 阻止WebView导航，因为我们要用外部应用处理
+              return NavigationDecision.prevent;
+            }
+
+            // 对于普通的HTTP/HTTPS链接，允许导航
+            if (scheme == 'http' || scheme == 'https') {
               return NavigationDecision.navigate;
-            },
-          ),
-        );
+            }
+
+            // 对于其他未知scheme，尝试启动外部应用
+            if (scheme != 'about' && scheme != 'data') {
+              debugPrint('[PaymentGateway] 检测到未知URL scheme: $scheme，尝试启动外部应用');
+              _launchExternalApp(request.url);
+              return NavigationDecision.prevent;
+            }
+
+            // 默认允许导航
+            return NavigationDecision.navigate;
+          },
+        ),
+      );
 
       // Android特定配置
       if (Platform.isAndroid) {
         debugPrint('[PaymentGateway] 应用Android特定配置');
-        
+
         try {
           controller.enableZoom(true);
           debugPrint('[PaymentGateway] 启用缩放功能');
         } catch (e) {
           debugPrint('[PaymentGateway] 启用缩放失败（非关键）: $e');
         }
-        
+
         // 使用反射方式配置Android WebView，避免直接依赖
         try {
           final platform = controller.platform;
@@ -323,7 +332,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
             // 通过反射调用Android特定方法
             final platformType = platform.runtimeType.toString();
             debugPrint('[PaymentGateway] WebView平台类型: $platformType');
-            
+
             // 尝试设置媒体播放和混合内容模式
             if (platformType.contains('Android')) {
               // 这些方法在webview_flutter 4.13.0中已经包含
@@ -336,23 +345,24 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
           debugPrint('[PaymentGateway] Android特定配置失败（非关键）: $e');
         }
       }
-      
+
       // 在赋值前检查mounted，避免在页面被销毁时赋值
       if (!mounted) {
         debugPrint('[PaymentGateway] 初始化时页面已销毁，跳过');
         return;
       }
-      
+
       // 赋值给late变量
       _webViewController = controller;
-      
+
       // 标记WebView已初始化
       _isWebViewInitialized = true;
-      
+
       // 加载请求
       _webViewController.loadRequest(Uri.parse(widget.paymentUrl));
 
-      debugPrint('[PaymentGateway] WebView 开始加载请求 - TradeNo: ${widget.tradeNo}');
+      debugPrint(
+          '[PaymentGateway] WebView 开始加载请求 - TradeNo: ${widget.tradeNo}');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -415,9 +425,11 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
   }
 
   Future<void> _pollPaymentStatus() async {
-    debugPrint('[PaymentGateway] 轮询检查开始 - TradeNo: ${widget.tradeNo}, 启用状态: $_autoPollingEnabled, mounted: $mounted');
+    debugPrint(
+        '[PaymentGateway] 轮询检查开始 - TradeNo: ${widget.tradeNo}, 启用状态: $_autoPollingEnabled, mounted: $mounted');
     if (!_autoPollingEnabled || !mounted) {
-      debugPrint('[PaymentGateway] 轮询终止 (未启用或已销毁) - TradeNo: ${widget.tradeNo}');
+      debugPrint(
+          '[PaymentGateway] 轮询终止 (未启用或已销毁) - TradeNo: ${widget.tradeNo}');
       return;
     }
     await Future.delayed(const Duration(seconds: 5));
@@ -440,7 +452,8 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
       debugPrint('[PaymentGateway] 已在检查支付状态，跳过 - TradeNo: ${widget.tradeNo}');
       return;
     }
-    debugPrint('[PaymentGateway] 开始检查支付状态 - TradeNo: ${widget.tradeNo}, silent: $silent');
+    debugPrint(
+        '[PaymentGateway] 开始检查支付状态 - TradeNo: ${widget.tradeNo}, silent: $silent');
     setState(() {
       _isCheckingPayment = true;
     });
@@ -452,7 +465,8 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
         (o) => o.tradeNo == widget.tradeNo,
         orElse: () => const OrderModel(status: -1),
       );
-      debugPrint('[PaymentGateway] 查找订单结果 - TradeNo: ${widget.tradeNo}, 状态: ${order.status}');
+      debugPrint(
+          '[PaymentGateway] 查找订单结果 - TradeNo: ${widget.tradeNo}, 状态: ${order.status}');
 
       if (mounted) {
         setState(() {
@@ -550,16 +564,16 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
   Future<void> _launchExternalApp(String url) async {
     try {
       debugPrint('[PaymentGateway] 尝试启动外部应用: $url');
-      
+
       final uri = Uri.parse(url);
       final canLaunch = await canLaunchUrl(uri);
-      
+
       if (canLaunch) {
         final launched = await launchUrl(
           uri,
           mode: LaunchMode.externalApplication,
         );
-        
+
         if (launched) {
           debugPrint('[PaymentGateway] 成功启动外部应用');
           if (mounted) {
@@ -569,7 +583,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
               }
             });
           }
-          
+
           // 启动外部应用后，开始更频繁地检查支付状态
           _startFrequentPaymentCheck();
         } else {
@@ -602,14 +616,14 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
     if (_pollingTimer != null) {
       _pollingTimer?.cancel();
     }
-    
+
     // 启动更频繁的检查（每2秒一次，持续30秒）
     int checkCount = 0;
     const maxChecks = 15; // 30秒 / 2秒 = 15次
-    
+
     Timer.periodic(const Duration(seconds: 2), (timer) {
       checkCount++;
-      
+
       if (!mounted || !_autoPollingEnabled || checkCount > maxChecks) {
         timer.cancel();
         // 恢复正常轮询
@@ -618,7 +632,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
         }
         return;
       }
-      
+
       _checkPaymentStatus(silent: true);
     });
   }
@@ -637,265 +651,286 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
   @override
   Widget build(BuildContext context) {
     return CommonScaffold(
-      title: '支付网关',
-      body: _errorMessage != null
-          ? SafeArea(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 40),
-                        Icon(Icons.error, size: 64, color: Colors.red.shade600),
+        title: AppLocalizations.of(context).xboardPaymentGateway,
+        body: _errorMessage != null
+            ? SafeArea(
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 40),
+                          Icon(Icons.error,
+                              size: 64, color: Colors.red.shade600),
                           const SizedBox(height: 24),
-                        const Text(
-                          '加载支付页面失败',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        if (_errorMessage != null)
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.red.shade200),
-                            ),
-                            child: Text(
-                              _errorMessage ?? '未知错误',
-                              style: TextStyle(color: Colors.red.shade700),
+                          const Text(
+                            '加载支付页面失败',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  setState(() {
-                                    _errorMessage = null;
-                                    _isLoading = true;
-                                    _isWebViewInitialized = false;
-                                    _isUsingWindowsWebView = false;
-                                  });
-                                  if (Platform.isWindows) {
-                                    _initializeWindowsWebView();
-                                  } else {
-                                    _initializeWebView();
-                                  }
-                                },
-                                icon: const Icon(Icons.refresh),
-                                label: const Text('重试'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                ),
+                          const SizedBox(height: 12),
+                          if (_errorMessage != null)
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.red.shade200),
+                              ),
+                              child: Text(
+                                _errorMessage ?? '未知错误',
+                                style: TextStyle(color: Colors.red.shade700),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () => Navigator.of(context).pop(),
-                                icon: const Icon(Icons.arrow_back),
-                                label: const Text('返回'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            )
-          : SafeArea(
-              child: _isWebViewInitialized
-                  ? Stack(
-                      children: [
-                        // WebView 显示支付页面 - 占满整个可用空间
-                        if (Platform.isWindows && _isUsingWindowsWebView && _winWebViewController != null)
-                          Positioned.fill(
-                            child: win.Webview(_winWebViewController!),
-                          )
-                        else
-                          Positioned.fill(
-                            child: WebViewWidget(controller: _webViewController),
-                          ),
-
-                        // 加载指示器
-                        if (_isLoading)
-                          Positioned.fill(
-                            child: Container(
-                              color: Colors.black.withOpacity(0.3),
-                              child: const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                          ),
-
-                        // 悬浮操作面板
-                        Positioned(
-                          bottom: 16,
-                          left: 16,
-                          right: 16,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
+                          const SizedBox(height: 24),
+                          Row(
                             children: [
-                              // 状态卡片
-                              if (_autoPollingEnabled)
-                                Card(
-                                  color: Colors.green.shade50,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(
-                                              Colors.green.shade600,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '自动检测支付状态',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.green.shade800,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                '系统每5秒检查一次',
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.green.shade600,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: _stopAutoPolling,
-                                          style: TextButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            '停止',
-                                            style: TextStyle(
-                                              color: Colors.green.shade700,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      _errorMessage = null;
+                                      _isLoading = true;
+                                      _isWebViewInitialized = false;
+                                      _isUsingWindowsWebView = false;
+                                    });
+                                    if (Platform.isWindows) {
+                                      _initializeWindowsWebView();
+                                    } else {
+                                      _initializeWebView();
+                                    }
+                                  },
+                                  icon: const Icon(Icons.refresh),
+                                  label: Text(
+                                      AppLocalizations.of(context).xboardRetry),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
                                   ),
                                 ),
-                              if (_autoPollingEnabled) const SizedBox(height: 8),
-
-                              // 操作按钮
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ElevatedButton.icon(
-                                      onPressed: _reloadWebView,
-                                      icon: const Icon(Icons.refresh, size: 18),
-                                      label: const Text('刷新'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    ElevatedButton.icon(
-                                      onPressed: _copyPaymentUrl,
-                                      icon: const Icon(Icons.copy, size: 18),
-                                      label: const Text('复制链接'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.purple,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    ElevatedButton.icon(
-                                      onPressed:
-                                          _isCheckingPayment ? null : _checkPaymentStatus,
-                                      icon: _isCheckingPayment
-                                          ? const SizedBox(
-                                              width: 14,
-                                              height: 14,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 1.5,
-                                                valueColor: AlwaysStoppedAnimation<Color>(
-                                                  Colors.white,
-                                                ),
-                                              ),
-                                            )
-                                          : const Icon(Icons.check, size: 18),
-                                      label: Text(
-                                        _isCheckingPayment ? '检查中' : '检查状态',
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orange,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: Text(
+                                      AppLocalizations.of(context).xboardBack),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const CircularProgressIndicator(),
-                          const SizedBox(height: 16),
-                          const Text('初始化支付页面中...'),
                         ],
                       ),
                     ),
-            )
-    );
+                  ),
+                ),
+              )
+            : SafeArea(
+                child: _isWebViewInitialized
+                    ? Stack(
+                        children: [
+                          // WebView 显示支付页面 - 占满整个可用空间
+                          if (Platform.isWindows &&
+                              _isUsingWindowsWebView &&
+                              _winWebViewController != null)
+                            Positioned.fill(
+                              child: win.Webview(_winWebViewController!),
+                            )
+                          else
+                            Positioned.fill(
+                              child:
+                                  WebViewWidget(controller: _webViewController),
+                            ),
+
+                          // 加载指示器
+                          if (_isLoading)
+                            Positioned.fill(
+                              child: Container(
+                                color: Colors.black.withOpacity(0.3),
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            ),
+
+                          // 悬浮操作面板
+                          Positioned(
+                            bottom: 16,
+                            left: 16,
+                            right: 16,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // 状态卡片
+                                if (_autoPollingEnabled)
+                                  Card(
+                                    color: Colors.green.shade50,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                Colors.green.shade600,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '自动检测支付状态',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colors.green.shade800,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '系统每5秒检查一次',
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color:
+                                                        Colors.green.shade600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: _stopAutoPolling,
+                                            style: TextButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                                vertical: 4,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              '停止',
+                                              style: TextStyle(
+                                                color: Colors.green.shade700,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                if (_autoPollingEnabled)
+                                  const SizedBox(height: 8),
+
+                                // 操作按钮
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        onPressed: _reloadWebView,
+                                        icon:
+                                            const Icon(Icons.refresh, size: 18),
+                                        label: Text(AppLocalizations.of(context)
+                                            .xboardRefresh),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      ElevatedButton.icon(
+                                        onPressed: _copyPaymentUrl,
+                                        icon: const Icon(Icons.copy, size: 18),
+                                        label: Text(AppLocalizations.of(context)
+                                            .copyLink),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.purple,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      ElevatedButton.icon(
+                                        onPressed: _isCheckingPayment
+                                            ? null
+                                            : _checkPaymentStatus,
+                                        icon: _isCheckingPayment
+                                            ? const SizedBox(
+                                                width: 14,
+                                                height: 14,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 1.5,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                              )
+                                            : const Icon(Icons.check, size: 18),
+                                        label: Text(
+                                          _isCheckingPayment ? '检查中' : '检查状态',
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(),
+                            const SizedBox(height: 16),
+                            Text(AppLocalizations.of(context)
+                                .xboardInitializingPayment),
+                          ],
+                        ),
+                      ),
+              ));
   }
 }

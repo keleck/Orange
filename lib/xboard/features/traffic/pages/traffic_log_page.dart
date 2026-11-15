@@ -5,6 +5,7 @@ import 'package:fl_clash/xboard/features/traffic/providers/traffic_log_provider.
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class TrafficLogPage extends ConsumerWidget {
   const TrafficLogPage({super.key});
@@ -19,7 +20,10 @@ class TrafficLogPage extends ConsumerWidget {
     if (bytes < 1024 * 1024 * 1024) {
       return {'value': (bytes / 1024 / 1024).toStringAsFixed(2), 'unit': 'MB'};
     }
-    return {'value': (bytes / 1024 / 1024 / 1024).toStringAsFixed(2), 'unit': 'GB'};
+    return {
+      'value': (bytes / 1024 / 1024 / 1024).toStringAsFixed(2),
+      'unit': 'GB'
+    };
   }
 
   @override
@@ -34,7 +38,7 @@ class TrafficLogPage extends ConsumerWidget {
         children: [
           // 固定的 AppBar
           AppBar(
-            title: const Text('流量明细'),
+            title: Text(AppLocalizations.of(context).xboardTrafficDetails),
             elevation: 0,
             scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
@@ -69,7 +73,8 @@ class TrafficLogPage extends ConsumerWidget {
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), // 增加底部 padding 避免被导航栏遮挡
+                  padding: const EdgeInsets.fromLTRB(
+                      16, 8, 16, 100), // 增加底部 padding 避免被导航栏遮挡
                   itemCount: logs.length,
                   itemBuilder: (context, index) {
                     final log = logs[index];
@@ -164,8 +169,7 @@ class TrafficLogPage extends ConsumerWidget {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
                   color: primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),

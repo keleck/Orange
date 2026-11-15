@@ -36,7 +36,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
   @override
   void initState() {
     super.initState();
-    
+
     // 如果是桌面端(macOS)，初始化 WebView
     if (Platform.isMacOS) {
       _isWebViewSupported = true;
@@ -71,10 +71,11 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
     try {
       final controller = win.WebviewController();
       await controller.initialize();
-      
+
       await controller.setBackgroundColor(Colors.transparent);
-      await controller.loadUrl('https://go.crisp.chat/chat/embed/?website_id=$websiteId');
-      
+      await controller
+          .loadUrl('https://go.crisp.chat/chat/embed/?website_id=$websiteId');
+
       // 监听加载完成，注入用户信息
       controller.loadingState.listen((state) {
         if (state == win.LoadingState.navigationCompleted) {
@@ -83,7 +84,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
       });
 
       if (!mounted) return;
-      
+
       setState(() {
         _winWebViewController = controller;
       });
@@ -104,7 +105,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
     if (userInfo != null && userState.email != null) {
       final email = userState.email!;
       final nickname = email.split('@').first;
-      
+
       controller.executeScript('''
         if (window.\$crisp) {
           \$crisp.push(["set", "user:email", ["$email"]]);
@@ -148,7 +149,8 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://go.crisp.chat/chat/embed/?website_id=$websiteId'));
+      ..loadRequest(
+          Uri.parse('https://go.crisp.chat/chat/embed/?website_id=$websiteId'));
 
     setState(() {
       _webViewController = controller;
@@ -161,7 +163,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
     if (userInfo != null && userState.email != null) {
       final email = userState.email!;
       final nickname = email.split('@').first;
-      
+
       // 注入用户信息到 Crisp
       controller.runJavaScript('''
         if (window.\$crisp) {
@@ -209,7 +211,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
     } catch (e) {
       debugPrint('Crisp Chat Error: $e');
       if (mounted) {
-         // 在这里不显示SnackBar，由UI层提示
+        // 在这里不显示SnackBar，由UI层提示
       }
     }
 
@@ -221,11 +223,14 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
   Future<void> _launchBrowserChat() async {
     final websiteId = _websiteId;
     if (websiteId != null && websiteId.isNotEmpty) {
-      final url = Uri.parse('https://go.crisp.chat/chat/embed/?website_id=$websiteId');
+      final url =
+          Uri.parse('https://go.crisp.chat/chat/embed/?website_id=$websiteId');
       if (!await launchUrl(url)) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('无法打开浏览器')),
+            const SnackBar(
+                content:
+                    Text(AppLocalizations.of(context).xboardCannotOpenBrowser)),
           );
         }
       }
@@ -268,7 +273,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
             ElevatedButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.arrow_back),
-              label: const Text('返回'),
+              label: Text(AppLocalizations.of(context).xboardBack),
             ),
           ],
         ),
@@ -292,7 +297,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
         content = const Center(child: CircularProgressIndicator());
       }
     } else if (_isMobile) {
-       content = Center(
+      content = Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -320,15 +325,15 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
           children: [
             const Icon(Icons.web, size: 64),
             const SizedBox(height: 16),
-             Text(
+            Text(
               '当前平台暂不支持内嵌客服窗口',
-               style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
-             const SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _launchBrowserChat,
               icon: const Icon(Icons.open_in_browser),
-              label: const Text('在浏览器中打开'),
+              label: Text(AppLocalizations.of(context).xboardOpenInBrowser),
             ),
           ],
         ),

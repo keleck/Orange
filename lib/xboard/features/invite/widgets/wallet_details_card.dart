@@ -6,6 +6,7 @@ import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/stat_item_widget.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/transfer_dialog.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/withdraw_dialog.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class WalletDetailsCard extends ConsumerWidget {
   const WalletDetailsCard({super.key});
@@ -13,7 +14,7 @@ class WalletDetailsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final inviteState = ref.watch(inviteProvider);
-    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
@@ -41,7 +42,7 @@ class WalletDetailsCard extends ConsumerWidget {
                         TextButton.icon(
                           onPressed: () => _showWithdrawDialog(context),
                           icon: const Icon(Icons.account_balance),
-                          label: const Text('提现'),
+                          label: Text(AppLocalizations.of(context).withdraw),
                         ),
                         const SizedBox(width: 8),
                         TextButton.icon(
@@ -76,7 +77,7 @@ class WalletDetailsCard extends ConsumerWidget {
                       Expanded(
                         child: StatItemWidget(
                           title: appLocalizations.walletBalance,
-                          value: inviteState.formattedWalletBalance, 
+                          value: inviteState.formattedWalletBalance,
                           icon: Icons.account_balance,
                         ),
                       ),

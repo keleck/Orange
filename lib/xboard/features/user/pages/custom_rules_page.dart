@@ -5,6 +5,7 @@ import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 /// 自定义分流规则页面
 ///
@@ -77,8 +78,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     super.dispose();
   }
 
-  List<String> get _rules =>
-      ref.read(patchClashConfigProvider).customRules;
+  List<String> get _rules => ref.read(patchClashConfigProvider).customRules;
 
   /// 代理目标使用当前配置里的第一个策略组名，取不到时退回 PROXY
   String _resolveTarget(_RuleTarget target) {
@@ -92,8 +92,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     final value = _ruleController.text.trim();
     if (value.isEmpty) return;
 
-    final isIpRule =
-        _type.token == 'IP-CIDR' || _type.token == 'IP-CIDR6';
+    final isIpRule = _type.token == 'IP-CIDR' || _type.token == 'IP-CIDR6';
     if (isIpRule && !value.contains('/')) {
       XBoardNotification.showError(
         _type.token == 'IP-CIDR6'
@@ -287,7 +286,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                   onTap: () async {
                     final picked = await showOptionSheet<_RuleType>(
                       context: context,
-                      title: '匹配类型',
+                      title: AppLocalizations.of(context).xboardMatchType,
                       items: _types
                           .map(
                             (item) => _PickerOption<_RuleType>(
@@ -313,7 +312,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                   onTap: () async {
                     final picked = await showOptionSheet<_RuleTarget>(
                       context: context,
-                      title: '目标策略',
+                      title: AppLocalizations.of(context).xboardTargetPolicy,
                       items: _targets
                           .map(
                             (item) => _PickerOption<_RuleTarget>(
@@ -527,7 +526,6 @@ class _Panel extends StatelessWidget {
   }
 }
 
-
 class _InputField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
@@ -573,10 +571,8 @@ class _InputField extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: Theme.of(context)
-                  .colorScheme
-                  .primary
-                  .withValues(alpha: 0.55),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.55),
             ),
           ),
         ),

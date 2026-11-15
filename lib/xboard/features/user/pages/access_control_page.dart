@@ -1,6 +1,7 @@
 import 'package:fl_clash/views/access.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 /// 「应用访问控制」独立页面
 ///
@@ -16,7 +17,7 @@ class AccessControlPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('应用访问控制'),
+          title: Text(AppLocalizations.of(context).appAccessControl),
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 0,

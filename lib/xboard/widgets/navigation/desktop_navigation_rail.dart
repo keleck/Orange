@@ -54,12 +54,12 @@ class DesktopNavigationRail extends ConsumerWidget {
           child: Column(
             children: [
               const SizedBox(height: 24),
-              
+
               // 导航项
               Expanded(
                 child: _buildNavigationItems(context, colorScheme),
               ),
-              
+
               // 底部功能区
               _buildBottomActions(colorScheme),
             ],
@@ -92,7 +92,7 @@ class DesktopNavigationRail extends ConsumerWidget {
     ColorScheme colorScheme,
   ) {
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return NavigationRail(
       backgroundColor: Colors.transparent,
       selectedIndex: selectedIndex,
@@ -132,7 +132,7 @@ class DesktopNavigationRail extends ConsumerWidget {
         NavigationRailDestination(
           icon: const Icon(Icons.person_outline),
           selectedIcon: const Icon(Icons.person),
-          label: const Text('我的'),
+          label: Text(AppLocalizations.of(context).xboardMine),
         ),
       ],
       onDestinationSelected: onDestinationSelected,
@@ -144,4 +144,3 @@ class DesktopNavigationRail extends ConsumerWidget {
     return const SizedBox(height: 16);
   }
 }
-

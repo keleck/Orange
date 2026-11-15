@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart' show XBoardSDK, NoticeModel;
+import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart'
+    show XBoardSDK, NoticeModel;
 import 'package:flutter_html/flutter_html.dart';
 import 'dart:ui';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class NoticeListPage extends ConsumerStatefulWidget {
   const NoticeListPage({super.key});
@@ -50,13 +52,13 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       decoration: AppColors.getBackgroundDecoration(),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          title: const Text('通知公告'),
+          title: Text(AppLocalizations.of(context).xboardNotices),
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),
@@ -114,7 +116,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
             FilledButton.icon(
               onPressed: _loadNotices,
               icon: const Icon(Icons.refresh),
-              label: const Text('重试'),
+              label: Text(AppLocalizations.of(context).xboardRetry),
             ),
           ],
         ),
@@ -189,11 +191,15 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.4)),
+                            border: Border.all(
+                                color: theme.colorScheme.primary
+                                    .withValues(alpha: 0.4)),
                           ),
                           child: Text(
                             _formatDate(notice.createdAt),
@@ -212,7 +218,8 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                         "body": Style(
                           margin: Margins.zero,
                           padding: HtmlPaddings.zero,
-                          fontSize: FontSize(theme.textTheme.bodySmall?.fontSize ?? 13),
+                          fontSize: FontSize(
+                              theme.textTheme.bodySmall?.fontSize ?? 13),
                           color: colorScheme.onSurface.withValues(alpha: 0.7),
                           maxLines: 2,
                           textOverflow: TextOverflow.ellipsis,
@@ -278,7 +285,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     showDialog(
       context: context,
       barrierDismissible: !_isPopupNotice(notice),
@@ -352,7 +359,10 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                       ),
                       border: Border(
                         bottom: BorderSide(
-                          color: Theme.of(context).colorScheme.outline.withValues(alpha: isDark ? 0.2 : 0.1),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outline
+                              .withValues(alpha: isDark ? 0.2 : 0.1),
                           width: 1,
                         ),
                       ),
@@ -365,10 +375,14 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               notice.title,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -384,7 +398,10 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                               padding: const EdgeInsets.all(6.0),
                               child: Icon(
                                 Icons.close_rounded,
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.6),
                                 size: 20,
                               ),
                             ),
@@ -405,9 +422,15 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                             padding: const EdgeInsets.only(bottom: 16),
                             child: Text(
                               _formatDate(notice.createdAt),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
                             ),
                           ),
                           Html(
@@ -416,11 +439,19 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                               "body": Style(
                                 margin: Margins.zero,
                                 padding: HtmlPaddings.zero,
-                                fontSize: FontSize(Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14),
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85),
+                                fontSize: FontSize(Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.fontSize ??
+                                    14),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.85),
                               ),
                               "p": Style(
-                                margin: Margins(top: Margin.zero(), bottom: Margin(8)),
+                                margin: Margins(
+                                    top: Margin.zero(), bottom: Margin(8)),
                               ),
                             },
                           ),
@@ -434,7 +465,10 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
-                          color: Theme.of(context).colorScheme.outline.withValues(alpha: isDark ? 0.2 : 0.1),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outline
+                              .withValues(alpha: isDark ? 0.2 : 0.1),
                           width: 1,
                         ),
                       ),
@@ -490,14 +524,16 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
   /// 检查通知是否为弹窗类型（标签包含\"弹窗\"）
   bool _isPopupNotice(NoticeModel notice) {
     if (notice.tags == null || notice.tags!.isEmpty) return false;
-    return notice.tags!.any((tag) => tag.toLowerCase().contains('弹窗') || tag.toLowerCase().contains('popup'));
+    return notice.tags!.any((tag) =>
+        tag.toLowerCase().contains('弹窗') ||
+        tag.toLowerCase().contains('popup'));
   }
 
   String _formatDate(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
         if (difference.inMinutes == 0) {

@@ -1,6 +1,7 @@
 import 'package:fl_clash/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class LanguageSelector extends ConsumerWidget {
   const LanguageSelector({super.key});
@@ -27,7 +28,7 @@ class LanguageSelector extends ConsumerWidget {
           color: colorScheme.outlineVariant.withValues(alpha: 0.4),
         ),
       ),
-      tooltip: '切换语言 / Switch Language',
+      tooltip: AppLocalizations.of(context).xboardSwitchLanguage,
       onSelected: (String languageCode) {
         ref.read(appSettingProvider.notifier).updateState(
               (state) => state.copyWith(locale: languageCode),

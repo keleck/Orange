@@ -5,6 +5,7 @@ import 'package:fl_clash/xboard/adapter/state/ticket_state.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class TicketDetailPage extends ConsumerStatefulWidget {
   final int ticketId;
@@ -29,13 +30,14 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
 
     try {
       await ref.read(ticketControllerProvider.notifier).replyTicket(
-        id: widget.ticketId,
-        message: _replyController.text,
-      );
+            id: widget.ticketId,
+            message: _replyController.text,
+          );
       _replyController.clear();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('回复成功')),
+          const SnackBar(
+              content: Text(AppLocalizations.of(context).xboardReplySent)),
         );
       }
     } catch (e) {
@@ -49,10 +51,13 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
 
   Future<void> _closeTicket() async {
     try {
-      await ref.read(ticketControllerProvider.notifier).closeTicket(widget.ticketId);
+      await ref
+          .read(ticketControllerProvider.notifier)
+          .closeTicket(widget.ticketId);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('工单已关闭')),
+          const SnackBar(
+              content: Text(AppLocalizations.of(context).xboardTicketClosed)),
         );
         // Refresh the ticket detail
         await Future.delayed(const Duration(milliseconds: 500));
@@ -74,19 +79,19 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('关闭工单'),
-        content: const Text('确定要关闭这个工单吗？关闭后将无法继续交互。'),
+        title: Text(AppLocalizations.of(context).xboardCloseTicket),
+        content: Text(AppLocalizations.of(context).xboardCloseTicketConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _closeTicket();
             },
-            child: const Text('确定'),
+            child: Text(AppLocalizations.of(context).confirm),
           ),
         ],
       ),
@@ -103,7 +108,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('工单详情'),
+        title: Text(AppLocalizations.of(context).xboardTicketDetails),
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -117,7 +122,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
               }
               return IconButton(
                 icon: const Icon(Icons.close_rounded),
-                tooltip: '关闭工单',
+                tooltip: AppLocalizations.of(context).xboardCloseTicket,
                 onPressed: _showCloseConfirmDialog,
               );
             },
@@ -134,88 +139,106 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
             top: MediaQuery.of(context).padding.top + kToolbarHeight,
           ),
           child: ticketAsync.when(
-        data: (ticket) {
-          // 调试：打印消息列表长度
-          debugPrint('Ticket ID: ${ticket.id}, Messages count: ${ticket.messages.length}');
-          if (ticket.messages.isNotEmpty) {
-            for (int i = 0; i < ticket.messages.length; i++) {
-              debugPrint('Message $i: ${ticket.messages[i].message}');
-            }
-          }
-          
-          // 计算回复框的实际高度（输入框 + padding + 底部导航栏 + 安全区域）
-          final replyBoxHeight = ticket.status != 1 ? 72.0 + bottomPadding + 56.0 : bottomPadding + 56.0;
-          
-          return Column(
-            children: [
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () =>
-                      ref.refresh(getTicketProvider(widget.ticketId).future),
-                  child: ticket.messages.isEmpty
-                      ? ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: replyBoxHeight + 16),
-                          children: [
-                            _TicketHeader(ticket: ticket),
-                            const SizedBox(height: 32),
-                            Center(
-                              child: Text(
-                                '暂无消息',
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).hintColor,
+            data: (ticket) {
+              // 调试：打印消息列表长度
+              debugPrint(
+                  'Ticket ID: ${ticket.id}, Messages count: ${ticket.messages.length}');
+              if (ticket.messages.isNotEmpty) {
+                for (int i = 0; i < ticket.messages.length; i++) {
+                  debugPrint('Message $i: ${ticket.messages[i].message}');
+                }
+              }
+
+              // 计算回复框的实际高度（输入框 + padding + 底部导航栏 + 安全区域）
+              final replyBoxHeight = ticket.status != 1
+                  ? 72.0 + bottomPadding + 56.0
+                  : bottomPadding + 56.0;
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: () => ref
+                          .refresh(getTicketProvider(widget.ticketId).future),
+                      child: ticket.messages.isEmpty
+                          ? ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  top: 16,
+                                  bottom: replyBoxHeight + 16),
+                              children: [
+                                _TicketHeader(ticket: ticket),
+                                const SizedBox(height: 32),
+                                Center(
+                                  child: Text(
+                                    '暂无消息',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Theme.of(context).hintColor,
+                                        ),
+                                  ),
                                 ),
+                              ],
+                            )
+                          : ListView.builder(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  top: 16,
+                                  bottom: replyBoxHeight + 16),
+                              itemCount:
+                                  ticket.messages.length + 1, // +1 for header
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  return _TicketHeader(ticket: ticket);
+                                }
+                                final message = ticket.messages[index - 1];
+                                return _MessageBubble(message: message);
+                              },
+                            ),
+                    ),
+                  ),
+                  if (ticket.status != 1) // Not closed
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          8.0, 8.0, 8.0, 8.0 + bottomPadding + 56.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _replyController,
+                              decoration: const InputDecoration(
+                                hintText: AppLocalizations.of(context)
+                                    .xboardReplyHint,
+                                border: OutlineInputBorder(),
                               ),
                             ),
-                          ],
-                        )
-                      : ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: replyBoxHeight + 16),
-                          itemCount: ticket.messages.length + 1, // +1 for header
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return _TicketHeader(ticket: ticket);
-                            }
-                            final message = ticket.messages[index - 1];
-                            return _MessageBubble(message: message);
-                          },
-                        ),
-                ),
-              ),
-              if (ticket.status != 1) // Not closed
-                Padding(
-                  padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0 + bottomPadding + 56.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _replyController,
-                          decoration: const InputDecoration(
-                            hintText: '请输入回复内容...',
-                            border: OutlineInputBorder(),
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            onPressed: isLoading ? null : _reply,
+                            icon: isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.send),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        onPressed: isLoading ? null : _reply,
-                        icon: isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Icon(Icons.send),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('加载失败: $error')),
+                    ),
+                ],
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('加载失败: $error')),
           ),
         ),
       ),
@@ -274,11 +297,13 @@ class _TicketHeader extends StatelessWidget {
                       spacing: 6,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: levelMeta.background,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: levelMeta.color.withValues(alpha: 0.3)),
+                            border: Border.all(
+                                color: levelMeta.color.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             '优先级: ${levelMeta.label}',
@@ -289,11 +314,13 @@ class _TicketHeader extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: replyMeta.background,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: replyMeta.color.withValues(alpha: 0.3)),
+                            border: Border.all(
+                                color: replyMeta.color.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             replyMeta.label,
@@ -362,15 +389,14 @@ class _TicketHeader extends StatelessWidget {
           Text(
             meta.label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: meta.color,
-              fontWeight: FontWeight.w600,
-            ),
+                  color: meta.color,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ],
       ),
     );
   }
-
 }
 
 class _MessageBubble extends StatelessWidget {
@@ -418,9 +444,8 @@ class _MessageBubble extends StatelessWidget {
             Text(
               message.message,
               style: TextStyle(
-                color: isMe
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: 0.88),
+                color:
+                    isMe ? Colors.white : Colors.white.withValues(alpha: 0.88),
                 fontSize: 13.5,
                 height: 1.55,
                 decoration: TextDecoration.none,
@@ -441,6 +466,7 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 }
+
 class _ChipMeta {
   final String label;
   final Color color;
@@ -466,14 +492,14 @@ _ChipMeta _statusMeta(int status, ThemeData theme) {
       );
     case 1:
       return _ChipMeta(
-        label: '已关闭',
+        label: AppLocalizations.of(context).xboardClosed,
         color: theme.colorScheme.outline,
         background: theme.colorScheme.outline.withValues(alpha: 0.12),
         icon: Icons.check_circle,
       );
     default:
       return _ChipMeta(
-        label: '未知',
+        label: AppLocalizations.of(context).unknown,
         color: theme.colorScheme.primary,
         background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
@@ -485,28 +511,28 @@ _ChipMeta _levelMeta(int level, ThemeData theme) {
   switch (level) {
     case 0:
       return _ChipMeta(
-        label: '低优先级',
+        label: AppLocalizations.of(context).xboardLowPriority,
         color: Colors.blueGrey.shade600,
         background: Colors.blueGrey.withValues(alpha: 0.12),
         icon: Icons.low_priority,
       );
     case 1:
       return _ChipMeta(
-        label: '中优先级',
+        label: AppLocalizations.of(context).xboardMediumPriority,
         color: Colors.orange.shade700,
         background: Colors.orange.withValues(alpha: 0.12),
         icon: Icons.trending_up,
       );
     case 2:
       return _ChipMeta(
-        label: '高优先级',
+        label: AppLocalizations.of(context).xboardHighPriority,
         color: Colors.red.shade700,
         background: Colors.red.withValues(alpha: 0.12),
         icon: Icons.priority_high,
       );
     default:
       return _ChipMeta(
-        label: '未知优先级',
+        label: AppLocalizations.of(context).xboardUnknownPriority,
         color: theme.colorScheme.primary,
         background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
@@ -518,21 +544,21 @@ _ChipMeta _replyStatusMeta(int replyStatus, ThemeData theme) {
   switch (replyStatus) {
     case 0:
       return _ChipMeta(
-        label: '已回复',
+        label: AppLocalizations.of(context).xboardReplied,
         color: Colors.green.shade700,
         background: Colors.green.withValues(alpha: 0.12),
         icon: Icons.mark_chat_read,
       );
     case 1:
       return _ChipMeta(
-        label: '等待回复',
+        label: AppLocalizations.of(context).xboardAwaitingReply,
         color: Colors.amber.shade800,
         background: Colors.amber.withValues(alpha: 0.12),
         icon: Icons.mark_chat_unread,
       );
     default:
       return _ChipMeta(
-        label: '未知回复状态',
+        label: AppLocalizations.of(context).xboardUnknownReplyStatus,
         color: theme.colorScheme.primary,
         background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,

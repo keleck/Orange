@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/l10n/l10n.dart';
+
 class SubscriptionPage extends ConsumerStatefulWidget {
   const SubscriptionPage({super.key});
   @override
   ConsumerState<SubscriptionPage> createState() => _SubscriptionPageState();
 }
+
 class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
   bool _isLoading = false;
   String? _subscriptionUrl;
@@ -18,6 +21,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     super.initState();
     _loadSubscriptionInfo();
   }
+
   Future<void> _loadSubscriptionInfo() async {
     setState(() {
       _isLoading = true;
@@ -27,7 +31,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
       // 使用 xboardUserProvider 获取订阅信息
       final userAuthState = ref.read(xboardUserProvider);
       final subscriptionInfo = userAuthState.subscriptionInfo;
-      
+
       if (mounted) {
         setState(() {
           _subscriptionUrl = subscriptionInfo?.subscribeUrl;
@@ -43,9 +47,11 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
       }
     }
   }
+
   Future<void> _refreshSubscription() async {
     await _loadSubscriptionInfo();
   }
+
   void _copyToClipboard() async {
     if (_subscriptionUrl != null) {
       await Clipboard.setData(
@@ -57,6 +63,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
       }
     }
   }
+
   void _navigateToHome() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
@@ -64,12 +71,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('订阅购买'),
+        title: Text(AppLocalizations.of(context).xboardSubscriptionPurchase),
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -86,7 +94,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 86, bottom: 16),
+        padding:
+            const EdgeInsets.only(left: 16, right: 16, top: 86, bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -131,7 +140,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _refreshSubscription,
-                            child: const Text('重新获取'),
+                            child:
+                                Text(AppLocalizations.of(context).xboardReload),
                           ),
                         ],
                       )
@@ -170,7 +180,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                                 child: ElevatedButton.icon(
                                   onPressed: _copyToClipboard,
                                   icon: const Icon(Icons.copy),
-                                  label: const Text('复制链接'),
+                                  label: Text(
+                                      AppLocalizations.of(context).copyLink),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -178,7 +189,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                                 child: ElevatedButton.icon(
                                   onPressed: _refreshSubscription,
                                   icon: const Icon(Icons.refresh),
-                                  label: const Text('刷新'),
+                                  label: Text(AppLocalizations.of(context)
+                                      .xboardRefresh),
                                 ),
                               ),
                             ],

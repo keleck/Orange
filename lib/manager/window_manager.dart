@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_ext/window_ext.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class WindowManager extends ConsumerStatefulWidget {
   final Widget child;
@@ -167,7 +168,7 @@ class WindowControlButtons extends StatelessWidget {
     if (!Platform.isWindows) {
       return const SizedBox.shrink();
     }
-    
+
     return Container(
       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -179,14 +180,14 @@ class WindowControlButtons extends StatelessWidget {
         children: [
           _WindowButton(
             icon: Icons.remove,
-            tooltip: '最小化',
+            tooltip: AppLocalizations.of(context).xboardMinimize,
             onTap: () async {
               await windowManager.minimize();
             },
           ),
           _WindowButton(
             icon: Icons.close,
-            tooltip: '关闭',
+            tooltip: AppLocalizations.of(context).close,
             onTap: () async {
               await globalState.appController.handleBackOrExit();
             },
@@ -303,7 +304,7 @@ class _WindowHeaderState extends State<WindowHeader> {
     if (!Platform.isWindows) {
       return const SizedBox.shrink();
     }
-    
+
     return Row(
       children: [
         IconButton(

@@ -13,6 +13,7 @@ import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:fl_clash/xboard/features/payment/pages/payment_gateway_page.dart';
 import 'package:fl_clash/xboard/features/payment/pages/qrcode_payment_page.dart';
 import 'package:fl_clash/xboard/domain/models/payment_method.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class WalletCard extends ConsumerStatefulWidget {
   const WalletCard({super.key});
@@ -51,7 +52,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
       debugPrint('WalletCard: Loading Payment Methods...');
       await ref.read(xboardPaymentProvider.notifier).loadPaymentMethods();
       final paymentMethods = ref.read(xboardAvailablePaymentMethodsProvider);
-      debugPrint('WalletCard: Payment Methods Loaded. Count: ${paymentMethods.length}');
+      debugPrint(
+          'WalletCard: Payment Methods Loaded. Count: ${paymentMethods.length}');
 
       if (paymentMethods.isEmpty) {
         throw Exception('暂无可用的支付方式');
@@ -60,9 +62,11 @@ class _WalletCardState extends ConsumerState<WalletCard> {
       DomainPaymentMethod? selectedMethod;
       if (paymentMethods.length == 1) {
         selectedMethod = paymentMethods.first;
-        debugPrint('WalletCard: Auto-selected single payment method: ${selectedMethod.name}');
+        debugPrint(
+            'WalletCard: Auto-selected single payment method: ${selectedMethod.name}');
       } else {
-        debugPrint('WalletCard: Hiding Waiting Overlay and Showing Selector Dialog...');
+        debugPrint(
+            'WalletCard: Hiding Waiting Overlay and Showing Selector Dialog...');
         PaymentWaitingManager.hide();
         if (!mounted) {
           debugPrint('WalletCard: Not mounted after hiding overlay.');
@@ -72,7 +76,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
           context,
           paymentMethods: paymentMethods,
         );
-        debugPrint('WalletCard: Dialog returned. Selected: ${selectedMethod?.name}');
+        debugPrint(
+            'WalletCard: Dialog returned. Selected: ${selectedMethod?.name}');
         if (selectedMethod == null) return;
         if (mounted) {
           PaymentWaitingManager.show(
@@ -110,14 +115,16 @@ class _WalletCardState extends ConsumerState<WalletCard> {
               _showQRCodePayment(url, tradeNo);
             } else {
               debugPrint('[WalletCard] 使用网页支付 - TradeNo: $tradeNo');
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => PaymentGatewayPage(
                     paymentUrl: url,
                     tradeNo: tradeNo,
                   ),
                 ),
-              ).then((_) {
+              )
+                  .then((_) {
                 debugPrint('[WalletCard] 支付页面返回 - TradeNo: $tradeNo');
                 ref.read(xboardUserAuthProvider.notifier).refreshUserInfo();
               });
@@ -132,7 +139,6 @@ class _WalletCardState extends ConsumerState<WalletCard> {
           debugPrint('[WalletCard] 支付取消 - TradeNo: $tradeNo');
         },
       );
-
     } catch (e) {
       if (mounted) {
         PaymentWaitingManager.hide();
@@ -261,31 +267,36 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           ),
                           child: TextField(
                             controller: controller,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
                             decoration: InputDecoration(
-                              labelText: '充值金额',
+                              labelText: AppLocalizations.of(context)
+                                  .xboardTopupAmount,
                               labelStyle: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.6),
                                 fontSize: 14,
                               ),
                               prefixIcon: Padding(
-                                padding: const EdgeInsets.only(left: 12, right: 4),
+                                padding:
+                                    const EdgeInsets.only(left: 12, right: 4),
                                 child: Text(
                                   '¥',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 12),
                               hintText: '0.00',
                               hintStyle: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.3),
@@ -310,7 +321,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               child: BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
@@ -320,7 +332,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.2),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.2),
                                       width: 1.5,
                                     ),
                                   ),
@@ -329,7 +342,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white.withValues(alpha: 0.7),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ),
@@ -356,7 +370,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               child: BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 10),
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
@@ -369,8 +384,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.10),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.10),
                                       width: 1.5,
                                     ),
                                     boxShadow: [
@@ -450,102 +465,103 @@ class _WalletCardState extends ConsumerState<WalletCard> {
               color: Colors.white.withValues(alpha: 0.07),
             ),
           ),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            theme.colorScheme.primary.withValues(alpha: 0.2),
-                            theme.colorScheme.tertiary.withValues(alpha: 0.1),
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        theme.colorScheme.primary.withValues(alpha: 0.2),
+                        theme.colorScheme.tertiary.withValues(alpha: 0.1),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
-                      child: Icon(
-                        Icons.account_balance_wallet_rounded,
-                        size: 36,
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.account_balance_wallet_rounded,
+                    size: 36,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  '账户余额',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white.withValues(alpha: 0.9),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0, end: balance),
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, child) {
+                    return Text(
+                      '¥${value.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: -1.5,
+                        height: 1.1,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        theme.colorScheme.surface.withValues(alpha: 0.6),
+                        theme.colorScheme.surface.withValues(alpha: 0.4),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.check_circle_rounded,
+                        size: 14,
                         color: theme.colorScheme.primary,
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      '账户余额',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white.withValues(alpha: 0.9),
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0, end: balance),
-                      duration: const Duration(milliseconds: 800),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, child) {
-                        return Text(
-                          '¥${value.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 48,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: -1.5,
-                            height: 1.1,
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.surface.withValues(alpha: 0.6),
-                            theme.colorScheme.surface.withValues(alpha: 0.4),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                      const SizedBox(width: 6),
+                      Text(
+                        '可用于购买套餐和续费',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.check_circle_rounded,
-                            size: 14,
-                            color: theme.colorScheme.primary,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '可用于购买套餐和续费',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white.withValues(alpha: 0.9),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 16),
         // 自动续费开关 - 液态玻璃卡片
@@ -556,7 +572,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
             child: Container(
               decoration: _glassmorphicDecoration(context),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     Container(
@@ -620,24 +637,19 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                 _isLoading = true;
                               });
                               try {
-                                await XBoardSDK.instance.user
-                                    .updateUserInfo({
+                                await XBoardSDK.instance.user.updateUserInfo({
                                   'auto_renewal': value ? 1 : 0,
                                 });
                                 await ref
-                                    .read(
-                                        xboardUserAuthProvider.notifier)
+                                    .read(xboardUserAuthProvider.notifier)
                                     .refreshUserInfo();
                                 if (mounted) {
                                   XBoardNotification.showSuccess(
-                                      value
-                                          ? '已开启自动续费'
-                                          : '已关闭自动续费');
+                                      value ? '已开启自动续费' : '已关闭自动续费');
                                 }
                               } catch (e) {
                                 if (mounted) {
-                                  XBoardNotification.showError(
-                                      '操作失败: $e');
+                                  XBoardNotification.showError('操作失败: $e');
                                 }
                               } finally {
                                 if (mounted) {
@@ -741,8 +753,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                       crossAxisSpacing: 10,
                       childAspectRatio: 2.5,
                       padding: EdgeInsets.zero, // 移除 GridView 的默认 padding
-                      children: [10, 30, 50, 100, 200, 500]
-                          .map((amount) {
+                      children: [10, 30, 50, 100, 200, 500].map((amount) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(14),
                           child: BackdropFilter(
@@ -752,18 +763,16 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               elevation: 0,
                               borderRadius: BorderRadius.circular(14),
                               child: InkWell(
-                                onTap: () =>
-                                    _handleTopUp(amount.toDouble()),
+                                onTap: () => _handleTopUp(amount.toDouble()),
                                 borderRadius: BorderRadius.circular(14),
                                 child: Ink(
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(14),
-                                    color: Colors.white
-                                        .withValues(alpha: 0.045),
+                                    borderRadius: BorderRadius.circular(14),
+                                    color:
+                                        Colors.white.withValues(alpha: 0.045),
                                     border: Border.all(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.08),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.08),
                                       width: 1,
                                     ),
                                   ),
@@ -808,15 +817,13 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: theme
-                                  .colorScheme.primary
+                              backgroundColor: theme.colorScheme.primary
                                   .withValues(alpha: 0.15),
                               foregroundColor: Colors.white,
                               elevation: 0,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(14),
                                 side: BorderSide(
                                   color: theme.colorScheme.primary
                                       .withValues(alpha: 0.25),
@@ -841,16 +848,16 @@ class _WalletCardState extends ConsumerState<WalletCard> {
   /// 判断是否是二维码支付
   bool _isQRCodePayment(String url) {
     final lowerUrl = url.toLowerCase();
-    
-    return lowerUrl.contains('qr.alipay.com') ||  // 支付宝二维码链接
-        lowerUrl.contains('mclient.alipay.com') ||  // 支付宝移动端（会唤起客户端）
-        lowerUrl.contains('pay.weixin.qq.com') ||  // 微信支付链接
-        lowerUrl.contains('qr') ||                  // 通用二维码标识
-        lowerUrl.contains('qrcode') ||              // 二维码代码
-        lowerUrl.contains('二维码') ||              // 中文二维码
-        lowerUrl.contains('alipay_qr') ||           // 支付宝二维码
-        lowerUrl.contains('wechat_qr') ||           // 微信二维码
-        lowerUrl.startsWith('data:image');          // Base64 图像数据
+
+    return lowerUrl.contains('qr.alipay.com') || // 支付宝二维码链接
+        lowerUrl.contains('mclient.alipay.com') || // 支付宝移动端（会唤起客户端）
+        lowerUrl.contains('pay.weixin.qq.com') || // 微信支付链接
+        lowerUrl.contains('qr') || // 通用二维码标识
+        lowerUrl.contains('qrcode') || // 二维码代码
+        lowerUrl.contains('二维码') || // 中文二维码
+        lowerUrl.contains('alipay_qr') || // 支付宝二维码
+        lowerUrl.contains('wechat_qr') || // 微信二维码
+        lowerUrl.startsWith('data:image'); // Base64 图像数据
   }
 
   /// 显示二维码支付页面
@@ -858,14 +865,16 @@ class _WalletCardState extends ConsumerState<WalletCard> {
     try {
       if (!mounted) return;
 
-      Navigator.of(context).push(
+      Navigator.of(context)
+          .push(
         MaterialPageRoute(
           builder: (context) => QRCodePaymentPage(
             qrCodeData: qrData,
             tradeNo: tradeNo,
           ),
         ),
-      ).then((_) {
+      )
+          .then((_) {
         ref.read(xboardUserAuthProvider.notifier).refreshUserInfo();
       });
     } catch (e) {

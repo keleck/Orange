@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'dart:async';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class QRCodePaymentPage extends ConsumerStatefulWidget {
   final String qrCodeData;
@@ -79,7 +80,8 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
   }
 
   Future<void> _pollPaymentStatus() async {
-    debugPrint('[QRCodePayment] 轮询检查开始 - TradeNo: ${widget.tradeNo}, 启用状态: $_autoPollingEnabled, mounted: $mounted');
+    debugPrint(
+        '[QRCodePayment] 轮询检查开始 - TradeNo: ${widget.tradeNo}, 启用状态: $_autoPollingEnabled, mounted: $mounted');
     if (!_autoPollingEnabled || !mounted) {
       debugPrint('[QRCodePayment] 轮询终止 (未启用或已销毁) - TradeNo: ${widget.tradeNo}');
       return;
@@ -104,7 +106,8 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
       debugPrint('[QRCodePayment] 已在检查支付状态，跳过 - TradeNo: ${widget.tradeNo}');
       return;
     }
-    debugPrint('[QRCodePayment] 开始检查支付状态 - TradeNo: ${widget.tradeNo}, silent: $silent');
+    debugPrint(
+        '[QRCodePayment] 开始检查支付状态 - TradeNo: ${widget.tradeNo}, silent: $silent');
     setState(() {
       _isCheckingPayment = true;
     });
@@ -116,7 +119,8 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
         (o) => o.tradeNo == widget.tradeNo,
         orElse: () => const OrderModel(status: -1),
       );
-      debugPrint('[QRCodePayment] 查找订单结果 - TradeNo: ${widget.tradeNo}, 状态: ${order.status}');
+      debugPrint(
+          '[QRCodePayment] 查找订单结果 - TradeNo: ${widget.tradeNo}, 状态: ${order.status}');
 
       if (mounted) {
         setState(() {
@@ -230,7 +234,7 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
   @override
   Widget build(BuildContext context) {
     return CommonScaffold(
-      title: '二维码支付',
+      title: AppLocalizations.of(context).xboardQrCodePayment,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -325,52 +329,52 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                   Card(
                     color: Colors.green.shade50,
                     child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.green.shade600,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.green.shade600,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '自动检测支付状态',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green.shade800,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '自动检测支付状态',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green.shade800,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '系统每5秒检查一次，支付完成后会自动跳转',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.green.shade600,
+                                Text(
+                                  '系统每5秒检查一次，支付完成后会自动跳转',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.green.shade600,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: _stopAutoPolling,
-                          child: Text(
-                            '停止',
-                            style: TextStyle(color: Colors.green.shade700),
+                          TextButton(
+                            onPressed: _stopAutoPolling,
+                            child: Text(
+                              '停止',
+                              style: TextStyle(color: Colors.green.shade700),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
                 if (_autoPollingEnabled) const SizedBox(height: 24),
 
                 // 操作说明卡片
@@ -388,11 +392,11 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        const Text('1. 使用支付宝或微信APP扫描左侧二维码'),
-                        const Text('2. 按照页面提示完成支付'),
-                        const Text('3. 支付完成后系统会自动检测并返回应用'),
+                        Text(AppLocalizations.of(context).xboardQrPayStep1),
+                        Text(AppLocalizations.of(context).xboardQrPayStep2),
+                        Text(AppLocalizations.of(context).xboardQrPayStep3),
                         const SizedBox(height: 8),
-                          Container(
+                        Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: Colors.blue.shade50,
@@ -401,7 +405,8 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.info_outline, size: 16, color: Colors.blue.shade700),
+                              Icon(Icons.info_outline,
+                                  size: 16, color: Colors.blue.shade700),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -428,7 +433,8 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                       child: ElevatedButton.icon(
                         onPressed: _copyQRCode,
                         icon: const Icon(Icons.copy),
-                        label: const Text('复制二维码'),
+                        label:
+                            Text(AppLocalizations.of(context).xboardCopyQrCode),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.purple,
                           foregroundColor: Colors.white,
@@ -439,25 +445,26 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: ElevatedButton.icon(
-                      onPressed: _isCheckingPayment ? null : _checkPaymentStatus,
-                      icon: _isCheckingPayment
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                        onPressed:
+                            _isCheckingPayment ? null : _checkPaymentStatus,
+                        icon: _isCheckingPayment
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
                                 ),
-                              ),
-                            )
-                          : const Icon(Icons.check),
-                      label: Text(_isCheckingPayment ? '检查中...' : '检查状态'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
+                              )
+                            : const Icon(Icons.check),
+                        label: Text(_isCheckingPayment ? '检查中...' : '检查状态'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
                       ),
                     ),
                   ],

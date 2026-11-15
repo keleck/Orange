@@ -185,7 +185,7 @@ class _MobileNavigationBarState extends State<MobileNavigationBar>
         ),
         _buildNavItem(
           icon: Icons.person_rounded,
-          label: '我的',
+          label: AppLocalizations.of(context).xboardMine,
           index: 2,
         ),
       ],
@@ -220,7 +220,7 @@ class _MobileNavigationBarState extends State<MobileNavigationBar>
               Colors.white,
               opacity,
             )!;
-            
+
             // 根据距离计算图标大小，防止在滑动时图标变大
             final scale = (1 - (distance * 0.15)).clamp(0.8, 1.0);
             final iconSize = 28 * scale;

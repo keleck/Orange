@@ -11,36 +11,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+
 class PlansView extends ConsumerStatefulWidget {
   const PlansView({super.key});
   @override
   ConsumerState<PlansView> createState() => _PlansViewState();
 }
+
 class _PlansViewState extends ConsumerState<PlansView> {
   DomainPlan? _selectedPlan; // 桌面端选中的套餐
   bool _hasCheckedUrlParams = false; // 标记是否已检查URL参数
   int _selectedFilter = 0; // 0: 全部, 1: 周期性, 2: 一次性
-  
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final subscriptionNotifier = ref.read(xboardSubscriptionProvider.notifier);
+      final subscriptionNotifier =
+          ref.read(xboardSubscriptionProvider.notifier);
       subscriptionNotifier.autoRefreshIfNeeded();
-      
+
       // 检查URL参数中是否有planId
       _checkUrlParams();
     });
   }
-  
+
   void _checkUrlParams() {
     // 每次检查前允许重置检查状态，前提是plan列表有变化等情况
     // 但为了避免死循环，这里只在列表非空时才认为是一次有效检查
-    
+
     // 获取URL参数
     final state = GoRouterState.of(context);
     final planIdStr = state.uri.queryParameters['planId'];
-    
+
     // 如果没有参数，直接返回，不做任何操作
     if (planIdStr == null) {
       _hasCheckedUrlParams = true;
@@ -49,7 +52,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
 
     // 如果已经检查过且当前有选中的套餐，说明已经处理过了，跳过
     if (_hasCheckedUrlParams && _selectedPlan != null) return;
-    
+
     final planId = int.tryParse(planIdStr);
     if (planId == null) {
       _hasCheckedUrlParams = true;
@@ -58,19 +61,19 @@ class _PlansViewState extends ConsumerState<PlansView> {
 
     // 尝试查找对应的套餐
     final plans = ref.read(xboardSubscriptionProvider);
-    
+
     // 如果套餐列表为空，直接返回，等待列表加载后重试
     if (plans.isEmpty) return;
-    
+
     _hasCheckedUrlParams = true; // 列表不为空，标记为已检查
-    
+
     DomainPlan? plan;
     try {
       plan = plans.firstWhere((p) => p.id == planId);
     } catch (e) {
       plan = null;
     }
-    
+
     if (plan != null) {
       // 既然要直接跳转，无论桌面还是移动端，都直接在 setState 中设置 _selectedPlan
       // 对于移动端，我们修改 build 方法，使其直接渲染 PlanPurchasePage 而不是 Push
@@ -80,32 +83,35 @@ class _PlansViewState extends ConsumerState<PlansView> {
       });
     }
   }
-  
+
   Future<void> _refreshPlans() async {
     final subscriptionNotifier = ref.read(xboardSubscriptionProvider.notifier);
     await subscriptionNotifier.refreshPlans();
   }
-  
+
   void _backToPlans() {
     setState(() {
       _selectedPlan = null;
     });
-    
+
     // 移动端：如果返回，需要清除 URL 参数，否则刷新又会跳进去
     // 但 GoRouter 对于同一个 path 的修改可能比较麻烦，
     // 这里简单处理：当用户点击返回时，我们只是清除 _selectedPlan
     // 为了防止 listen 监听到变化再次触发 _checkUrlParams，_hasCheckedUrlParams 保持 true
   }
+
   String _formatPrice(double? price) {
     if (price == null) return '-';
     return '¥${price.toStringAsFixed(2)}';
   }
+
   String _formatTraffic(double transferEnable) {
     if (transferEnable >= 1024) {
       return '${(transferEnable / 1024).toStringAsFixed(1)}TB';
     }
     return '${transferEnable.toStringAsFixed(0)}GB';
   }
+
   String _getLowestPrice(DomainPlan plan) {
     List<double> prices = [];
     if (plan.monthlyPrice != null) prices.add(plan.monthlyPrice!);
@@ -119,24 +125,26 @@ class _PlansViewState extends ConsumerState<PlansView> {
     final lowestPrice = prices.reduce((a, b) => a < b ? a : b);
     return _formatPrice(lowestPrice);
   }
+
   String _getSpeedLimitText(DomainPlan plan) {
     if (plan.speedLimit == null) {
       return AppLocalizations.of(context).xboardUnlimited; // 不限速
     }
     return '${plan.speedLimit} Mbps';
   }
+
   Widget _buildPlanCard(DomainPlan plan) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth > 768;
-    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          margin: isDesktop 
-            ? EdgeInsets.zero 
-            : const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: isDesktop
+              ? EdgeInsets.zero
+              : const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -186,10 +194,14 @@ class _PlansViewState extends ConsumerState<PlansView> {
                       ),
                       if (plan.hasPrice)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Colors.blue.shade400, Colors.blue.shade600],
+                              colors: [
+                                Colors.blue.shade400,
+                                Colors.blue.shade600
+                              ],
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
@@ -333,10 +345,11 @@ class _PlansViewState extends ConsumerState<PlansView> {
       ),
     );
   }
+
   void _navigateToPurchase(DomainPlan plan) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth > 768;
-    
+
     if (isDesktop) {
       // 桌面端：内嵌显示
       setState(() {
@@ -351,6 +364,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     // 监听套餐列表变化，处理URL参数跳转
@@ -358,7 +372,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
 
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth > 768;
-    
+
     final showPurchasePage = _selectedPlan != null;
 
     final scaffold = Scaffold(
@@ -368,7 +382,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: _backToPlans,
-                tooltip: '返回',
+                tooltip: AppLocalizations.of(context).xboardBack,
               ),
               title: Text(appLocalizations.xboardPurchaseSubscription),
               elevation: 0,
@@ -402,173 +416,192 @@ class _PlansViewState extends ConsumerState<PlansView> {
                   onRefresh: _refreshPlans,
                   child: Consumer(
                     builder: (context, ref, child) {
-                    final plans = ref.watch(xboardSubscriptionProvider);
-                    final uiState = ref.watch(userUIStateProvider);
+                      final plans = ref.watch(xboardSubscriptionProvider);
+                      final uiState = ref.watch(userUIStateProvider);
 
-                    Widget buildScrollableCenter(Widget child) {
-                      return LayoutBuilder(
-                        builder: (context, constraints) => SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                            child: Center(child: child),
+                      Widget buildScrollableCenter(Widget child) {
+                        return LayoutBuilder(
+                          builder: (context, constraints) =>
+                              SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight),
+                              child: Center(child: child),
+                            ),
                           ),
-                        ),
-                      );
-                    }
+                        );
+                      }
 
-                    if (uiState.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (uiState.errorMessage != null) {
-                      return buildScrollableCenter(
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              '加载失败',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red.shade700,
+                      if (uiState.isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (uiState.errorMessage != null) {
+                        return buildScrollableCenter(
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                size: 64,
+                                color: Colors.red,
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              uiState.errorMessage!,
-                              style: const TextStyle(color: Colors.red),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _refreshPlans,
-                              child: Text(appLocalizations.xboardRetry),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    if (plans.isEmpty) {
-                      return buildScrollableCenter(
-                        const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.inbox_outlined,
-                              size: 64,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              '暂无套餐信息',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    // 过滤套餐
-                    var filteredPlans = plans;
-                    if (_selectedFilter == 1) {
-                      // 周期性：有任意周期性价格
-                      filteredPlans = plans.where((p) => 
-                        (p.monthlyPrice != null && p.monthlyPrice! > 0) || 
-                        (p.quarterlyPrice != null && p.quarterlyPrice! > 0) || 
-                        (p.halfYearlyPrice != null && p.halfYearlyPrice! > 0) || 
-                        (p.yearlyPrice != null && p.yearlyPrice! > 0) || 
-                        (p.twoYearPrice != null && p.twoYearPrice! > 0) || 
-                        (p.threeYearPrice != null && p.threeYearPrice! > 0)
-                      ).toList();
-                    } else if (_selectedFilter == 2) {
-                      // 一次性：有一次性价格
-                      filteredPlans = plans.where((p) => p.onetimePrice != null && p.onetimePrice! > 0).toList();
-                    }
-
-                    final screenWidth = MediaQuery.of(context).size.width;
-                    final isDesktop = screenWidth > 768;
-
-                    Widget filterWidget = SlidingFilterButton(
-                      selectedIndex: _selectedFilter,
-                      onChanged: (newIndex) {
-                        setState(() {
-                          _selectedFilter = newIndex;
-                        });
-                      },
-                      labels: const ['全部', '周期性', '一次性'],
-                    );
-
-                    if (isDesktop) {
-                      return SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 24),
-                              child: Center(child: filterWidget),
-                            ),
-                            if (filteredPlans.isEmpty)
-                              const Center(child: Padding(
-                                padding: EdgeInsets.all(32.0),
-                                child: Text('该分类下暂无套餐'),
-                              ))
-                            else
-                              Center(
-                                child: Wrap(
-                                  spacing: 16,
-                                  runSpacing: 16,
-                                  alignment: WrapAlignment.center,
-                                  children: filteredPlans.map((plan) {
-                                    return SizedBox(
-                                      width: 350, // 固定宽度
-                                      child: _buildPlanCard(plan),
-                                    );
-                                  }).toList(),
+                              const SizedBox(height: 16),
+                              Text(
+                                '加载失败',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade700,
                                 ),
                               ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                            child: Center(child: filterWidget),
+                              const SizedBox(height: 8),
+                              Text(
+                                uiState.errorMessage!,
+                                style: const TextStyle(color: Colors.red),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _refreshPlans,
+                                child: Text(appLocalizations.xboardRetry),
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child: filteredPlans.isEmpty
-                                ? const Center(child: Text('该分类下暂无套餐'))
-                                : ListView.builder(
-                                    physics: const AlwaysScrollableScrollPhysics(),
-                                    padding: const EdgeInsets.only(bottom: 100), // 增加底部 padding 避免被导航栏遮挡
-                                    itemCount: filteredPlans.length,
-                                    itemBuilder: (context, index) {
-                                      return _buildPlanCard(filteredPlans[index]);
-                                    },
+                        );
+                      }
+                      if (plans.isEmpty) {
+                        return buildScrollableCenter(
+                          const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.inbox_outlined,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                '暂无套餐信息',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      // 过滤套餐
+                      var filteredPlans = plans;
+                      if (_selectedFilter == 1) {
+                        // 周期性：有任意周期性价格
+                        filteredPlans = plans
+                            .where((p) =>
+                                (p.monthlyPrice != null &&
+                                    p.monthlyPrice! > 0) ||
+                                (p.quarterlyPrice != null &&
+                                    p.quarterlyPrice! > 0) ||
+                                (p.halfYearlyPrice != null &&
+                                    p.halfYearlyPrice! > 0) ||
+                                (p.yearlyPrice != null && p.yearlyPrice! > 0) ||
+                                (p.twoYearPrice != null &&
+                                    p.twoYearPrice! > 0) ||
+                                (p.threeYearPrice != null &&
+                                    p.threeYearPrice! > 0))
+                            .toList();
+                      } else if (_selectedFilter == 2) {
+                        // 一次性：有一次性价格
+                        filteredPlans = plans
+                            .where((p) =>
+                                p.onetimePrice != null && p.onetimePrice! > 0)
+                            .toList();
+                      }
+
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final isDesktop = screenWidth > 768;
+
+                      Widget filterWidget = SlidingFilterButton(
+                        selectedIndex: _selectedFilter,
+                        onChanged: (newIndex) {
+                          setState(() {
+                            _selectedFilter = newIndex;
+                          });
+                        },
+                        labels: const ['全部', '周期性', '一次性'],
+                      );
+
+                      if (isDesktop) {
+                        return SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 24),
+                                child: Center(child: filterWidget),
+                              ),
+                              if (filteredPlans.isEmpty)
+                                const Center(
+                                    child: Padding(
+                                  padding: EdgeInsets.all(32.0),
+                                  child: Text(AppLocalizations.of(context)
+                                      .xboardNoPlansInCategory),
+                                ))
+                              else
+                                Center(
+                                  child: Wrap(
+                                    spacing: 16,
+                                    runSpacing: 16,
+                                    alignment: WrapAlignment.center,
+                                    children: filteredPlans.map((plan) {
+                                      return SizedBox(
+                                        width: 350, // 固定宽度
+                                        child: _buildPlanCard(plan),
+                                      );
+                                    }).toList(),
                                   ),
+                                ),
+                            ],
                           ),
-                        ],
-                      );
-                    }
-                  },
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 16.0),
+                              child: Center(child: filterWidget),
+                            ),
+                            Expanded(
+                              child: filteredPlans.isEmpty
+                                  ? const Center(
+                                      child: Text(AppLocalizations.of(context)
+                                          .xboardNoPlansInCategory))
+                                  : ListView.builder(
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.only(
+                                          bottom: 100), // 增加底部 padding 避免被导航栏遮挡
+                                      itemCount: filteredPlans.length,
+                                      itemBuilder: (context, index) {
+                                        return _buildPlanCard(
+                                            filteredPlans[index]);
+                                      },
+                                    ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
             ),
-            ),
     );
-    
+
     // 移动端需要拦截返回按钮，桌面端直接返回 scaffold
     if (isDesktop) {
       return scaffold;
@@ -577,12 +610,12 @@ class _PlansViewState extends ConsumerState<PlansView> {
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
-          
+
           if (_selectedPlan != null) {
             _backToPlans();
             return;
           }
-          
+
           context.go('/');
         },
         child: scaffold,

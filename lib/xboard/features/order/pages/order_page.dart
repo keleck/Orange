@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:fl_clash/xboard/features/order/providers/order_provider.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class OrderPage extends ConsumerWidget {
   const OrderPage({super.key});
@@ -21,7 +22,7 @@ class OrderPage extends ConsumerWidget {
         children: [
           // 固定的 AppBar
           AppBar(
-            title: const Text('我的订单'),
+            title: Text(AppLocalizations.of(context).myOrders),
             elevation: 0,
             scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
@@ -32,7 +33,8 @@ class OrderPage extends ConsumerWidget {
             child: ordersAsync.when(
               data: (orders) {
                 if (orders.isEmpty) {
-                  return const Center(child: Text('暂无订单'));
+                  return const Center(
+                      child: Text(AppLocalizations.of(context).xboardNoOrders));
                 }
                 return RefreshIndicator(
                   onRefresh: () async {
@@ -40,7 +42,8 @@ class OrderPage extends ConsumerWidget {
                   },
                   child: ListView.builder(
                     itemCount: orders.length,
-                    padding: const EdgeInsets.only(bottom: 100), // 增加底部 padding 避免被导航栏遮挡
+                    padding: const EdgeInsets.only(
+                        bottom: 100), // 增加底部 padding 避免被导航栏遮挡
                     itemBuilder: (context, index) {
                       final order = orders[index];
                       return _OrderCard(order: order);
@@ -366,7 +369,8 @@ class _OrderCard extends ConsumerWidget {
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: value));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('已复制')),
+                  const SnackBar(
+                      content: Text(AppLocalizations.of(context).xboardCopied)),
                 );
               },
             )
@@ -378,19 +382,19 @@ class _OrderCard extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('取消订单'),
-        content: const Text('确定要取消该订单吗？取消后无法恢复。'),
+        title: Text(AppLocalizations.of(context).xboardCancelOrder),
+        content: Text(AppLocalizations.of(context).xboardCancelOrderConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('暂不取消'),
+            child: Text(AppLocalizations.of(context).xboardKeepOrder),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('确认取消'),
+            child: Text(AppLocalizations.of(context).xboardConfirmCancel),
           ),
         ],
       ),
@@ -402,11 +406,15 @@ class _OrderCard extends ConsumerWidget {
       if (context.mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('订单已取消')),
+            const SnackBar(
+                content:
+                    Text(AppLocalizations.of(context).xboardOrderCancelled)),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('取消失败，请稍后重试')),
+            const SnackBar(
+                content:
+                    Text(AppLocalizations.of(context).xboardCancelFailedRetry)),
           );
         }
       }

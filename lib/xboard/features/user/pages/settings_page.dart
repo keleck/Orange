@@ -16,6 +16,7 @@ import 'package:fl_clash/xboard/features/user/pages/custom_rules_page.dart';
 import 'package:fl_clash/xboard/features/user/pages/access_control_page.dart';
 import 'package:fl_clash/xboard/features/user/widgets/settings_card.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -23,6 +24,7 @@ class SettingsPage extends ConsumerStatefulWidget {
   @override
   ConsumerState<SettingsPage> createState() => _SettingsPageState();
 }
+
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _ipv6Enabled = false;
   bool _lanProxyEnabled = false;
@@ -41,6 +43,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     _geoInfoFuture = _loadGeoInfo();
     _loadSettings();
   }
+
   @override
   void dispose() {
     _importRulesController.dispose();
@@ -71,21 +74,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     try {
       // 更新本地Clash配置
       ref.read(patchClashConfigProvider.notifier).updateState(
-        (state) => state.copyWith(ipv6: value),
-      );
-      
+            (state) => state.copyWith(ipv6: value),
+          );
+
       if (mounted) {
         setState(() => _ipv6Enabled = value);
-        XBoardNotification.showSuccess(
-          value ? 'IPv6 已开启' : 'IPv6 已关闭'
-        );
+        XBoardNotification.showSuccess(value ? 'IPv6 已开启' : 'IPv6 已关闭');
       }
     } catch (e) {
       if (mounted) {
         // 恢复之前的状态
         ref.read(patchClashConfigProvider.notifier).updateState(
-          (state) => state.copyWith(ipv6: !value),
-        );
+              (state) => state.copyWith(ipv6: !value),
+            );
         setState(() => _ipv6Enabled = !value);
         XBoardNotification.showError('设置失败: ${e.toString()}');
       }
@@ -101,21 +102,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     try {
       // 更新本地Clash配置（逻辑反转：true关闭，false开启）
       ref.read(patchClashConfigProvider.notifier).updateState(
-        (state) => state.copyWith(allowLan: !value),
-      );
-      
+            (state) => state.copyWith(allowLan: !value),
+          );
+
       if (mounted) {
         setState(() => _lanProxyEnabled = value);
-        XBoardNotification.showSuccess(
-          value ? '局域网代理已开启' : '局域网代理已关闭'
-        );
+        XBoardNotification.showSuccess(value ? '局域网代理已开启' : '局域网代理已关闭');
       }
     } catch (e) {
       if (mounted) {
         // 恢复之前的状态
         ref.read(patchClashConfigProvider.notifier).updateState(
-          (state) => state.copyWith(allowLan: value),
-        );
+              (state) => state.copyWith(allowLan: value),
+            );
         setState(() => _lanProxyEnabled = !value);
         XBoardNotification.showError('设置失败: ${e.toString()}');
       }
@@ -130,13 +129,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     try {
       final currentRules = ref.read(patchClashConfigProvider).customRules;
       final updatedRules = currentRules.where((r) => r != rule).toList();
-      
+
       ref.read(patchClashConfigProvider.notifier).updateState(
-        (state) => state.copyWith(customRules: updatedRules),
-      );
-      
+            (state) => state.copyWith(customRules: updatedRules),
+          );
+
       XBoardNotification.showSuccess('规则已删除');
-      
+
       // 重新应用 Clash 配置使规则生效
       await _applyConfig();
     } catch (e) {
@@ -147,11 +146,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _clearAllRules() async {
     try {
       ref.read(patchClashConfigProvider.notifier).updateState(
-        (state) => state.copyWith(customRules: []),
-      );
-      
+            (state) => state.copyWith(customRules: []),
+          );
+
       XBoardNotification.showSuccess('所有规则已清除');
-      
+
       // 重新应用 Clash 配置
       await _applyConfig();
     } catch (e) {
@@ -188,7 +187,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
       for (final line in lines) {
         final parts = line.split(',');
-        
+
         // 检查规则格式
         if (parts.length < 3) {
           invalidRules.add('$line (格式错误)');
@@ -197,7 +196,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
         final ruleType = parts[0].trim();
         final ruleContent = parts[1].trim();
-        final destination = parts[2].trim();  // 只取第3个部分作为目标，忽略其他参数如 no-resolve
+        final destination = parts[2].trim(); // 只取第3个部分作为目标，忽略其他参数如 no-resolve
 
         if (destination.isEmpty) {
           invalidRules.add('$line (缺少目标)');
@@ -206,7 +205,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
         // 验证目标是否存在（代理组或节点）
         bool targetExists = false;
-        
+
         // 检查是否是代理组
         if (groups.any((g) => g.name == destination)) {
           targetExists = true;
@@ -245,10 +244,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       // 添加新规则
       if (newRules.isNotEmpty) {
         ref.read(patchClashConfigProvider.notifier).updateState(
-          (state) => state.copyWith(
-            customRules: [...currentRules, ...newRules],
-          ),
-        );
+              (state) => state.copyWith(
+                customRules: [...currentRules, ...newRules],
+              ),
+            );
       }
 
       // 显示导入结果
@@ -263,7 +262,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       }
 
       _importRulesController.clear();
-      
+
       if (successCount > 0) {
         XBoardNotification.showSuccess(message);
         await _applyConfig();
@@ -282,7 +281,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   void _showImportDialog() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -457,7 +456,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               fontFamily: 'monospace',
                             ),
                             decoration: InputDecoration(
-                              hintText: '每行一条规则...',
+                              hintText: AppLocalizations.of(context)
+                                  .xboardRulesPerLineHint,
                               hintStyle: TextStyle(
                                 color: Colors.white.withOpacity(0.4),
                               ),
@@ -526,7 +526,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.white.withOpacity(0.7),
                           ),
-                          child: const Text('取消'),
+                          child: Text(AppLocalizations.of(context).cancel),
                         ),
                         const SizedBox(width: 12),
                         ClipRRect(
@@ -601,7 +601,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       // 显示当前规则列表（用于调试）
       final currentRules = ref.read(patchClashConfigProvider).customRules;
       commonPrint.log('当前自定义规则: $currentRules');
-      
+
       if (globalState.isStart) {
         // 如果 Clash 已启动，重新应用配置
         XBoardNotification.showInfo('正在更新 Clash 配置...');
@@ -631,7 +631,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         children: [
           // 固定的 AppBar
           AppBar(
-            title: const Text('设置'),
+            title: Text(AppLocalizations.of(context).settings),
             elevation: 0,
             scrolledUnderElevation: 0,
             surfaceTintColor: Colors.transparent,
@@ -644,7 +644,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           // 可滚动内容
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 100), // 底部增加 padding 避免被导航栏遮挡
+              padding: const EdgeInsets.fromLTRB(
+                  16, 0, 16, 100), // 底部增加 padding 避免被导航栏遮挡
               children: [
                 _buildSectionHeader(context, '基础配置', icon: Icons.tune_rounded),
                 const SizedBox(height: 14),
@@ -678,7 +679,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, {required IconData icon}) {
+  Widget _buildSectionHeader(BuildContext context, String title,
+      {required IconData icon}) {
     return Row(
       children: [
         Icon(icon, size: 20, color: Colors.white),
@@ -699,8 +701,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return SettingsCard(
       icon: Icons.lan_outlined,
       accentColor: AppIconColors.teal,
-      title: 'IPv6 支持',
-      subtitle: '开启后将可以接收 IPv6 流量',
+      title: AppLocalizations.of(context).xboardIpv6Support,
+      subtitle: AppLocalizations.of(context).xboardIpv6Hint,
       trailing: _ipv6Loading
           ? const _CardLoading()
           : Switch(
@@ -715,8 +717,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return SettingsCard(
       icon: Icons.wifi_tethering_rounded,
       accentColor: AppIconColors.blue,
-      title: '局域网代理',
-      subtitle: '允许局域网内的设备通过本机代理上网',
+      title: AppLocalizations.of(context).allowLan,
+      subtitle: AppLocalizations.of(context).xboardAllowLanDevices,
       trailing: _lanProxyLoading
           ? const _CardLoading()
           : Switch(
@@ -735,8 +737,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return SettingsCard(
       icon: Icons.cloud_sync_outlined,
       accentColor: AppIconColors.blue,
-      title: '通过代理更新订阅',
-      subtitle: '使用上次连接的节点拉取订阅更新',
+      title: AppLocalizations.of(context).xboardUpdateSubscriptionViaProxy,
+      subtitle: AppLocalizations.of(context).xboardUpdateViaLastNode,
       trailing: Switch(
         value: enabled,
         onChanged: (value) {
@@ -766,15 +768,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         return SettingsCard(
           icon: Icons.public_rounded,
           accentColor: AppIconColors.blue,
-          title: '地理数据库',
-          subtitle: '用于 IP 地理位置识别，影响分流规则的准确性',
+          title: AppLocalizations.of(context).xboardGeoDatabase,
+          subtitle: AppLocalizations.of(context).xboardGeoDatabaseHint,
           child: Column(
             children: [
               SettingsInfoBar(text: detail),
               const SizedBox(height: 12),
               SettingsOutlineButton(
                 icon: Icons.download_rounded,
-                label: '更新地理数据库',
+                label: AppLocalizations.of(context).xboardUpdateGeoDatabase,
                 loading: _geoUpdating,
                 onTap: _updateGeoDatabase,
               ),
@@ -793,7 +795,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return SettingsCard(
       icon: Icons.rule_folder_outlined,
       accentColor: AppIconColors.purple,
-      title: '自定义分流规则',
+      title: AppLocalizations.of(context).xboardCustomRoutingRules,
       subtitle: count > 0 ? '已配置 $count 条规则' : '添加远程规则或手动配置',
       trailing: Icon(
         Icons.chevron_right_rounded,
@@ -813,8 +815,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return SettingsCard(
       icon: Icons.apps_rounded,
       accentColor: AppIconColors.purple,
-      title: '应用访问控制',
-      subtitle: '选择哪些应用走代理、哪些直连',
+      title: AppLocalizations.of(context).appAccessControl,
+      subtitle: AppLocalizations.of(context).xboardSelectAppsHint,
       trailing: Icon(
         Icons.chevron_right_rounded,
         size: 20,
@@ -872,16 +874,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return Consumer(
       builder: (context, ref, _) {
         final campusHostsAsync = ref.watch(campusHostsProvider);
-        
+
         return campusHostsAsync.when(
           data: (hosts) {
             if (hosts.isEmpty) {
               return const SizedBox.shrink();
             }
-            
+
             // 直接从当前配置中检查是否已启用
             final isEnabled = isCampusHostsEnabled(ref, hosts);
-            
+
             return ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: BackdropFilter(
@@ -933,10 +935,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                     try {
                                       if (value) {
                                         await applyCampusHosts(ref, hosts);
-                                        XBoardNotification.showSuccess('校园网 Hosts 已启用');
+                                        XBoardNotification.showSuccess(
+                                            '校园网 Hosts 已启用');
                                       } else {
                                         await clearCampusHosts(ref, hosts);
-                                        XBoardNotification.showSuccess('校园网 Hosts 已禁用');
+                                        XBoardNotification.showSuccess(
+                                            '校园网 Hosts 已禁用');
                                       }
                                       // 触发重建以更新开关状态
                                       if (mounted) {
@@ -946,7 +950,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                       XBoardNotification.showError('操作失败');
                                     } finally {
                                       if (mounted) {
-                                        setState(() => _campusHostsLoading = false);
+                                        setState(
+                                            () => _campusHostsLoading = false);
                                       }
                                     }
                                   },
@@ -999,9 +1004,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       },
     );
   }
-
 }
-
 
 class _GeoInfo {
   final bool exists;

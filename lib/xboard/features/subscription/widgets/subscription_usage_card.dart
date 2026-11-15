@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../shared/widgets/glass_container.dart';
 import '../services/subscription_status_service.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+
 class SubscriptionUsageCard extends ConsumerWidget {
   final DomainSubscription? subscriptionInfo;
   final DomainUser? userInfo;
@@ -31,17 +32,20 @@ class SubscriptionUsageCard extends ConsumerWidget {
         profileSubscriptionInfo: profileSubscriptionInfo,
       );
     }
-    if (profileSubscriptionInfo == null && userInfo == null && subscriptionInfo == null) {
+    if (profileSubscriptionInfo == null &&
+        userInfo == null &&
+        subscriptionInfo == null) {
       return _buildEmptyCard(theme, context);
     }
-    if (subscriptionStatus != null && 
-        (subscriptionStatus.type == SubscriptionStatusType.expired || 
-         subscriptionStatus.type == SubscriptionStatusType.exhausted ||
-         subscriptionStatus.type == SubscriptionStatusType.noSubscription)) {
+    if (subscriptionStatus != null &&
+        (subscriptionStatus.type == SubscriptionStatusType.expired ||
+            subscriptionStatus.type == SubscriptionStatusType.exhausted ||
+            subscriptionStatus.type == SubscriptionStatusType.noSubscription)) {
       return _buildStatusCard(subscriptionStatus, theme, context);
     }
     return _buildUsageCard(theme, context);
   }
+
   Widget _buildEmptyCard(ThemeData theme, BuildContext context) {
     return GlassContainer(
       borderRadius: BorderRadius.circular(16),
@@ -73,7 +77,9 @@ class SubscriptionUsageCard extends ConsumerWidget {
       ),
     );
   }
-  Widget _buildStatusCard(SubscriptionStatusResult statusResult, ThemeData theme, BuildContext context) {
+
+  Widget _buildStatusCard(SubscriptionStatusResult statusResult,
+      ThemeData theme, BuildContext context) {
     IconData statusIcon;
     Color statusColor;
     String statusText;
@@ -83,19 +89,22 @@ class SubscriptionUsageCard extends ConsumerWidget {
         statusIcon = Icons.card_giftcard;
         statusColor = Colors.blue.shade600;
         statusText = AppLocalizations.of(context).xboardNoAvailableSubscription;
-        statusDetail = AppLocalizations.of(context).xboardPurchaseSubscriptionToUse;
+        statusDetail =
+            AppLocalizations.of(context).xboardPurchaseSubscriptionToUse;
         break;
       case SubscriptionStatusType.expired:
         statusIcon = Icons.schedule;
         statusColor = Colors.red.shade600;
         statusText = AppLocalizations.of(context).xboardSubscriptionExpired;
-        statusDetail = statusResult.getDetailMessage(context) ?? AppLocalizations.of(context).xboardRenewToContinue;
+        statusDetail = statusResult.getDetailMessage(context) ??
+            AppLocalizations.of(context).xboardRenewToContinue;
         break;
       case SubscriptionStatusType.exhausted:
         statusIcon = Icons.data_usage;
         statusColor = Colors.orange.shade600;
         statusText = AppLocalizations.of(context).xboardTrafficExhausted;
-        statusDetail = statusResult.getDetailMessage(context) ?? AppLocalizations.of(context).xboardBuyMoreTrafficOrUpgrade;
+        statusDetail = statusResult.getDetailMessage(context) ??
+            AppLocalizations.of(context).xboardBuyMoreTrafficOrUpgrade;
         break;
       default:
         statusIcon = Icons.info;
@@ -144,7 +153,8 @@ class SubscriptionUsageCard extends ConsumerWidget {
                     Text(
                       statusDetail,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -154,24 +164,29 @@ class SubscriptionUsageCard extends ConsumerWidget {
                 builder: (context, ref, child) {
                   final userState = ref.watch(xboardUserProvider);
                   return IconButton(
-                    onPressed: userState.isLoading ? null : () async {
-                      await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
-                    },
+                    onPressed: userState.isLoading
+                        ? null
+                        : () async {
+                            await ref
+                                .read(xboardUserProvider.notifier)
+                                .refreshSubscriptionInfo();
+                          },
                     icon: userState.isLoading
-                      ? SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: statusColor,
+                            ),
+                          )
+                        : Icon(
+                            Icons.refresh,
                             color: statusColor,
+                            size: 20,
                           ),
-                        )
-                      : Icon(
-                          Icons.refresh,
-                          color: statusColor,
-                          size: 20,
-                        ),
-                    tooltip: '刷新订阅信息',
+                    tooltip: AppLocalizations.of(context)
+                        .xboardRefreshSubscriptionInfo,
                     style: IconButton.styleFrom(
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(20, 20),
@@ -187,7 +202,8 @@ class SubscriptionUsageCard extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: theme.colorScheme.surfaceContainerHighest
+                    .withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -233,8 +249,9 @@ class SubscriptionUsageCard extends ConsumerWidget {
       ),
     );
   }
-  
-  String _getRenewButtonText(SubscriptionStatusType type, BuildContext context) {
+
+  String _getRenewButtonText(
+      SubscriptionStatusType type, BuildContext context) {
     switch (type) {
       case SubscriptionStatusType.noSubscription:
         return AppLocalizations.of(context).xboardPurchasePlan;
@@ -246,24 +263,24 @@ class SubscriptionUsageCard extends ConsumerWidget {
         return AppLocalizations.of(context).xboardPurchasePlan;
     }
   }
-  
+
   Future<void> _handleRenewAction(BuildContext context, WidgetRef ref) async {
     // 先尝试从 provider 获取已加载的订阅信息
     var subscriptionInfo = ref.read(subscriptionInfoProvider);
     int? currentPlanId = subscriptionInfo?.planId;
-    
+
     // 如果 planId 为空或为0，则刷新订阅信息
     if (currentPlanId == null || currentPlanId == 0) {
       await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
-      
+
       // 检查 context 是否仍然有效
       if (!context.mounted) return;
-      
+
       // 重新获取
       subscriptionInfo = ref.read(subscriptionInfoProvider);
       currentPlanId = subscriptionInfo?.planId;
     }
-    
+
     if (currentPlanId != null && currentPlanId != 0) {
       // 确保套餐列表已加载
       var plans = ref.read(xboardSubscriptionProvider);
@@ -271,17 +288,17 @@ class SubscriptionUsageCard extends ConsumerWidget {
         await ref.read(xboardSubscriptionProvider.notifier).loadPlans();
         plans = ref.read(xboardSubscriptionProvider);
       }
-      
+
       // 再次检查 context 是否仍然有效
       if (!context.mounted) return;
-      
+
       DomainPlan? currentPlan;
       try {
         currentPlan = plans.firstWhere((plan) => plan.id == currentPlanId);
       } catch (e) {
         currentPlan = null;
       }
-      
+
       if (currentPlan != null) {
         // 直接跳转到购买页面（续费）
         Navigator.of(context).push(
@@ -292,13 +309,14 @@ class SubscriptionUsageCard extends ConsumerWidget {
         return;
       }
     }
-    
+
     // 检查 context 是否仍然有效
     if (!context.mounted) return;
-    
+
     // 没找到套餐：跳转到套餐列表页面
     context.push('/plans');
   }
+
   Widget _buildUsageCard(ThemeData theme, BuildContext context) {
     final progress = _getProgressValue();
     final usedTraffic = _getUsedTraffic();
@@ -330,24 +348,29 @@ class SubscriptionUsageCard extends ConsumerWidget {
                 builder: (context, ref, child) {
                   final userState = ref.watch(xboardUserProvider);
                   return IconButton(
-                    onPressed: userState.isLoading ? null : () async {
-                      await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
-                    },
+                    onPressed: userState.isLoading
+                        ? null
+                        : () async {
+                            await ref
+                                .read(xboardUserProvider.notifier)
+                                .refreshSubscriptionInfo();
+                          },
                     icon: userState.isLoading
-                      ? SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: theme.colorScheme.primary,
+                            ),
+                          )
+                        : Icon(
+                            Icons.refresh,
                             color: theme.colorScheme.primary,
+                            size: 20,
                           ),
-                        )
-                      : Icon(
-                          Icons.refresh,
-                          color: theme.colorScheme.primary,
-                          size: 20,
-                        ),
-                    tooltip: '刷新订阅信息',
+                    tooltip: AppLocalizations.of(context)
+                        .xboardRefreshSubscriptionInfo,
                     style: IconButton.styleFrom(
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(20, 20),
@@ -363,7 +386,8 @@ class SubscriptionUsageCard extends ConsumerWidget {
             height: 10,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              color: theme.colorScheme.surfaceContainerHighest
+                  .withValues(alpha: 0.5),
             ),
             child: TweenAnimationBuilder<double>(
               tween: Tween<double>(begin: 0, end: progress),
@@ -405,11 +429,11 @@ class SubscriptionUsageCard extends ConsumerWidget {
                 child: _buildStatItem(
                   icon: Icons.schedule,
                   label: AppLocalizations.of(context).xboardValidityPeriod,
-                  value: remainingDays == -1 
-                      ? AppLocalizations.of(context).xboardNoExpiration 
+                  value: remainingDays == -1
+                      ? AppLocalizations.of(context).xboardNoExpiration
                       : '$remainingDays',
-                  subtitle: remainingDays == -1 
-                      ? '' 
+                  subtitle: remainingDays == -1
+                      ? ''
                       : AppLocalizations.of(context).xboardDays,
                   theme: theme,
                 ),
@@ -442,6 +466,7 @@ class SubscriptionUsageCard extends ConsumerWidget {
       ),
     );
   }
+
   Widget _buildStatItem({
     required IconData icon,
     required String label,
@@ -491,6 +516,7 @@ class SubscriptionUsageCard extends ConsumerWidget {
       ],
     );
   }
+
   String _formatBytes(double bytes) {
     if (bytes < 0) return '0 B';
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -508,6 +534,7 @@ class SubscriptionUsageCard extends ConsumerWidget {
       return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
     }
   }
+
   int _calculateRemainingDays() {
     // 1. 优先检查 Profile Subscription Info (来自订阅链接头部)
     if (profileSubscriptionInfo != null) {
@@ -516,9 +543,14 @@ class SubscriptionUsageCard extends ConsumerWidget {
         return -1;
       }
       if (profileSubscriptionInfo!.expire != null) {
-        final expiredAt = DateTime.fromMillisecondsSinceEpoch(profileSubscriptionInfo!.expire * 1000);
+        final expiredAt = DateTime.fromMillisecondsSinceEpoch(
+            profileSubscriptionInfo!.expire * 1000);
         final now = DateTime.now();
-        return expiredAt.difference(now).inDays.clamp(0, double.infinity).toInt();
+        return expiredAt
+            .difference(now)
+            .inDays
+            .clamp(0, double.infinity)
+            .toInt();
       }
     }
 
@@ -529,30 +561,41 @@ class SubscriptionUsageCard extends ConsumerWidget {
         return -1;
       }
       final now = DateTime.now();
-      return subscriptionInfo!.expiredAt!.difference(now).inDays.clamp(0, double.infinity).toInt();
+      return subscriptionInfo!.expiredAt!
+          .difference(now)
+          .inDays
+          .clamp(0, double.infinity)
+          .toInt();
     }
 
     return 0;
   }
+
   double _getProgressValue() {
     if (profileSubscriptionInfo != null && profileSubscriptionInfo!.total > 0) {
-      final used = profileSubscriptionInfo!.upload + profileSubscriptionInfo!.download;
+      final used =
+          profileSubscriptionInfo!.upload + profileSubscriptionInfo!.download;
       return (used / profileSubscriptionInfo!.total).clamp(0.0, 1.0);
     }
     return 0.0;
   }
+
   double _getUsedTraffic() {
     if (profileSubscriptionInfo != null) {
-      return (profileSubscriptionInfo!.upload + profileSubscriptionInfo!.download).toDouble();
+      return (profileSubscriptionInfo!.upload +
+              profileSubscriptionInfo!.download)
+          .toDouble();
     }
     return 0;
   }
+
   double _getTotalTraffic() {
     if (profileSubscriptionInfo != null && profileSubscriptionInfo!.total > 0) {
       return profileSubscriptionInfo!.total.toDouble();
     }
     return userInfo?.transferLimit?.toDouble() ?? 0;
   }
+
   Color _getProgressColor(double progress, ThemeData theme) {
     if (progress >= 0.9) {
       return Colors.red.shade400;
@@ -562,8 +605,9 @@ class SubscriptionUsageCard extends ConsumerWidget {
       return theme.colorScheme.primary;
     }
   }
+
   String _formatDateTime(DateTime dateTime) {
     return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} '
-           '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+        '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }
