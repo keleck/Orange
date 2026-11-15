@@ -243,10 +243,10 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
             vertical: 4,
           ),
           decoration: BoxDecoration(
-            color: color,
+            color: color.withValues(alpha: 0.18),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: color,
+              color: color.withValues(alpha: 0.55),
               width: 1,
             ),
             boxShadow: [

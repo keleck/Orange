@@ -556,7 +556,7 @@ class _InputField extends StatelessWidget {
         decoration: InputDecoration(
           isDense: true,
           filled: true,
-          fillColor: AppColors.surface(context, 0.05),
+          fillColor: AppColors.subtle(context),
           hintText: hint,
           hintStyle: TextStyle(
             fontSize: 13,
@@ -568,9 +568,7 @@ class _InputField extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: AppColors.surface(context, 0.07),
-            ),
+            borderSide: BorderSide(color: AppColors.outline(context)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -662,11 +660,18 @@ class _PickerField extends StatelessWidget {
         height: 46,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: AppColors.surface(context, 0.05),
+          color: AppColors.subtle(context),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.surface(context, 0.07),
-          ),
+          border: Border.all(color: AppColors.outline(context)),
+          boxShadow: AppColors.isDark(context)
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
         child: Row(
           children: [
