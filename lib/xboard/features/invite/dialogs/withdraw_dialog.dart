@@ -47,21 +47,27 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          filter: ImageFilter.blur(
+            sigmaX: AppColors.isDark(context) ? 12 : 0,
+            sigmaY: AppColors.isDark(context) ? 12 : 0,
+          ),
           child: Container(
             constraints: BoxConstraints(
               maxWidth: screenWidth > 600 ? 500 : double.infinity,
               maxHeight: screenHeight * 0.85,
             ),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.blue.withValues(alpha: 0.15),
-                  AppColors.surface(context, 0.08),
-                ],
-              ),
+              gradient: AppColors.isDark(context)
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.blue.withValues(alpha: 0.15),
+                        AppColors.surface(context, 0.08),
+                      ],
+                    )
+                  : null,
+              color: AppColors.isDark(context) ? null : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: AppColors.fg(context).withValues(alpha: 0.2),
@@ -462,14 +468,17 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.blue.withValues(alpha: 0.15),
-                    AppColors.surface(context, 0.08),
-                  ],
-                ),
+                gradient: AppColors.isDark(context)
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.blue.withValues(alpha: 0.15),
+                          AppColors.surface(context, 0.08),
+                        ],
+                      )
+                    : null,
+                color: AppColors.isDark(context) ? null : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: AppColors.fg(context).withValues(alpha: 0.2),
