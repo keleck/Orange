@@ -164,150 +164,156 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       body: Stack(
         children: [
           LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 800) {
-            return Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    color: colorScheme.surface,
-                    child: Stack(
-                      children: [
-                        Image.asset(
-                          'assets/images/login_left_side.png',
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                          width: double.infinity,
-                        ),
-                        Positioned(
-                          left: 48,
-                          bottom: 48,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _appTitle,
-                                style: textTheme.displaySmall?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Let\'s start here!',
-                                style: textTheme.headlineSmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: Container(
-                    color: Colors.white, // Right side background
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: SingleChildScrollView(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 48.0),
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 400),
-                              child: _buildLoginForm(context, isDesktop: true),
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 800) {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: Container(
+                        color: colorScheme.surface,
+                        child: Stack(
+                          children: [
+                            Image.asset(
+                              'assets/images/login_left_side.png',
+                              fit: BoxFit.cover,
+                              height: double.infinity,
+                              width: double.infinity,
                             ),
-                          ),
+                            Positioned(
+                              left: 48,
+                              bottom: 48,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _appTitle,
+                                    style: textTheme.displaySmall?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Let\'s start here!',
+                                    style: textTheme.headlineSmall?.copyWith(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.9),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          top: 24,
-                          right: 24,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const LanguageSelector(),
-                              const SizedBox(width: 16),
-                              _buildInitializationIndicator(initState),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          top: 24,
-                          left: 24,
-                          child: IconButton(
-                            icon: const Icon(Icons.support_agent),
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const CrispSupportPage(),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        color: Colors.white, // Right side background
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: SingleChildScrollView(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 48.0),
+                                child: ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 400),
+                                  child:
+                                      _buildLoginForm(context, isDesktop: true),
                                 ),
-                              );
-                            },
+                              ),
+                            ),
+                            Positioned(
+                              top: 24,
+                              right: 24,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const LanguageSelector(),
+                                  const SizedBox(width: 16),
+                                  _buildInitializationIndicator(initState),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              top: 24,
+                              left: 24,
+                              child: IconButton(
+                                icon: const Icon(Icons.support_agent),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CrispSupportPage(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                // Mobile Layout - 深色模式紫色和海军蓝渐变
+                return Container(
+                  decoration: AppColors.getBackgroundDecoration(),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32.0, vertical: 24.0),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 400),
+                            child: _buildLoginForm(context, isDesktop: false),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            // Mobile Layout - 深色模式紫色和海军蓝渐变
-            return Container(
-              decoration: AppColors.getBackgroundDecoration(),
-              child: Stack(
-                children: [
-                  Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 32.0, vertical: 24.0),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 400),
-                        child: _buildLoginForm(context, isDesktop: false),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: MediaQuery.of(context).padding.top + 16,
-                    left: 16,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.support_agent,
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const CrispSupportPage(),
+                      Positioned(
+                        top: MediaQuery.of(context).padding.top + 16,
+                        left: 16,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.support_agent,
+                            color: Colors.white.withValues(alpha: 0.8),
                           ),
-                        );
-                      },
-                    ),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const CrispSupportPage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        top: MediaQuery.of(context).padding.top + 16,
+                        right: 16,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const LanguageSelector(),
+                            const SizedBox(width: 16),
+                            _buildInitializationIndicator(initState),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Positioned(
-                    top: MediaQuery.of(context).padding.top + 16,
-                    right: 16,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const LanguageSelector(),
-                        const SizedBox(width: 16),
-                        _buildInitializationIndicator(initState),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-        },
-      ),
+                );
+              }
+            },
+          ),
           // Loading overlay when initializing
-          if (initState.isInitializing || (!initState.isReady && initState.status != InitializationStatus.failed))
+          if (initState.isInitializing ||
+              (!initState.isReady &&
+                  initState.status != InitializationStatus.failed))
             Container(
               color: Colors.black.withValues(alpha: 0.5),
               child: Center(
@@ -321,16 +327,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const CircularProgressIndicator(),
                         const SizedBox(height: 24),
                         Text(
-                          '正在加载配置中...',
+                          AppLocalizations.of(context).xboardLoadingConfig,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         if (initState.currentStepDescription != null) ...[
                           const SizedBox(height: 8),
                           Text(
                             initState.currentStepDescription!,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Colors.grey,
+                                ),
                           ),
                         ],
                       ],
@@ -392,7 +401,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
           // Title
           Text(
-            '登录',
+            appLocalizations.xboardLogin,
             style: textTheme.displaySmall?.copyWith(
               color: isDark ? Colors.white : Colors.white,
               fontWeight: FontWeight.bold,
@@ -404,7 +413,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           // Email Input
           Container(
             decoration: BoxDecoration(
-              color: isDark 
+              color: isDark
                   ? Colors.white.withValues(alpha: 0.08)
                   : Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
@@ -422,7 +431,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               decoration: InputDecoration(
                 hintText: 'demo@gmail.com',
                 hintStyle: TextStyle(
-                  color: isDark 
+                  color: isDark
                       ? Colors.white.withValues(alpha: 0.5)
                       : Colors.white.withValues(alpha: 0.5),
                 ),
@@ -449,7 +458,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           // Password Input
           Container(
             decoration: BoxDecoration(
-              color: isDark 
+              color: isDark
                   ? Colors.white.withValues(alpha: 0.08)
                   : Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
@@ -468,7 +477,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               decoration: InputDecoration(
                 hintText: '••••••••',
                 hintStyle: TextStyle(
-                  color: isDark 
+                  color: isDark
                       ? Colors.white.withValues(alpha: 0.5)
                       : Colors.white.withValues(alpha: 0.5),
                 ),
@@ -508,12 +517,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: _rememberPassword 
+                  color: _rememberPassword
                       ? const Color(0xFF5FD68A)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
-                    color: _rememberPassword 
+                    color: _rememberPassword
                         ? const Color(0xFF5FD68A)
                         : Colors.white.withValues(alpha: 0.3),
                     width: 2,
@@ -536,7 +545,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
               const SizedBox(width: 8),
               Text(
-                '记住密码',
+                appLocalizations.xboardRememberPassword,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.white,
                   fontSize: 15,
@@ -552,9 +561,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   );
                 },
                 child: Text(
-                  '忘记密码',
+                  appLocalizations.xboardForgotPassword,
                   style: TextStyle(
-                    color: isDark 
+                    color: isDark
                         ? Colors.white.withValues(alpha: 0.7)
                         : Colors.white.withValues(alpha: 0.7),
                     fontSize: 15,
@@ -603,9 +612,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '还没有账号？',
+                  appLocalizations.xboardNoAccount,
                   style: TextStyle(
-                    color: isDark 
+                    color: isDark
                         ? Colors.white.withValues(alpha: 0.6)
                         : Colors.white.withValues(alpha: 0.6),
                     fontSize: 15,
@@ -616,9 +625,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
-                  child: const Text(
-                    '注册',
-                    style: TextStyle(
+                  child: Text(
+                    appLocalizations.xboardRegister,
+                    style: const TextStyle(
                       color: Color(0xFF5FD68A),
                       fontSize: 15,
                       fontWeight: FontWeight.w600,

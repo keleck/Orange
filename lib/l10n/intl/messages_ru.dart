@@ -1509,5 +1509,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardYearlyPayment": MessageLookupByLibrary.simpleMessage("Ежегодно"),
     "years": MessageLookupByLibrary.simpleMessage("Лет"),
     "zh_CN": MessageLookupByLibrary.simpleMessage("Упрощенный китайский"),
+    "xboardLoadingConfig": MessageLookupByLibrary.simpleMessage("Загрузка конфигурации..."),
+    "xboardNoAccount": MessageLookupByLibrary.simpleMessage("Нет аккаунта?"),
   };
 }

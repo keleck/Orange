@@ -3239,6 +3239,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Loading configuration...`
+  String get xboardLoadingConfig {
+    return Intl.message(
+      'Loading configuration...',
+      name: 'xboardLoadingConfig',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Don't have an account?`
+  String get xboardNoAccount {
+    return Intl.message(
+      "Don't have an account?",
+      name: 'xboardNoAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remember Password`
   String get xboardRememberPassword {
     return Intl.message(

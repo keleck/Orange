@@ -1139,5 +1139,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "xboardYearlyPayment": MessageLookupByLibrary.simpleMessage("年払い"),
     "years": MessageLookupByLibrary.simpleMessage("年"),
     "zh_CN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
+    "xboardLoadingConfig": MessageLookupByLibrary.simpleMessage("設定を読み込み中..."),
+    "xboardNoAccount": MessageLookupByLibrary.simpleMessage("アカウントをお持ちでない方は？"),
   };
 }
