@@ -248,12 +248,6 @@ class AutoLatencyService {
           Timer(const Duration(seconds: 2), () {
             if (_ensureServiceActive() && _isRefValid()) {
               testCurrentGroupNodes(maxNodes: 3);
-              // 首次启动内核可能还没就绪，第一次测速容易超时，补测一次
-              Timer(const Duration(seconds: 4), () {
-                if (_ensureServiceActive() && _isRefValid()) {
-                  testCurrentGroupNodes(maxNodes: 3);
-                }
-              });
             }
           });
         }

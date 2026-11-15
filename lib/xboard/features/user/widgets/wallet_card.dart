@@ -407,10 +407,10 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                   ),
                                   child: Text(
                                     appLocalizations.xboardConfirmTopup,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.fg(context),
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
