@@ -318,7 +318,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
       height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: AppColors.surface(context, 0.05),
+        color: AppColors.subtle(context),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(

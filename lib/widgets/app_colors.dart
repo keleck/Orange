@@ -63,6 +63,11 @@ class AppColors {
           ? Colors.white.withValues(alpha: darkAlpha)
           : Colors.white;
 
+  /// 卡片内的次级块（图标块 / 小标签底）：夜间半透明白，白天浅灰
+  static Color subtle(BuildContext context) => isDark(context)
+      ? Colors.white.withValues(alpha: 0.06)
+      : const Color(0xFFF4F6FA);
+
   /// 分割线：夜间半透明白，白天浅灰
   static Color divider(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.10)
