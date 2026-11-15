@@ -32,7 +32,7 @@ class SettingsCard extends StatelessWidget {
     final content = Container(
       padding: EdgeInsets.all(dense ? 14 : 16),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.035),
+        color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: AppColors.fg(context).withValues(alpha: 0.07),
@@ -121,7 +121,7 @@ class SettingsInfoBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.05),
+        color: AppColors.surface(context, 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppColors.fg(context).withValues(alpha: 0.06),

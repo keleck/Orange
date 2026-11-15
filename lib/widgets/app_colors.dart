@@ -57,6 +57,12 @@ class AppColors {
     ];
   }
 
+  /// 卡片 / 弹层背景：深色下半透明白，浅色下纯白（不做透明叠加）
+  static Color surface(BuildContext context, [double darkAlpha = 0.06]) =>
+      isDark(context)
+          ? Colors.white.withValues(alpha: darkAlpha)
+          : Colors.white;
+
   /// 弹层 / 面板底色（跟随当前主题）
   static Color panel(BuildContext context) =>
       isDark(context) ? const Color(0xFF1A1535) : Colors.white;

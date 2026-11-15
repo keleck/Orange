@@ -143,7 +143,7 @@ class TrafficLogPage extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.035),
+        color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppColors.fg(context).withValues(alpha: 0.06),

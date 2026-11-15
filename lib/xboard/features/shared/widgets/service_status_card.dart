@@ -242,7 +242,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
         decoration: BoxDecoration(
-          color: AppColors.fg(context).withValues(alpha: 0.06),
+          color: AppColors.surface(context, 0.06),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: AppColors.fg(context).withValues(alpha: 0.12),
@@ -320,7 +320,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
       height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.05),
+        color: AppColors.surface(context, 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -499,7 +499,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.fg(context).withValues(alpha: 0.18),
+              color: AppColors.surface(context, 0.18),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -585,7 +585,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.05),
+        color: AppColors.surface(context, 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -812,7 +812,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.fg(context).withValues(alpha: 0.18),
+              color: AppColors.surface(context, 0.18),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -933,7 +933,7 @@ class ServiceIconBadge extends StatelessWidget {
             height: size,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: AppColors.fg(context).withValues(alpha: 0.08),
+              color: AppColors.surface(context, 0.08),
               borderRadius: BorderRadius.circular(radius),
             ),
             child: SvgPicture.asset(

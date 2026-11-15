@@ -81,7 +81,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
                   decoration: BoxDecoration(
-                    color: AppColors.fg(context).withValues(alpha: 0.08),
+                    color: AppColors.surface(context, 0.08),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),

@@ -491,7 +491,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
           decoration: BoxDecoration(
-            color: AppColors.fg(context).withValues(alpha: 0.08),
+            color: AppColors.surface(context, 0.08),
             borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
@@ -693,7 +693,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                         height: 32,
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: AppColors.fg(context).withValues(alpha: 0.1),
+                          color: AppColors.surface(context, 0.1),
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: AppColors.fg(context).withValues(alpha: 0.2),
@@ -972,7 +972,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.fg(context).withValues(alpha: 0.1),
+              color: AppColors.surface(context, 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isExpiringSoon

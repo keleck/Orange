@@ -58,7 +58,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 // 垂直列表样式的快捷入口 - 包装在一个容器中
                 Container(
                   decoration: BoxDecoration(
-                    color: AppColors.fg(context).withValues(alpha: 0.035),
+                    color: AppColors.surface(context, 0.035),
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(
                       color: AppColors.fg(context).withValues(alpha: 0.07),
@@ -153,7 +153,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 const SizedBox(height: 20),
                 Container(
                   decoration: BoxDecoration(
-                    color: AppColors.fg(context).withValues(alpha: 0.035),
+                    color: AppColors.surface(context, 0.035),
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(
                       color: AppColors.fg(context).withValues(alpha: 0.07),

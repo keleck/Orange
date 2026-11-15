@@ -709,7 +709,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                     Container(
                       padding: const EdgeInsets.all(13),
                       decoration: BoxDecoration(
-                        color: AppColors.fg(context).withValues(alpha: 0.04),
+                        color: AppColors.surface(context, 0.04),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: AppColors.fg(context).withValues(alpha: 0.06),

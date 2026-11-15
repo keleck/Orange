@@ -249,7 +249,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: AppColors.fg(context).withValues(alpha: 0.06),
+                color: AppColors.surface(context, 0.06),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: AppColors.fg(context).withValues(alpha: 0.08),
@@ -391,7 +391,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: AppColors.fg(context).withValues(alpha: 0.10),
+                    color: AppColors.surface(context, 0.10),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: AppColors.fg(context).withValues(alpha: 0.30),
@@ -426,7 +426,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.fromLTRB(13, 11, 6, 11),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.035),
+        color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: AppColors.fg(context).withValues(alpha: 0.06),
@@ -519,7 +519,7 @@ class _Panel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.035),
+        color: AppColors.surface(context, 0.035),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: AppColors.fg(context).withValues(alpha: 0.07),
@@ -662,7 +662,7 @@ class _PickerField extends StatelessWidget {
         height: 46,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: AppColors.fg(context).withValues(alpha: 0.05),
+          color: AppColors.surface(context, 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: AppColors.fg(context).withValues(alpha: 0.07),

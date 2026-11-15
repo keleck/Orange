@@ -140,7 +140,7 @@ class PlanHeaderCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.fg(context).withValues(alpha: 0.15),
+        color: AppColors.surface(context, 0.15),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
