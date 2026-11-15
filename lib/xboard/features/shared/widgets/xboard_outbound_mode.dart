@@ -144,9 +144,7 @@ class XBoardOutboundMode extends StatelessWidget {
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       color: mode == Mode.rule
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary
+                                          ? Colors.white
                                           : Theme.of(context)
                                               .colorScheme
                                               .onSurfaceVariant,
@@ -167,9 +165,7 @@ class XBoardOutboundMode extends StatelessWidget {
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       color: mode == Mode.global
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary
+                                          ? Colors.white
                                           : Theme.of(context)
                                               .colorScheme
                                               .onSurfaceVariant,
