@@ -919,7 +919,8 @@ class ServiceIconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dot = size / 4.5;
+    // 白天底色更亮，圆点适当放大，避免白描边吃掉视觉尺寸
+    final dot = size / (AppColors.isDark(context) ? 4.5 : 3.6);
     return SizedBox(
       width: size,
       height: size,
@@ -955,7 +956,9 @@ class ServiceIconBadge extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: dotColor,
                   border: Border.all(
-                      color: AppColors.card(context, 0.06), width: 1.5),
+                    color: AppColors.card(context, 0.06),
+                    width: AppColors.isDark(context) ? 1.5 : 1.2,
+                  ),
                 ),
               ),
             ),

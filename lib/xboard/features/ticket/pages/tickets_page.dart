@@ -561,10 +561,10 @@ class _CreateTicketButton extends StatelessWidget {
             SizedBox(width: 6),
             Text(
               appLocalizations.xboardNewTicket,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.fg(context),
+                color: Colors.white,
                 decoration: TextDecoration.none,
               ),
             ),
