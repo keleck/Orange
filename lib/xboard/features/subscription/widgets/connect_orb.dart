@@ -39,9 +39,9 @@ class ConnectRingPainter extends CustomPainter {
     this.discSize = kConnectDiscSize,
   });
 
-  static const Color _mint = Color(0xFF7FE3C6);
-  static const Color _teal = Color(0xFF1E7F66);
-  static const Color _deep = Color(0xFF0E4B3E);
+  static const Color _mint = Color(0xFF9BE7C4);
+  static const Color _teal = Color(0xFF3EA34B);
+  static const Color _deep = Color(0xFF2E7D32);
   static const Color _greySolid = Color(0xFF5A636E);
   static const Color _greyMid = Color(0xFF454E58);
   static const Color _greyDeep = Color(0xFF333A42);
@@ -192,7 +192,7 @@ class ConnectActiveDisc extends StatelessWidget {
         gradient: RadialGradient(
           center: Alignment(-0.3, -0.35),
           radius: 1.0,
-          colors: [Color(0xFF00855A), Color(0xFF006945), Color(0xFF004E33)],
+          colors: [Color(0xFF4CAF50), Color(0xFF3EA34B), Color(0xFF348C40)],
           stops: [0.0, 0.62, 1.0],
         ),
       ),
@@ -206,7 +206,7 @@ class ConnectActiveDisc extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppColors.fg(context).withValues(alpha: 0.85),
+                    color: Colors.white.withValues(alpha: 0.9),
                     width: 1.4,
                   ),
                 ),
@@ -217,7 +217,7 @@ class ConnectActiveDisc extends StatelessWidget {
             child: Icon(
               Icons.power_settings_new_rounded,
               size: size * 0.42,
-              color: AppColors.fg(context).withValues(alpha: 0.95),
+              color: Colors.white,
             ),
           ),
         ],
