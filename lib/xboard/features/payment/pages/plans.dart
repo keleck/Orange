@@ -544,7 +544,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
                                 child: Center(child: filterWidget),
                               ),
                               if (filteredPlans.isEmpty)
-                                const Center(
+                                Center(
                                     child: Padding(
                                   padding: EdgeInsets.all(32.0),
                                   child: Text(AppLocalizations.of(context)
@@ -577,7 +577,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
                             ),
                             Expanded(
                               child: filteredPlans.isEmpty
-                                  ? const Center(
+                                  ? Center(
                                       child: Text(AppLocalizations.of(context)
                                           .xboardNoPlansInCategory))
                                   : ListView.builder(

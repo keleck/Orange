@@ -1410,5 +1410,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardInviteFriendsEarn":
             MessageLookupByLibrary.simpleMessage("邀请好友获得佣金"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("重新检测"),
+        "myOrders": MessageLookupByLibrary.simpleMessage("我的订单"),
       };
 }

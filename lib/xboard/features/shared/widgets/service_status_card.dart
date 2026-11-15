@@ -208,7 +208,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
         color: _amber,
       );
     }
-    return const _Verdict(
+    return _Verdict(
         label: AppLocalizations.of(context).xboardAllNormal, color: _green);
   }
 

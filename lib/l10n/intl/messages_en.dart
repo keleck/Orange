@@ -1960,5 +1960,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardInviteFriendsEarn": MessageLookupByLibrary.simpleMessage(
             "Invite friends and earn commission"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("Recheck"),
+        "myOrders": MessageLookupByLibrary.simpleMessage("My Orders"),
       };
 }

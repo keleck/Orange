@@ -4169,6 +4169,16 @@ class AppLocalizations {
     );
   }
 
+  /// `My Orders`
+  String get myOrders {
+    return Intl.message(
+      'My Orders',
+      name: 'myOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remember Password`
   String get xboardRememberPassword {
     return Intl.message(

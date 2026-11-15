@@ -228,7 +228,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
       if (!await launchUrl(url)) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
                 content:
                     Text(AppLocalizations.of(context).xboardCannotOpenBrowser)),
           );

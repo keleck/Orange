@@ -36,8 +36,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
       _replyController.clear();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(AppLocalizations.of(context).xboardReplySent)),
+          SnackBar(content: Text(AppLocalizations.of(context).xboardReplySent)),
         );
       }
     } catch (e) {
@@ -56,7 +55,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
           .closeTicket(widget.ticketId);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
               content: Text(AppLocalizations.of(context).xboardTicketClosed)),
         );
         // Refresh the ticket detail
@@ -212,7 +211,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
                           Expanded(
                             child: TextField(
                               controller: _replyController,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: AppLocalizations.of(context)
                                     .xboardReplyHint,
                                 border: OutlineInputBorder(),

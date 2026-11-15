@@ -431,7 +431,7 @@ class _TicketCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     if (ticket.level == 2)
-                      const _MiniTag(
+                      _MiniTag(
                         label: AppLocalizations.of(context).xboardHighPriority,
                         color: Color(0xFFFF6B6B),
                       ),

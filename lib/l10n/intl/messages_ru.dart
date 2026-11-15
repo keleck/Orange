@@ -1757,5 +1757,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardInviteFriendsEarn": MessageLookupByLibrary.simpleMessage(
             "Приглашайте друзей и получайте комиссию"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("Перепроверить"),
+        "myOrders": MessageLookupByLibrary.simpleMessage("Мои заказы"),
       };
 }

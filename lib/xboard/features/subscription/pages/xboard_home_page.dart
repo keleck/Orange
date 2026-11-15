@@ -1967,7 +1967,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     // 显示加载提示
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
               SizedBox(
@@ -1998,14 +1998,14 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(AppLocalizations.of(context).xboardDataCycleReset),
             backgroundColor: Colors.green,
           ),
         );
       } else if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content:
                 Text(AppLocalizations.of(context).xboardOperationFailedRetry),
             backgroundColor: Colors.red,

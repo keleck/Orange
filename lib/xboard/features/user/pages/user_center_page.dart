@@ -716,7 +716,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     // 显示加载提示
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
               SizedBox(

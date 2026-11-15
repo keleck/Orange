@@ -1350,5 +1350,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardInviteFriendsEarn":
             MessageLookupByLibrary.simpleMessage("友達を招待して報酬を得る"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("再検査"),
+        "myOrders": MessageLookupByLibrary.simpleMessage("マイ注文"),
       };
 }

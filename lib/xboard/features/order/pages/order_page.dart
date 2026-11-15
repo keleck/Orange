@@ -33,7 +33,7 @@ class OrderPage extends ConsumerWidget {
             child: ordersAsync.when(
               data: (orders) {
                 if (orders.isEmpty) {
-                  return const Center(
+                  return Center(
                       child: Text(AppLocalizations.of(context).xboardNoOrders));
                 }
                 return RefreshIndicator(
@@ -369,7 +369,7 @@ class _OrderCard extends ConsumerWidget {
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: value));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                       content: Text(AppLocalizations.of(context).xboardCopied)),
                 );
               },
@@ -406,13 +406,13 @@ class _OrderCard extends ConsumerWidget {
       if (context.mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
                 content:
                     Text(AppLocalizations.of(context).xboardOrderCancelled)),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
                 content:
                     Text(AppLocalizations.of(context).xboardCancelFailedRetry)),
           );
