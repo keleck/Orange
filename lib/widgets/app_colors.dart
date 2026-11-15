@@ -63,6 +63,16 @@ class AppColors {
           ? Colors.white.withValues(alpha: darkAlpha)
           : Colors.white;
 
+  /// 分割线：夜间半透明白，白天浅灰
+  static Color divider(BuildContext context) => isDark(context)
+      ? Colors.white.withValues(alpha: 0.10)
+      : const Color(0xFFE3E7EE);
+
+  /// 细描边：夜间半透明白，白天浅灰
+  static Color outline(BuildContext context) => isDark(context)
+      ? Colors.white.withValues(alpha: 0.14)
+      : const Color(0xFFDCE2EA);
+
   /// 弹层 / 面板底色（跟随当前主题）
   static Color panel(BuildContext context) =>
       isDark(context) ? const Color(0xFF1A1535) : Colors.white;

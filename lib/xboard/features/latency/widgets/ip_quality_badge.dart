@@ -125,8 +125,13 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
             if (usage != IpUsageType.unknown) ...[
               _pill(
                 text: usage.label,
-                background: AppColors.surface(context, 0.10),
-                foreground: AppColors.fg(context).withValues(alpha: 0.75),
+                background: AppColors.isDark(context)
+                    ? Colors.white.withValues(alpha: 0.10)
+                    : const Color(0xFFF1F3F7),
+                foreground: AppColors.isDark(context)
+                    ? Colors.white.withValues(alpha: 0.75)
+                    : const Color(0xFF5A6270),
+                borderColor: AppColors.outline(context),
               ),
               const SizedBox(width: 6),
             ],
@@ -217,12 +222,16 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
     required String text,
     required Color background,
     required Color foreground,
+    Color? borderColor,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(999),
+        border: borderColor == null
+            ? null
+            : Border.all(color: borderColor, width: 0.8),
       ),
       child: Text(
         text,

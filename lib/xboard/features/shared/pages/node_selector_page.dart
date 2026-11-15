@@ -278,7 +278,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.fg(context).withValues(alpha: 0.2),
+              color: AppColors.outline(context),
               width: 1.5,
             ),
             boxShadow: [
@@ -300,7 +300,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             itemCount: filteredProxies.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,
-              color: AppColors.surface(context, 0.1),
+              color: AppColors.divider(context),
             ),
             itemBuilder: (context, index) {
               final proxy = filteredProxies[index];
