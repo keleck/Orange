@@ -456,16 +456,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color.alphaBlend(
-                  theme.colorScheme.primary.withValues(alpha: 0.10),
-                  AppColors.gradientColor1,
-                ),
-                Color.alphaBlend(
-                  theme.colorScheme.primary.withValues(alpha: 0.03),
-                  AppColors.gradientColor2,
-                ),
-              ],
+              colors: AppColors.cardGradientColors(context,
+                  accent: theme.colorScheme.primary),
             ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(

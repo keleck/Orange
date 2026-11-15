@@ -41,6 +41,26 @@ class AppColors {
   static Color card(BuildContext context, [double alpha = 0.1]) =>
       isDark(context) ? Colors.white.withValues(alpha: alpha) : Colors.white;
 
+  /// 卡片渐变（跟随当前主题）：深色为深紫/海军蓝，浅色为白色/淡蓝
+  static List<Color> cardGradientColors(BuildContext context, {Color? accent}) {
+    final primary = accent ?? Theme.of(context).colorScheme.primary;
+    if (isDark(context)) {
+      return [
+        Color.alphaBlend(primary.withValues(alpha: 0.12), gradientColor1),
+        Color.alphaBlend(primary.withValues(alpha: 0.04), gradientColor2),
+      ];
+    }
+    return [
+      Colors.white,
+      Color.alphaBlend(
+          primary.withValues(alpha: 0.05), const Color(0xFFF4F8FF)),
+    ];
+  }
+
+  /// 弹层 / 面板底色（跟随当前主题）
+  static Color panel(BuildContext context) =>
+      isDark(context) ? const Color(0xFF1A1535) : Colors.white;
+
   /// 获取背景渐变（跟随当前主题）
   static LinearGradient backgroundGradient(BuildContext context) {
     if (isDark(context)) {

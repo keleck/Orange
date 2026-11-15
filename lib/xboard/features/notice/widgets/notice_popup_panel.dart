@@ -539,15 +539,15 @@ LinearGradient noticePanelGradient(BuildContext context) {
     colors: [
       Color.alphaBlend(
         primary.withValues(alpha: 0.10),
-        AppColors.gradientColor1,
+        (AppColors.isDark(context) ? AppColors.gradientColor1 : Colors.white),
       ),
       Color.alphaBlend(
         primary.withValues(alpha: 0.05),
-        AppColors.gradientColor2,
+        (AppColors.isDark(context) ? AppColors.gradientColor2 : Colors.white),
       ),
       Color.alphaBlend(
         primary.withValues(alpha: 0.08),
-        AppColors.gradientColor4,
+        (AppColors.isDark(context) ? AppColors.gradientColor4 : Colors.white),
       ),
     ],
   );

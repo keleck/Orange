@@ -295,16 +295,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color.alphaBlend(
-              primary.withValues(alpha: 0.12),
-              AppColors.gradientColor1,
-            ),
-            Color.alphaBlend(
-              primary.withValues(alpha: 0.04),
-              AppColors.gradientColor2,
-            ),
-          ],
+          colors: AppColors.cardGradientColors(context, accent: primary),
         ),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(

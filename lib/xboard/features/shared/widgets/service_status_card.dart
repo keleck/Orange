@@ -12,7 +12,7 @@ import 'package:fl_clash/widgets/app_colors.dart';
 const _amber = Color(0xFFF59E0B);
 const _green = Color(0xFF22C55E);
 const _red = Color(0xFFEF4444);
-const _cardSurface = Color(0xFF141226);
+
 const _sheetSurface = Color(0xFF0F0E1D);
 
 /// 卡片上展示的数量
@@ -488,9 +488,9 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
     final media = MediaQuery.of(context);
     return Container(
       height: media.size.height * 0.85,
-      decoration: const BoxDecoration(
-        color: _sheetSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: AppColors.panel(context),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
@@ -956,7 +956,8 @@ class ServiceIconBadge extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: dotColor,
-                  border: Border.all(color: _cardSurface, width: 1.5),
+                  border: Border.all(
+                      color: AppColors.card(context, 0.06), width: 1.5),
                 ),
               ),
             ),
