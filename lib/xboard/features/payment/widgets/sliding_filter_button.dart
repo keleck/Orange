@@ -77,7 +77,7 @@ class _SlidingFilterButtonState extends State<SlidingFilterButton>
         ),
         borderRadius: BorderRadius.circular(50),
         border: Border.all(
-          color: AppColors.fg(context).withValues(alpha: 0.15),
+          color: AppColors.surface(context, 0.15),
           width: 1.5,
         ),
         boxShadow: [

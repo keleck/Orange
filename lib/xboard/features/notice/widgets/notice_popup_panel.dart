@@ -777,7 +777,7 @@ class _NoticeDialogButton extends StatelessWidget {
           border: Border.all(
             color: filled
                 ? AppColors.surface(context, 0.12)
-                : AppColors.fg(context).withValues(alpha: 0.14),
+                : AppColors.surface(context, 0.14),
           ),
         ),
         child: Text(

@@ -261,7 +261,10 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: ImageFilter.blur(
+          sigmaX: AppColors.isDark(context) ? 10 : 0,
+          sigmaY: AppColors.isDark(context) ? 10 : 0,
+        ),
         child: Container(
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           decoration: BoxDecoration(
@@ -269,7 +272,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.fg(context).withValues(alpha: 0.15),
+                AppColors.surface(context, 0.15),
                 AppColors.surface(context, 0.05),
               ],
             ),
@@ -280,9 +283,10 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: Colors.black
+                    .withValues(alpha: AppColors.isDark(context) ? 0.2 : 0.06),
+                blurRadius: AppColors.isDark(context) ? 20 : 12,
+                offset: const Offset(0, 3),
               ),
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.1),
@@ -396,7 +400,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.fg(context).withValues(alpha: 0.15),
+                      AppColors.surface(context, 0.15),
                       AppColors.surface(context, 0.08),
                     ],
                   ),

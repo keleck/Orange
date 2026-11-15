@@ -151,7 +151,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.fg(context).withValues(alpha: 0.15),
+                AppColors.surface(context, 0.15),
                 AppColors.surface(context, 0.05),
               ],
             ),

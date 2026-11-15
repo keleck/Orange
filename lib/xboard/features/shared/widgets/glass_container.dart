@@ -56,6 +56,16 @@ class GlassContainer extends StatelessWidget {
                   ],
             )
           : null,
+      // 白天给白卡片一层很淡的灰阴影，拉开层次
+      boxShadow: isDark
+          ? null
+          : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
     );
 
     final inner = Container(

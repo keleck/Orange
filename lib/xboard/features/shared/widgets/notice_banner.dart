@@ -125,7 +125,7 @@ class _NoticeBannerState extends ConsumerState<NoticeBanner>
                       AppColors.gradientColor3.withValues(alpha: 0.6),
                     ]
                   : [
-                      AppColors.fg(context).withValues(alpha: 0.15),
+                      AppColors.surface(context, 0.15),
                       Colors.blue.withValues(alpha: 0.08),
                     ],
             ),

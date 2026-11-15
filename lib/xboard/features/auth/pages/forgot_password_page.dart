@@ -182,14 +182,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -285,14 +285,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -342,14 +342,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -409,14 +409,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: AppColors.fg(context).withValues(alpha: 0.15),
+                    color: AppColors.surface(context, 0.15),
                     width: 1.5,
                   ),
                 ),
