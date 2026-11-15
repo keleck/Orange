@@ -6,6 +6,7 @@ import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 class TicketDetailPage extends ConsumerStatefulWidget {
   final int ticketId;
@@ -491,14 +492,14 @@ _ChipMeta _statusMeta(int status, ThemeData theme) {
       );
     case 1:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardClosed,
+        label: appLocalizations.xboardClosed,
         color: theme.colorScheme.outline,
         background: theme.colorScheme.outline.withValues(alpha: 0.12),
         icon: Icons.check_circle,
       );
     default:
       return _ChipMeta(
-        label: AppLocalizations.of(context).unknown,
+        label: appLocalizations.unknown,
         color: theme.colorScheme.primary,
         background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
@@ -510,28 +511,28 @@ _ChipMeta _levelMeta(int level, ThemeData theme) {
   switch (level) {
     case 0:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardLowPriority,
+        label: appLocalizations.xboardLowPriority,
         color: Colors.blueGrey.shade600,
         background: Colors.blueGrey.withValues(alpha: 0.12),
         icon: Icons.low_priority,
       );
     case 1:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardMediumPriority,
+        label: appLocalizations.xboardMediumPriority,
         color: Colors.orange.shade700,
         background: Colors.orange.withValues(alpha: 0.12),
         icon: Icons.trending_up,
       );
     case 2:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardHighPriority,
+        label: appLocalizations.xboardHighPriority,
         color: Colors.red.shade700,
         background: Colors.red.withValues(alpha: 0.12),
         icon: Icons.priority_high,
       );
     default:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardUnknownPriority,
+        label: appLocalizations.xboardUnknownPriority,
         color: theme.colorScheme.primary,
         background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
@@ -543,21 +544,21 @@ _ChipMeta _replyStatusMeta(int replyStatus, ThemeData theme) {
   switch (replyStatus) {
     case 0:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardReplied,
+        label: appLocalizations.xboardReplied,
         color: Colors.green.shade700,
         background: Colors.green.withValues(alpha: 0.12),
         icon: Icons.mark_chat_read,
       );
     case 1:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardAwaitingReply,
+        label: appLocalizations.xboardAwaitingReply,
         color: Colors.amber.shade800,
         background: Colors.amber.withValues(alpha: 0.12),
         icon: Icons.mark_chat_unread,
       );
     default:
       return _ChipMeta(
-        label: AppLocalizations.of(context).xboardUnknownReplyStatus,
+        label: appLocalizations.xboardUnknownReplyStatus,
         color: theme.colorScheme.primary,
         background: theme.colorScheme.primary.withValues(alpha: 0.12),
         icon: Icons.help_outline,
