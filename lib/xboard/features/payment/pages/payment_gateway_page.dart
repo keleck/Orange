@@ -710,7 +710,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                       AppLocalizations.of(context).xboardRetry),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue,
-                                    foregroundColor: AppColors.fg(context),
+                                    foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
                                   ),
@@ -725,7 +725,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                       AppLocalizations.of(context).xboardBack),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.grey,
-                                    foregroundColor: AppColors.fg(context),
+                                    foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
                                   ),

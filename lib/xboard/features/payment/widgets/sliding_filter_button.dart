@@ -185,9 +185,10 @@ class _SlidingFilterButtonState extends State<SlidingFilterButton>
                         final distance = (_slideAnimation.value - index).abs();
                         // 根据距离计算透明度和颜色
                         final opacity = (1 - (distance * 0.3)).clamp(0.0, 1.0);
+                        // 选中项落在蓝色滑块上，用白字
                         final textColor = Color.lerp(
                           AppColors.fg(context).withValues(alpha: 0.6),
-                          AppColors.fg(context),
+                          isSelected ? Colors.white : AppColors.fg(context),
                           opacity,
                         )!;
 

@@ -223,7 +223,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             onPressed: _isLoading ? null : _sendVerificationCode,
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF5FD68A),
-              foregroundColor: AppColors.fg(context),
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
@@ -461,7 +461,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             onPressed: _isLoading ? null : _resetPassword,
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF5FD68A),
-              foregroundColor: AppColors.fg(context),
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),

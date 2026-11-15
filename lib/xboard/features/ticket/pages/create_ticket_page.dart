@@ -300,14 +300,13 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                             ? SizedBox(
                                 height: 20,
                                 width: 20,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: AppColors.fg(context)),
+                                child: const CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white),
                               )
                             : Text(
                                 '提交',
-                                style: TextStyle(
-                                  color: AppColors.fg(context),
+                                style: const TextStyle(
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
                                 ),

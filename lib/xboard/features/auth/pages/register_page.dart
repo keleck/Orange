@@ -686,7 +686,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         : _sendEmailCode,
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.surface(context, 0.15),
-                      foregroundColor: AppColors.fg(context),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -765,7 +765,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               onPressed: _isRegistering ? null : _register,
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFF5FD68A),
-                foregroundColor: AppColors.fg(context),
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),

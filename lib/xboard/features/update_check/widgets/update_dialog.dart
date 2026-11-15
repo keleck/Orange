@@ -130,7 +130,7 @@ class UpdateDialog extends ConsumerWidget {
           style: state.forceUpdate
               ? ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  foregroundColor: AppColors.fg(context),
+                  foregroundColor: Colors.white,
                 )
               : null,
         ),

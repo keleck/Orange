@@ -932,7 +932,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     child: FilledButton(
                       style: FilledButton.styleFrom(
                         backgroundColor: Colors.blue.shade600,
-                        foregroundColor: AppColors.fg(context),
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         textStyle: const TextStyle(fontWeight: FontWeight.w700),
                       ),

@@ -583,7 +583,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   initState.isReady && !userState.isLoading ? _login : null,
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFF5FD68A),
-                foregroundColor: AppColors.fg(context),
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),

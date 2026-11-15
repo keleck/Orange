@@ -214,8 +214,8 @@ class _PlansViewState extends ConsumerState<PlansView> {
                           ),
                           child: Text(
                             _getLowestPrice(plan),
-                            style: TextStyle(
-                              color: AppColors.fg(context),
+                            style: const TextStyle(
+                              color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),

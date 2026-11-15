@@ -122,7 +122,7 @@ class _PaymentMethodSelectorDialogState
               : () => Navigator.of(context).pop(_selectedMethod),
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: AppColors.fg(context),
+            foregroundColor: Colors.white,
           ),
           child: Text(AppLocalizations.of(context).confirm),
         ),

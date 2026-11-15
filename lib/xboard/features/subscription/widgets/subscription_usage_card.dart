@@ -237,7 +237,7 @@ class SubscriptionUsageCard extends ConsumerWidget {
                   },
                   style: FilledButton.styleFrom(
                     backgroundColor: statusColor,
-                    foregroundColor: AppColors.fg(context),
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   icon: const Icon(Icons.shopping_bag, size: 18),
@@ -453,7 +453,7 @@ class SubscriptionUsageCard extends ConsumerWidget {
                     },
                     style: FilledButton.styleFrom(
                       backgroundColor: Colors.orange.shade600,
-                      foregroundColor: AppColors.fg(context),
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     icon: const Icon(Icons.shopping_bag, size: 18),

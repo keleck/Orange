@@ -821,7 +821,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.primary
                                   .withValues(alpha: 0.15),
-                              foregroundColor: AppColors.fg(context),
+                              foregroundColor: Colors.white,
                               elevation: 0,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(

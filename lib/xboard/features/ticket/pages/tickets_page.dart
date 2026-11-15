@@ -557,7 +557,7 @@ class _CreateTicketButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.add_rounded, size: 18, color: AppColors.fg(context)),
+            const Icon(Icons.add_rounded, size: 18, color: Colors.white),
             SizedBox(width: 6),
             Text(
               appLocalizations.xboardNewTicket,

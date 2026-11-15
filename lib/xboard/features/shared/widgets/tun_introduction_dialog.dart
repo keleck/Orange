@@ -146,7 +146,7 @@ class TunIntroductionDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(true),
           style: FilledButton.styleFrom(
             backgroundColor: Colors.green.shade600,
-            foregroundColor: AppColors.fg(context),
+            foregroundColor: Colors.white,
           ),
           child: Text(AppLocalizations.of(context).xboardEnableTun),
         ),

@@ -213,7 +213,7 @@ class _ValidateButton extends StatelessWidget {
               },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.orange.shade600,
-          foregroundColor: AppColors.fg(context),
+          foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

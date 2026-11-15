@@ -292,7 +292,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
           },
           style: FilledButton.styleFrom(
             backgroundColor: _getPrimaryButtonColor(),
-            foregroundColor: AppColors.fg(context),
+            foregroundColor: Colors.white,
           ),
           child: Text(_getPrimaryButtonText(context)),
         ),

@@ -344,7 +344,7 @@ class _PaymentWaitingOverlayState extends ConsumerState<PaymentWaitingOverlay>
                     onPressed: widget.onPaymentSuccess,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      foregroundColor: AppColors.fg(context),
+                      foregroundColor: Colors.white,
                     ),
                     child: Text(AppLocalizations.of(context).xboardConfirm),
                   ),

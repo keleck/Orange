@@ -735,7 +735,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
                           paymentState.isLoading ? null : _proceedToPurchase,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue.shade600,
-                        foregroundColor: AppColors.fg(context),
+                        foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),

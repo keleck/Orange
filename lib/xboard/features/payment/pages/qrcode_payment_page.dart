@@ -438,7 +438,7 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                             Text(AppLocalizations.of(context).xboardCopyQrCode),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.purple,
-                          foregroundColor: AppColors.fg(context),
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
@@ -463,7 +463,7 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                         label: Text(_isCheckingPayment ? '检查中...' : '检查状态'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
-                          foregroundColor: AppColors.fg(context),
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
