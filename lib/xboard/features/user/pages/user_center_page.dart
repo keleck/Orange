@@ -69,6 +69,14 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   child: Column(
                     children: [
                       _ActionTile(
+                        icon: Icons.palette_rounded,
+                        title: appLocalizations.themeMode,
+                        tone: _TileTone.neutral,
+                        color: AppIconColors.purple,
+                        trailing: const _ThemeModeToggle(),
+                        onTap: () {},
+                      ),
+                      _ActionTile(
                         icon: Icons.people,
                         title: AppLocalizations.of(context).xboardInviteFriends,
                         subtitle: AppLocalizations.of(context)
@@ -1057,6 +1065,7 @@ class _ActionTile extends StatelessWidget {
   final bool compact;
   final bool danger;
   final Color color;
+  final Widget? trailing;
 
   const _ActionTile({
     required this.icon,
@@ -1067,6 +1076,7 @@ class _ActionTile extends StatelessWidget {
     this.compact = false,
     this.danger = false,
     this.color = AppIconColors.blue,
+    this.trailing,
   });
 
   @override
@@ -1129,8 +1139,11 @@ class _ActionTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right,
-                  color: palette.textColor.withOpacity(0.5), size: 20),
+              if (trailing != null)
+                trailing!
+              else
+                Icon(Icons.chevron_right,
+                    color: palette.textColor.withOpacity(0.5), size: 20),
             ],
           ),
         ),
@@ -1200,4 +1213,73 @@ _Palette _palette(ThemeData theme, _TileTone tone, {bool danger = false}) {
     iconBackground: accent.withValues(alpha: 0.12),
     iconColor: accent,
   );
+}
+
+/// 主题模式三段切换（跟随系统 / 白天 / 夜晚）
+class _ThemeModeToggle extends ConsumerWidget {
+  const _ThemeModeToggle();
+
+  static const _items = <(ThemeMode, IconData)>[
+    (ThemeMode.system, Icons.brightness_auto_rounded),
+    (ThemeMode.light, Icons.light_mode_outlined),
+    (ThemeMode.dark, Icons.dark_mode_outlined),
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(themeSettingProvider.select((s) => s.themeMode));
+    final isDark = AppColors.isDark(context);
+    final trackColor =
+        isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFEFF1F5);
+    final selectedBg =
+        isDark ? Colors.white.withValues(alpha: 0.18) : Colors.white;
+    final activeColor = isDark ? Colors.white : const Color(0xFF1B1B1F);
+    final inactiveColor =
+        isDark ? Colors.white.withValues(alpha: 0.45) : const Color(0xFF9AA0A6);
+
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: trackColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final item in _items)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                ref.read(themeSettingProvider.notifier).updateState(
+                      (state) => state.copyWith(themeMode: item.$1),
+                    );
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                decoration: BoxDecoration(
+                  color: mode == item.$1 ? selectedBg : Colors.transparent,
+                  borderRadius: BorderRadius.circular(999),
+                  boxShadow: mode == item.$1 && !isDark
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 6,
+                            offset: const Offset(0, 1),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Icon(
+                  item.$2,
+                  size: 16,
+                  color: mode == item.$1 ? activeColor : inactiveColor,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
