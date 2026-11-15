@@ -5339,6 +5339,276 @@ class AppLocalizations {
     );
   }
 
+  /// `Domain suffix`
+  String get xboardDomainSuffix {
+    return Intl.message(
+      'Domain suffix',
+      name: 'xboardDomainSuffix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exact domain`
+  String get xboardExactDomain {
+    return Intl.message(
+      'Exact domain',
+      name: 'xboardExactDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Domain keyword`
+  String get xboardDomainKeyword {
+    return Intl.message(
+      'Domain keyword',
+      name: 'xboardDomainKeyword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IPv4 CIDR`
+  String get xboardIpv4Cidr {
+    return Intl.message(
+      'IPv4 CIDR',
+      name: 'xboardIpv4Cidr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IPv6 CIDR`
+  String get xboardIpv6Cidr {
+    return Intl.message(
+      'IPv6 CIDR',
+      name: 'xboardIpv6Cidr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Country/Region`
+  String get xboardCountryRegion {
+    return Intl.message(
+      'Country/Region',
+      name: 'xboardCountryRegion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reject`
+  String get xboardRejectAction {
+    return Intl.message(
+      'Reject',
+      name: 'xboardRejectAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rule added`
+  String get xboardRuleAdded {
+    return Intl.message(
+      'Rule added',
+      name: 'xboardRuleAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom rules cleared`
+  String get xboardRulesCleared {
+    return Intl.message(
+      'Custom rules cleared',
+      name: 'xboardRulesCleared',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rules added`
+  String get xboardRulesAdded {
+    return Intl.message(
+      'Rules added',
+      name: 'xboardRulesAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get xboardClearAll {
+    return Intl.message(
+      'Clear',
+      name: 'xboardClearAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remote rule URL`
+  String get xboardRemoteRuleUrl {
+    return Intl.message(
+      'Remote rule URL',
+      name: 'xboardRemoteRuleUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remote rules`
+  String get xboardRemoteRules {
+    return Intl.message(
+      'Remote rules',
+      name: 'xboardRemoteRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get xboardAllFilter {
+    return Intl.message(
+      'All',
+      name: 'xboardAllFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recurring`
+  String get xboardRecurring {
+    return Intl.message(
+      'Recurring',
+      name: 'xboardRecurring',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restarting`
+  String get xboardRestarting {
+    return Intl.message(
+      'Restarting',
+      name: 'xboardRestarting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IPv6 range should look like 2001:db8::/32`
+  String get xboardIpv6CidrHint {
+    return Intl.message(
+      'IPv6 range should look like 2001:db8::/32',
+      name: 'xboardIpv6CidrHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IP range should look like 192.168.0.0/16`
+  String get xboardIpv4CidrHint {
+    return Intl.message(
+      'IP range should look like 192.168.0.0/16',
+      name: 'xboardIpv4CidrHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a rule set URL starting with http(s)`
+  String get xboardRuleSetUrlHint {
+    return Intl.message(
+      'Enter a rule set URL starting with http(s)',
+      name: 'xboardRuleSetUrlHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core running, tap to restart and refresh`
+  String get xboardCoreRunningHint {
+    return Intl.message(
+      'Core running, tap to restart and refresh',
+      name: 'xboardCoreRunningHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restarting core...`
+  String get xboardCoreRestartingHint {
+    return Intl.message(
+      'Restarting core...',
+      name: 'xboardCoreRestartingHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core stopped, tap to restart and refresh`
+  String get xboardCoreStoppedHint {
+    return Intl.message(
+      'Core stopped, tap to restart and refresh',
+      name: 'xboardCoreStoppedHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking core status...`
+  String get xboardCheckingCoreStatus {
+    return Intl.message(
+      'Checking core status...',
+      name: 'xboardCheckingCoreStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core did not respond after restart, retry later`
+  String get xboardCoreRestartTimeout {
+    return Intl.message(
+      'Core did not respond after restart, retry later',
+      name: 'xboardCoreRestartTimeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core restarted but subscription refresh failed`
+  String get xboardCoreRestartedRefreshFailed {
+    return Intl.message(
+      'Core restarted but subscription refresh failed',
+      name: 'xboardCoreRestartedRefreshFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core restarted and subscription refreshed`
+  String get xboardCoreRestartedRefreshed {
+    return Intl.message(
+      'Core restarted and subscription refreshed',
+      name: 'xboardCoreRestartedRefreshed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `rules`
+  String get xboardRulesUnit {
+    return Intl.message(
+      'rules',
+      name: 'xboardRulesUnit',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remember Password`
   String get xboardRememberPassword {
     return Intl.message(

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 /// 自定义分流规则页面
 ///
@@ -20,50 +21,51 @@ class CustomRulesPage extends ConsumerStatefulWidget {
 }
 
 class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
-  static const _types = <_RuleType>[
-    _RuleType(
-      '域名后缀',
-      'DOMAIN-SUFFIX',
-      'example.com',
-      Icons.language_rounded,
-    ),
-    _RuleType(
-      '精确域名',
-      'DOMAIN',
-      'www.example.com',
-      Icons.my_location_rounded,
-    ),
-    _RuleType(
-      '域名关键词',
-      'DOMAIN-KEYWORD',
-      'example',
-      Icons.text_fields_rounded,
-    ),
-    _RuleType(
-      'IPv4 地址段',
-      'IP-CIDR',
-      '192.168.0.0/16',
-      Icons.router_outlined,
-    ),
-    _RuleType(
-      'IPv6 地址段',
-      'IP-CIDR6',
-      '2001:db8::/32',
-      Icons.settings_ethernet_rounded,
-    ),
-    _RuleType(
-      '国家/地区',
-      'GEOIP',
-      'CN',
-      Icons.public_rounded,
-    ),
-  ];
+  static List<_RuleType> get _types => <_RuleType>[
+        _RuleType(
+          appLocalizations.xboardDomainSuffix,
+          'DOMAIN-SUFFIX',
+          'example.com',
+          Icons.language_rounded,
+        ),
+        _RuleType(
+          appLocalizations.xboardExactDomain,
+          'DOMAIN',
+          'www.example.com',
+          Icons.my_location_rounded,
+        ),
+        _RuleType(
+          appLocalizations.xboardDomainKeyword,
+          'DOMAIN-KEYWORD',
+          'example',
+          Icons.text_fields_rounded,
+        ),
+        _RuleType(
+          appLocalizations.xboardIpv4Cidr,
+          'IP-CIDR',
+          '192.168.0.0/16',
+          Icons.router_outlined,
+        ),
+        _RuleType(
+          appLocalizations.xboardIpv6Cidr,
+          'IP-CIDR6',
+          '2001:db8::/32',
+          Icons.settings_ethernet_rounded,
+        ),
+        _RuleType(
+          appLocalizations.xboardCountryRegion,
+          'GEOIP',
+          'CN',
+          Icons.public_rounded,
+        ),
+      ];
 
-  static const _targets = <_RuleTarget>[
-    _RuleTarget('代理', 'PROXY', Icons.vpn_key_rounded),
-    _RuleTarget('直连', 'DIRECT', Icons.link_off_rounded),
-    _RuleTarget('拒绝', 'REJECT', Icons.block_rounded),
-  ];
+  static List<_RuleTarget> get _targets => <_RuleTarget>[
+        _RuleTarget(appLocalizations.proxies, 'PROXY', Icons.vpn_key_rounded),
+        _RuleTarget(appLocalizations.direct, 'DIRECT', Icons.link_off_rounded),
+        _RuleTarget(
+            appLocalizations.xboardRejectAction, 'REJECT', Icons.block_rounded),
+      ];
 
   final _ruleController = TextEditingController();
   final _remoteController = TextEditingController();
@@ -96,8 +98,8 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     if (isIpRule && !value.contains('/')) {
       XBoardNotification.showError(
         _type.token == 'IP-CIDR6'
-            ? 'IPv6 段格式应为 2001:db8::/32'
-            : 'IP 段格式应为 192.168.0.0/16',
+            ? appLocalizations.xboardIpv6CidrHint
+            : appLocalizations.xboardIpv4CidrHint,
       );
       return;
     }
@@ -115,7 +117,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     final url = _remoteController.text.trim();
     if (url.isEmpty) return;
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      XBoardNotification.showError('请输入 http(s) 开头的规则集地址');
+      XBoardNotification.showError(appLocalizations.xboardRuleSetUrlHint);
       return;
     }
 
@@ -132,7 +134,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
             customRules: [...current, ...newRules],
           ),
         );
-    XBoardNotification.showSuccess('规则已添加');
+    XBoardNotification.showSuccess(appLocalizations.xboardRuleAdded);
     _applyConfig();
   }
 
@@ -143,7 +145,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
             customRules: current.where((item) => item != rule).toList(),
           ),
         );
-    XBoardNotification.showSuccess('规则已删除');
+    XBoardNotification.showSuccess(appLocalizations.xboardRuleDeleted);
     _applyConfig();
   }
 
@@ -151,7 +153,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     ref.read(patchClashConfigProvider.notifier).updateState(
           (state) => state.copyWith(customRules: const []),
         );
-    XBoardNotification.showSuccess('已清空自定义规则');
+    XBoardNotification.showSuccess(appLocalizations.xboardRulesCleared);
     _applyConfig();
   }
 
@@ -188,7 +190,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                       Row(
                         children: [
                           Text(
-                            '已添加规则',
+                            appLocalizations.xboardRulesAdded,
                             style: TextStyle(
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
@@ -198,7 +200,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                           ),
                           const Spacer(),
                           Text(
-                            '${rules.length} 条',
+                            '${rules.length} ${appLocalizations.xboardRulesUnit}',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.white.withValues(alpha: 0.35),
@@ -210,7 +212,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                             onTap: _clearAll,
                             behavior: HitTestBehavior.opaque,
                             child: Text(
-                              '清空',
+                              appLocalizations.xboardClearAll,
                               style: TextStyle(
                                 fontSize: 12.5,
                                 color: Colors.redAccent.withValues(alpha: 0.8),
@@ -259,8 +261,8 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
             ),
           ),
           const SizedBox(width: 14),
-          const Text(
-            '自定义分流规则',
+          Text(
+            appLocalizations.xboardCustomRoutingRules,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -359,8 +361,8 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '远程规则 URL',
+          Text(
+            appLocalizations.xboardRemoteRuleUrl,
             style: TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w600,
@@ -394,7 +396,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                     ),
                   ),
                   child: Text(
-                    '添加',
+                    appLocalizations.add,
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600,
@@ -491,7 +493,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     for (final type in _types) {
       if (type.token == token) return type.label;
     }
-    if (token == 'RULE-SET') return '远程规则';
+    if (token == 'RULE-SET') return appLocalizations.xboardRemoteRules;
     return token;
   }
 
@@ -499,9 +501,9 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     for (final target in _targets) {
       if (target.token == token) return target.label;
     }
-    if (token == 'DIRECT') return '直连';
-    if (token == 'REJECT') return '拒绝';
-    return '代理';
+    if (token == 'DIRECT') return appLocalizations.direct;
+    if (token == 'REJECT') return appLocalizations.xboardRejectAction;
+    return appLocalizations.proxies;
   }
 }
 

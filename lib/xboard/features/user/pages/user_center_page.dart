@@ -187,7 +187,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '退出登录',
+                                    appLocalizations.xboardLogout,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,

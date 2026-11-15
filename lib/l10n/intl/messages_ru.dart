@@ -1971,5 +1971,53 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("📡 Трафик используется"),
         "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage(
             "• Текущий трафик будет сброшен сразу\\n• Это влияет на время следующего сброса\\n• Некоторые тарифы могут не поддерживать это"),
+        "xboardDomainSuffix":
+            MessageLookupByLibrary.simpleMessage("Суффикс домена"),
+        "xboardExactDomain":
+            MessageLookupByLibrary.simpleMessage("Точный домен"),
+        "xboardDomainKeyword":
+            MessageLookupByLibrary.simpleMessage("Ключевое слово домена"),
+        "xboardIpv4Cidr": MessageLookupByLibrary.simpleMessage("Диапазон IPv4"),
+        "xboardIpv6Cidr": MessageLookupByLibrary.simpleMessage("Диапазон IPv6"),
+        "xboardCountryRegion":
+            MessageLookupByLibrary.simpleMessage("Страна/Регион"),
+        "xboardRejectAction": MessageLookupByLibrary.simpleMessage("Отклонить"),
+        "xboardRuleAdded":
+            MessageLookupByLibrary.simpleMessage("Правило добавлено"),
+        "xboardRulesCleared":
+            MessageLookupByLibrary.simpleMessage("Свои правила очищены"),
+        "xboardRulesAdded":
+            MessageLookupByLibrary.simpleMessage("Правила добавлены"),
+        "xboardClearAll": MessageLookupByLibrary.simpleMessage("Очистить"),
+        "xboardRemoteRuleUrl":
+            MessageLookupByLibrary.simpleMessage("URL удалённых правил"),
+        "xboardRemoteRules":
+            MessageLookupByLibrary.simpleMessage("Удалённые правила"),
+        "xboardAllFilter": MessageLookupByLibrary.simpleMessage("Все"),
+        "xboardRecurring":
+            MessageLookupByLibrary.simpleMessage("Периодические"),
+        "xboardRestarting": MessageLookupByLibrary.simpleMessage("Перезапуск"),
+        "xboardIpv6CidrHint": MessageLookupByLibrary.simpleMessage(
+            "Диапазон IPv6: 2001:db8::/32"),
+        "xboardIpv4CidrHint":
+            MessageLookupByLibrary.simpleMessage("Диапазон IP: 192.168.0.0/16"),
+        "xboardRuleSetUrlHint": MessageLookupByLibrary.simpleMessage(
+            "Введите URL набора правил (http(s))"),
+        "xboardCoreRunningHint": MessageLookupByLibrary.simpleMessage(
+            "Ядро работает, нажмите для перезапуска"),
+        "xboardCoreRestartingHint":
+            MessageLookupByLibrary.simpleMessage("Перезапуск ядра..."),
+        "xboardCoreStoppedHint": MessageLookupByLibrary.simpleMessage(
+            "Ядро остановлено, нажмите для перезапуска"),
+        "xboardCheckingCoreStatus":
+            MessageLookupByLibrary.simpleMessage("Проверка состояния ядра..."),
+        "xboardCoreRestartTimeout": MessageLookupByLibrary.simpleMessage(
+            "Ядро не отвечает после перезапуска, повторите позже"),
+        "xboardCoreRestartedRefreshFailed":
+            MessageLookupByLibrary.simpleMessage(
+                "Ядро перезапущено, но обновление не удалось"),
+        "xboardCoreRestartedRefreshed": MessageLookupByLibrary.simpleMessage(
+            "Ядро перезапущено, подписка обновлена"),
+        "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("прав."),
       };
 }

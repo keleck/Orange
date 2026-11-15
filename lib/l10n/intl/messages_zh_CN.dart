@@ -1577,5 +1577,42 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardTrafficInUse": MessageLookupByLibrary.simpleMessage("📡 流量使用中"),
         "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage(
             "• 此操作会立即重置当前流量\\n• 会影响下次流量重置时间\\n• 部分套餐可能不支持此功能"),
+        "xboardDomainSuffix": MessageLookupByLibrary.simpleMessage("域名后缀"),
+        "xboardExactDomain": MessageLookupByLibrary.simpleMessage("精确域名"),
+        "xboardDomainKeyword": MessageLookupByLibrary.simpleMessage("域名关键词"),
+        "xboardIpv4Cidr": MessageLookupByLibrary.simpleMessage("IPv4 地址段"),
+        "xboardIpv6Cidr": MessageLookupByLibrary.simpleMessage("IPv6 地址段"),
+        "xboardCountryRegion": MessageLookupByLibrary.simpleMessage("国家/地区"),
+        "xboardRejectAction": MessageLookupByLibrary.simpleMessage("拒绝"),
+        "xboardRuleAdded": MessageLookupByLibrary.simpleMessage("规则已添加"),
+        "xboardRulesCleared": MessageLookupByLibrary.simpleMessage("已清空自定义规则"),
+        "xboardRulesAdded": MessageLookupByLibrary.simpleMessage("已添加规则"),
+        "xboardClearAll": MessageLookupByLibrary.simpleMessage("清空"),
+        "xboardRemoteRuleUrl": MessageLookupByLibrary.simpleMessage("远程规则 URL"),
+        "xboardRemoteRules": MessageLookupByLibrary.simpleMessage("远程规则"),
+        "xboardAllFilter": MessageLookupByLibrary.simpleMessage("全部"),
+        "xboardRecurring": MessageLookupByLibrary.simpleMessage("周期性"),
+        "xboardRestarting": MessageLookupByLibrary.simpleMessage("重启中"),
+        "xboardIpv6CidrHint":
+            MessageLookupByLibrary.simpleMessage("IPv6 段格式应为 2001:db8::/32"),
+        "xboardIpv4CidrHint":
+            MessageLookupByLibrary.simpleMessage("IP 段格式应为 192.168.0.0/16"),
+        "xboardRuleSetUrlHint":
+            MessageLookupByLibrary.simpleMessage("请输入 http(s) 开头的规则集地址"),
+        "xboardCoreRunningHint":
+            MessageLookupByLibrary.simpleMessage("内核运行中，点击重启内核并刷新订阅"),
+        "xboardCoreRestartingHint":
+            MessageLookupByLibrary.simpleMessage("内核重启中…"),
+        "xboardCoreStoppedHint":
+            MessageLookupByLibrary.simpleMessage("内核未运行，点击重启内核并刷新订阅"),
+        "xboardCheckingCoreStatus":
+            MessageLookupByLibrary.simpleMessage("正在检测内核状态…"),
+        "xboardCoreRestartTimeout":
+            MessageLookupByLibrary.simpleMessage("内核重启后无响应，请稍后重试"),
+        "xboardCoreRestartedRefreshFailed":
+            MessageLookupByLibrary.simpleMessage("内核已重启，但订阅刷新失败，请手动刷新订阅"),
+        "xboardCoreRestartedRefreshed":
+            MessageLookupByLibrary.simpleMessage("内核已重启，订阅已刷新"),
+        "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("条"),
       };
 }

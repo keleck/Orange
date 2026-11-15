@@ -69,26 +69,16 @@ class LanguageSelector extends ConsumerWidget {
       // 用 child 而不是 icon：icon 会被塞进 IconButton（48x48 最小尺寸 + 内边距），
       // 胶囊会显得偏大偏空
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: const Color(0xFFE6F2FF),
-          borderRadius: BorderRadius.circular(999),
+        width: 36,
+        height: 36,
+        decoration: const BoxDecoration(
+          color: Color(0xFFE6F2FF),
+          shape: BoxShape.circle,
         ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.translate,
-              size: 17,
-              color: Color(0xFF3B8EF0),
-            ),
-            SizedBox(width: 1),
-            Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: Color(0xFF3B8EF0),
-              size: 17,
-            ),
-          ],
+        child: const Icon(
+          Icons.translate,
+          size: 18,
+          color: Color(0xFF3B8EF0),
         ),
       ),
     );

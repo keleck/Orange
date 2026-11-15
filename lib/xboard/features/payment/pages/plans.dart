@@ -449,7 +449,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                '加载失败',
+                                appLocalizations.xboardLoadingFailed,
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -473,7 +473,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
                       }
                       if (plans.isEmpty) {
                         return buildScrollableCenter(
-                          const Column(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
@@ -483,7 +483,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
                               ),
                               SizedBox(height: 16),
                               Text(
-                                '暂无套餐信息',
+                                appLocalizations.xboardNoSubscriptionInfo,
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.grey,
@@ -530,7 +530,11 @@ class _PlansViewState extends ConsumerState<PlansView> {
                             _selectedFilter = newIndex;
                           });
                         },
-                        labels: const ['全部', '周期性', '一次性'],
+                        labels: [
+                          appLocalizations.xboardAllFilter,
+                          appLocalizations.xboardRecurring,
+                          appLocalizations.xboardOneTimePayment
+                        ],
                       );
 
                       if (isDesktop) {

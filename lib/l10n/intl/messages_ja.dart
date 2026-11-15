@@ -1531,5 +1531,45 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardTrafficInUse": MessageLookupByLibrary.simpleMessage("📡 通信量使用中"),
         "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage(
             "• 現在の通信量を即座にリセットします\\n• 次回のリセット時刻に影響します\\n• 一部のプランは未対応の場合があります"),
+        "xboardDomainSuffix": MessageLookupByLibrary.simpleMessage("ドメイン接尾辞"),
+        "xboardExactDomain": MessageLookupByLibrary.simpleMessage("完全一致ドメイン"),
+        "xboardDomainKeyword":
+            MessageLookupByLibrary.simpleMessage("ドメインキーワード"),
+        "xboardIpv4Cidr": MessageLookupByLibrary.simpleMessage("IPv4 アドレス帯"),
+        "xboardIpv6Cidr": MessageLookupByLibrary.simpleMessage("IPv6 アドレス帯"),
+        "xboardCountryRegion": MessageLookupByLibrary.simpleMessage("国/地域"),
+        "xboardRejectAction": MessageLookupByLibrary.simpleMessage("拒否"),
+        "xboardRuleAdded": MessageLookupByLibrary.simpleMessage("ルールを追加しました"),
+        "xboardRulesCleared":
+            MessageLookupByLibrary.simpleMessage("カスタムルールを削除しました"),
+        "xboardRulesAdded": MessageLookupByLibrary.simpleMessage("ルールを追加しました"),
+        "xboardClearAll": MessageLookupByLibrary.simpleMessage("クリア"),
+        "xboardRemoteRuleUrl":
+            MessageLookupByLibrary.simpleMessage("リモートルールURL"),
+        "xboardRemoteRules": MessageLookupByLibrary.simpleMessage("リモートルール"),
+        "xboardAllFilter": MessageLookupByLibrary.simpleMessage("すべて"),
+        "xboardRecurring": MessageLookupByLibrary.simpleMessage("定期"),
+        "xboardRestarting": MessageLookupByLibrary.simpleMessage("再起動中"),
+        "xboardIpv6CidrHint":
+            MessageLookupByLibrary.simpleMessage("IPv6帯は 2001:db8::/32 の形式です"),
+        "xboardIpv4CidrHint":
+            MessageLookupByLibrary.simpleMessage("IP帯は 192.168.0.0/16 の形式です"),
+        "xboardRuleSetUrlHint":
+            MessageLookupByLibrary.simpleMessage("http(s) で始まるルールセットURLを入力"),
+        "xboardCoreRunningHint":
+            MessageLookupByLibrary.simpleMessage("コア稼働中。タップで再起動して更新"),
+        "xboardCoreRestartingHint":
+            MessageLookupByLibrary.simpleMessage("コアを再起動中…"),
+        "xboardCoreStoppedHint":
+            MessageLookupByLibrary.simpleMessage("コア停止中。タップで再起動して更新"),
+        "xboardCheckingCoreStatus":
+            MessageLookupByLibrary.simpleMessage("コア状態を確認中…"),
+        "xboardCoreRestartTimeout":
+            MessageLookupByLibrary.simpleMessage("再起動後に応答がありません。後で再試行してください"),
+        "xboardCoreRestartedRefreshFailed":
+            MessageLookupByLibrary.simpleMessage("コアは再起動しましたが更新に失敗しました"),
+        "xboardCoreRestartedRefreshed":
+            MessageLookupByLibrary.simpleMessage("コアを再起動し、サブスクを更新しました"),
+        "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("件"),
       };
 }

@@ -2170,5 +2170,50 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("📡 Data in use"),
         "xboardResetCycleNotes": MessageLookupByLibrary.simpleMessage(
             "• This will reset your current data immediately\\n• It affects the next reset time\\n• Some plans may not support this"),
+        "xboardDomainSuffix":
+            MessageLookupByLibrary.simpleMessage("Domain suffix"),
+        "xboardExactDomain":
+            MessageLookupByLibrary.simpleMessage("Exact domain"),
+        "xboardDomainKeyword":
+            MessageLookupByLibrary.simpleMessage("Domain keyword"),
+        "xboardIpv4Cidr": MessageLookupByLibrary.simpleMessage("IPv4 CIDR"),
+        "xboardIpv6Cidr": MessageLookupByLibrary.simpleMessage("IPv6 CIDR"),
+        "xboardCountryRegion":
+            MessageLookupByLibrary.simpleMessage("Country/Region"),
+        "xboardRejectAction": MessageLookupByLibrary.simpleMessage("Reject"),
+        "xboardRuleAdded": MessageLookupByLibrary.simpleMessage("Rule added"),
+        "xboardRulesCleared":
+            MessageLookupByLibrary.simpleMessage("Custom rules cleared"),
+        "xboardRulesAdded": MessageLookupByLibrary.simpleMessage("Rules added"),
+        "xboardClearAll": MessageLookupByLibrary.simpleMessage("Clear"),
+        "xboardRemoteRuleUrl":
+            MessageLookupByLibrary.simpleMessage("Remote rule URL"),
+        "xboardRemoteRules":
+            MessageLookupByLibrary.simpleMessage("Remote rules"),
+        "xboardAllFilter": MessageLookupByLibrary.simpleMessage("All"),
+        "xboardRecurring": MessageLookupByLibrary.simpleMessage("Recurring"),
+        "xboardRestarting": MessageLookupByLibrary.simpleMessage("Restarting"),
+        "xboardIpv6CidrHint": MessageLookupByLibrary.simpleMessage(
+            "IPv6 range should look like 2001:db8::/32"),
+        "xboardIpv4CidrHint": MessageLookupByLibrary.simpleMessage(
+            "IP range should look like 192.168.0.0/16"),
+        "xboardRuleSetUrlHint": MessageLookupByLibrary.simpleMessage(
+            "Enter a rule set URL starting with http(s)"),
+        "xboardCoreRunningHint": MessageLookupByLibrary.simpleMessage(
+            "Core running, tap to restart and refresh"),
+        "xboardCoreRestartingHint":
+            MessageLookupByLibrary.simpleMessage("Restarting core..."),
+        "xboardCoreStoppedHint": MessageLookupByLibrary.simpleMessage(
+            "Core stopped, tap to restart and refresh"),
+        "xboardCheckingCoreStatus":
+            MessageLookupByLibrary.simpleMessage("Checking core status..."),
+        "xboardCoreRestartTimeout": MessageLookupByLibrary.simpleMessage(
+            "Core did not respond after restart, retry later"),
+        "xboardCoreRestartedRefreshFailed":
+            MessageLookupByLibrary.simpleMessage(
+                "Core restarted but subscription refresh failed"),
+        "xboardCoreRestartedRefreshed": MessageLookupByLibrary.simpleMessage(
+            "Core restarted and subscription refreshed"),
+        "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("rules"),
       };
 }

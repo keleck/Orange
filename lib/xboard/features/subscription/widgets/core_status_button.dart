@@ -10,6 +10,7 @@ import 'package:fl_clash/xboard/features/subscription/services/subscription_stat
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 
 /// 内核（Clash Meta）运行状态
 enum CoreHealthStatus {
@@ -159,11 +160,13 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
         _status = alive ? CoreHealthStatus.running : CoreHealthStatus.stopped;
       });
       if (!alive) {
-        XBoardNotification.showError('内核重启后无响应，请稍后重试');
+        XBoardNotification.showError(appLocalizations.xboardCoreRestartTimeout);
       } else if (!refreshed) {
-        XBoardNotification.showError('内核已重启，但订阅刷新失败，请手动刷新订阅');
+        XBoardNotification.showError(
+            appLocalizations.xboardCoreRestartedRefreshFailed);
       } else {
-        XBoardNotification.showSuccess('内核已重启，订阅已刷新');
+        XBoardNotification.showSuccess(
+            appLocalizations.xboardCoreRestartedRefreshed);
       }
     } catch (e) {
       commonPrint.log('重启内核失败: $e');
@@ -181,15 +184,16 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
       };
 
   String get _label => switch (_status) {
-        CoreHealthStatus.restarting => '重启中',
-        _ => '内核',
+        CoreHealthStatus.restarting => appLocalizations.xboardRestarting,
+        _ => appLocalizations.core,
       };
 
   String get _tooltip => switch (_status) {
-        CoreHealthStatus.running => '内核运行中，点击重启内核并刷新订阅',
-        CoreHealthStatus.restarting => '内核重启中…',
-        CoreHealthStatus.stopped => '内核未运行，点击重启内核并刷新订阅',
-        CoreHealthStatus.checking => '正在检测内核状态…',
+        CoreHealthStatus.running => appLocalizations.xboardCoreRunningHint,
+        CoreHealthStatus.restarting =>
+          appLocalizations.xboardCoreRestartingHint,
+        CoreHealthStatus.stopped => appLocalizations.xboardCoreStoppedHint,
+        CoreHealthStatus.checking => appLocalizations.xboardCheckingCoreStatus,
       };
 
   Widget _buildIndicator(Color color) {
