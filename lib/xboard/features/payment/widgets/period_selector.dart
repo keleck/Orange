@@ -196,8 +196,7 @@ class _PeriodCard extends StatelessWidget {
               children: [
                 Icon(
                   isSelected ? Icons.check_circle : Icons.circle_outlined,
-                  color:
-                      isSelected ? AppColors.fg(context) : Colors.grey.shade400,
+                  color: isSelected ? Colors.white : Colors.grey.shade400,
                   size: iconSize,
                 ),
                 SizedBox(width: horizontalSpacing),
@@ -253,8 +252,7 @@ class _PeriodCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: priceFontSize,
                   fontWeight: FontWeight.bold,
-                  color:
-                      isSelected ? AppColors.fg(context) : Colors.blue.shade700,
+                  color: isSelected ? Colors.white : Colors.blue.shade700,
                 ),
                 textAlign: TextAlign.center,
               ),

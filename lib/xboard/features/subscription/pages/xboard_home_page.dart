@@ -882,22 +882,28 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         opacity: isNodeLoading
                                             ? 0.4
                                             : (tunEnable ? 1.0 : 0.6),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.vpn_key_rounded,
                                           size: 14,
-                                          color: Colors.white,
+                                          color: tunEnable
+                                              ? Colors.white
+                                              : AppColors.fg(context)
+                                                  .withValues(alpha: 0.7),
                                         ),
                                       ),
                                 SizedBox(width: 4),
                                 AnimatedDefaultTextStyle(
                                   duration: Duration(milliseconds: 200),
                                   style: TextStyle(
-                                    color: Colors.white.withValues(
-                                        alpha: isNodeLoading
-                                            ? 0.4
-                                            : (_isTunLoading
-                                                ? 1.0
-                                                : (tunEnable ? 1.0 : 0.6))),
+                                    color: tunEnable
+                                        ? Colors.white.withValues(
+                                            alpha: isNodeLoading
+                                                ? 0.4
+                                                : (_isTunLoading ? 1.0 : 1.0),
+                                          )
+                                        : AppColors.fg(context).withValues(
+                                            alpha: isNodeLoading ? 0.4 : 0.7,
+                                          ),
                                     fontSize: 12,
                                     fontWeight: _isTunLoading || tunEnable
                                         ? FontWeight.w600

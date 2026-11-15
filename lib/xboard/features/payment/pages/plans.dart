@@ -319,16 +319,16 @@ class _PlansViewState extends ConsumerState<PlansView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.shopping_bag_rounded,
-                            color: AppColors.fg(context),
+                            color: Colors.white,
                             size: 20,
                           ),
                           SizedBox(width: 10),
                           Text(
                             appLocalizations.xboardBuyNow,
-                            style: TextStyle(
-                              color: AppColors.fg(context),
+                            style: const TextStyle(
+                              color: Colors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
                               letterSpacing: 0.5,

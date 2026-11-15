@@ -931,7 +931,7 @@ class ServiceIconBadge extends StatelessWidget {
             height: size,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: AppColors.surface(context, 0.08),
+              color: AppColors.subtle(context),
               borderRadius: BorderRadius.circular(radius),
             ),
             child: SvgPicture.asset(

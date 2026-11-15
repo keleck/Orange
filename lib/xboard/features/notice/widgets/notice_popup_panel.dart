@@ -786,7 +786,7 @@ class _NoticeDialogButton extends StatelessWidget {
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: filled
-                ? AppColors.fg(context)
+                ? Colors.white
                 : AppColors.fg(context).withValues(alpha: 0.85),
             decoration: TextDecoration.none,
           ),

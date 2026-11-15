@@ -723,7 +723,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   : Colors.white,
               inactiveTrackColor: AppColors.isDark(context)
                   ? Colors.white.withValues(alpha: 0.15)
-                  : const Color(0xFFDDE2EA),
+                  : const Color(0xFFC9CFD8),
             ),
     );
   }
@@ -745,7 +745,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   : Colors.white,
               inactiveTrackColor: AppColors.isDark(context)
                   ? Colors.white.withValues(alpha: 0.15)
-                  : const Color(0xFFDDE2EA),
+                  : const Color(0xFFC9CFD8),
             ),
     );
   }
@@ -778,7 +778,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             : Colors.white,
         inactiveTrackColor: AppColors.isDark(context)
             ? Colors.white.withValues(alpha: 0.15)
-            : const Color(0xFFDDE2EA),
+            : const Color(0xFFC9CFD8),
       ),
     );
   }
@@ -996,7 +996,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 : Colors.white,
                             inactiveTrackColor: AppColors.isDark(context)
                                 ? Colors.white.withValues(alpha: 0.15)
-                                : const Color(0xFFDDE2EA),
+                                : const Color(0xFFC9CFD8),
                           ),
                         ],
                       ),

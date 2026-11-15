@@ -614,10 +614,10 @@ class _AddButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
+        child: const Icon(
           Icons.add_rounded,
           size: 22,
-          color: AppColors.fg(context),
+          color: Colors.white,
         ),
       ),
     );

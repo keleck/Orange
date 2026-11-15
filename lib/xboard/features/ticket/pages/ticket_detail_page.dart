@@ -345,14 +345,18 @@ class _TicketHeader extends StatelessWidget {
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     final theme = Theme.of(context);
     return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          theme.colorScheme.primary.withValues(alpha: 0.08),
-          theme.colorScheme.primary.withValues(alpha: 0.04),
-        ],
-      ),
+      // 白天用白底，夜间保留主色玻璃质感
+      color: AppColors.isDark(context) ? null : Colors.white,
+      gradient: AppColors.isDark(context)
+          ? LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.primary.withValues(alpha: 0.08),
+                theme.colorScheme.primary.withValues(alpha: 0.04),
+              ],
+            )
+          : null,
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
         color: theme.colorScheme.primary.withValues(alpha: 0.15),
@@ -445,7 +449,7 @@ class _MessageBubble extends StatelessWidget {
               message.message,
               style: TextStyle(
                 color: isMe
-                    ? AppColors.fg(context)
+                    ? Colors.white
                     : AppColors.fg(context).withValues(alpha: 0.88),
                 fontSize: 13.5,
                 height: 1.55,
@@ -457,7 +461,9 @@ class _MessageBubble extends StatelessWidget {
               DateFormat('MM-dd HH:mm').format(message.createdAt),
               style: TextStyle(
                 fontSize: 10,
-                color: AppColors.fg(context).withValues(alpha: 0.42),
+                color: isMe
+                    ? Colors.white.withValues(alpha: 0.7)
+                    : AppColors.fg(context).withValues(alpha: 0.42),
                 decoration: TextDecoration.none,
               ),
             ),
