@@ -87,7 +87,7 @@ class TicketsPage extends ConsumerWidget {
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            '工单加载失败',
+                            appLocalizations.xboardTicketLoadFailed,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.white.withValues(alpha: 0.7),
@@ -182,7 +182,7 @@ class _HeaderSummary extends StatelessWidget {
                 Icon(Icons.support_agent_rounded, size: 18, color: primary),
                 const SizedBox(width: 8),
                 const Text(
-                  '工单概览',
+                  appLocalizations.xboardTicketOverview,
                   style: TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w600,
@@ -206,13 +206,13 @@ class _HeaderSummary extends StatelessWidget {
               children: [
                 _StatItem(
                   value: openCount,
-                  label: '处理中',
+                  label: appLocalizations.xboardProcessingStatus,
                   color: primary,
                 ),
                 const _StatDivider(),
                 _StatItem(
                   value: waitingReply,
-                  label: '待回复',
+                  label: appLocalizations.xboardPendingReply,
                   color: const Color(0xFFFFC061),
                 ),
                 const _StatDivider(),
@@ -313,7 +313,7 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            '还没有工单',
+            appLocalizations.xboardNoTickets,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -323,7 +323,7 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '遇到问题可以提交工单，客服会尽快回复你',
+            appLocalizations.xboardTicketEmptyHint,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12.5,
@@ -516,7 +516,9 @@ class _ReplyTag extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          isWaiting ? '等待回复' : '已回复',
+          isWaiting
+              ? appLocalizations.xboardAwaitingReply
+              : appLocalizations.xboardReplied,
           style: TextStyle(
             fontSize: 11,
             fontWeight: isWaiting ? FontWeight.w600 : FontWeight.w400,
@@ -562,7 +564,7 @@ class _CreateTicketButton extends StatelessWidget {
             Icon(Icons.add_rounded, size: 18, color: Colors.white),
             SizedBox(width: 6),
             Text(
-              '新建工单',
+              appLocalizations.xboardNewTicket,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -581,7 +583,7 @@ String _relativeTime(DateTime time) {
   final now = DateTime.now();
   final difference = now.difference(time);
 
-  if (difference.inMinutes < 1) return '刚刚';
+  if (difference.inMinutes < 1) return appLocalizations.just;
   if (difference.inHours < 1) return '${difference.inMinutes}分钟前';
   if (difference.inDays < 1) return '${difference.inHours}小时前';
   if (difference.inDays < 7) return '${difference.inDays}天前';

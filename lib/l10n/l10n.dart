@@ -4179,6 +4179,1156 @@ class AppLocalizations {
     );
   }
 
+  /// `Clash is not running; rules take effect on start`
+  String get xboardClashNotRunningRulesPending {
+    return Intl.message(
+      'Clash is not running; rules take effect on start',
+      name: 'xboardClashNotRunningRulesPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IPv6 disabled`
+  String get xboardIpv6Disabled {
+    return Intl.message(
+      'IPv6 disabled',
+      name: 'xboardIpv6Disabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IPv6 enabled`
+  String get xboardIpv6Enabled {
+    return Intl.message(
+      'IPv6 enabled',
+      name: 'xboardIpv6Enabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Some plans may not support this`
+  String get xboardSomePlansUnsupported {
+    return Intl.message(
+      '• Some plans may not support this',
+      name: 'xboardSomePlansUnsupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `⏰ Subscription expiring soon`
+  String get xboardSubscriptionExpiring {
+    return Intl.message(
+      '⏰ Subscription expiring soon',
+      name: 'xboardSubscriptionExpiring',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `⚠️ Data almost used up`
+  String get xboardTrafficAlmostUsed {
+    return Intl.message(
+      '⚠️ Data almost used up',
+      name: 'xboardTrafficAlmostUsed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `❌ Subscription expired`
+  String get xboardSubscriptionExpiredTitle {
+    return Intl.message(
+      '❌ Subscription expired',
+      name: 'xboardSubscriptionExpiredTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn off campus network bypass when not needed`
+  String get xboardCampusHostsHint {
+    return Intl.message(
+      'Turn off campus network bypass when not needed',
+      name: 'xboardCampusHostsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Operation not allowed, please check plan status`
+  String get xboardOperationNotAllowed {
+    return Intl.message(
+      'Operation not allowed, please check plan status',
+      name: 'xboardOperationNotAllowed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Top up or unlock benefits`
+  String get xboardTopupOrUnlock {
+    return Intl.message(
+      'Top up or unlock benefits',
+      name: 'xboardTopupOrUnlock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance is credited instantly and can be used for plans`
+  String get xboardTopupInstantHint {
+    return Intl.message(
+      'Balance is credited instantly and can be used for plans',
+      name: 'xboardTopupInstantHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Top-up successful`
+  String get xboardTopupSuccess {
+    return Intl.message(
+      'Top-up successful',
+      name: 'xboardTopupSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select none`
+  String get xboardSelectNone {
+    return Intl.message(
+      'Select none',
+      name: 'xboardSelectNone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load notices`
+  String get xboardNoticeLoadFailed {
+    return Intl.message(
+      'Failed to load notices',
+      name: 'xboardNoticeLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outbound IP`
+  String get xboardOutboundIp {
+    return Intl.message(
+      'Outbound IP',
+      name: 'xboardOutboundIp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Created at`
+  String get xboardCreatedAt {
+    return Intl.message(
+      'Created at',
+      name: 'xboardCreatedAt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refreshing...`
+  String get xboardRefreshing {
+    return Intl.message(
+      'Refreshing...',
+      name: 'xboardRefreshing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading..`
+  String get xboardLoadingDots {
+    return Intl.message(
+      'Loading..',
+      name: 'xboardLoadingDots',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading campus config...`
+  String get xboardLoadingCampusConfig {
+    return Intl.message(
+      'Loading campus config...',
+      name: 'xboardLoadingCampusConfig',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load campus config`
+  String get xboardCampusConfigFailed {
+    return Intl.message(
+      'Failed to load campus config',
+      name: 'xboardCampusConfigFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Usable for plans and renewal`
+  String get xboardBalanceUsableHint {
+    return Intl.message(
+      'Usable for plans and renewal',
+      name: 'xboardBalanceUsableHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geo database updated`
+  String get xboardGeoDatabaseUpdated {
+    return Intl.message(
+      'Geo database updated',
+      name: 'xboardGeoDatabaseUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Basic info`
+  String get xboardBasicInfo {
+    return Intl.message(
+      'Basic info',
+      name: 'xboardBasicInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Basic settings`
+  String get xboardBasicSettings {
+    return Intl.message(
+      'Basic settings',
+      name: 'xboardBasicSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Processing`
+  String get xboardProcessingStatus {
+    return Intl.message(
+      'Processing',
+      name: 'xboardProcessingStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto-renew with balance when the plan expires`
+  String get xboardAutoRenewHint {
+    return Intl.message(
+      'Auto-renew with balance when the plan expires',
+      name: 'xboardAutoRenewHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Plan name`
+  String get xboardPlanName {
+    return Intl.message(
+      'Plan name',
+      name: 'xboardPlanName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safely sign out of the current account`
+  String get xboardLogoutHint {
+    return Intl.message(
+      'Safely sign out of the current account',
+      name: 'xboardLogoutHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription updates go through the proxy`
+  String get xboardUpdateViaProxyOn {
+    return Intl.message(
+      'Subscription updates go through the proxy',
+      name: 'xboardUpdateViaProxyOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not downloaded`
+  String get xboardNotDownloaded {
+    return Intl.message(
+      'Not downloaded',
+      name: 'xboardNotDownloaded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `LAN proxy disabled`
+  String get xboardLanProxyDisabled {
+    return Intl.message(
+      'LAN proxy disabled',
+      name: 'xboardLanProxyDisabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `LAN proxy enabled`
+  String get xboardLanProxyEnabled {
+    return Intl.message(
+      'LAN proxy enabled',
+      name: 'xboardLanProxyEnabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load tickets`
+  String get xboardTicketLoadFailed {
+    return Intl.message(
+      'Failed to load tickets',
+      name: 'xboardTicketLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ticket overview`
+  String get xboardTicketOverview {
+    return Intl.message(
+      'Ticket overview',
+      name: 'xboardTicketOverview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto-renew turned off`
+  String get xboardAutoRenewOff {
+    return Intl.message(
+      'Auto-renew turned off',
+      name: 'xboardAutoRenewOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancelled`
+  String get xboardCancelled {
+    return Intl.message(
+      'Cancelled',
+      name: 'xboardCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed`
+  String get xboardCompleted {
+    return Intl.message(
+      'Completed',
+      name: 'xboardCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto-renew turned on`
+  String get xboardAutoRenewOn {
+    return Intl.message(
+      'Auto-renew turned on',
+      name: 'xboardAutoRenewOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Offset applied`
+  String get xboardOffsetApplied {
+    return Intl.message(
+      'Offset applied',
+      name: 'xboardOffsetApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription updates go direct`
+  String get xboardUpdateViaProxyOff {
+    return Intl.message(
+      'Subscription updates go direct',
+      name: 'xboardUpdateViaProxyOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expired`
+  String get xboardExpired {
+    return Intl.message(
+      'Expired',
+      name: 'xboardExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connected`
+  String get xboardConnected {
+    return Intl.message(
+      'Connected',
+      name: 'xboardConnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Popup`
+  String get xboardPopup {
+    return Intl.message(
+      'Popup',
+      name: 'xboardPopup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current plan does not support starting the cycle early`
+  String get xboardCycleNotSupported {
+    return Intl.message(
+      'Current plan does not support starting the cycle early',
+      name: 'xboardCycleNotSupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending reply`
+  String get xboardPendingReply {
+    return Intl.message(
+      'Pending reply',
+      name: 'xboardPendingReply',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending payment`
+  String get xboardPendingPayment {
+    return Intl.message(
+      'Pending payment',
+      name: 'xboardPendingPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick access`
+  String get xboardQuickAccess {
+    return Intl.message(
+      'Quick access',
+      name: 'xboardQuickAccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get xboardTotal {
+    return Intl.message(
+      'Total',
+      name: 'xboardTotal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have used 70% of your data`
+  String get xboardTraffic70 {
+    return Intl.message(
+      'You have used 70% of your data',
+      name: 'xboardTraffic70',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have used 80% of your data`
+  String get xboardTraffic80 {
+    return Intl.message(
+      'You have used 80% of your data',
+      name: 'xboardTraffic80',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have used 90% of your data, please renew soon`
+  String get xboardTraffic90 {
+    return Intl.message(
+      'You have used 90% of your data, please renew soon',
+      name: 'xboardTraffic90',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have used 100% of your data, please renew`
+  String get xboardTraffic100 {
+    return Intl.message(
+      'You have used 100% of your data, please renew',
+      name: 'xboardTraffic100',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your subscription has expired, please renew now`
+  String get xboardSubscriptionExpiredHint {
+    return Intl.message(
+      'Your subscription has expired, please renew now',
+      name: 'xboardSubscriptionExpiredHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All rules cleared`
+  String get xboardAllRulesCleared {
+    return Intl.message(
+      'All rules cleared',
+      name: 'xboardAllRulesCleared',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bulk import rules`
+  String get xboardBulkImportRules {
+    return Intl.message(
+      'Bulk import rules',
+      name: 'xboardBulkImportRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paid at`
+  String get xboardPaidAt {
+    return Intl.message(
+      'Paid at',
+      name: 'xboardPaidAt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment request failed`
+  String get xboardPaymentRequestFailed {
+    return Intl.message(
+      'Payment request failed',
+      name: 'xboardPaymentRequestFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Separate rules by newline or semicolon`
+  String get xboardRuleSeparatorHint {
+    return Intl.message(
+      'Separate rules by newline or semicolon',
+      name: 'xboardRuleSeparatorHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New`
+  String get xboardNewBadge {
+    return Intl.message(
+      'New',
+      name: 'xboardNewBadge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New ticket`
+  String get xboardNewTicket {
+    return Intl.message(
+      'New ticket',
+      name: 'xboardNewTicket',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cannot open link`
+  String get xboardCannotOpenLink {
+    return Intl.message(
+      'Cannot open link',
+      name: 'xboardCannotOpenLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time info`
+  String get xboardTimeInfo {
+    return Intl.message(
+      'Time info',
+      name: 'xboardTimeInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No notices`
+  String get xboardNoNotices {
+    return Intl.message(
+      'No notices',
+      name: 'xboardNoNotices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No payment methods available`
+  String get xboardNoPaymentMethods {
+    return Intl.message(
+      'No payment methods available',
+      name: 'xboardNoPaymentMethods',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data records`
+  String get xboardNoTrafficRecords {
+    return Intl.message(
+      'No data records',
+      name: 'xboardNoTrafficRecords',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No notifications`
+  String get xboardNoNotifications {
+    return Intl.message(
+      'No notifications',
+      name: 'xboardNoNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Valid until`
+  String get xboardValidUntil {
+    return Intl.message(
+      'Valid until',
+      name: 'xboardValidUntil',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service status`
+  String get xboardServiceStatus {
+    return Intl.message(
+      'Service status',
+      name: 'xboardServiceStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No services enabled`
+  String get xboardNoServicesEnabled {
+    return Intl.message(
+      'No services enabled',
+      name: 'xboardNoServicesEnabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No valid rules found`
+  String get xboardNoValidRules {
+    return Intl.message(
+      'No valid rules found',
+      name: 'xboardNoValidRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown plan`
+  String get xboardUnknownPlan {
+    return Intl.message(
+      'Unknown plan',
+      name: 'xboardUnknownPlan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disconnected`
+  String get xboardDisconnected {
+    return Intl.message(
+      'Disconnected',
+      name: 'xboardDisconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No services selected, tap to configure`
+  String get xboardNoProbeTargetsHint {
+    return Intl.message(
+      'No services selected, tap to configure',
+      name: 'xboardNoProbeTargetsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Website not configured`
+  String get xboardWebsiteNotConfigured {
+    return Intl.message(
+      'Website not configured',
+      name: 'xboardWebsiteNotConfigured',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View details`
+  String get xboardViewDetails {
+    return Intl.message(
+      'View details',
+      name: 'xboardViewDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Campus Hosts`
+  String get xboardCampusHosts {
+    return Intl.message(
+      'Campus Hosts',
+      name: 'xboardCampusHosts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Campus Hosts enabled`
+  String get xboardCampusHostsEnabled {
+    return Intl.message(
+      'Campus Hosts enabled',
+      name: 'xboardCampusHostsEnabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Campus Hosts disabled`
+  String get xboardCampusHostsDisabled {
+    return Intl.message(
+      'Campus Hosts disabled',
+      name: 'xboardCampusHostsDisabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update check failed`
+  String get xboardUpdateCheckFailed {
+    return Intl.message(
+      'Update check failed',
+      name: 'xboardUpdateCheckFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking`
+  String get xboardCheckingStatus {
+    return Intl.message(
+      'Checking',
+      name: 'xboardCheckingStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applying Clash config...`
+  String get xboardApplyingClashConfig {
+    return Intl.message(
+      'Applying Clash config...',
+      name: 'xboardApplyingClashConfig',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One rule per line: TYPE,CONDITION,DESTINATION`
+  String get xboardRuleFormatHint {
+    return Intl.message(
+      'One rule per line: TYPE,CONDITION,DESTINATION',
+      name: 'xboardRuleFormatHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notes`
+  String get xboardNotes {
+    return Intl.message(
+      'Notes',
+      name: 'xboardNotes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data used up, you can borrow next month's`
+  String get xboardTrafficExhaustedAdvance {
+    return Intl.message(
+      'Data used up, you can borrow next month\'s',
+      name: 'xboardTrafficExhaustedAdvance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data used up, renew for more`
+  String get xboardTrafficExhaustedRenew {
+    return Intl.message(
+      'Data used up, renew for more',
+      name: 'xboardTrafficExhaustedRenew',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add remote rules or configure manually`
+  String get xboardAddRulesHint {
+    return Intl.message(
+      'Add remote rules or configure manually',
+      name: 'xboardAddRulesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User account`
+  String get xboardUserAccount {
+    return Intl.message(
+      'User account',
+      name: 'xboardUserAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start the next data cycle?`
+  String get xboardConfirmNextCycle {
+    return Intl.message(
+      'Start the next data cycle?',
+      name: 'xboardConfirmNextCycle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm top-up`
+  String get xboardConfirmTopup {
+    return Intl.message(
+      'Confirm top-up',
+      name: 'xboardConfirmTopup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeem gift card`
+  String get xboardGiftCardRedeem {
+    return Intl.message(
+      'Redeem gift card',
+      name: 'xboardGiftCardRedeem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gift card redeemed`
+  String get xboardGiftCardRedeemSuccess {
+    return Intl.message(
+      'Gift card redeemed',
+      name: 'xboardGiftCardRedeemSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paste or enter rules`
+  String get xboardPasteRulesHint {
+    return Intl.message(
+      'Paste or enter rules',
+      name: 'xboardPasteRulesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System notice`
+  String get xboardSystemNotice {
+    return Intl.message(
+      'System notice',
+      name: 'xboardSystemNotice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto-renew`
+  String get xboardAutoRenew {
+    return Intl.message(
+      'Auto-renew',
+      name: 'xboardAutoRenew',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom amount`
+  String get xboardCustomAmount {
+    return Intl.message(
+      'Custom amount',
+      name: 'xboardCustomAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to fetch nodes`
+  String get xboardFetchNodesFailed {
+    return Intl.message(
+      'Failed to fetch nodes',
+      name: 'xboardFetchNodesFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rules and routing`
+  String get xboardRulesAndRouting {
+    return Intl.message(
+      'Rules and routing',
+      name: 'xboardRulesAndRouting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rule deleted`
+  String get xboardRuleDeleted {
+    return Intl.message(
+      'Rule deleted',
+      name: 'xboardRuleDeleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rule examples`
+  String get xboardRuleExamples {
+    return Intl.message(
+      'Rule examples',
+      name: 'xboardRuleExamples',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order cycle`
+  String get xboardOrderCycle {
+    return Intl.message(
+      'Order cycle',
+      name: 'xboardOrderCycle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order details`
+  String get xboardOrderDetails {
+    return Intl.message(
+      'Order details',
+      name: 'xboardOrderDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please renew in time`
+  String get xboardRenewPrompt {
+    return Intl.message(
+      'Please renew in time',
+      name: 'xboardRenewPrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter the amount to top up`
+  String get xboardEnterTopupAmount {
+    return Intl.message(
+      'Enter the amount to top up',
+      name: 'xboardEnterTopupAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid amount`
+  String get xboardEnterValidAmount {
+    return Intl.message(
+      'Enter a valid amount',
+      name: 'xboardEnterValidAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter rules`
+  String get xboardEnterRules {
+    return Intl.message(
+      'Enter rules',
+      name: 'xboardEnterRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reading...`
+  String get xboardReading {
+    return Intl.message(
+      'Reading...',
+      name: 'xboardReading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account expired`
+  String get xboardAccountExpired {
+    return Intl.message(
+      'Account expired',
+      name: 'xboardAccountExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account`
+  String get xboardAccount {
+    return Intl.message(
+      'Account',
+      name: 'xboardAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account top-up`
+  String get xboardAccountTopup {
+    return Intl.message(
+      'Account top-up',
+      name: 'xboardAccountTopup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No tickets yet`
+  String get xboardNoTickets {
+    return Intl.message(
+      'No tickets yet',
+      name: 'xboardNoTickets',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit a ticket if you need help`
+  String get xboardTicketEmptyHint {
+    return Intl.message(
+      'Submit a ticket if you need help',
+      name: 'xboardTicketEmptyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Configuration updated`
+  String get xboardConfigUpdated {
+    return Intl.message(
+      'Configuration updated',
+      name: 'xboardConfigUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `💾 Data used up!`
+  String get xboardTrafficExhaustedEmoji {
+    return Intl.message(
+      '💾 Data used up!',
+      name: 'xboardTrafficExhaustedEmoji',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `📊 Heavy data usage`
+  String get xboardTrafficHeavy {
+    return Intl.message(
+      '📊 Heavy data usage',
+      name: 'xboardTrafficHeavy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `📡 Data in use`
+  String get xboardTrafficInUse {
+    return Intl.message(
+      '📡 Data in use',
+      name: 'xboardTrafficInUse',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remember Password`
   String get xboardRememberPassword {
     return Intl.message(

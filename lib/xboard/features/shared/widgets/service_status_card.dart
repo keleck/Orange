@@ -36,10 +36,10 @@ Color _statusColor(ServiceProbeStatus status) {
 
 String _statusText(ServiceCheck? check, {required bool loading}) {
   if (loading) {
-    return '检测中';
+    return appLocalizations.xboardCheckingStatus;
   }
   if (check == null) {
-    return '待检测';
+    return appLocalizations.xboardPending;
   }
   if (check.isOk) {
     return check.delay != null ? '${check.delay} ms' : check.status.label;
@@ -187,7 +187,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     }
     if (_probing) {
       return _Verdict(
-        label: '检测中',
+        label: appLocalizations.xboardCheckingStatus,
         color: Colors.white.withValues(alpha: 0.55),
       );
     }
@@ -258,7 +258,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                 ),
                 const SizedBox(width: 8),
                 const Text(
-                  '服务状态',
+                  appLocalizations.xboardServiceStatus,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -280,7 +280,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  '未选择需要检测的服务，点击此处配置',
+                  appLocalizations.xboardNoProbeTargetsHint,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.5),
@@ -514,7 +514,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                 const Expanded(
                   child: Center(
                     child: Text(
-                      '服务状态',
+                      appLocalizations.xboardServiceStatus,
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -594,7 +594,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
           ),
           const SizedBox(width: 8),
           Text(
-            '出口 IP',
+            appLocalizations.xboardOutboundIp,
             style: TextStyle(
               fontSize: 12,
               color: Colors.white.withValues(alpha: 0.55),
@@ -636,7 +636,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '未启用任何服务',
+            appLocalizations.xboardNoServicesEnabled,
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withValues(alpha: 0.6),
@@ -816,7 +816,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
             child: Row(
               children: [
                 const Text(
-                  '管理服务',
+                  appLocalizations.xboardManageServices,
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
@@ -834,7 +834,9 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                 const Spacer(),
                 TextButton(
                   onPressed: () => _toggleAll(!allSelected),
-                  child: Text(allSelected ? '全不选' : '全选'),
+                  child: Text(allSelected
+                      ? appLocalizations.xboardSelectNone
+                      : appLocalizations.selectAll),
                 ),
                 TextButton(
                   onPressed: _save,

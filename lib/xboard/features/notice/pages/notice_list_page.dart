@@ -101,7 +101,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              '加载失败',
+              appLocalizations.xboardLoadingFailed,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -135,7 +135,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              '暂无通知',
+              appLocalizations.xboardNoNotifications,
               style: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -500,7 +500,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                                 ),
                               ),
                               child: const Text(
-                                '关闭',
+                                appLocalizations.close,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -525,7 +525,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
   bool _isPopupNotice(NoticeModel notice) {
     if (notice.tags == null || notice.tags!.isEmpty) return false;
     return notice.tags!.any((tag) =>
-        tag.toLowerCase().contains('弹窗') ||
+        tag.toLowerCase().contains(appLocalizations.xboardPopup) ||
         tag.toLowerCase().contains('popup'));
   }
 
@@ -537,7 +537,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
         if (difference.inMinutes == 0) {
-          return '刚刚';
+          return appLocalizations.just;
         }
         return '${difference.inMinutes}分钟前';
       }

@@ -1351,5 +1351,183 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("友達を招待して報酬を得る"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("再検査"),
         "myOrders": MessageLookupByLibrary.simpleMessage("マイ注文"),
+        "xboardClashNotRunningRulesPending":
+            MessageLookupByLibrary.simpleMessage("Clash未起動、ルールは起動時に有効になります"),
+        "xboardIpv6Disabled": MessageLookupByLibrary.simpleMessage("IPv6 無効"),
+        "xboardIpv6Enabled": MessageLookupByLibrary.simpleMessage("IPv6 有効"),
+        "xboardSomePlansUnsupported":
+            MessageLookupByLibrary.simpleMessage("• 一部のプランは未対応の場合があります"),
+        "xboardSubscriptionExpiring":
+            MessageLookupByLibrary.simpleMessage("⏰ サブスクがまもなく期限切れ"),
+        "xboardTrafficAlmostUsed":
+            MessageLookupByLibrary.simpleMessage("⚠️ 通信量がまもなく上限"),
+        "xboardSubscriptionExpiredTitle":
+            MessageLookupByLibrary.simpleMessage("❌ サブスク期限切れ"),
+        "xboardCampusHostsHint": MessageLookupByLibrary.simpleMessage(
+            "不要な場合はキャンパスネットワーク突破をオフにしてください"),
+        "xboardOperationNotAllowed": MessageLookupByLibrary.simpleMessage(
+            "この操作は許可されていません。プラン状態を確認してください"),
+        "xboardTopupOrUnlock":
+            MessageLookupByLibrary.simpleMessage("チャージまたは特典を解除"),
+        "xboardTopupInstantHint":
+            MessageLookupByLibrary.simpleMessage("チャージ後すぐに反映され、プラン購入に使えます"),
+        "xboardTopupSuccess": MessageLookupByLibrary.simpleMessage("チャージ成功"),
+        "xboardSelectNone": MessageLookupByLibrary.simpleMessage("すべて解除"),
+        "xboardNoticeLoadFailed":
+            MessageLookupByLibrary.simpleMessage("お知らせの読み込みに失敗"),
+        "xboardOutboundIp": MessageLookupByLibrary.simpleMessage("出口IP"),
+        "xboardCreatedAt": MessageLookupByLibrary.simpleMessage("作成日時"),
+        "xboardRefreshing": MessageLookupByLibrary.simpleMessage("更新中..."),
+        "xboardLoadingDots": MessageLookupByLibrary.simpleMessage("読み込み中.."),
+        "xboardLoadingCampusConfig":
+            MessageLookupByLibrary.simpleMessage("キャンパス設定を読み込み中..."),
+        "xboardCampusConfigFailed":
+            MessageLookupByLibrary.simpleMessage("キャンパス設定の読み込みに失敗"),
+        "xboardBalanceUsableHint":
+            MessageLookupByLibrary.simpleMessage("プラン購入と更新に使えます"),
+        "xboardGeoDatabaseUpdated":
+            MessageLookupByLibrary.simpleMessage("ジオDBを更新しました"),
+        "xboardBasicInfo": MessageLookupByLibrary.simpleMessage("基本情報"),
+        "xboardBasicSettings": MessageLookupByLibrary.simpleMessage("基本設定"),
+        "xboardProcessingStatus": MessageLookupByLibrary.simpleMessage("処理中"),
+        "xboardAutoRenewHint":
+            MessageLookupByLibrary.simpleMessage("プラン期限切れ時に残高で自動更新"),
+        "xboardPlanName": MessageLookupByLibrary.simpleMessage("プラン名"),
+        "xboardLogoutHint":
+            MessageLookupByLibrary.simpleMessage("現在のアカウントから安全にログアウト"),
+        "xboardUpdateViaProxyOn":
+            MessageLookupByLibrary.simpleMessage("プロキシ経由でサブスクを更新します"),
+        "xboardNotDownloaded": MessageLookupByLibrary.simpleMessage("未ダウンロード"),
+        "xboardLanProxyDisabled":
+            MessageLookupByLibrary.simpleMessage("LANプロキシ無効"),
+        "xboardLanProxyEnabled":
+            MessageLookupByLibrary.simpleMessage("LANプロキシ有効"),
+        "xboardTicketLoadFailed":
+            MessageLookupByLibrary.simpleMessage("チケットの読み込みに失敗"),
+        "xboardTicketOverview": MessageLookupByLibrary.simpleMessage("チケット概要"),
+        "xboardAutoRenewOff":
+            MessageLookupByLibrary.simpleMessage("自動更新をオフにしました"),
+        "xboardCancelled": MessageLookupByLibrary.simpleMessage("キャンセル済み"),
+        "xboardCompleted": MessageLookupByLibrary.simpleMessage("完了"),
+        "xboardAutoRenewOn":
+            MessageLookupByLibrary.simpleMessage("自動更新をオンにしました"),
+        "xboardOffsetApplied": MessageLookupByLibrary.simpleMessage("相殺済み"),
+        "xboardUpdateViaProxyOff":
+            MessageLookupByLibrary.simpleMessage("サブスクを直接更新します"),
+        "xboardExpired": MessageLookupByLibrary.simpleMessage("期限切れ"),
+        "xboardConnected": MessageLookupByLibrary.simpleMessage("接続済み"),
+        "xboardPopup": MessageLookupByLibrary.simpleMessage("ポップアップ"),
+        "xboardCycleNotSupported":
+            MessageLookupByLibrary.simpleMessage("現在のプランはサイクルの前倒しに対応していません"),
+        "xboardPendingReply": MessageLookupByLibrary.simpleMessage("返信待ち"),
+        "xboardPendingPayment": MessageLookupByLibrary.simpleMessage("支払い待ち"),
+        "xboardQuickAccess": MessageLookupByLibrary.simpleMessage("クイックアクセス"),
+        "xboardTotal": MessageLookupByLibrary.simpleMessage("合計"),
+        "xboardTraffic70":
+            MessageLookupByLibrary.simpleMessage("通信量を70%使用しました"),
+        "xboardTraffic80":
+            MessageLookupByLibrary.simpleMessage("通信量を80%使用しました"),
+        "xboardTraffic90":
+            MessageLookupByLibrary.simpleMessage("通信量を90%使用しました。更新をご準備ください"),
+        "xboardTraffic100":
+            MessageLookupByLibrary.simpleMessage("通信量が100%に達しました。更新してください"),
+        "xboardSubscriptionExpiredHint":
+            MessageLookupByLibrary.simpleMessage("サブスクが期限切れです。今すぐ更新してください"),
+        "xboardAllRulesCleared":
+            MessageLookupByLibrary.simpleMessage("すべてのルールを削除しました"),
+        "xboardBulkImportRules":
+            MessageLookupByLibrary.simpleMessage("ルールを一括インポート"),
+        "xboardPaidAt": MessageLookupByLibrary.simpleMessage("支払い日時"),
+        "xboardPaymentRequestFailed":
+            MessageLookupByLibrary.simpleMessage("支払いリクエストに失敗"),
+        "xboardRuleSeparatorHint":
+            MessageLookupByLibrary.simpleMessage("改行またはセミコロンで区切ります"),
+        "xboardNewBadge": MessageLookupByLibrary.simpleMessage("新着"),
+        "xboardNewTicket": MessageLookupByLibrary.simpleMessage("新規チケット"),
+        "xboardCannotOpenLink":
+            MessageLookupByLibrary.simpleMessage("リンクを開けません"),
+        "xboardTimeInfo": MessageLookupByLibrary.simpleMessage("時刻情報"),
+        "xboardNoNotices": MessageLookupByLibrary.simpleMessage("お知らせはありません"),
+        "xboardNoPaymentMethods":
+            MessageLookupByLibrary.simpleMessage("利用可能な支払い方法がありません"),
+        "xboardNoTrafficRecords":
+            MessageLookupByLibrary.simpleMessage("通信量の記録はありません"),
+        "xboardNoNotifications":
+            MessageLookupByLibrary.simpleMessage("通知はありません"),
+        "xboardValidUntil": MessageLookupByLibrary.simpleMessage("有効期限"),
+        "xboardServiceStatus": MessageLookupByLibrary.simpleMessage("サービス状態"),
+        "xboardNoServicesEnabled":
+            MessageLookupByLibrary.simpleMessage("有効なサービスはありません"),
+        "xboardNoValidRules":
+            MessageLookupByLibrary.simpleMessage("有効なルールが見つかりません"),
+        "xboardUnknownPlan": MessageLookupByLibrary.simpleMessage("不明なプラン"),
+        "xboardDisconnected": MessageLookupByLibrary.simpleMessage("未接続"),
+        "xboardNoProbeTargetsHint":
+            MessageLookupByLibrary.simpleMessage("検査するサービスが未選択です。タップして設定"),
+        "xboardWebsiteNotConfigured":
+            MessageLookupByLibrary.simpleMessage("公式サイトが未設定"),
+        "xboardViewDetails": MessageLookupByLibrary.simpleMessage("詳細を見る"),
+        "xboardCampusHosts":
+            MessageLookupByLibrary.simpleMessage("キャンパス Hosts"),
+        "xboardCampusHostsEnabled":
+            MessageLookupByLibrary.simpleMessage("キャンパス Hosts 有効"),
+        "xboardCampusHostsDisabled":
+            MessageLookupByLibrary.simpleMessage("キャンパス Hosts 無効"),
+        "xboardUpdateCheckFailed":
+            MessageLookupByLibrary.simpleMessage("更新確認に失敗"),
+        "xboardCheckingStatus": MessageLookupByLibrary.simpleMessage("検査中"),
+        "xboardApplyingClashConfig":
+            MessageLookupByLibrary.simpleMessage("Clash設定を適用中..."),
+        "xboardRuleFormatHint": MessageLookupByLibrary.simpleMessage(
+            "1行1ルール: TYPE,CONDITION,DESTINATION"),
+        "xboardNotes": MessageLookupByLibrary.simpleMessage("注意事項"),
+        "xboardTrafficExhaustedAdvance":
+            MessageLookupByLibrary.simpleMessage("通信量が尽きました。翌月分を前借りできます"),
+        "xboardTrafficExhaustedRenew":
+            MessageLookupByLibrary.simpleMessage("通信量が尽きました。更新で追加できます"),
+        "xboardAddRulesHint":
+            MessageLookupByLibrary.simpleMessage("リモートルール追加または手動設定"),
+        "xboardUserAccount": MessageLookupByLibrary.simpleMessage("ユーザーアカウント"),
+        "xboardConfirmNextCycle":
+            MessageLookupByLibrary.simpleMessage("次の通信量サイクルを開始しますか？"),
+        "xboardConfirmTopup": MessageLookupByLibrary.simpleMessage("チャージを確定"),
+        "xboardGiftCardRedeem":
+            MessageLookupByLibrary.simpleMessage("ギフトカード交換"),
+        "xboardGiftCardRedeemSuccess":
+            MessageLookupByLibrary.simpleMessage("ギフトカードを交換しました"),
+        "xboardPasteRulesHint":
+            MessageLookupByLibrary.simpleMessage("ルールを貼り付けまたは入力"),
+        "xboardSystemNotice": MessageLookupByLibrary.simpleMessage("システムお知らせ"),
+        "xboardAutoRenew": MessageLookupByLibrary.simpleMessage("自動更新"),
+        "xboardCustomAmount": MessageLookupByLibrary.simpleMessage("カスタム金額"),
+        "xboardFetchNodesFailed":
+            MessageLookupByLibrary.simpleMessage("ノード取得に失敗"),
+        "xboardRulesAndRouting":
+            MessageLookupByLibrary.simpleMessage("ルールと振り分け"),
+        "xboardRuleDeleted": MessageLookupByLibrary.simpleMessage("ルールを削除しました"),
+        "xboardRuleExamples": MessageLookupByLibrary.simpleMessage("ルール例"),
+        "xboardOrderCycle": MessageLookupByLibrary.simpleMessage("注文サイクル"),
+        "xboardOrderDetails": MessageLookupByLibrary.simpleMessage("注文詳細"),
+        "xboardRenewPrompt":
+            MessageLookupByLibrary.simpleMessage("早めに更新してください"),
+        "xboardEnterTopupAmount":
+            MessageLookupByLibrary.simpleMessage("チャージ金額を入力"),
+        "xboardEnterValidAmount":
+            MessageLookupByLibrary.simpleMessage("有効な金額を入力"),
+        "xboardEnterRules": MessageLookupByLibrary.simpleMessage("ルールを入力"),
+        "xboardReading": MessageLookupByLibrary.simpleMessage("読み取り中..."),
+        "xboardAccountExpired":
+            MessageLookupByLibrary.simpleMessage("アカウント期限切れ"),
+        "xboardAccount": MessageLookupByLibrary.simpleMessage("アカウント"),
+        "xboardAccountTopup": MessageLookupByLibrary.simpleMessage("アカウントチャージ"),
+        "xboardNoTickets": MessageLookupByLibrary.simpleMessage("チケットはありません"),
+        "xboardTicketEmptyHint":
+            MessageLookupByLibrary.simpleMessage("問題があればチケットを送信してください"),
+        "xboardConfigUpdated":
+            MessageLookupByLibrary.simpleMessage("設定を更新しました"),
+        "xboardTrafficExhaustedEmoji":
+            MessageLookupByLibrary.simpleMessage("💾 通信量が上限です！"),
+        "xboardTrafficHeavy": MessageLookupByLibrary.simpleMessage("📊 通信量多め"),
+        "xboardTrafficInUse": MessageLookupByLibrary.simpleMessage("📡 通信量使用中"),
       };
 }

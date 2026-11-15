@@ -51,7 +51,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
               children: [
                 _buildTrafficUsageCard(context),
                 const SizedBox(height: 16),
-                _buildSectionHeader(context, '快捷入口',
+                _buildSectionHeader(context, appLocalizations.xboardQuickAccess,
                     icon: Icons.grid_view_rounded),
                 const SizedBox(height: 12),
                 // 垂直列表样式的快捷入口 - 包装在一个容器中
@@ -195,7 +195,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '安全退出当前账号',
+                                    appLocalizations.xboardLogoutHint,
                                     style: TextStyle(
                                       color: Colors.white.withOpacity(0.85),
                                       fontSize: 12,
@@ -262,7 +262,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     final usedStr = _formatBytes(used.toDouble());
     final ratio = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
 
-    String expireStr = '长期有效';
+    String expireStr = appLocalizations.infiniteTime;
     bool isExpired = false;
     bool isExpiringSoon = false;
     if (expireDate != null) {
@@ -276,7 +276,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       }
     }
 
-    final email = ref.watch(userInfoProvider)?.email ?? '用户账户';
+    final email = ref.watch(userInfoProvider)?.email ?? appLocalizations.xboardUserAccount;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
@@ -325,7 +325,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '账户',
+                      appLocalizations.xboardAccount,
                       style: TextStyle(
                         fontSize: 11.5,
                         color: Colors.white.withValues(alpha: 0.42),
@@ -356,7 +356,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     borderRadius: BorderRadius.circular(7),
                   ),
                   child: const Text(
-                    '已过期',
+                    appLocalizations.xboardExpired,
                     style: TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w600,
@@ -434,7 +434,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '有效期至',
+                      appLocalizations.xboardValidUntil,
                       style: TextStyle(
                         fontSize: 11.5,
                         color: Colors.white.withValues(alpha: 0.42),
@@ -495,7 +495,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   borderRadius: BorderRadius.circular(11),
                 ),
                 child: const Text(
-                  '购买套餐',
+                  appLocalizations.xboardPurchaseSubscription,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -556,7 +556,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      XBoardNotification.showError('无法打开链接');
+      XBoardNotification.showError(appLocalizations.xboardCannotOpenLink);
     }
   }
 
@@ -585,7 +585,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
         } else {
-          XBoardNotification.showError('无法打开链接');
+          XBoardNotification.showError(appLocalizations.xboardCannotOpenLink);
         }
       },
     );
@@ -605,14 +605,14 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
             iconColor: AppIconColors.blue,
             onTap: () async {
               if (websiteUrl == null || websiteUrl.isEmpty) {
-                XBoardNotification.showError('未配置官网地址');
+                XBoardNotification.showError(appLocalizations.xboardWebsiteNotConfigured);
                 return;
               }
               final uri = Uri.parse(websiteUrl);
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               } else {
-                XBoardNotification.showError('无法打开链接');
+                XBoardNotification.showError(appLocalizations.xboardCannotOpenLink);
               }
             },
           ),
@@ -624,7 +624,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
             icon: Icons.system_update,
             title: AppLocalizations.of(context).checkUpdate,
             iconColor: AppIconColors.teal,
-            badge: updateState.hasUpdate ? '新' : null,
+            badge: updateState.hasUpdate ? appLocalizations.xboardNewBadge : null,
             isLoading: updateState.isChecking,
             onTap: () async {
               await ref.read(updateCheckProvider.notifier).checkForUpdates();
@@ -637,9 +637,9 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   );
                 }
               } else if (state.error != null) {
-                XBoardNotification.showError('检查更新失败');
+                XBoardNotification.showError(appLocalizations.xboardUpdateCheckFailed);
               } else {
-                XBoardNotification.showSuccess('已是最新版本');
+                XBoardNotification.showSuccess(appLocalizations.xboardAlreadyLatest);
               }
             },
           ),
@@ -678,7 +678,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                           size: 16, color: Colors.orange.shade700),
                       const SizedBox(width: 6),
                       Text(
-                        '注意事项',
+                        appLocalizations.xboardNotes,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.orange.shade700,
@@ -690,7 +690,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   const Text(
                     '• 此操作会立即重置当前流量\n'
                     '• 会影响下次流量重置时间\n'
-                    '• 部分套餐可能不支持此功能',
+                    appLocalizations.xboardSomePlansUnsupported,
                     style: TextStyle(fontSize: 13),
                   ),
                 ],
@@ -745,9 +745,9 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       if (success && context.mounted) {
         // 刷新订阅信息
         await ref.read(xboardUserProvider.notifier).refreshSubscriptionInfo();
-        XBoardNotification.showSuccess('流量周期已重置');
+        XBoardNotification.showSuccess(appLocalizations.xboardDataCycleReset);
       } else if (context.mounted) {
-        XBoardNotification.showError('操作失败，请稍后重试');
+        XBoardNotification.showError(appLocalizations.xboardOperationFailedRetry);
       }
     } catch (e) {
       // 移除加载提示
@@ -756,14 +756,14 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       }
 
       if (context.mounted) {
-        String errorMessage = '操作失败';
+        String errorMessage = appLocalizations.xboardOperationFailed;
         final errorStr = e.toString();
 
         // 提取错误信息
         if (errorStr.contains('Renewal is not allowed')) {
-          errorMessage = '当前套餐不支持提前开启流量周期';
+          errorMessage = appLocalizations.xboardCycleNotSupported;
         } else if (errorStr.contains('not allowed')) {
-          errorMessage = '不允许执行此操作，请检查套餐状态';
+          errorMessage = appLocalizations.xboardOperationNotAllowed;
         } else if (errorStr.contains('insufficient')) {
           errorMessage = '余额不足，无法执行此操作';
         } else {
@@ -797,7 +797,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
   Future<void> _redeemGiftCard() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
-      XBoardNotification.showError('请输入礼品卡兑换码');
+      XBoardNotification.showError(appLocalizations.xboardEnterGiftCardCode);
       return;
     }
 
@@ -808,7 +808,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
       await XBoardSDK.instance.coupon.redeemGiftCard(code);
 
       if (mounted) {
-        XBoardNotification.showSuccess('礼品卡兑换成功！');
+        XBoardNotification.showSuccess(appLocalizations.xboardGiftCardRedeemSuccess);
         _codeController.clear();
         setState(() => _isExpanded = false);
       }
@@ -861,7 +861,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '礼品卡兑换',
+                        appLocalizations.xboardGiftCardRedeem,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -870,7 +870,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '充值余额或解锁权益',
+                        appLocalizations.xboardTopupOrUnlock,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white.withOpacity(0.7),

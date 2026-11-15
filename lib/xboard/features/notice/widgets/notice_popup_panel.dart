@@ -15,7 +15,7 @@ Future<void> showNoticePopup(BuildContext context) {
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
-    barrierLabel: '系统公告',
+    barrierLabel: appLocalizations.xboardSystemNotice,
     barrierColor: Colors.black.withValues(alpha: 0.35),
     transitionDuration: const Duration(milliseconds: 200),
     pageBuilder: (_, __, ___) => const _NoticePopupPanel(),
@@ -146,7 +146,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
           const SizedBox(width: 9),
           const Expanded(
             child: Text(
-              '系统公告',
+              appLocalizations.xboardSystemNotice,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -193,7 +193,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '公告加载失败',
+              appLocalizations.xboardNoticeLoadFailed,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white.withValues(alpha: 0.75),
@@ -239,7 +239,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
             ),
             const SizedBox(height: 10),
             Text(
-              '暂无公告',
+              appLocalizations.xboardNoNotices,
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.white.withValues(alpha: 0.4),
@@ -404,7 +404,8 @@ bool _isUnread(NoticeModel notice) {
   if (tags == null || tags.isEmpty) return false;
   return tags.any(
     (tag) =>
-        tag.toLowerCase().contains('弹窗') || tag.toLowerCase().contains('popup'),
+        tag.toLowerCase().contains(appLocalizations.xboardPopup) ||
+        tag.toLowerCase().contains('popup'),
   );
 }
 
@@ -517,7 +518,7 @@ String _formatDate(int timestamp) {
 
   if (difference.inDays == 0) {
     if (difference.inHours == 0) {
-      if (difference.inMinutes <= 0) return '刚刚';
+      if (difference.inMinutes <= 0) return appLocalizations.just;
       return '${difference.inMinutes}分钟前';
     }
     return '${difference.inHours}小时前';

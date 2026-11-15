@@ -83,7 +83,7 @@ class _OrderCard extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  order.planName ?? '未知套餐',
+                  order.planName ?? appLocalizations.xboardUnknownPlan,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -151,7 +151,7 @@ class _OrderCard extends ConsumerWidget {
                       vertical: 9,
                     ),
                     child: Text(
-                      '取消订单',
+                      appLocalizations.xboardCancelOrder,
                       style: TextStyle(
                         fontSize: 12.5,
                         color: Colors.white.withValues(alpha: 0.45),
@@ -178,7 +178,7 @@ class _OrderCard extends ConsumerWidget {
                     ),
                   ),
                   child: Text(
-                    '查看详情',
+                    appLocalizations.xboardViewDetails,
                     style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
@@ -234,7 +234,7 @@ class _OrderCard extends ConsumerWidget {
             children: [
               Center(
                 child: Text(
-                  '订单详情',
+                  appLocalizations.xboardOrderDetails,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -260,7 +260,7 @@ class _OrderCard extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                '基本信息',
+                appLocalizations.xboardBasicInfo,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -275,13 +275,17 @@ class _OrderCard extends ConsumerWidget {
                     decoration: _detailGlassmorphicDecoration(context),
                     child: Column(
                       children: [
-                        _buildDetailTile(
-                            context, Icons.numbers, '订单号', order.tradeNo,
+                        _buildDetailTile(context, Icons.numbers,
+                            appLocalizations.xboardOrderNumber, order.tradeNo,
                             canCopy: true),
-                        _buildDetailTile(context, Icons.inventory_2_outlined,
-                            '套餐名称', order.planName ?? '未知套餐'),
                         _buildDetailTile(
-                            context, Icons.update, '订单周期', order.period),
+                            context,
+                            Icons.inventory_2_outlined,
+                            appLocalizations.xboardPlanName,
+                            order.planName ??
+                                appLocalizations.xboardUnknownPlan),
+                        _buildDetailTile(context, Icons.update,
+                            appLocalizations.xboardOrderCycle, order.period),
                       ],
                     ),
                   ),
@@ -289,7 +293,7 @@ class _OrderCard extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                '时间信息',
+                appLocalizations.xboardTimeInfo,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -307,14 +311,14 @@ class _OrderCard extends ConsumerWidget {
                         _buildDetailTile(
                             context,
                             Icons.access_time,
-                            '创建时间',
+                            appLocalizations.xboardCreatedAt,
                             DateFormat('yyyy-MM-dd HH:mm:ss')
                                 .format(order.createdAt)),
                         if (order.paidAt != null)
                           _buildDetailTile(
                               context,
                               Icons.payment,
-                              '支付时间',
+                              appLocalizations.xboardPaidAt,
                               DateFormat('yyyy-MM-dd HH:mm:ss')
                                   .format(order.paidAt!)),
                       ],
@@ -428,19 +432,19 @@ class _OrderCard extends ConsumerWidget {
     switch (status) {
       case OrderStatus.pending:
         color = Colors.orange;
-        label = '待支付';
+        label = appLocalizations.xboardPendingPayment;
       case OrderStatus.processing:
         color = Colors.blue;
-        label = '处理中';
+        label = appLocalizations.xboardProcessingStatus;
       case OrderStatus.completed:
         color = Colors.green;
-        label = '已完成';
+        label = appLocalizations.xboardCompleted;
       case OrderStatus.canceled:
         color = Colors.grey;
-        label = '已取消';
+        label = appLocalizations.xboardCancelled;
       case OrderStatus.discounted:
         color = Colors.purple;
-        label = '已折抵';
+        label = appLocalizations.xboardOffsetApplied;
     }
 
     return Container(

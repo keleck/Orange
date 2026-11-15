@@ -1411,5 +1411,169 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("邀请好友获得佣金"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("重新检测"),
         "myOrders": MessageLookupByLibrary.simpleMessage("我的订单"),
+        "xboardClashNotRunningRulesPending":
+            MessageLookupByLibrary.simpleMessage("Clash 未启动，规则将在启动时生效"),
+        "xboardIpv6Disabled": MessageLookupByLibrary.simpleMessage("IPv6 已关闭"),
+        "xboardIpv6Enabled": MessageLookupByLibrary.simpleMessage("IPv6 已开启"),
+        "xboardSomePlansUnsupported":
+            MessageLookupByLibrary.simpleMessage("• 部分套餐可能不支持此功能"),
+        "xboardSubscriptionExpiring":
+            MessageLookupByLibrary.simpleMessage("⏰ 订阅即将到期"),
+        "xboardTrafficAlmostUsed":
+            MessageLookupByLibrary.simpleMessage("⚠️ 流量即将耗尽"),
+        "xboardSubscriptionExpiredTitle":
+            MessageLookupByLibrary.simpleMessage("❌ 订阅已过期"),
+        "xboardCampusHostsHint":
+            MessageLookupByLibrary.simpleMessage("不使用或者不需要突破时请关闭校园网穿透"),
+        "xboardOperationNotAllowed":
+            MessageLookupByLibrary.simpleMessage("不允许执行此操作，请检查套餐状态"),
+        "xboardTopupOrUnlock":
+            MessageLookupByLibrary.simpleMessage("充值余额或解锁权益"),
+        "xboardTopupInstantHint":
+            MessageLookupByLibrary.simpleMessage("充值后的余额将立即到账，可用于购买套餐服务"),
+        "xboardTopupSuccess": MessageLookupByLibrary.simpleMessage("充值成功"),
+        "xboardSelectNone": MessageLookupByLibrary.simpleMessage("全不选"),
+        "xboardNoticeLoadFailed":
+            MessageLookupByLibrary.simpleMessage("公告加载失败"),
+        "xboardOutboundIp": MessageLookupByLibrary.simpleMessage("出口 IP"),
+        "xboardCreatedAt": MessageLookupByLibrary.simpleMessage("创建时间"),
+        "xboardRefreshing": MessageLookupByLibrary.simpleMessage("刷新中..."),
+        "xboardLoadingDots": MessageLookupByLibrary.simpleMessage("加载中.."),
+        "xboardLoadingCampusConfig":
+            MessageLookupByLibrary.simpleMessage("加载校园网配置中..."),
+        "xboardCampusConfigFailed":
+            MessageLookupByLibrary.simpleMessage("加载校园网配置失败"),
+        "xboardBalanceUsableHint":
+            MessageLookupByLibrary.simpleMessage("可用于购买套餐和续费"),
+        "xboardGeoDatabaseUpdated":
+            MessageLookupByLibrary.simpleMessage("地理数据库已更新"),
+        "xboardBasicInfo": MessageLookupByLibrary.simpleMessage("基本信息"),
+        "xboardBasicSettings": MessageLookupByLibrary.simpleMessage("基础配置"),
+        "xboardProcessingStatus": MessageLookupByLibrary.simpleMessage("处理中"),
+        "xboardAutoRenewHint":
+            MessageLookupByLibrary.simpleMessage("套餐到期时自动使用余额续费"),
+        "xboardPlanName": MessageLookupByLibrary.simpleMessage("套餐名称"),
+        "xboardLogoutHint": MessageLookupByLibrary.simpleMessage("安全退出当前账号"),
+        "xboardUpdateViaProxyOn":
+            MessageLookupByLibrary.simpleMessage("将通过节点代理更新订阅"),
+        "xboardNotDownloaded": MessageLookupByLibrary.simpleMessage("尚未下载"),
+        "xboardLanProxyDisabled":
+            MessageLookupByLibrary.simpleMessage("局域网代理已关闭"),
+        "xboardLanProxyEnabled":
+            MessageLookupByLibrary.simpleMessage("局域网代理已开启"),
+        "xboardTicketLoadFailed":
+            MessageLookupByLibrary.simpleMessage("工单加载失败"),
+        "xboardTicketOverview": MessageLookupByLibrary.simpleMessage("工单概览"),
+        "xboardAutoRenewOff": MessageLookupByLibrary.simpleMessage("已关闭自动续费"),
+        "xboardCancelled": MessageLookupByLibrary.simpleMessage("已取消"),
+        "xboardCompleted": MessageLookupByLibrary.simpleMessage("已完成"),
+        "xboardAutoRenewOn": MessageLookupByLibrary.simpleMessage("已开启自动续费"),
+        "xboardOffsetApplied": MessageLookupByLibrary.simpleMessage("已折抵"),
+        "xboardUpdateViaProxyOff":
+            MessageLookupByLibrary.simpleMessage("已改为直连更新订阅"),
+        "xboardExpired": MessageLookupByLibrary.simpleMessage("已过期"),
+        "xboardConnected": MessageLookupByLibrary.simpleMessage("已连接"),
+        "xboardPopup": MessageLookupByLibrary.simpleMessage("弹窗"),
+        "xboardCycleNotSupported":
+            MessageLookupByLibrary.simpleMessage("当前套餐不支持提前开启流量周期"),
+        "xboardPendingReply": MessageLookupByLibrary.simpleMessage("待回复"),
+        "xboardPendingPayment": MessageLookupByLibrary.simpleMessage("待支付"),
+        "xboardQuickAccess": MessageLookupByLibrary.simpleMessage("快捷入口"),
+        "xboardTotal": MessageLookupByLibrary.simpleMessage("总计"),
+        "xboardTraffic70":
+            MessageLookupByLibrary.simpleMessage("您的流量已使用70%，还有充足空间~"),
+        "xboardTraffic80":
+            MessageLookupByLibrary.simpleMessage("您的流量已使用80%，注意节省使用哦~"),
+        "xboardTraffic90":
+            MessageLookupByLibrary.simpleMessage("您的流量已使用90%，请准备续费！"),
+        "xboardTraffic100":
+            MessageLookupByLibrary.simpleMessage("您的流量已达到100%，赶快续费吧！"),
+        "xboardSubscriptionExpiredHint":
+            MessageLookupByLibrary.simpleMessage("您的订阅已过期，请立即续费！"),
+        "xboardAllRulesCleared":
+            MessageLookupByLibrary.simpleMessage("所有规则已清除"),
+        "xboardBulkImportRules": MessageLookupByLibrary.simpleMessage("批量导入规则"),
+        "xboardPaidAt": MessageLookupByLibrary.simpleMessage("支付时间"),
+        "xboardPaymentRequestFailed":
+            MessageLookupByLibrary.simpleMessage("支付请求失败"),
+        "xboardRuleSeparatorHint":
+            MessageLookupByLibrary.simpleMessage("支持换行符或分号分隔规则"),
+        "xboardNewBadge": MessageLookupByLibrary.simpleMessage("新"),
+        "xboardNewTicket": MessageLookupByLibrary.simpleMessage("新建工单"),
+        "xboardCannotOpenLink": MessageLookupByLibrary.simpleMessage("无法打开链接"),
+        "xboardTimeInfo": MessageLookupByLibrary.simpleMessage("时间信息"),
+        "xboardNoNotices": MessageLookupByLibrary.simpleMessage("暂无公告"),
+        "xboardNoPaymentMethods":
+            MessageLookupByLibrary.simpleMessage("暂无可用的支付方式"),
+        "xboardNoTrafficRecords":
+            MessageLookupByLibrary.simpleMessage("暂无流量记录"),
+        "xboardNoNotifications": MessageLookupByLibrary.simpleMessage("暂无通知"),
+        "xboardValidUntil": MessageLookupByLibrary.simpleMessage("有效期至"),
+        "xboardServiceStatus": MessageLookupByLibrary.simpleMessage("服务状态"),
+        "xboardNoServicesEnabled":
+            MessageLookupByLibrary.simpleMessage("未启用任何服务"),
+        "xboardNoValidRules": MessageLookupByLibrary.simpleMessage("未找到有效的规则"),
+        "xboardUnknownPlan": MessageLookupByLibrary.simpleMessage("未知套餐"),
+        "xboardDisconnected": MessageLookupByLibrary.simpleMessage("未连接"),
+        "xboardNoProbeTargetsHint":
+            MessageLookupByLibrary.simpleMessage("未选择需要检测的服务，点击此处配置"),
+        "xboardWebsiteNotConfigured":
+            MessageLookupByLibrary.simpleMessage("未配置官网地址"),
+        "xboardViewDetails": MessageLookupByLibrary.simpleMessage("查看详情"),
+        "xboardCampusHosts": MessageLookupByLibrary.simpleMessage("校园网 Hosts"),
+        "xboardCampusHostsEnabled":
+            MessageLookupByLibrary.simpleMessage("校园网 Hosts 已启用"),
+        "xboardCampusHostsDisabled":
+            MessageLookupByLibrary.simpleMessage("校园网 Hosts 已禁用"),
+        "xboardUpdateCheckFailed":
+            MessageLookupByLibrary.simpleMessage("检查更新失败"),
+        "xboardCheckingStatus": MessageLookupByLibrary.simpleMessage("检测中"),
+        "xboardApplyingClashConfig":
+            MessageLookupByLibrary.simpleMessage("正在更新 Clash 配置..."),
+        "xboardRuleFormatHint": MessageLookupByLibrary.simpleMessage(
+            "每行一条规则，格式: TYPE,CONDITION,DESTINATION"),
+        "xboardNotes": MessageLookupByLibrary.simpleMessage("注意事项"),
+        "xboardTrafficExhaustedAdvance":
+            MessageLookupByLibrary.simpleMessage("流量已用尽，可提前透支下月流量"),
+        "xboardTrafficExhaustedRenew":
+            MessageLookupByLibrary.simpleMessage("流量已用尽，续费可获得更多流量"),
+        "xboardAddRulesHint":
+            MessageLookupByLibrary.simpleMessage("添加远程规则或手动配置"),
+        "xboardUserAccount": MessageLookupByLibrary.simpleMessage("用户账户"),
+        "xboardConfirmNextCycle":
+            MessageLookupByLibrary.simpleMessage("确定开启下一个流量周期？"),
+        "xboardConfirmTopup": MessageLookupByLibrary.simpleMessage("确认充值"),
+        "xboardGiftCardRedeem": MessageLookupByLibrary.simpleMessage("礼品卡兑换"),
+        "xboardGiftCardRedeemSuccess":
+            MessageLookupByLibrary.simpleMessage("礼品卡兑换成功！"),
+        "xboardPasteRulesHint": MessageLookupByLibrary.simpleMessage("粘贴或输入规则"),
+        "xboardSystemNotice": MessageLookupByLibrary.simpleMessage("系统公告"),
+        "xboardAutoRenew": MessageLookupByLibrary.simpleMessage("自动续费"),
+        "xboardCustomAmount": MessageLookupByLibrary.simpleMessage("自定义金额"),
+        "xboardFetchNodesFailed":
+            MessageLookupByLibrary.simpleMessage("获取节点失败"),
+        "xboardRulesAndRouting": MessageLookupByLibrary.simpleMessage("规则与分流"),
+        "xboardRuleDeleted": MessageLookupByLibrary.simpleMessage("规则已删除"),
+        "xboardRuleExamples": MessageLookupByLibrary.simpleMessage("规则示例"),
+        "xboardOrderCycle": MessageLookupByLibrary.simpleMessage("订单周期"),
+        "xboardOrderDetails": MessageLookupByLibrary.simpleMessage("订单详情"),
+        "xboardRenewPrompt": MessageLookupByLibrary.simpleMessage("请及时续费！"),
+        "xboardEnterTopupAmount":
+            MessageLookupByLibrary.simpleMessage("请输入您想要充值的金额"),
+        "xboardEnterValidAmount":
+            MessageLookupByLibrary.simpleMessage("请输入有效的金额"),
+        "xboardEnterRules": MessageLookupByLibrary.simpleMessage("请输入规则"),
+        "xboardReading": MessageLookupByLibrary.simpleMessage("读取中…"),
+        "xboardAccountExpired": MessageLookupByLibrary.simpleMessage("账号已过期"),
+        "xboardAccount": MessageLookupByLibrary.simpleMessage("账户"),
+        "xboardAccountTopup": MessageLookupByLibrary.simpleMessage("账户充值"),
+        "xboardNoTickets": MessageLookupByLibrary.simpleMessage("还没有工单"),
+        "xboardTicketEmptyHint":
+            MessageLookupByLibrary.simpleMessage("遇到问题可以提交工单，客服会尽快回复你"),
+        "xboardConfigUpdated": MessageLookupByLibrary.simpleMessage("配置已更新"),
+        "xboardTrafficExhaustedEmoji":
+            MessageLookupByLibrary.simpleMessage("💾 流量已用尽！"),
+        "xboardTrafficHeavy": MessageLookupByLibrary.simpleMessage("📊 流量使用较多"),
+        "xboardTrafficInUse": MessageLookupByLibrary.simpleMessage("📡 流量使用中"),
       };
 }

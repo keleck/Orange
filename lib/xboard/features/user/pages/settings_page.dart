@@ -79,7 +79,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
       if (mounted) {
         setState(() => _ipv6Enabled = value);
-        XBoardNotification.showSuccess(value ? 'IPv6 已开启' : 'IPv6 已关闭');
+        XBoardNotification.showSuccess(value
+            ? appLocalizations.xboardIpv6Enabled
+            : appLocalizations.xboardIpv6Disabled);
       }
     } catch (e) {
       if (mounted) {
@@ -107,7 +109,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
       if (mounted) {
         setState(() => _lanProxyEnabled = value);
-        XBoardNotification.showSuccess(value ? '局域网代理已开启' : '局域网代理已关闭');
+        XBoardNotification.showSuccess(value
+            ? appLocalizations.xboardLanProxyEnabled
+            : appLocalizations.xboardLanProxyDisabled);
       }
     } catch (e) {
       if (mounted) {
@@ -134,7 +138,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             (state) => state.copyWith(customRules: updatedRules),
           );
 
-      XBoardNotification.showSuccess('规则已删除');
+      XBoardNotification.showSuccess(appLocalizations.xboardRuleDeleted);
 
       // 重新应用 Clash 配置使规则生效
       await _applyConfig();
@@ -149,7 +153,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             (state) => state.copyWith(customRules: []),
           );
 
-      XBoardNotification.showSuccess('所有规则已清除');
+      XBoardNotification.showSuccess(appLocalizations.xboardAllRulesCleared);
 
       // 重新应用 Clash 配置
       await _applyConfig();
@@ -161,7 +165,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _importRules(String rulesText) async {
     try {
       if (rulesText.trim().isEmpty) {
-        XBoardNotification.showError('请输入规则');
+        XBoardNotification.showError(appLocalizations.xboardEnterRules);
         return;
       }
 
@@ -173,7 +177,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           .toList();
 
       if (lines.isEmpty) {
-        XBoardNotification.showError('未找到有效的规则');
+        XBoardNotification.showError(appLocalizations.xboardNoValidRules);
         return;
       }
 
@@ -237,7 +241,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       }
 
       if (newRules.isEmpty && invalidRules.isEmpty && skipCount == 0) {
-        XBoardNotification.showError('未找到有效的规则');
+        XBoardNotification.showError(appLocalizations.xboardNoValidRules);
         return;
       }
 
@@ -345,7 +349,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              '批量导入规则',
+                              appLocalizations.xboardBulkImportRules,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -396,7 +400,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    '每行一条规则，格式: TYPE,CONDITION,DESTINATION',
+                                    appLocalizations.xboardRuleFormatHint,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.blue.shade200,
@@ -409,7 +413,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            '规则示例',
+                            appLocalizations.xboardRuleExamples,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 13,
@@ -438,7 +442,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            '粘贴或输入规则',
+                            appLocalizations.xboardPasteRulesHint,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 13,
@@ -495,7 +499,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                '支持换行符或分号分隔规则',
+                                appLocalizations.xboardRuleSeparatorHint,
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.green.shade300,
@@ -570,7 +574,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                         ),
                                         const SizedBox(width: 6),
                                         const Text(
-                                          '导入',
+                                          appLocalizations.import,
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
@@ -604,13 +608,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
       if (globalState.isStart) {
         // 如果 Clash 已启动，重新应用配置
-        XBoardNotification.showInfo('正在更新 Clash 配置...');
+        XBoardNotification.showInfo(appLocalizations.xboardApplyingClashConfig);
         globalState.appController.setupClashConfigDebounce();
         // 等待一下确保配置已应用
         await Future.delayed(const Duration(seconds: 2));
-        XBoardNotification.showSuccess('配置已更新');
+        XBoardNotification.showSuccess(appLocalizations.xboardConfigUpdated);
       } else {
-        XBoardNotification.showInfo('Clash 未启动，规则将在启动时生效');
+        XBoardNotification.showInfo(
+            appLocalizations.xboardClashNotRunningRulesPending);
       }
     } catch (e) {
       commonPrint.log('应用规则配置失败: $e');
@@ -647,7 +652,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               padding: const EdgeInsets.fromLTRB(
                   16, 0, 16, 100), // 底部增加 padding 避免被导航栏遮挡
               children: [
-                _buildSectionHeader(context, '基础配置', icon: Icons.tune_rounded),
+                _buildSectionHeader(
+                    context, appLocalizations.xboardBasicSettings,
+                    icon: Icons.tune_rounded),
                 const SizedBox(height: 14),
                 _buildIPv6Section(context),
                 const SizedBox(height: 10),
@@ -665,7 +672,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 const SizedBox(height: 28),
                 _buildSectionHeader(
                   context,
-                  '规则与分流',
+                  appLocalizations.xboardRulesAndRouting,
                   icon: Icons.alt_route_rounded,
                 ),
                 const SizedBox(height: 14),
@@ -746,7 +753,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 (state) => state.copyWith(proxyUpdateSubscription: value),
               );
           XBoardNotification.showSuccess(
-            value ? '将通过节点代理更新订阅' : '已改为直连更新订阅',
+            value
+                ? appLocalizations.xboardUpdateViaProxyOn
+                : appLocalizations.xboardUpdateViaProxyOff,
           );
         },
         activeColor: Theme.of(context).colorScheme.primary,
@@ -761,10 +770,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       builder: (context, snapshot) {
         final info = snapshot.data;
         final detail = info == null
-            ? '读取中…'
+            ? appLocalizations.xboardReading
             : info.exists
                 ? '${info.dateText}   ${info.sizeText}'
-                : '尚未下载';
+                : appLocalizations.xboardNotDownloaded;
         return SettingsCard(
           icon: Icons.public_rounded,
           accentColor: AppIconColors.blue,
@@ -796,7 +805,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       icon: Icons.rule_folder_outlined,
       accentColor: AppIconColors.purple,
       title: AppLocalizations.of(context).xboardCustomRoutingRules,
-      subtitle: count > 0 ? '已配置 $count 条规则' : '添加远程规则或手动配置',
+      subtitle:
+          count > 0 ? '已配置 $count 条规则' : appLocalizations.xboardAddRulesHint,
       trailing: Icon(
         Icons.chevron_right_rounded,
         size: 20,
@@ -857,7 +867,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         ),
       );
       if (message.isNotEmpty) throw message;
-      XBoardNotification.showSuccess('地理数据库已更新');
+      XBoardNotification.showSuccess(appLocalizations.xboardGeoDatabaseUpdated);
       if (mounted) {
         setState(() => _geoInfoFuture = _loadGeoInfo());
       }
@@ -908,7 +918,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '校园网 Hosts',
+                                  appLocalizations.xboardCampusHosts,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
@@ -936,18 +946,22 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                       if (value) {
                                         await applyCampusHosts(ref, hosts);
                                         XBoardNotification.showSuccess(
-                                            '校园网 Hosts 已启用');
+                                            appLocalizations
+                                                .xboardCampusHostsEnabled);
                                       } else {
                                         await clearCampusHosts(ref, hosts);
                                         XBoardNotification.showSuccess(
-                                            '校园网 Hosts 已禁用');
+                                            appLocalizations
+                                                .xboardCampusHostsDisabled);
                                       }
                                       // 触发重建以更新开关状态
                                       if (mounted) {
                                         setState(() {});
                                       }
                                     } catch (e) {
-                                      XBoardNotification.showError('操作失败');
+                                      XBoardNotification.showError(
+                                          appLocalizations
+                                              .xboardOperationFailed);
                                     } finally {
                                       if (mounted) {
                                         setState(
@@ -961,7 +975,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '不使用或者不需要突破时请关闭校园网穿透',
+                        appLocalizations.xboardCampusHostsHint,
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.5),
                           fontSize: 11,
@@ -985,7 +999,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const SizedBox(width: 8),
               Text(
-                '加载校园网配置中...',
+                appLocalizations.xboardLoadingCampusConfig,
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.7),
                   fontSize: 12,
@@ -994,7 +1008,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ],
           ),
           error: (error, stack) => Text(
-            '加载校园网配置失败',
+            appLocalizations.xboardCampusConfigFailed,
             style: TextStyle(
               color: Colors.red.shade300,
               fontSize: 12,

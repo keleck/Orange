@@ -56,7 +56,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
           'WalletCard: Payment Methods Loaded. Count: ${paymentMethods.length}');
 
       if (paymentMethods.isEmpty) {
-        throw Exception('暂无可用的支付方式');
+        throw Exception(appLocalizations.xboardNoPaymentMethods);
       }
 
       DomainPaymentMethod? selectedMethod;
@@ -97,7 +97,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
       );
 
       if (paymentResult == null) {
-        throw Exception('支付请求失败');
+        throw Exception(appLocalizations.xboardPaymentRequestFailed);
       }
 
       paymentResult.when(
@@ -150,7 +150,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
   void _handlePaymentSuccess() {
     ref.read(xboardUserAuthProvider.notifier).refreshUserInfo();
     if (mounted) {
-      XBoardNotification.showSuccess('充值成功');
+      XBoardNotification.showSuccess(appLocalizations.xboardTopupSuccess);
       PaymentWaitingManager.hide();
     }
   }
@@ -229,7 +229,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         ),
                         const SizedBox(width: 12),
                         const Text(
-                          '自定义金额',
+                          appLocalizations.xboardCustomAmount,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -240,7 +240,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '请输入您想要充值的金额',
+                      appLocalizations.xboardEnterTopupAmount,
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.white.withValues(alpha: 0.7),
@@ -338,7 +338,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     ),
                                   ),
                                   child: Text(
-                                    '取消',
+                                    appLocalizations.cancel,
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -361,7 +361,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                 Navigator.pop(context);
                                 _handleTopUp(amount);
                               } else {
-                                XBoardNotification.showError('请输入有效的金额');
+                                XBoardNotification.showError(
+                                    appLocalizations.xboardEnterValidAmount);
                               }
                             },
                             borderRadius: BorderRadius.circular(12),
@@ -399,7 +400,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     ],
                                   ),
                                   child: const Text(
-                                    '确认充值',
+                                    appLocalizations.xboardConfirmTopup,
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -497,7 +498,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  '账户余额',
+                  appLocalizations.xboardAccountBalance,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -549,7 +550,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '可用于购买套餐和续费',
+                        appLocalizations.xboardBalanceUsableHint,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -598,7 +599,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            '自动续费',
+                            appLocalizations.xboardAutoRenew,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
@@ -607,7 +608,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '套餐到期时自动使用余额续费',
+                            appLocalizations.xboardAutoRenewHint,
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.white.withValues(alpha: 0.7),
@@ -644,8 +645,9 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     .read(xboardUserAuthProvider.notifier)
                                     .refreshUserInfo();
                                 if (mounted) {
-                                  XBoardNotification.showSuccess(
-                                      value ? '已开启自动续费' : '已关闭自动续费');
+                                  XBoardNotification.showSuccess(value
+                                      ? appLocalizations.xboardAutoRenewOn
+                                      : appLocalizations.xboardAutoRenewOff);
                                 }
                               } catch (e) {
                                 if (mounted) {
@@ -695,7 +697,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         ),
                         const SizedBox(width: 12),
                         const Text(
-                          '账户充值',
+                          appLocalizations.xboardAccountTopup,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -733,7 +735,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              '充值后的余额将立即到账，可用于购买套餐服务',
+                              appLocalizations.xboardTopupInstantHint,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -809,7 +811,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               size: 20,
                             ),
                             label: const Text(
-                              '自定义金额',
+                              appLocalizations.xboardCustomAmount,
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -854,7 +856,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
         lowerUrl.contains('pay.weixin.qq.com') || // 微信支付链接
         lowerUrl.contains('qr') || // 通用二维码标识
         lowerUrl.contains('qrcode') || // 二维码代码
-        lowerUrl.contains('二维码') || // 中文二维码
+        lowerUrl.contains(appLocalizations.qrcode) || // 中文二维码
         lowerUrl.contains('alipay_qr') || // 支付宝二维码
         lowerUrl.contains('wechat_qr') || // 微信二维码
         lowerUrl.startsWith('data:image'); // Base64 图像数据

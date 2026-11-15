@@ -61,7 +61,7 @@ class TrafficLogPage extends ConsumerWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          '暂无流量记录',
+                          appLocalizations.xboardNoTrafficRecords,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white.withValues(alpha: 0.7),
@@ -94,7 +94,7 @@ class TrafficLogPage extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '加载失败',
+                      appLocalizations.xboardLoadingFailed,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -193,7 +193,7 @@ class TrafficLogPage extends ConsumerWidget {
               _buildTrafficItem(
                 context,
                 Icons.arrow_upward_rounded,
-                '上传',
+                appLocalizations.upload,
                 log.upload,
                 const Color(0xFFFFB86B),
               ),
@@ -201,7 +201,7 @@ class TrafficLogPage extends ConsumerWidget {
               _buildTrafficItem(
                 context,
                 Icons.arrow_downward_rounded,
-                '下载',
+                appLocalizations.download,
                 log.download,
                 const Color(0xFF5FD3A0),
               ),
@@ -209,7 +209,7 @@ class TrafficLogPage extends ConsumerWidget {
               _buildTrafficItem(
                 context,
                 Icons.import_export_rounded,
-                '总计',
+                appLocalizations.xboardTotal,
                 total,
                 primary,
               ),

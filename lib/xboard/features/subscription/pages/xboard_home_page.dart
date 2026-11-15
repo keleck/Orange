@@ -416,12 +416,12 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     }
 
     final label = isRefreshing
-        ? '刷新中...'
+        ? appLocalizations.xboardRefreshing
         : isNodeLoading
-            ? '加载中...'
+            ? appLocalizations.loading
             : isDisabled
-                ? (isExpired ? '账号已过期' : '流量已耗尽')
-                : (isStart ? '已连接' : '未连接');
+                ? (isExpired ? appLocalizations.xboardAccountExpired : '流量已耗尽')
+                : (isStart ? appLocalizations.xboardConnected : appLocalizations.xboardDisconnected);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -619,7 +619,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     final bool shouldShowFetchTransferButton = false; // 暂时禁用，优先引导用户购买流量
 
     Group? currentGroup;
-    String displayName = '未选择';
+    String displayName = appLocalizations.xboardUnselected;
 
     if (groups.isNotEmpty) {
       if (mode == Mode.global) {
@@ -897,7 +897,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         ? FontWeight.w600
                                         : FontWeight.w500,
                                   ),
-                                  child: Text(_isTunLoading ? '加载中..' : 'TUN'),
+                                  child: Text(_isTunLoading ? appLocalizations.xboardLoadingDots : 'TUN'),
                                 ),
                               ],
                             ),
@@ -1015,7 +1015,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     Text(
                                       domainSubscription?.planId != null &&
                                               domainSubscription!.planId != 0
-                                          ? '续费套餐'
+                                          ? appLocalizations.xboardRenewPlan
                                           : AppLocalizations.of(context)
                                               .xboardPurchasePlan,
                                       style: const TextStyle(
@@ -1048,7 +1048,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                 if (isTrafficExhausted && !isExpired) ...[
                                   const SizedBox(height: 6),
                                   Text(
-                                    '流量已用尽，续费可获得更多流量',
+                                    appLocalizations.xboardTrafficExhaustedRenew,
                                     style: TextStyle(
                                       color:
                                           Colors.white.withValues(alpha: 0.8),
@@ -1103,7 +1103,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         ),
                                         const SizedBox(width: 12),
                                         const Text(
-                                          '确定开启下一个流量周期？',
+                                          appLocalizations.xboardConfirmNextCycle,
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 16,
@@ -1121,7 +1121,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      '流量已用尽，可提前透支下月流量',
+                                      appLocalizations.xboardTrafficExhaustedAdvance,
                                       style: TextStyle(
                                         color:
                                             Colors.white.withValues(alpha: 0.8),
@@ -1156,7 +1156,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    importState.message ?? '获取节点失败',
+                                    importState.message ?? appLocalizations.xboardFetchNodesFailed,
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
@@ -1228,7 +1228,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             Row(
                                               children: [
                                                 Text(
-                                                  '当前节点',
+                                                  appLocalizations.xboardCurrentNode,
                                                   style: TextStyle(
                                                     color: Colors.white
                                                         .withValues(alpha: 0.7),
@@ -1308,7 +1308,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                                   ),
                                                 ),
                                                 if (currentGroup != null &&
-                                                    displayName != '未选择')
+                                                    displayName != appLocalizations.xboardUnselected)
                                                   Consumer(
                                                     builder: (context, ref, _) {
                                                       final delay = ref.watch(
@@ -1373,7 +1373,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                               child: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: isStart &&
-                                                        displayName != '未选择'
+                                                        displayName != appLocalizations.xboardUnselected
                                                     ? IpQualityBadge(
                                                         proxyName: displayName,
                                                         enabled: isStart,
@@ -1606,8 +1606,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   Map<String, dynamic> _getExpiringHint(DomainSubscription? subscription) {
     if (subscription?.expiredAt == null) {
       return {
-        'title': '⏰ 订阅即将到期',
-        'message': '请及时续费！',
+        'title': appLocalizations.xboardSubscriptionExpiring,
+        'message': appLocalizations.xboardRenewPrompt,
         'icon': Icons.schedule_rounded,
         'color': Colors.purple,
       };
@@ -1620,8 +1620,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     // 如果已经过期
     if (difference.isNegative) {
       return {
-        'title': '❌ 订阅已过期',
-        'message': '您的订阅已过期，请立即续费！',
+        'title': appLocalizations.xboardSubscriptionExpiredTitle,
+        'message': appLocalizations.xboardSubscriptionExpiredHint,
         'icon': Icons.cancel_rounded,
         'color': Colors.red,
       };
@@ -1641,7 +1641,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     }
 
     return {
-      'title': '⏰ 订阅即将到期',
+      'title': appLocalizations.xboardSubscriptionExpiring,
       'message': '还剩 $timeStr，记得及时续费！',
       'icon': Icons.schedule_rounded,
       'color': Colors.purple,
@@ -1652,29 +1652,29 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   Map<String, dynamic> _getTrafficHint(double percentage) {
     if (percentage >= 100) {
       return {
-        'title': '💾 流量已用尽！',
-        'message': '您的流量已达到100%，赶快续费吧！',
+        'title': appLocalizations.xboardTrafficExhaustedEmoji,
+        'message': appLocalizations.xboardTraffic100,
         'icon': Icons.storage_rounded,
         'color': Colors.red,
       };
     } else if (percentage >= 90) {
       return {
-        'title': '⚠️ 流量即将耗尽',
-        'message': '您的流量已使用90%，请准备续费！',
+        'title': appLocalizations.xboardTrafficAlmostUsed,
+        'message': appLocalizations.xboardTraffic90,
         'icon': Icons.warning_rounded,
         'color': Colors.orange,
       };
     } else if (percentage >= 80) {
       return {
-        'title': '📊 流量使用较多',
-        'message': '您的流量已使用80%，注意节省使用哦~',
+        'title': appLocalizations.xboardTrafficHeavy,
+        'message': appLocalizations.xboardTraffic80,
         'icon': Icons.info_rounded,
         'color': Colors.amber,
       };
     } else {
       return {
-        'title': '📡 流量使用中',
-        'message': '您的流量已使用70%，还有充足空间~',
+        'title': appLocalizations.xboardTrafficInUse,
+        'message': appLocalizations.xboardTraffic70,
         'icon': Icons.cloud_upload_rounded,
         'color': Colors.blue,
       };
@@ -1929,7 +1929,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                           size: 16, color: Colors.orange.shade700),
                       const SizedBox(width: 6),
                       Text(
-                        '注意事项',
+                        appLocalizations.xboardNotes,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.orange.shade700,
@@ -1941,7 +1941,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                   const Text(
                     '• 此操作会立即重置当前流量\n'
                     '• 会影响下次流量重置时间\n'
-                    '• 部分套餐可能不支持此功能',
+                    appLocalizations.xboardSomePlansUnsupported,
                     style: TextStyle(fontSize: 13),
                   ),
                 ],
@@ -2019,14 +2019,14 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       }
 
       if (context.mounted) {
-        String errorMessage = '操作失败';
+        String errorMessage = appLocalizations.xboardOperationFailed;
         final errorStr = e.toString();
 
         // 提取错误信息
         if (errorStr.contains('Renewal is not allowed')) {
-          errorMessage = '当前套餐不支持提前开启流量周期';
+          errorMessage = appLocalizations.xboardCycleNotSupported;
         } else if (errorStr.contains('not allowed')) {
-          errorMessage = '不允许执行此操作，请检查套餐状态';
+          errorMessage = appLocalizations.xboardOperationNotAllowed;
         } else if (errorStr.contains('insufficient')) {
           errorMessage = '余额不足，无法执行此操作';
         } else {
@@ -2071,7 +2071,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
   bool _isPopupNotice(NoticeModel notice) {
     if (notice.tags == null || notice.tags!.isEmpty) return false;
     return notice.tags!.any((tag) =>
-        tag.toLowerCase().contains('弹窗') ||
+        tag.toLowerCase().contains(appLocalizations.xboardPopup) ||
         tag.toLowerCase().contains('popup'));
   }
 

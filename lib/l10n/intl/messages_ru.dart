@@ -1758,5 +1758,216 @@ class MessageLookup extends MessageLookupByLibrary {
             "Приглашайте друзей и получайте комиссию"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("Перепроверить"),
         "myOrders": MessageLookupByLibrary.simpleMessage("Мои заказы"),
+        "xboardClashNotRunningRulesPending":
+            MessageLookupByLibrary.simpleMessage(
+                "Clash не запущен, правила применятся при старте"),
+        "xboardIpv6Disabled":
+            MessageLookupByLibrary.simpleMessage("IPv6 отключён"),
+        "xboardIpv6Enabled":
+            MessageLookupByLibrary.simpleMessage("IPv6 включён"),
+        "xboardSomePlansUnsupported": MessageLookupByLibrary.simpleMessage(
+            "• Некоторые тарифы могут не поддерживать это"),
+        "xboardSubscriptionExpiring":
+            MessageLookupByLibrary.simpleMessage("⏰ Подписка скоро истекает"),
+        "xboardTrafficAlmostUsed":
+            MessageLookupByLibrary.simpleMessage("⚠️ Трафик почти исчерпан"),
+        "xboardSubscriptionExpiredTitle":
+            MessageLookupByLibrary.simpleMessage("❌ Подписка истекла"),
+        "xboardCampusHostsHint": MessageLookupByLibrary.simpleMessage(
+            "Отключите обход сети кампуса, если не нужен"),
+        "xboardOperationNotAllowed": MessageLookupByLibrary.simpleMessage(
+            "Операция запрещена, проверьте статус тарифа"),
+        "xboardTopupOrUnlock": MessageLookupByLibrary.simpleMessage(
+            "Пополнить или разблокировать"),
+        "xboardTopupInstantHint": MessageLookupByLibrary.simpleMessage(
+            "Средства зачисляются сразу и годятся для тарифов"),
+        "xboardTopupSuccess":
+            MessageLookupByLibrary.simpleMessage("Пополнение успешно"),
+        "xboardSelectNone": MessageLookupByLibrary.simpleMessage("Снять все"),
+        "xboardNoticeLoadFailed": MessageLookupByLibrary.simpleMessage(
+            "Не удалось загрузить уведомления"),
+        "xboardOutboundIp":
+            MessageLookupByLibrary.simpleMessage("Исходящий IP"),
+        "xboardCreatedAt": MessageLookupByLibrary.simpleMessage("Создано"),
+        "xboardRefreshing":
+            MessageLookupByLibrary.simpleMessage("Обновление..."),
+        "xboardLoadingDots": MessageLookupByLibrary.simpleMessage("Загрузка.."),
+        "xboardLoadingCampusConfig": MessageLookupByLibrary.simpleMessage(
+            "Загрузка конфигурации кампуса..."),
+        "xboardCampusConfigFailed": MessageLookupByLibrary.simpleMessage(
+            "Не удалось загрузить конфигурацию кампуса"),
+        "xboardBalanceUsableHint":
+            MessageLookupByLibrary.simpleMessage("Для тарифов и продления"),
+        "xboardGeoDatabaseUpdated":
+            MessageLookupByLibrary.simpleMessage("Геобаза обновлена"),
+        "xboardBasicInfo":
+            MessageLookupByLibrary.simpleMessage("Основная информация"),
+        "xboardBasicSettings":
+            MessageLookupByLibrary.simpleMessage("Основные настройки"),
+        "xboardProcessingStatus":
+            MessageLookupByLibrary.simpleMessage("В обработке"),
+        "xboardAutoRenewHint": MessageLookupByLibrary.simpleMessage(
+            "Автопродление с баланса при истечении"),
+        "xboardPlanName":
+            MessageLookupByLibrary.simpleMessage("Название тарифа"),
+        "xboardLogoutHint": MessageLookupByLibrary.simpleMessage(
+            "Безопасный выход из аккаунта"),
+        "xboardUpdateViaProxyOn": MessageLookupByLibrary.simpleMessage(
+            "Подписка обновляется через прокси"),
+        "xboardNotDownloaded":
+            MessageLookupByLibrary.simpleMessage("Не загружено"),
+        "xboardLanProxyDisabled":
+            MessageLookupByLibrary.simpleMessage("LAN-прокси отключён"),
+        "xboardLanProxyEnabled":
+            MessageLookupByLibrary.simpleMessage("LAN-прокси включён"),
+        "xboardTicketLoadFailed":
+            MessageLookupByLibrary.simpleMessage("Не удалось загрузить тикеты"),
+        "xboardTicketOverview":
+            MessageLookupByLibrary.simpleMessage("Обзор тикетов"),
+        "xboardAutoRenewOff":
+            MessageLookupByLibrary.simpleMessage("Автопродление отключено"),
+        "xboardCancelled": MessageLookupByLibrary.simpleMessage("Отменено"),
+        "xboardCompleted": MessageLookupByLibrary.simpleMessage("Завершено"),
+        "xboardAutoRenewOn":
+            MessageLookupByLibrary.simpleMessage("Автопродление включено"),
+        "xboardOffsetApplied": MessageLookupByLibrary.simpleMessage("Зачтено"),
+        "xboardUpdateViaProxyOff": MessageLookupByLibrary.simpleMessage(
+            "Подписка обновляется напрямую"),
+        "xboardExpired": MessageLookupByLibrary.simpleMessage("Истекло"),
+        "xboardConnected": MessageLookupByLibrary.simpleMessage("Подключено"),
+        "xboardPopup": MessageLookupByLibrary.simpleMessage("Всплывающее окно"),
+        "xboardCycleNotSupported": MessageLookupByLibrary.simpleMessage(
+            "Тариф не поддерживает досрочный старт цикла"),
+        "xboardPendingReply":
+            MessageLookupByLibrary.simpleMessage("Ожидает ответа"),
+        "xboardPendingPayment":
+            MessageLookupByLibrary.simpleMessage("Ожидает оплаты"),
+        "xboardQuickAccess":
+            MessageLookupByLibrary.simpleMessage("Быстрый доступ"),
+        "xboardTotal": MessageLookupByLibrary.simpleMessage("Всего"),
+        "xboardTraffic70":
+            MessageLookupByLibrary.simpleMessage("Использовано 70% трафика"),
+        "xboardTraffic80":
+            MessageLookupByLibrary.simpleMessage("Использовано 80% трафика"),
+        "xboardTraffic90": MessageLookupByLibrary.simpleMessage(
+            "Использовано 90% трафика, продлите подписку"),
+        "xboardTraffic100": MessageLookupByLibrary.simpleMessage(
+            "Трафик исчерпан, продлите подписку"),
+        "xboardSubscriptionExpiredHint": MessageLookupByLibrary.simpleMessage(
+            "Подписка истекла, продлите сейчас"),
+        "xboardAllRulesCleared":
+            MessageLookupByLibrary.simpleMessage("Все правила удалены"),
+        "xboardBulkImportRules":
+            MessageLookupByLibrary.simpleMessage("Массовый импорт правил"),
+        "xboardPaidAt": MessageLookupByLibrary.simpleMessage("Оплачено"),
+        "xboardPaymentRequestFailed":
+            MessageLookupByLibrary.simpleMessage("Ошибка запроса оплаты"),
+        "xboardRuleSeparatorHint": MessageLookupByLibrary.simpleMessage(
+            "Разделяйте правила переводом строки или точкой с запятой"),
+        "xboardNewBadge": MessageLookupByLibrary.simpleMessage("Новое"),
+        "xboardNewTicket": MessageLookupByLibrary.simpleMessage("Новый тикет"),
+        "xboardCannotOpenLink":
+            MessageLookupByLibrary.simpleMessage("Не удалось открыть ссылку"),
+        "xboardTimeInfo": MessageLookupByLibrary.simpleMessage("Время"),
+        "xboardNoNotices":
+            MessageLookupByLibrary.simpleMessage("Уведомлений нет"),
+        "xboardNoPaymentMethods": MessageLookupByLibrary.simpleMessage(
+            "Нет доступных способов оплаты"),
+        "xboardNoTrafficRecords":
+            MessageLookupByLibrary.simpleMessage("Нет записей трафика"),
+        "xboardNoNotifications":
+            MessageLookupByLibrary.simpleMessage("Уведомлений нет"),
+        "xboardValidUntil":
+            MessageLookupByLibrary.simpleMessage("Действует до"),
+        "xboardServiceStatus":
+            MessageLookupByLibrary.simpleMessage("Состояние сервисов"),
+        "xboardNoServicesEnabled":
+            MessageLookupByLibrary.simpleMessage("Сервисы не включены"),
+        "xboardNoValidRules": MessageLookupByLibrary.simpleMessage(
+            "Действующих правил не найдено"),
+        "xboardUnknownPlan":
+            MessageLookupByLibrary.simpleMessage("Неизвестный тариф"),
+        "xboardDisconnected":
+            MessageLookupByLibrary.simpleMessage("Не подключено"),
+        "xboardNoProbeTargetsHint": MessageLookupByLibrary.simpleMessage(
+            "Сервисы не выбраны, нажмите для настройки"),
+        "xboardWebsiteNotConfigured":
+            MessageLookupByLibrary.simpleMessage("Сайт не настроен"),
+        "xboardViewDetails": MessageLookupByLibrary.simpleMessage("Подробнее"),
+        "xboardCampusHosts":
+            MessageLookupByLibrary.simpleMessage("Hosts кампуса"),
+        "xboardCampusHostsEnabled":
+            MessageLookupByLibrary.simpleMessage("Hosts кампуса включены"),
+        "xboardCampusHostsDisabled":
+            MessageLookupByLibrary.simpleMessage("Hosts кампуса отключены"),
+        "xboardUpdateCheckFailed":
+            MessageLookupByLibrary.simpleMessage("Ошибка проверки обновлений"),
+        "xboardCheckingStatus":
+            MessageLookupByLibrary.simpleMessage("Проверка"),
+        "xboardApplyingClashConfig": MessageLookupByLibrary.simpleMessage(
+            "Применение конфигурации Clash..."),
+        "xboardRuleFormatHint": MessageLookupByLibrary.simpleMessage(
+            "Одно правило на строку: TYPE,CONDITION,DESTINATION"),
+        "xboardNotes": MessageLookupByLibrary.simpleMessage("Примечания"),
+        "xboardTrafficExhaustedAdvance": MessageLookupByLibrary.simpleMessage(
+            "Трафик исчерпан, можно взять из следующего месяца"),
+        "xboardTrafficExhaustedRenew": MessageLookupByLibrary.simpleMessage(
+            "Трафик исчерпан, продлите для пополнения"),
+        "xboardAddRulesHint": MessageLookupByLibrary.simpleMessage(
+            "Добавьте удалённые правила или настройте вручную"),
+        "xboardUserAccount": MessageLookupByLibrary.simpleMessage("Аккаунт"),
+        "xboardConfirmNextCycle": MessageLookupByLibrary.simpleMessage(
+            "Начать следующий цикл трафика?"),
+        "xboardConfirmTopup":
+            MessageLookupByLibrary.simpleMessage("Подтвердить пополнение"),
+        "xboardGiftCardRedeem":
+            MessageLookupByLibrary.simpleMessage("Обменять подарочную карту"),
+        "xboardGiftCardRedeemSuccess": MessageLookupByLibrary.simpleMessage(
+            "Подарочная карта активирована"),
+        "xboardPasteRulesHint": MessageLookupByLibrary.simpleMessage(
+            "Вставьте или введите правила"),
+        "xboardSystemNotice":
+            MessageLookupByLibrary.simpleMessage("Системное уведомление"),
+        "xboardAutoRenew":
+            MessageLookupByLibrary.simpleMessage("Автопродление"),
+        "xboardCustomAmount":
+            MessageLookupByLibrary.simpleMessage("Своя сумма"),
+        "xboardFetchNodesFailed":
+            MessageLookupByLibrary.simpleMessage("Не удалось получить узлы"),
+        "xboardRulesAndRouting":
+            MessageLookupByLibrary.simpleMessage("Правила и маршрутизация"),
+        "xboardRuleDeleted":
+            MessageLookupByLibrary.simpleMessage("Правило удалено"),
+        "xboardRuleExamples":
+            MessageLookupByLibrary.simpleMessage("Примеры правил"),
+        "xboardOrderCycle":
+            MessageLookupByLibrary.simpleMessage("Период заказа"),
+        "xboardOrderDetails":
+            MessageLookupByLibrary.simpleMessage("Детали заказа"),
+        "xboardRenewPrompt":
+            MessageLookupByLibrary.simpleMessage("Продлите вовремя"),
+        "xboardEnterTopupAmount":
+            MessageLookupByLibrary.simpleMessage("Введите сумму пополнения"),
+        "xboardEnterValidAmount":
+            MessageLookupByLibrary.simpleMessage("Введите корректную сумму"),
+        "xboardEnterRules":
+            MessageLookupByLibrary.simpleMessage("Введите правила"),
+        "xboardReading": MessageLookupByLibrary.simpleMessage("Чтение..."),
+        "xboardAccountExpired":
+            MessageLookupByLibrary.simpleMessage("Аккаунт истёк"),
+        "xboardAccount": MessageLookupByLibrary.simpleMessage("Аккаунт"),
+        "xboardAccountTopup":
+            MessageLookupByLibrary.simpleMessage("Пополнение счёта"),
+        "xboardNoTickets": MessageLookupByLibrary.simpleMessage("Тикетов нет"),
+        "xboardTicketEmptyHint": MessageLookupByLibrary.simpleMessage(
+            "Создайте тикет, если нужна помощь"),
+        "xboardConfigUpdated":
+            MessageLookupByLibrary.simpleMessage("Конфигурация обновлена"),
+        "xboardTrafficExhaustedEmoji":
+            MessageLookupByLibrary.simpleMessage("💾 Трафик исчерпан!"),
+        "xboardTrafficHeavy":
+            MessageLookupByLibrary.simpleMessage("📊 Большой расход трафика"),
+        "xboardTrafficInUse":
+            MessageLookupByLibrary.simpleMessage("📡 Трафик используется"),
       };
 }

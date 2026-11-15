@@ -1961,5 +1961,212 @@ class MessageLookup extends MessageLookupByLibrary {
             "Invite friends and earn commission"),
         "xboardRecheck": MessageLookupByLibrary.simpleMessage("Recheck"),
         "myOrders": MessageLookupByLibrary.simpleMessage("My Orders"),
+        "xboardClashNotRunningRulesPending":
+            MessageLookupByLibrary.simpleMessage(
+                "Clash is not running; rules take effect on start"),
+        "xboardIpv6Disabled":
+            MessageLookupByLibrary.simpleMessage("IPv6 disabled"),
+        "xboardIpv6Enabled":
+            MessageLookupByLibrary.simpleMessage("IPv6 enabled"),
+        "xboardSomePlansUnsupported": MessageLookupByLibrary.simpleMessage(
+            "• Some plans may not support this"),
+        "xboardSubscriptionExpiring": MessageLookupByLibrary.simpleMessage(
+            "⏰ Subscription expiring soon"),
+        "xboardTrafficAlmostUsed":
+            MessageLookupByLibrary.simpleMessage("⚠️ Data almost used up"),
+        "xboardSubscriptionExpiredTitle":
+            MessageLookupByLibrary.simpleMessage("❌ Subscription expired"),
+        "xboardCampusHostsHint": MessageLookupByLibrary.simpleMessage(
+            "Turn off campus network bypass when not needed"),
+        "xboardOperationNotAllowed": MessageLookupByLibrary.simpleMessage(
+            "Operation not allowed, please check plan status"),
+        "xboardTopupOrUnlock":
+            MessageLookupByLibrary.simpleMessage("Top up or unlock benefits"),
+        "xboardTopupInstantHint": MessageLookupByLibrary.simpleMessage(
+            "Balance is credited instantly and can be used for plans"),
+        "xboardTopupSuccess":
+            MessageLookupByLibrary.simpleMessage("Top-up successful"),
+        "xboardSelectNone": MessageLookupByLibrary.simpleMessage("Select none"),
+        "xboardNoticeLoadFailed":
+            MessageLookupByLibrary.simpleMessage("Failed to load notices"),
+        "xboardOutboundIp": MessageLookupByLibrary.simpleMessage("Outbound IP"),
+        "xboardCreatedAt": MessageLookupByLibrary.simpleMessage("Created at"),
+        "xboardRefreshing":
+            MessageLookupByLibrary.simpleMessage("Refreshing..."),
+        "xboardLoadingDots": MessageLookupByLibrary.simpleMessage("Loading.."),
+        "xboardLoadingCampusConfig":
+            MessageLookupByLibrary.simpleMessage("Loading campus config..."),
+        "xboardCampusConfigFailed": MessageLookupByLibrary.simpleMessage(
+            "Failed to load campus config"),
+        "xboardBalanceUsableHint": MessageLookupByLibrary.simpleMessage(
+            "Usable for plans and renewal"),
+        "xboardGeoDatabaseUpdated":
+            MessageLookupByLibrary.simpleMessage("Geo database updated"),
+        "xboardBasicInfo": MessageLookupByLibrary.simpleMessage("Basic info"),
+        "xboardBasicSettings":
+            MessageLookupByLibrary.simpleMessage("Basic settings"),
+        "xboardProcessingStatus":
+            MessageLookupByLibrary.simpleMessage("Processing"),
+        "xboardAutoRenewHint": MessageLookupByLibrary.simpleMessage(
+            "Auto-renew with balance when the plan expires"),
+        "xboardPlanName": MessageLookupByLibrary.simpleMessage("Plan name"),
+        "xboardLogoutHint": MessageLookupByLibrary.simpleMessage(
+            "Safely sign out of the current account"),
+        "xboardUpdateViaProxyOn": MessageLookupByLibrary.simpleMessage(
+            "Subscription updates go through the proxy"),
+        "xboardNotDownloaded":
+            MessageLookupByLibrary.simpleMessage("Not downloaded"),
+        "xboardLanProxyDisabled":
+            MessageLookupByLibrary.simpleMessage("LAN proxy disabled"),
+        "xboardLanProxyEnabled":
+            MessageLookupByLibrary.simpleMessage("LAN proxy enabled"),
+        "xboardTicketLoadFailed":
+            MessageLookupByLibrary.simpleMessage("Failed to load tickets"),
+        "xboardTicketOverview":
+            MessageLookupByLibrary.simpleMessage("Ticket overview"),
+        "xboardAutoRenewOff":
+            MessageLookupByLibrary.simpleMessage("Auto-renew turned off"),
+        "xboardCancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
+        "xboardCompleted": MessageLookupByLibrary.simpleMessage("Completed"),
+        "xboardAutoRenewOn":
+            MessageLookupByLibrary.simpleMessage("Auto-renew turned on"),
+        "xboardOffsetApplied":
+            MessageLookupByLibrary.simpleMessage("Offset applied"),
+        "xboardUpdateViaProxyOff": MessageLookupByLibrary.simpleMessage(
+            "Subscription updates go direct"),
+        "xboardExpired": MessageLookupByLibrary.simpleMessage("Expired"),
+        "xboardConnected": MessageLookupByLibrary.simpleMessage("Connected"),
+        "xboardPopup": MessageLookupByLibrary.simpleMessage("Popup"),
+        "xboardCycleNotSupported": MessageLookupByLibrary.simpleMessage(
+            "Current plan does not support starting the cycle early"),
+        "xboardPendingReply":
+            MessageLookupByLibrary.simpleMessage("Pending reply"),
+        "xboardPendingPayment":
+            MessageLookupByLibrary.simpleMessage("Pending payment"),
+        "xboardQuickAccess":
+            MessageLookupByLibrary.simpleMessage("Quick access"),
+        "xboardTotal": MessageLookupByLibrary.simpleMessage("Total"),
+        "xboardTraffic70": MessageLookupByLibrary.simpleMessage(
+            "You have used 70% of your data"),
+        "xboardTraffic80": MessageLookupByLibrary.simpleMessage(
+            "You have used 80% of your data"),
+        "xboardTraffic90": MessageLookupByLibrary.simpleMessage(
+            "You have used 90% of your data, please renew soon"),
+        "xboardTraffic100": MessageLookupByLibrary.simpleMessage(
+            "You have used 100% of your data, please renew"),
+        "xboardSubscriptionExpiredHint": MessageLookupByLibrary.simpleMessage(
+            "Your subscription has expired, please renew now"),
+        "xboardAllRulesCleared":
+            MessageLookupByLibrary.simpleMessage("All rules cleared"),
+        "xboardBulkImportRules":
+            MessageLookupByLibrary.simpleMessage("Bulk import rules"),
+        "xboardPaidAt": MessageLookupByLibrary.simpleMessage("Paid at"),
+        "xboardPaymentRequestFailed":
+            MessageLookupByLibrary.simpleMessage("Payment request failed"),
+        "xboardRuleSeparatorHint": MessageLookupByLibrary.simpleMessage(
+            "Separate rules by newline or semicolon"),
+        "xboardNewBadge": MessageLookupByLibrary.simpleMessage("New"),
+        "xboardNewTicket": MessageLookupByLibrary.simpleMessage("New ticket"),
+        "xboardCannotOpenLink":
+            MessageLookupByLibrary.simpleMessage("Cannot open link"),
+        "xboardTimeInfo": MessageLookupByLibrary.simpleMessage("Time info"),
+        "xboardNoNotices": MessageLookupByLibrary.simpleMessage("No notices"),
+        "xboardNoPaymentMethods": MessageLookupByLibrary.simpleMessage(
+            "No payment methods available"),
+        "xboardNoTrafficRecords":
+            MessageLookupByLibrary.simpleMessage("No data records"),
+        "xboardNoNotifications":
+            MessageLookupByLibrary.simpleMessage("No notifications"),
+        "xboardValidUntil": MessageLookupByLibrary.simpleMessage("Valid until"),
+        "xboardServiceStatus":
+            MessageLookupByLibrary.simpleMessage("Service status"),
+        "xboardNoServicesEnabled":
+            MessageLookupByLibrary.simpleMessage("No services enabled"),
+        "xboardNoValidRules":
+            MessageLookupByLibrary.simpleMessage("No valid rules found"),
+        "xboardUnknownPlan":
+            MessageLookupByLibrary.simpleMessage("Unknown plan"),
+        "xboardDisconnected":
+            MessageLookupByLibrary.simpleMessage("Disconnected"),
+        "xboardNoProbeTargetsHint": MessageLookupByLibrary.simpleMessage(
+            "No services selected, tap to configure"),
+        "xboardWebsiteNotConfigured":
+            MessageLookupByLibrary.simpleMessage("Website not configured"),
+        "xboardViewDetails":
+            MessageLookupByLibrary.simpleMessage("View details"),
+        "xboardCampusHosts":
+            MessageLookupByLibrary.simpleMessage("Campus Hosts"),
+        "xboardCampusHostsEnabled":
+            MessageLookupByLibrary.simpleMessage("Campus Hosts enabled"),
+        "xboardCampusHostsDisabled":
+            MessageLookupByLibrary.simpleMessage("Campus Hosts disabled"),
+        "xboardUpdateCheckFailed":
+            MessageLookupByLibrary.simpleMessage("Update check failed"),
+        "xboardCheckingStatus":
+            MessageLookupByLibrary.simpleMessage("Checking"),
+        "xboardApplyingClashConfig":
+            MessageLookupByLibrary.simpleMessage("Applying Clash config..."),
+        "xboardRuleFormatHint": MessageLookupByLibrary.simpleMessage(
+            "One rule per line: TYPE,CONDITION,DESTINATION"),
+        "xboardNotes": MessageLookupByLibrary.simpleMessage("Notes"),
+        "xboardTrafficExhaustedAdvance": MessageLookupByLibrary.simpleMessage(
+            "Data used up, you can borrow next month's"),
+        "xboardTrafficExhaustedRenew": MessageLookupByLibrary.simpleMessage(
+            "Data used up, renew for more"),
+        "xboardAddRulesHint": MessageLookupByLibrary.simpleMessage(
+            "Add remote rules or configure manually"),
+        "xboardUserAccount":
+            MessageLookupByLibrary.simpleMessage("User account"),
+        "xboardConfirmNextCycle":
+            MessageLookupByLibrary.simpleMessage("Start the next data cycle?"),
+        "xboardConfirmTopup":
+            MessageLookupByLibrary.simpleMessage("Confirm top-up"),
+        "xboardGiftCardRedeem":
+            MessageLookupByLibrary.simpleMessage("Redeem gift card"),
+        "xboardGiftCardRedeemSuccess":
+            MessageLookupByLibrary.simpleMessage("Gift card redeemed"),
+        "xboardPasteRulesHint":
+            MessageLookupByLibrary.simpleMessage("Paste or enter rules"),
+        "xboardSystemNotice":
+            MessageLookupByLibrary.simpleMessage("System notice"),
+        "xboardAutoRenew": MessageLookupByLibrary.simpleMessage("Auto-renew"),
+        "xboardCustomAmount":
+            MessageLookupByLibrary.simpleMessage("Custom amount"),
+        "xboardFetchNodesFailed":
+            MessageLookupByLibrary.simpleMessage("Failed to fetch nodes"),
+        "xboardRulesAndRouting":
+            MessageLookupByLibrary.simpleMessage("Rules and routing"),
+        "xboardRuleDeleted":
+            MessageLookupByLibrary.simpleMessage("Rule deleted"),
+        "xboardRuleExamples":
+            MessageLookupByLibrary.simpleMessage("Rule examples"),
+        "xboardOrderCycle": MessageLookupByLibrary.simpleMessage("Order cycle"),
+        "xboardOrderDetails":
+            MessageLookupByLibrary.simpleMessage("Order details"),
+        "xboardRenewPrompt":
+            MessageLookupByLibrary.simpleMessage("Please renew in time"),
+        "xboardEnterTopupAmount":
+            MessageLookupByLibrary.simpleMessage("Enter the amount to top up"),
+        "xboardEnterValidAmount":
+            MessageLookupByLibrary.simpleMessage("Enter a valid amount"),
+        "xboardEnterRules": MessageLookupByLibrary.simpleMessage("Enter rules"),
+        "xboardReading": MessageLookupByLibrary.simpleMessage("Reading..."),
+        "xboardAccountExpired":
+            MessageLookupByLibrary.simpleMessage("Account expired"),
+        "xboardAccount": MessageLookupByLibrary.simpleMessage("Account"),
+        "xboardAccountTopup":
+            MessageLookupByLibrary.simpleMessage("Account top-up"),
+        "xboardNoTickets":
+            MessageLookupByLibrary.simpleMessage("No tickets yet"),
+        "xboardTicketEmptyHint": MessageLookupByLibrary.simpleMessage(
+            "Submit a ticket if you need help"),
+        "xboardConfigUpdated":
+            MessageLookupByLibrary.simpleMessage("Configuration updated"),
+        "xboardTrafficExhaustedEmoji":
+            MessageLookupByLibrary.simpleMessage("💾 Data used up!"),
+        "xboardTrafficHeavy":
+            MessageLookupByLibrary.simpleMessage("📊 Heavy data usage"),
+        "xboardTrafficInUse":
+            MessageLookupByLibrary.simpleMessage("📡 Data in use"),
       };
 }
