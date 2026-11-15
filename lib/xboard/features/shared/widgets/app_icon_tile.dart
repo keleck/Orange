@@ -49,7 +49,8 @@ class AppIconTile extends StatelessWidget {
       child: Icon(
         icon,
         size: iconSize ?? size * 0.5,
-        color: AppColors.fg(context),
+        // 彩色方块上的图标固定白色，不随主题变化
+        color: Colors.white,
       ),
     );
   }

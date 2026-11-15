@@ -32,7 +32,37 @@ class GlassContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(16);
+    final baseColor = color ?? theme.colorScheme.surface;
+
+    // 白天：纯白实色，不做模糊叠加，避免发灰；夜间：保持原来的玻璃质感
+    final decoration = BoxDecoration(
+      color: isDark ? baseColor.withValues(alpha: opacity) : Colors.white,
+      borderRadius: effectiveBorderRadius,
+      border: border ??
+          Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+            width: 1,
+          ),
+      gradient: isDark
+          ? LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: gradientColors ??
+                  [
+                    baseColor.withValues(alpha: opacity + 0.1),
+                    baseColor.withValues(alpha: opacity),
+                  ],
+            )
+          : null,
+    );
+
+    final inner = Container(
+      padding: padding,
+      decoration: decoration,
+      child: child,
+    );
 
     return Container(
       width: width,
@@ -40,34 +70,12 @@ class GlassContainer extends StatelessWidget {
       margin: margin,
       child: ClipRRect(
         borderRadius: effectiveBorderRadius,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-          child: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              color: (color ?? theme.colorScheme.surface)
-                  .withValues(alpha: opacity),
-              borderRadius: effectiveBorderRadius,
-              border: border ??
-                  Border.all(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    width: 1,
-                  ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: gradientColors ??
-                    [
-                      (color ?? theme.colorScheme.surface)
-                          .withValues(alpha: opacity + 0.1),
-                      (color ?? theme.colorScheme.surface)
-                          .withValues(alpha: opacity),
-                    ],
-              ),
-            ),
-            child: child,
-          ),
-        ),
+        child: isDark
+            ? BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                child: inner,
+              )
+            : inner,
       ),
     );
   }

@@ -25,7 +25,7 @@ class QrCodeWidget extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: backgroundColor ?? AppColors.fg(context),
+          color: backgroundColor ?? Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade300),
         ),
@@ -55,7 +55,7 @@ class QrCodeWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.fg(context),
+        color: backgroundColor ?? Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -63,7 +63,7 @@ class QrCodeWidget extends StatelessWidget {
         data: data,
         version: QrVersions.auto,
         size: size,
-        backgroundColor: backgroundColor ?? AppColors.fg(context),
+        backgroundColor: backgroundColor ?? Colors.white,
         eyeStyle: QrEyeStyle(
           eyeShape: QrEyeShape.square,
           color: foregroundColor ?? Colors.black,

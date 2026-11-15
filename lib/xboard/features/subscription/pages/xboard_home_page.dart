@@ -855,7 +855,6 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           ? Colors.orange.withValues(alpha: 0.4)
                                           : tunEnable
                                               ? Colors.green
-                                                  .withValues(alpha: 0.4)
                                               : Colors.transparent,
                                   blurRadius: 8,
                                   spreadRadius: 0,
@@ -883,17 +882,17 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         opacity: isNodeLoading
                                             ? 0.4
                                             : (tunEnable ? 1.0 : 0.6),
-                                        child: Icon(
+                                        child: const Icon(
                                           Icons.vpn_key_rounded,
                                           size: 14,
-                                          color: AppColors.fg(context),
+                                          color: Colors.white,
                                         ),
                                       ),
                                 SizedBox(width: 4),
                                 AnimatedDefaultTextStyle(
                                   duration: Duration(milliseconds: 200),
                                   style: TextStyle(
-                                    color: AppColors.fg(context).withValues(
+                                    color: Colors.white.withValues(
                                         alpha: isNodeLoading
                                             ? 0.4
                                             : (_isTunLoading
@@ -1225,9 +1224,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        child: Icon(
+                                        child: const Icon(
                                           Icons.public,
-                                          color: AppColors.fg(context),
+                                          color: Colors.white,
                                           size: 24,
                                         ),
                                       ),
