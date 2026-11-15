@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/theme_dialog.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class UserMenuWidget extends ConsumerWidget {
   const UserMenuWidget({super.key});
@@ -15,7 +16,8 @@ class UserMenuWidget extends ConsumerWidget {
     final isDark = colorScheme.brightness == Brightness.dark;
 
     return PopupMenuButton<String>(
-      icon: Icon(Icons.person, color: Colors.white.withValues(alpha: 0.8)),
+      icon: Icon(Icons.person,
+          color: AppColors.fg(context).withValues(alpha: 0.8)),
       tooltip: appLocalizations.userCenter,
       onSelected: (value) {
         if (value == 'theme') {
@@ -38,19 +40,19 @@ class UserMenuWidget extends ConsumerWidget {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: AppColors.fg(context).withValues(alpha: 0.1),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.brightness_6,
-                        color: Colors.white, size: 20),
+                    Icon(Icons.brightness_6,
+                        color: AppColors.fg(context), size: 20),
                     SizedBox(width: 8),
                     Text(
                       appLocalizations.switchTheme,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class TunIntroductionDialog extends StatelessWidget {
   const TunIntroductionDialog({super.key});
@@ -145,7 +146,7 @@ class TunIntroductionDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(true),
           style: FilledButton.styleFrom(
             backgroundColor: Colors.green.shade600,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.fg(context),
           ),
           child: Text(AppLocalizations.of(context).xboardEnableTun),
         ),

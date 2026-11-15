@@ -12,7 +12,7 @@ class WalletPage extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Column(
         children: [
           // 固定的 AppBar

@@ -6,6 +6,7 @@ import 'package:fl_clash/xboard/features/invite/widgets/user_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 桌面端侧边导航栏
 class DesktopNavigationRail extends ConsumerWidget {
@@ -35,13 +36,13 @@ class DesktopNavigationRail extends ConsumerWidget {
           decoration: BoxDecoration(
             border: Border(
               right: BorderSide(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppColors.fg(context).withValues(alpha: 0.1),
               ),
               top: BorderSide(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppColors.fg(context).withValues(alpha: 0.1),
               ),
               bottom: BorderSide(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppColors.fg(context).withValues(alpha: 0.1),
               ),
             ),
             boxShadow: [

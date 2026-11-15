@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// XBoard 通知工具类
 ///
@@ -28,7 +29,7 @@ class XBoardNotification {
           content: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.check_circle, color: Colors.white, size: 20),
+              Icon(Icons.check_circle, color: AppColors.fg(context), size: 20),
               const SizedBox(width: 8),
               Flexible(child: Text(message)),
             ],

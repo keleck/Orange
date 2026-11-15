@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/subscription_status_service.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class SubscriptionStatusDialog extends StatelessWidget {
   final SubscriptionStatusResult statusResult;
@@ -291,7 +292,7 @@ class SubscriptionStatusDialog extends StatelessWidget {
           },
           style: FilledButton.styleFrom(
             backgroundColor: _getPrimaryButtonColor(),
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.fg(context),
           ),
           child: Text(_getPrimaryButtonText(context)),
         ),

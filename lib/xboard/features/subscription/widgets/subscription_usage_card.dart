@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../shared/widgets/glass_container.dart';
 import '../services/subscription_status_service.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class SubscriptionUsageCard extends ConsumerWidget {
   final DomainSubscription? subscriptionInfo;
@@ -236,7 +237,7 @@ class SubscriptionUsageCard extends ConsumerWidget {
                   },
                   style: FilledButton.styleFrom(
                     backgroundColor: statusColor,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.fg(context),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   icon: const Icon(Icons.shopping_bag, size: 18),
@@ -452,7 +453,7 @@ class SubscriptionUsageCard extends ConsumerWidget {
                     },
                     style: FilledButton.styleFrom(
                       backgroundColor: Colors.orange.shade600,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.fg(context),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     icon: const Icon(Icons.shopping_bag, size: 18),

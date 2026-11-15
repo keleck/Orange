@@ -11,6 +11,7 @@ import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 内核（Clash Meta）运行状态
 enum CoreHealthStatus {
@@ -267,7 +268,7 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
                   style: TextStyle(
                     fontSize: 11,
                     height: 1.0,
-                    color: Colors.white.withValues(alpha: 0.92),
+                    color: AppColors.fg(context).withValues(alpha: 0.92),
                     fontWeight: FontWeight.w600,
                   ),
                 ),

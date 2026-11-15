@@ -284,7 +284,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               Text(
                                 _appTitle,
                                 style: textTheme.displaySmall?.copyWith(
-                                  color: Colors.white,
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -292,7 +292,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               Text(
                                 'Let\'s start here!',
                                 style: textTheme.headlineSmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.9),
                                 ),
                               ),
                             ],
@@ -305,7 +306,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 Expanded(
                   flex: 4,
                   child: Container(
-                    color: Colors.white, // Right side background
+                    color: AppColors.fg(context), // Right side background
                     child: Center(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 48.0),
@@ -331,7 +332,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             // Mobile Layout - 深色模式紫色和海军蓝渐变
             final isDark = Theme.of(context).brightness == Brightness.dark;
             return Container(
-              decoration: AppColors.getBackgroundDecoration(),
+              decoration: AppColors.backgroundDecoration(context),
               child: Center(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
@@ -402,17 +403,19 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.person_add_outlined,
                       size: 40,
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                     ),
                   ),
                   SizedBox(height: 24),
                   Text(
                     appLocalizations.createAccount,
                     style: textTheme.displaySmall?.copyWith(
-                      color: isDark ? Colors.white : Colors.white,
+                      color: isDark
+                          ? AppColors.fg(context)
+                          : AppColors.fg(context),
                       fontWeight: FontWeight.bold,
                       fontSize: 40,
                     ),
@@ -434,26 +437,26 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.white.withValues(alpha: 0.08),
-                      Colors.white.withValues(alpha: 0.04),
+                      AppColors.fg(context).withValues(alpha: 0.08),
+                      AppColors.fg(context).withValues(alpha: 0.04),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
                 child: TextFormField(
                   controller: _emailController,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
                     hintText: appLocalizations.xboardEmail,
                     hintStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: AppColors.fg(context).withValues(alpha: 0.5),
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
@@ -486,35 +489,35 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                   fontSize: 16,
                 ),
                 decoration: InputDecoration(
                   labelText: null,
                   hintText: appLocalizations.xboardPassword,
                   hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.04),
+                  fillColor: AppColors.fg(context).withValues(alpha: 0.04),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: AppColors.fg(context).withValues(alpha: 0.15),
                       width: 1.5,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: AppColors.fg(context).withValues(alpha: 0.15),
                       width: 1.5,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: AppColors.fg(context).withValues(alpha: 0.3),
                       width: 1.5,
                     ),
                   ),
@@ -525,7 +528,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       _isPasswordVisible
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: AppColors.fg(context).withValues(alpha: 0.6),
                     ),
                     onPressed: () {
                       setState(() {
@@ -557,35 +560,35 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 controller: _confirmPasswordController,
                 obscureText: !_isConfirmPasswordVisible,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                   fontSize: 16,
                 ),
                 decoration: InputDecoration(
                   labelText: null,
                   hintText: appLocalizations.confirmNewPassword,
                   hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.04),
+                  fillColor: AppColors.fg(context).withValues(alpha: 0.04),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: AppColors.fg(context).withValues(alpha: 0.15),
                       width: 1.5,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: AppColors.fg(context).withValues(alpha: 0.15),
                       width: 1.5,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: AppColors.fg(context).withValues(alpha: 0.3),
                       width: 1.5,
                     ),
                   ),
@@ -596,7 +599,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       _isConfirmPasswordVisible
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: AppColors.fg(context).withValues(alpha: 0.6),
                     ),
                     onPressed: () {
                       setState(() {
@@ -631,28 +634,31 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       child: TextFormField(
                         controller: _emailCodeController,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.fg(context),
                           fontSize: 16,
                         ),
                         decoration: InputDecoration(
                           labelText: null,
                           hintText: appLocalizations.emailVerificationCode,
                           hintStyle: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: AppColors.fg(context).withValues(alpha: 0.5),
                           ),
                           filled: true,
-                          fillColor: Colors.white.withValues(alpha: 0.04),
+                          fillColor:
+                              AppColors.fg(context).withValues(alpha: 0.04),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide(
-                              color: Colors.white.withValues(alpha: 0.15),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.15),
                               width: 1.5,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide(
-                              color: Colors.white.withValues(alpha: 0.15),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.15),
                               width: 1.5,
                             ),
                           ),
@@ -682,8 +688,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ? null
                         : _sendEmailCode,
                     style: FilledButton.styleFrom(
-                      backgroundColor: Colors.white.withValues(alpha: 0.15),
-                      foregroundColor: Colors.white,
+                      backgroundColor:
+                          AppColors.fg(context).withValues(alpha: 0.15),
+                      foregroundColor: AppColors.fg(context),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -693,7 +700,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
+                                strokeWidth: 2, color: AppColors.fg(context)),
                           )
                         : Text(_countdown > 0
                             ? '${_countdown}s'
@@ -713,7 +720,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               child: TextFormField(
                 controller: _inviteCodeController,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                   fontSize: 16,
                 ),
                 decoration: InputDecoration(
@@ -722,21 +729,21 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       ? '${appLocalizations.xboardInviteCode} *'
                       : appLocalizations.inviteCodeOptional,
                   hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.04),
+                  fillColor: AppColors.fg(context).withValues(alpha: 0.04),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: AppColors.fg(context).withValues(alpha: 0.15),
                       width: 1.5,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: AppColors.fg(context).withValues(alpha: 0.15),
                       width: 1.5,
                     ),
                   ),
@@ -762,7 +769,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               onPressed: _isRegistering ? null : _register,
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFF5FD68A),
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.fg(context),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -772,12 +779,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                          strokeWidth: 2, color: AppColors.fg(context)),
                     )
                   : Text(
                       appLocalizations.registerAccount,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                         fontWeight: FontWeight.w600,
                       ),
                     ),

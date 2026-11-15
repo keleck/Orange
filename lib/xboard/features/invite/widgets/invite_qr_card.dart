@@ -8,6 +8,7 @@ import 'package:fl_clash/xboard/config/xboard_config.dart';
 import 'package:fl_clash/xboard/features/invite/widgets/qr_code_widget.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class InviteQrCard extends ConsumerStatefulWidget {
   const InviteQrCard({super.key});
@@ -122,10 +123,11 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                         children: [
                           ElevatedButton.icon(
                             onPressed: () => _saveQrCode(context, inviteUrl),
-                            icon: Icon(Icons.save_alt, color: Colors.white),
+                            icon: Icon(Icons.save_alt,
+                                color: AppColors.fg(context)),
                             label: Text(
                               appLocalizations.saveQr,
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(color: AppColors.fg(context)),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
@@ -137,10 +139,11 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
                           ElevatedButton.icon(
                             onPressed: () =>
                                 _copyToClipboard(context, inviteUrl),
-                            icon: Icon(Icons.link, color: Colors.white),
+                            icon:
+                                Icon(Icons.link, color: AppColors.fg(context)),
                             label: Text(
                               appLocalizations.copyInviteLink,
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(color: AppColors.fg(context)),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
@@ -247,10 +250,10 @@ class _InviteQrCardState extends ConsumerState<InviteQrCard> {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.035),
+      color: AppColors.fg(context).withValues(alpha: 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: AppColors.fg(context).withValues(alpha: 0.07),
       ),
     );
   }

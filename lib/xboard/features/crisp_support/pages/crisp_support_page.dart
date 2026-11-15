@@ -342,7 +342,7 @@ class _CrispSupportPageState extends ConsumerState<CrispSupportPage> {
     }
 
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Column(
         children: [
           // 固定的 AppBar

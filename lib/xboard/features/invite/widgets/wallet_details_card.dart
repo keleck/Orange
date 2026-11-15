@@ -8,6 +8,7 @@ import 'package:fl_clash/xboard/features/invite/dialogs/transfer_dialog.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/withdraw_dialog.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class WalletDetailsCard extends ConsumerWidget {
   const WalletDetailsCard({super.key});
@@ -94,10 +95,10 @@ class WalletDetailsCard extends ConsumerWidget {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.035),
+      color: AppColors.fg(context).withValues(alpha: 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: AppColors.fg(context).withValues(alpha: 0.07),
       ),
     );
   }

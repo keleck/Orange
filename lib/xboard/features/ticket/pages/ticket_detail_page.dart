@@ -132,7 +132,7 @@ class _TicketDetailPageState extends ConsumerState<TicketDetailPage> {
         ],
       ),
       body: Container(
-        decoration: AppColors.getBackgroundDecoration(),
+        decoration: AppColors.backgroundDecoration(context),
         child: Padding(
           // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
           padding: EdgeInsets.only(
@@ -427,7 +427,7 @@ class _MessageBubble extends StatelessWidget {
                   ],
                 )
               : null,
-          color: isMe ? null : Colors.white.withValues(alpha: 0.05),
+          color: isMe ? null : AppColors.fg(context).withValues(alpha: 0.05),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(14),
             topRight: const Radius.circular(14),
@@ -435,7 +435,7 @@ class _MessageBubble extends StatelessWidget {
             bottomRight: Radius.circular(isMe ? 4 : 14),
           ),
           border: Border.all(
-            color: Colors.white.withValues(alpha: isMe ? 0.10 : 0.07),
+            color: AppColors.fg(context).withValues(alpha: isMe ? 0.10 : 0.07),
           ),
         ),
         child: Column(
@@ -444,8 +444,9 @@ class _MessageBubble extends StatelessWidget {
             Text(
               message.message,
               style: TextStyle(
-                color:
-                    isMe ? Colors.white : Colors.white.withValues(alpha: 0.88),
+                color: isMe
+                    ? AppColors.fg(context)
+                    : AppColors.fg(context).withValues(alpha: 0.88),
                 fontSize: 13.5,
                 height: 1.55,
                 decoration: TextDecoration.none,
@@ -456,7 +457,7 @@ class _MessageBubble extends StatelessWidget {
               DateFormat('MM-dd HH:mm').format(message.createdAt),
               style: TextStyle(
                 fontSize: 10,
-                color: Colors.white.withValues(alpha: 0.42),
+                color: AppColors.fg(context).withValues(alpha: 0.42),
                 decoration: TextDecoration.none,
               ),
             ),

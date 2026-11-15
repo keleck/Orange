@@ -55,7 +55,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
     final theme = Theme.of(context);
 
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
@@ -315,7 +315,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                           AppColors.gradientColor4,
                         ]
                       : [
-                          Colors.white.withValues(alpha: 0.2),
+                          AppColors.fg(context).withValues(alpha: 0.2),
                           Colors.blue.withValues(alpha: 0.1),
                         ],
                   stops: isDark ? [0.0, 0.5, 1.0] : null,
@@ -324,7 +324,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                 border: Border.all(
                   color: isDark
                       ? AppColors.gradientColor1.withValues(alpha: 0.8)
-                      : Colors.white.withValues(alpha: 0.3),
+                      : AppColors.fg(context).withValues(alpha: 0.3),
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -503,7 +503,7 @@ class _NoticeListPageState extends ConsumerState<NoticeListPage> {
                               child: Text(
                                 appLocalizations.close,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

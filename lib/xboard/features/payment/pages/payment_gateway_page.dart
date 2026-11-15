@@ -12,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class PaymentGatewayPage extends ConsumerStatefulWidget {
   final String paymentUrl;
@@ -183,7 +184,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
       // 只在Android和iOS上设置背景色，macOS不支持
       if (Platform.isAndroid || Platform.isIOS) {
         try {
-          controller.setBackgroundColor(Colors.white);
+          controller.setBackgroundColor(AppColors.fg(context));
           debugPrint('[PaymentGateway] 设置WebView背景色');
         } catch (e) {
           debugPrint('[PaymentGateway] 设置背景色失败（非关键）: $e');
@@ -709,7 +710,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                       AppLocalizations.of(context).xboardRetry),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
+                                    foregroundColor: AppColors.fg(context),
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
                                   ),
@@ -724,7 +725,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                       AppLocalizations.of(context).xboardBack),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.grey,
-                                    foregroundColor: Colors.white,
+                                    foregroundColor: AppColors.fg(context),
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
                                   ),
@@ -857,7 +858,8 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                             .xboardRefresh),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.blue,
-                                          foregroundColor: Colors.white,
+                                          foregroundColor:
+                                              AppColors.fg(context),
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
                                             vertical: 8,
@@ -872,7 +874,8 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                             .copyLink),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.purple,
-                                          foregroundColor: Colors.white,
+                                          foregroundColor:
+                                              AppColors.fg(context),
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
                                             vertical: 8,
@@ -885,7 +888,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                             ? null
                                             : _checkPaymentStatus,
                                         icon: _isCheckingPayment
-                                            ? const SizedBox(
+                                            ? SizedBox(
                                                 width: 14,
                                                 height: 14,
                                                 child:
@@ -894,7 +897,7 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
                                                           Color>(
-                                                    Colors.white,
+                                                    AppColors.fg(context),
                                                   ),
                                                 ),
                                               )
@@ -905,7 +908,8 @@ class _PaymentGatewayPageState extends ConsumerState<PaymentGatewayPage> {
                                         ),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.orange,
-                                          foregroundColor: Colors.white,
+                                          foregroundColor:
+                                              AppColors.fg(context),
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
                                             vertical: 8,

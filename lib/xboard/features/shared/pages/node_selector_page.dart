@@ -37,7 +37,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
       backgroundColor: Colors.transparent,
       appBar: _buildAppBar(context, currentGroup),
       body: Container(
-        decoration: AppColors.getBackgroundDecoration(),
+        decoration: AppColors.backgroundDecoration(context),
         child: Padding(
           // AppBar 悬浮在 body 之上，顶部留白必须等于「状态栏 + 工具栏」，
           // 写死 70 会在状态栏较高的机型上让内容压到标题上。
@@ -269,13 +269,13 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.15),
-                Colors.white.withValues(alpha: 0.05),
+                AppColors.fg(context).withValues(alpha: 0.15),
+                AppColors.fg(context).withValues(alpha: 0.05),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: AppColors.fg(context).withValues(alpha: 0.2),
               width: 1.5,
             ),
             boxShadow: [
@@ -296,7 +296,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             itemCount: filteredProxies.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,
-              color: Colors.white.withValues(alpha: 0.1),
+              color: AppColors.fg(context).withValues(alpha: 0.1),
             ),
             itemBuilder: (context, index) {
               final proxy = filteredProxies[index];
@@ -396,13 +396,13 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.15),
-                      Colors.white.withValues(alpha: 0.08),
+                      AppColors.fg(context).withValues(alpha: 0.15),
+                      AppColors.fg(context).withValues(alpha: 0.08),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: AppColors.fg(context).withValues(alpha: 0.2),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -431,7 +431,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
                         fontSize: 15,
                         fontWeight:
                             isSelected ? FontWeight.w600 : FontWeight.w500,
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -442,7 +442,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: AppColors.fg(context).withValues(alpha: 0.6),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

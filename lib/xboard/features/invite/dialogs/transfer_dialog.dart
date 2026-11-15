@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class TransferDialog extends ConsumerStatefulWidget {
   const TransferDialog({super.key});
@@ -51,12 +52,12 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                 end: Alignment.bottomRight,
                 colors: [
                   Colors.blue.withValues(alpha: 0.15),
-                  Colors.white.withValues(alpha: 0.08),
+                  AppColors.fg(context).withValues(alpha: 0.08),
                 ],
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: AppColors.fg(context).withValues(alpha: 0.2),
                 width: 1.5,
               ),
               boxShadow: [
@@ -80,13 +81,13 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: AppColors.fg(context).withValues(alpha: 0.08),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
                     border: Border(
                       bottom: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: AppColors.fg(context).withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -99,7 +100,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: AppColors.fg(context),
                                   ),
                         ),
                       ),
@@ -112,7 +113,8 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                             padding: const EdgeInsets.all(6.0),
                             child: Icon(
                               Icons.close_rounded,
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.6),
                               size: 20,
                             ),
                           ),
@@ -168,10 +170,10 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                               : _isTransferring
                                   ? Text(
                                       appLocalizations.transferring,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: AppColors.fg(context),
                                       ),
                                       key: ValueKey('loading-text'),
                                     )
@@ -179,10 +181,10 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                                       appLocalizations.maxTransferable(
                                           inviteState.availableCommission
                                               .toStringAsFixed(2)),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: AppColors.fg(context),
                                       ),
                                       key: const ValueKey('balance-text'),
                                     ),
@@ -191,24 +193,28 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                         if (!_isTransferring && !_isSuccess) ...[
                           TextField(
                             controller: _amountController,
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: AppColors.fg(context)),
                             decoration: InputDecoration(
                               labelText: appLocalizations.transferAmount,
                               labelStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7)),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.7)),
                               hintText: appLocalizations.enterTransferAmount,
                               hintStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5)),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.5)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.2),
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.2),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -220,11 +226,13 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                               ),
                               suffixText: '¥',
                               suffixStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7)),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.7)),
                               helperText: appLocalizations.maxTransferable(
                                   maxAmount.toStringAsFixed(2)),
                               helperStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5)),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.5)),
                             ),
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
@@ -234,7 +242,8 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                             appLocalizations.transferNote,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.6),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -249,7 +258,7 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                   decoration: BoxDecoration(
                     border: Border(
                       top: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: AppColors.fg(context).withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -269,17 +278,19 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.2),
                                   width: 1,
                                 ),
                               ),
                               child: Text(
                                 appLocalizations.cancel,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -312,8 +323,8 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                               ),
                               child: Text(
                                 appLocalizations.confirmTransfer,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

@@ -735,7 +735,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
                           paymentState.isLoading ? null : _proceedToPurchase,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue.shade600,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.fg(context),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -745,13 +745,13 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const SizedBox(
+                                SizedBox(
                                   width: 20,
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
+                                        AppColors.fg(context)),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -801,7 +801,7 @@ class _PlanPurchasePageState extends ConsumerState<PlanPurchasePage> {
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        decoration: AppColors.getBackgroundDecoration(),
+        decoration: AppColors.backgroundDecoration(context),
         child: Padding(
           // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
           padding: EdgeInsets.only(

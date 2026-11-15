@@ -269,11 +269,12 @@ class ApplicationState extends ConsumerState<Application> {
               title: appName,
               locale: utils.getLocaleForString(locale),
               supportedLocales: AppLocalizations.delegate.supportedLocales,
-              themeMode: ThemeMode.dark, // 强制使用深色主题
+              themeMode: themeProps.themeMode, // 跟随「主题模式」设置
+              // 白天主题：淡蓝背景 + 白色卡片 + 蓝色主色
               theme: ThemeData(
                 useMaterial3: true,
                 pageTransitionsTheme: _pageTransitionsTheme,
-                scaffoldBackgroundColor: const Color(0xFF0F0E1D), // 深紫色基调
+                scaffoldBackgroundColor: const Color(0xFFEAF2FE),
                 appBarTheme: const AppBarTheme(
                   backgroundColor: Colors.transparent,
                   elevation: 0,
@@ -281,15 +282,16 @@ class ApplicationState extends ConsumerState<Application> {
                   surfaceTintColor: Colors.transparent,
                   systemOverlayStyle: SystemUiOverlayStyle(
                     statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.light,
+                    statusBarIconBrightness: Brightness.dark,
                   ),
                 ),
                 colorScheme: _getAppColorScheme(
-                  brightness: Brightness.dark, // 强制深色
+                  brightness: Brightness.light,
                   primaryColor: themeProps.primaryColor,
                 ).copyWith(
-                  surface: const Color(0xFF1A1535), // 深紫色表面
-                  surfaceContainer: const Color(0xFF1E2A47), // 海军蓝容器
+                  surface: Colors.white,
+                  surfaceContainer: const Color(0xFFF2F6FD),
+                  onSurface: const Color(0xFF1B1B1F),
                 ),
               ),
               darkTheme: ThemeData(

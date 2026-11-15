@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/ip_quality_service.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 出口 IP 质量标签
 ///
@@ -124,8 +125,8 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
             if (usage != IpUsageType.unknown) ...[
               _pill(
                 text: usage.label,
-                background: Colors.white.withValues(alpha: 0.10),
-                foreground: Colors.white.withValues(alpha: 0.75),
+                background: AppColors.fg(context).withValues(alpha: 0.10),
+                foreground: AppColors.fg(context).withValues(alpha: 0.75),
               ),
               const SizedBox(width: 6),
             ],
@@ -164,9 +165,9 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1B1A28),
-        title: const Text(
+        title: Text(
           'IP 质量详情',
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: AppColors.fg(context), fontSize: 16),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -183,7 +184,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
                       child: Text(
                         entry.key,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.55),
+                          color: AppColors.fg(context).withValues(alpha: 0.55),
                           fontSize: 12.5,
                         ),
                       ),
@@ -191,8 +192,8 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
                     Expanded(
                       child: Text(
                         entry.value,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: AppColors.fg(context),
                           fontSize: 12.5,
                         ),
                       ),
@@ -256,8 +257,8 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
           const Color(0xFF3A0A0A),
         ),
       IpQualityLevel.unknown => (
-          Colors.white.withValues(alpha: 0.12),
-          Colors.white.withValues(alpha: 0.62),
+          AppColors.fg(context).withValues(alpha: 0.12),
+          AppColors.fg(context).withValues(alpha: 0.62),
         ),
     };
   }

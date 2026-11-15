@@ -34,7 +34,7 @@ class TrafficLogPage extends ConsumerWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Column(
         children: [
           // 固定的 AppBar
@@ -58,14 +58,14 @@ class TrafficLogPage extends ConsumerWidget {
                         Icon(
                           Icons.data_usage_outlined,
                           size: 80,
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: AppColors.fg(context).withValues(alpha: 0.2),
                         ),
                         SizedBox(height: 16),
                         Text(
                           appLocalizations.xboardNoTrafficRecords,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.white.withValues(alpha: 0.7),
+                            color: AppColors.fg(context).withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -99,7 +99,7 @@ class TrafficLogPage extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -107,7 +107,7 @@ class TrafficLogPage extends ConsumerWidget {
                       '$err',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: AppColors.fg(context).withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -143,10 +143,10 @@ class TrafficLogPage extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.035),
+        color: AppColors.fg(context).withValues(alpha: 0.035),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: AppColors.fg(context).withValues(alpha: 0.06),
         ),
       ),
       child: Column(
@@ -161,10 +161,10 @@ class TrafficLogPage extends ConsumerWidget {
               const SizedBox(width: 8),
               Text(
                 formatDate(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -242,7 +242,7 @@ class TrafficLogPage extends ConsumerWidget {
                 label,
                 style: TextStyle(
                   fontSize: 11.5,
-                  color: Colors.white.withValues(alpha: 0.42),
+                  color: AppColors.fg(context).withValues(alpha: 0.42),
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -255,10 +255,10 @@ class TrafficLogPage extends ConsumerWidget {
             children: [
               Text(
                 formatted['value'],
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -268,7 +268,7 @@ class TrafficLogPage extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w500,
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: AppColors.fg(context).withValues(alpha: 0.4),
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -289,7 +289,7 @@ class _TrafficDivider extends StatelessWidget {
       width: 1,
       height: 30,
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      color: Colors.white.withValues(alpha: 0.06),
+      color: AppColors.fg(context).withValues(alpha: 0.06),
     );
   }
 }

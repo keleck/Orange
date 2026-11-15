@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 带未读数标记的图标组件
 class BadgeIcon extends StatelessWidget {
@@ -48,7 +49,7 @@ class BadgeIcon extends StatelessWidget {
                 ? Text(
                     count > 99 ? '99+' : count.toString(),
                     style: TextStyle(
-                      color: textColor ?? Colors.white,
+                      color: textColor ?? AppColors.fg(context),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),

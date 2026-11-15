@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 参考应用里的图标配色：每个功能一个固定色，实色圆角方块 + 白色图标
 class AppIconColors {
@@ -40,7 +41,7 @@ class AppIconTile extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(color, Colors.white, 0.14)!,
+            Color.lerp(color, AppColors.fg(context), 0.14)!,
             color,
           ],
         ),
@@ -48,7 +49,7 @@ class AppIconTile extends StatelessWidget {
       child: Icon(
         icon,
         size: iconSize ?? size * 0.5,
-        color: Colors.white,
+        color: AppColors.fg(context),
       ),
     );
   }

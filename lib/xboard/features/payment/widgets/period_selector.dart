@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import '../utils/price_calculator.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 周期选择器
 class PeriodSelector extends StatelessWidget {
@@ -195,7 +196,8 @@ class _PeriodCard extends StatelessWidget {
               children: [
                 Icon(
                   isSelected ? Icons.check_circle : Icons.circle_outlined,
-                  color: isSelected ? Colors.white : Colors.grey.shade400,
+                  color:
+                      isSelected ? AppColors.fg(context) : Colors.grey.shade400,
                   size: iconSize,
                 ),
                 SizedBox(width: horizontalSpacing),
@@ -205,7 +207,9 @@ class _PeriodCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: labelFontSize,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Colors.grey.shade800,
+                      color: isSelected
+                          ? AppColors.fg(context)
+                          : Colors.grey.shade800,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -227,8 +231,9 @@ class _PeriodCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: originalPriceFontSize,
                       decoration: TextDecoration.lineThrough,
-                      decorationColor: Colors.white70,
-                      color: Colors.white70,
+                      decorationColor:
+                          AppColors.fg(context).withValues(alpha: 0.7),
+                      color: AppColors.fg(context).withValues(alpha: 0.7),
                     ),
                   ),
                   SizedBox(width: priceSpacing),
@@ -237,7 +242,7 @@ class _PeriodCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: priceFontSize,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                     ),
                   ),
                 ],
@@ -248,7 +253,8 @@ class _PeriodCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: priceFontSize,
                   fontWeight: FontWeight.bold,
-                  color: isSelected ? Colors.white : Colors.blue.shade700,
+                  color:
+                      isSelected ? AppColors.fg(context) : Colors.blue.shade700,
                 ),
                 textAlign: TextAlign.center,
               ),

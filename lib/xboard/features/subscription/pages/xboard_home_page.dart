@@ -234,7 +234,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
     return Container(
       height: double.infinity,
       width: double.infinity,
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Stack(
         children: [
           Column(
@@ -491,7 +491,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: AppColors.fg(context).withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
@@ -521,8 +521,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                   key: ValueKey(label),
                   style: TextStyle(
                     color: isDisabled
-                        ? Colors.white.withValues(alpha: 0.5)
-                        : Colors.white.withValues(alpha: 0.92),
+                        ? AppColors.fg(context).withValues(alpha: 0.5)
+                        : AppColors.fg(context).withValues(alpha: 0.92),
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.3,
@@ -553,7 +553,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
           child: Icon(
             Icons.block,
             size: _discSize * 0.4,
-            color: Colors.white.withValues(alpha: 0.6),
+            color: AppColors.fg(context).withValues(alpha: 0.6),
           ),
         ),
       );
@@ -693,10 +693,10 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                         height: 32,
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: AppColors.fg(context).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: AppColors.fg(context).withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -743,7 +743,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             duration: const Duration(
                                                 milliseconds: 200),
                                             style: TextStyle(
-                                              color: Colors.white.withValues(
+                                              color: AppColors.fg(context)
+                                                  .withValues(
                                                 alpha: isNodeLoading
                                                     ? 0.4
                                                     : (mode == Mode.rule
@@ -776,7 +777,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             duration: const Duration(
                                                 milliseconds: 200),
                                             style: TextStyle(
-                                              color: Colors.white.withValues(
+                                              color: AppColors.fg(context)
+                                                  .withValues(
                                                 alpha: isNodeLoading
                                                     ? 0.4
                                                     : (mode == Mode.global
@@ -831,7 +833,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       ? Colors.orange.shade600
                                       : tunEnable
                                           ? Colors.green.shade600
-                                          : Colors.white.withValues(alpha: 0.1),
+                                          : AppColors.fg(context)
+                                              .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
                                 color: isNodeLoading
@@ -840,7 +843,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         ? Colors.orange.shade400
                                         : tunEnable
                                             ? Colors.green.shade400
-                                            : Colors.white
+                                            : AppColors.fg(context)
                                                 .withValues(alpha: 0.2),
                                 width: 1,
                               ),
@@ -868,7 +871,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         child: Icon(
                                           Icons.sync_rounded,
                                           size: 14,
-                                          color: Colors.white.withValues(
+                                          color:
+                                              AppColors.fg(context).withValues(
                                             alpha: isNodeLoading ? 0.5 : 1.0,
                                           ),
                                         ),
@@ -879,17 +883,17 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         opacity: isNodeLoading
                                             ? 0.4
                                             : (tunEnable ? 1.0 : 0.6),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.vpn_key_rounded,
                                           size: 14,
-                                          color: Colors.white,
+                                          color: AppColors.fg(context),
                                         ),
                                       ),
                                 SizedBox(width: 4),
                                 AnimatedDefaultTextStyle(
                                   duration: Duration(milliseconds: 200),
                                   style: TextStyle(
-                                    color: Colors.white.withValues(
+                                    color: AppColors.fg(context).withValues(
                                         alpha: isNodeLoading
                                             ? 0.4
                                             : (_isTunLoading
@@ -947,7 +951,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                         }
                       },
                       icon: const Icon(Icons.refresh, size: 20),
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                       tooltip: AppLocalizations.of(context)
                           .xboardRefreshSubscription,
                     ),
@@ -968,13 +972,13 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: AppColors.fg(context).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isExpiringSoon
                     ? const Color.fromARGB(255, 255, 110, 38)
                         .withValues(alpha: 0.4)
-                    : Colors.white.withValues(alpha: 0.2),
+                    : AppColors.fg(context).withValues(alpha: 0.2),
                 width: isExpiringSoon ? 1.5 : 1,
               ),
             ),
@@ -1013,7 +1017,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                   children: [
                                     Icon(
                                       Icons.card_giftcard_rounded,
-                                      color: Colors.white,
+                                      color: AppColors.fg(context),
                                       size: 22,
                                     ),
                                     SizedBox(width: 12),
@@ -1023,17 +1027,17 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           ? appLocalizations.xboardRenewPlan
                                           : AppLocalizations.of(context)
                                               .xboardPurchasePlan,
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: AppColors.fg(context),
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.5,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                                    const Icon(
+                                    Icon(
                                       Icons.arrow_forward_rounded,
-                                      color: Colors.white,
+                                      color: AppColors.fg(context),
                                       size: 18,
                                     ),
                                   ],
@@ -1044,8 +1048,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                   Text(
                                     '已于 ${_formatExpiredDate(domainSubscription!.expiredAt!)} 到期',
                                     style: TextStyle(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.8),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.8),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -1056,8 +1060,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     appLocalizations
                                         .xboardTrafficExhaustedRenew,
                                     style: TextStyle(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.8),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.8),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -1102,9 +1106,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.fast_forward_rounded,
-                                          color: Colors.white,
+                                          color: AppColors.fg(context),
                                           size: 22,
                                         ),
                                         const SizedBox(width: 12),
@@ -1112,16 +1116,16 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           appLocalizations
                                               .xboardConfirmNextCycle,
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: AppColors.fg(context),
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
                                             letterSpacing: 0.5,
                                           ),
                                         ),
                                         const SizedBox(width: 8),
-                                        const Icon(
+                                        Icon(
                                           Icons.arrow_forward_rounded,
-                                          color: Colors.white,
+                                          color: AppColors.fg(context),
                                           size: 18,
                                         ),
                                       ],
@@ -1131,8 +1135,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       appLocalizations
                                           .xboardTrafficExhaustedAdvance,
                                       style: TextStyle(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.8),
+                                        color: AppColors.fg(context)
+                                            .withValues(alpha: 0.8),
                                         fontSize: 12,
                                       ),
                                     ),
@@ -1158,7 +1162,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                     ),
                                     child: Icon(
                                       Icons.error_outline,
-                                      color: Colors.white,
+                                      color: AppColors.fg(context),
                                       size: 16,
                                     ),
                                   ),
@@ -1166,8 +1170,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                   Text(
                                     importState.message ??
                                         appLocalizations.xboardFetchNodesFailed,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: AppColors.fg(context),
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -1185,9 +1189,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
                                           valueColor: AlwaysStoppedAnimation(
-                                            Colors.white,
+                                            AppColors.fg(context),
                                           ),
-                                          backgroundColor: Colors.white
+                                          backgroundColor: AppColors.fg(context)
                                               .withValues(alpha: 0.2),
                                         ),
                                       ),
@@ -1197,8 +1201,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                         child: Text(
                                           AppLocalizations.of(context)
                                               .xboardLoadingNodes,
-                                          style: const TextStyle(
-                                            color: Colors.white,
+                                          style: TextStyle(
+                                            color: AppColors.fg(context),
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -1221,9 +1225,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.public,
-                                          color: Colors.white,
+                                          color: AppColors.fg(context),
                                           size: 24,
                                         ),
                                       ),
@@ -1240,7 +1244,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                                   appLocalizations
                                                       .xboardCurrentNode,
                                                   style: TextStyle(
-                                                    color: Colors.white
+                                                    color: AppColors.fg(context)
                                                         .withValues(alpha: 0.7),
                                                     fontSize: 11,
                                                   ),
@@ -1306,8 +1310,9 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                                 Flexible(
                                                   child: Text(
                                                     displayName,
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
+                                                    style: TextStyle(
+                                                      color:
+                                                          AppColors.fg(context),
                                                       fontSize: 15,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -1400,8 +1405,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                       ),
                                       Icon(
                                         Icons.chevron_right,
-                                        color:
-                                            Colors.white.withValues(alpha: 0.5),
+                                        color: AppColors.fg(context)
+                                            .withValues(alpha: 0.5),
                                       ),
                                     ],
                                   ),
@@ -1419,11 +1424,11 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
       child: InkWell(
         onTap: () => showNoticePopup(context),
         customBorder: const CircleBorder(),
-        child: const Padding(
+        child: Padding(
           padding: EdgeInsets.all(8),
           child: Icon(
             Icons.notifications_none_rounded,
-            color: Colors.white,
+            color: AppColors.fg(context),
             size: 26,
           ),
         ),
@@ -1576,7 +1581,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                           Text(
                             hintData['message'],
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.7),
                               fontSize: 10,
                             ),
                             textAlign: TextAlign.center,
@@ -1601,7 +1607,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                         padding: const EdgeInsets.all(6),
                         child: Icon(
                           Icons.close,
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: AppColors.fg(context).withValues(alpha: 0.5),
                           size: 14,
                         ),
                       ),
@@ -1986,7 +1992,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.fg(context)),
               ),
               SizedBox(width: 12),
               Text(AppLocalizations.of(context).xboardResettingDataCycle),

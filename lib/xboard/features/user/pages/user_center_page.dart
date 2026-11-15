@@ -26,7 +26,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Column(
         children: [
           // 固定的 AppBar
@@ -58,10 +58,10 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 // 垂直列表样式的快捷入口 - 包装在一个容器中
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.035),
+                    color: AppColors.fg(context).withValues(alpha: 0.035),
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.07),
+                      color: AppColors.fg(context).withValues(alpha: 0.07),
                       width: 1,
                     ),
                   ),
@@ -145,10 +145,10 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 const SizedBox(height: 20),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.035),
+                    color: AppColors.fg(context).withValues(alpha: 0.035),
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.07),
+                      color: AppColors.fg(context).withValues(alpha: 0.07),
                     ),
                   ),
                   child: Material(
@@ -189,7 +189,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                                   Text(
                                     appLocalizations.xboardLogout,
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.fg(context),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -198,7 +198,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                                   Text(
                                     appLocalizations.xboardLogoutHint,
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.85),
+                                      color: AppColors.fg(context)
+                                          .withOpacity(0.85),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -206,7 +207,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                               ),
                             ),
                             Icon(Icons.chevron_right,
-                                color: Colors.white.withOpacity(0.9)),
+                                color: AppColors.fg(context).withOpacity(0.9)),
                           ],
                         ),
                       ),
@@ -299,7 +300,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
         ),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: AppColors.fg(context).withValues(alpha: 0.07),
         ),
       ),
       child: Column(
@@ -318,7 +319,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 child: Icon(
                   Icons.person_rounded,
                   size: 22,
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                 ),
               ),
               SizedBox(width: 12),
@@ -330,7 +331,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       appLocalizations.xboardAccount,
                       style: TextStyle(
                         fontSize: 11.5,
-                        color: Colors.white.withValues(alpha: 0.42),
+                        color: AppColors.fg(context).withValues(alpha: 0.42),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -339,10 +340,10 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       email,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14.5,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -373,7 +374,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
           Divider(
             height: 1,
             thickness: 1,
-            color: Colors.white.withValues(alpha: 0.06),
+            color: AppColors.fg(context).withValues(alpha: 0.06),
           ),
           const SizedBox(height: 14),
           Row(
@@ -388,7 +389,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       '已用流量',
                       style: TextStyle(
                         fontSize: 11.5,
-                        color: Colors.white.withValues(alpha: 0.42),
+                        color: AppColors.fg(context).withValues(alpha: 0.42),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -415,7 +416,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                           ' / $totalStr',
                           style: TextStyle(
                             fontSize: 11.5,
-                            color: Colors.white.withValues(alpha: 0.38),
+                            color:
+                                AppColors.fg(context).withValues(alpha: 0.38),
                             decoration: TextDecoration.none,
                           ),
                         ),
@@ -428,7 +430,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 width: 1,
                 height: 34,
                 margin: const EdgeInsets.symmetric(horizontal: 14),
-                color: Colors.white.withValues(alpha: 0.07),
+                color: AppColors.fg(context).withValues(alpha: 0.07),
               ),
               Expanded(
                 flex: 2,
@@ -439,7 +441,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                       appLocalizations.xboardValidUntil,
                       style: TextStyle(
                         fontSize: 11.5,
-                        color: Colors.white.withValues(alpha: 0.42),
+                        color: AppColors.fg(context).withValues(alpha: 0.42),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -453,7 +455,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                         fontWeight: FontWeight.w600,
                         color: isExpiringSoon
                             ? const Color(0xFFFFC061)
-                            : Colors.white,
+                            : AppColors.fg(context),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -469,7 +471,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
               child: LinearProgressIndicator(
                 value: ratio,
                 minHeight: 5,
-                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                backgroundColor: AppColors.fg(context).withValues(alpha: 0.08),
                 valueColor: AlwaysStoppedAnimation<Color>(
                   isExpired ? const Color(0xFFFF6B6B) : primary,
                 ),
@@ -501,7 +503,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -529,14 +531,14 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
       {required IconData icon}) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.white),
+        Icon(icon, size: 20, color: AppColors.fg(context)),
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppColors.fg(context),
           ),
         ),
       ],
@@ -728,7 +730,7 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2, color: AppColors.fg(context)),
               ),
               SizedBox(width: 12),
               Text(AppLocalizations.of(context).xboardResettingDataCycle),
@@ -834,8 +836,8 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final gradient = [
-      Colors.white.withOpacity(0.15),
-      Colors.white.withOpacity(0.1),
+      AppColors.fg(context).withOpacity(0.15),
+      AppColors.fg(context).withOpacity(0.1),
     ];
 
     return AnimatedContainer(
@@ -847,7 +849,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.15)),
+        border: Border.all(color: AppColors.fg(context).withOpacity(0.15)),
       ),
       child: Column(
         children: [
@@ -872,7 +874,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: AppColors.fg(context),
                         ),
                       ),
                       SizedBox(height: 4),
@@ -880,7 +882,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                         appLocalizations.xboardTopupOrUnlock,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.white.withOpacity(0.7),
+                          color: AppColors.fg(context).withOpacity(0.7),
                         ),
                       ),
                     ],
@@ -890,7 +892,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     turns: _isExpanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
                     child: Icon(Icons.expand_more,
-                        color: Colors.white.withOpacity(0.7)),
+                        color: AppColors.fg(context).withOpacity(0.7)),
                   ),
                 ],
               ),
@@ -907,22 +909,22 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     controller: _codeController,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.1),
+                      fillColor: AppColors.fg(context).withOpacity(0.1),
                       hintText:
                           AppLocalizations.of(context).xboardEnterGiftCardCode,
-                      hintStyle:
-                          TextStyle(color: Colors.white.withOpacity(0.5)),
+                      hintStyle: TextStyle(
+                          color: AppColors.fg(context).withOpacity(0.5)),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                            BorderSide(color: Colors.white.withOpacity(0.15)),
+                        borderSide: BorderSide(
+                            color: AppColors.fg(context).withOpacity(0.15)),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 12),
                       prefixIcon: Icon(Icons.code,
-                          color: Colors.white.withOpacity(0.7)),
+                          color: AppColors.fg(context).withOpacity(0.7)),
                     ),
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppColors.fg(context)),
                     enabled: !_isRedeeming,
                   ),
                   const SizedBox(height: 12),
@@ -931,18 +933,18 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                     child: FilledButton(
                       style: FilledButton.styleFrom(
                         backgroundColor: Colors.blue.shade600,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.fg(context),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         textStyle: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                       onPressed: _isRedeeming ? null : _redeemGiftCard,
                       child: _isRedeeming
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: AppColors.fg(context),
                               ),
                             )
                           : Text(AppLocalizations.of(context).xboardRedeemNow),
@@ -991,9 +993,9 @@ class _SmallActionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Ink(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: AppColors.fg(context).withOpacity(0.12),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.15)),
+            border: Border.all(color: AppColors.fg(context).withOpacity(0.15)),
           ),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: Row(
@@ -1005,7 +1007,7 @@ class _SmallActionTile extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                   ),
                 )
               else
@@ -1013,8 +1015,8 @@ class _SmallActionTile extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.fg(context),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1030,8 +1032,8 @@ class _SmallActionTile extends StatelessWidget {
                   ),
                   child: Text(
                     badge!,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.fg(context),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1083,7 +1085,7 @@ class _ActionTile extends StatelessWidget {
             borderRadius: BorderRadius.zero, // 移除圆角
             border: Border(
               bottom: BorderSide(
-                color: Colors.white.withOpacity(0.05), // 底部分隔线
+                color: AppColors.fg(context).withOpacity(0.05), // 底部分隔线
                 width: 0.5,
               ),
             ),
@@ -1155,7 +1157,7 @@ class _CircleIcon extends StatelessWidget {
         color: background,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(icon, size: 19, color: iconColor ?? Colors.white),
+      child: Icon(icon, size: 19, color: iconColor ?? AppColors.fg(context)),
     );
   }
 }
@@ -1193,8 +1195,8 @@ _Palette _palette(ThemeData theme, _TileTone tone, {bool danger = false}) {
     ),
     shadow: null,
     border: null,
-    textColor: Colors.white,
-    subtextColor: Colors.white.withValues(alpha: 0.45),
+    textColor: AppColors.fgOf(theme),
+    subtextColor: AppColors.fgOf(theme).withValues(alpha: 0.45),
     iconBackground: accent.withValues(alpha: 0.12),
     iconColor: accent,
   );

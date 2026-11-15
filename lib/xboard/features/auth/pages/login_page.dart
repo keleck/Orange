@@ -190,7 +190,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   Text(
                                     _appTitle,
                                     style: textTheme.displaySmall?.copyWith(
-                                      color: Colors.white,
+                                      color: AppColors.fg(context),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -198,8 +198,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   Text(
                                     'Let\'s start here!',
                                     style: textTheme.headlineSmall?.copyWith(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.9),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.9),
                                     ),
                                   ),
                                 ],
@@ -212,7 +212,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     Expanded(
                       flex: 4,
                       child: Container(
-                        color: Colors.white, // Right side background
+                        color: AppColors.fg(context), // Right side background
                         child: Stack(
                           children: [
                             Center(
@@ -263,7 +263,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               } else {
                 // Mobile Layout - 深色模式紫色和海军蓝渐变
                 return Container(
-                  decoration: AppColors.getBackgroundDecoration(),
+                  decoration: AppColors.backgroundDecoration(context),
                   child: Stack(
                     children: [
                       Center(
@@ -282,7 +282,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         child: IconButton(
                           icon: Icon(
                             Icons.support_agent,
-                            color: Colors.white.withValues(alpha: 0.8),
+                            color: AppColors.fg(context).withValues(alpha: 0.8),
                           ),
                           onPressed: () {
                             Navigator.of(context).push(
@@ -391,10 +391,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.rocket_launch,
                 size: 40,
-                color: Colors.white,
+                color: AppColors.fg(context),
               ),
             ),
           ),
@@ -404,7 +404,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           Text(
             appLocalizations.xboardLogin,
             style: textTheme.displaySmall?.copyWith(
-              color: isDark ? Colors.white : Colors.white,
+              color: isDark ? AppColors.fg(context) : AppColors.fg(context),
               fontWeight: FontWeight.bold,
               fontSize: 40,
             ),
@@ -415,26 +415,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.white.withValues(alpha: 0.1),
+                  ? AppColors.fg(context).withValues(alpha: 0.08)
+                  : AppColors.fg(context).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppColors.fg(context).withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
             child: TextFormField(
               controller: _emailController,
               style: TextStyle(
-                color: isDark ? Colors.white : Colors.white,
+                color: isDark ? AppColors.fg(context) : AppColors.fg(context),
                 fontSize: 16,
               ),
               decoration: InputDecoration(
                 hintText: 'demo@gmail.com',
                 hintStyle: TextStyle(
                   color: isDark
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.white.withValues(alpha: 0.5),
+                      ? AppColors.fg(context).withValues(alpha: 0.5)
+                      : AppColors.fg(context).withValues(alpha: 0.5),
                 ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
@@ -460,11 +460,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.white.withValues(alpha: 0.1),
+                  ? AppColors.fg(context).withValues(alpha: 0.08)
+                  : AppColors.fg(context).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppColors.fg(context).withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -472,15 +472,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               controller: _passwordController,
               obscureText: !_isPasswordVisible,
               style: TextStyle(
-                color: isDark ? Colors.white : Colors.white,
+                color: isDark ? AppColors.fg(context) : AppColors.fg(context),
                 fontSize: 16,
               ),
               decoration: InputDecoration(
                 hintText: '••••••••',
                 hintStyle: TextStyle(
                   color: isDark
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.white.withValues(alpha: 0.5),
+                      ? AppColors.fg(context).withValues(alpha: 0.5)
+                      : AppColors.fg(context).withValues(alpha: 0.5),
                 ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
@@ -492,7 +492,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     _isPasswordVisible
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                   onPressed: () {
                     setState(() {
@@ -525,7 +525,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   border: Border.all(
                     color: _rememberPassword
                         ? const Color(0xFF5FD68A)
-                        : Colors.white.withValues(alpha: 0.3),
+                        : AppColors.fg(context).withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -536,10 +536,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     });
                   },
                   child: _rememberPassword
-                      ? const Icon(
+                      ? Icon(
                           Icons.check,
                           size: 16,
-                          color: Colors.white,
+                          color: AppColors.fg(context),
                         )
                       : null,
                 ),
@@ -548,7 +548,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Text(
                 appLocalizations.xboardRememberPassword,
                 style: TextStyle(
-                  color: isDark ? Colors.white : Colors.white,
+                  color: isDark ? AppColors.fg(context) : AppColors.fg(context),
                   fontSize: 15,
                 ),
               ),
@@ -565,8 +565,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   appLocalizations.xboardForgotPassword,
                   style: TextStyle(
                     color: isDark
-                        ? Colors.white.withValues(alpha: 0.7)
-                        : Colors.white.withValues(alpha: 0.7),
+                        ? AppColors.fg(context).withValues(alpha: 0.7)
+                        : AppColors.fg(context).withValues(alpha: 0.7),
                     fontSize: 15,
                   ),
                 ),
@@ -583,7 +583,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   initState.isReady && !userState.isLoading ? _login : null,
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFF5FD68A),
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.fg(context),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -593,12 +593,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                          strokeWidth: 2, color: AppColors.fg(context)),
                     )
                   : Text(
                       appLocalizations.xboardLogin,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: AppColors.fg(context),
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -616,8 +616,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   appLocalizations.xboardNoAccount,
                   style: TextStyle(
                     color: isDark
-                        ? Colors.white.withValues(alpha: 0.6)
-                        : Colors.white.withValues(alpha: 0.6),
+                        ? AppColors.fg(context).withValues(alpha: 0.6)
+                        : AppColors.fg(context).withValues(alpha: 0.6),
                     fontSize: 15,
                   ),
                 ),

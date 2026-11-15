@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_clash/xboard/features/shared/widgets/app_icon_tile.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 设置类页面的统一卡片样式：
 /// 深色半透明底 + 细描边 + 左侧圆角图标块，标题/副标题上下排布。
@@ -31,10 +32,10 @@ class SettingsCard extends StatelessWidget {
     final content = Container(
       padding: EdgeInsets.all(dense ? 14 : 16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.035),
+        color: AppColors.fg(context).withValues(alpha: 0.035),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: AppColors.fg(context).withValues(alpha: 0.07),
         ),
       ),
       child: Column(
@@ -59,7 +60,7 @@ class SettingsCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: dense ? 14.5 : 15.5,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                         height: 1.25,
                         decoration: TextDecoration.none,
                       ),
@@ -70,7 +71,7 @@ class SettingsCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12.5,
                         height: 1.4,
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: AppColors.fg(context).withValues(alpha: 0.45),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -120,10 +121,10 @@ class SettingsInfoBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppColors.fg(context).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: AppColors.fg(context).withValues(alpha: 0.06),
         ),
       ),
       child: Row(
@@ -131,14 +132,14 @@ class SettingsInfoBar extends StatelessWidget {
           Icon(
             icon,
             size: 15,
-            color: Colors.white.withValues(alpha: 0.4),
+            color: AppColors.fg(context).withValues(alpha: 0.4),
           ),
           const SizedBox(width: 8),
           Text(
             text,
             style: TextStyle(
               fontSize: 12.5,
-              color: Colors.white.withValues(alpha: 0.7),
+              color: AppColors.fg(context).withValues(alpha: 0.7),
               decoration: TextDecoration.none,
             ),
           ),

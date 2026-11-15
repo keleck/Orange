@@ -125,7 +125,7 @@ class _NoticeBannerState extends ConsumerState<NoticeBanner>
                       AppColors.gradientColor3.withValues(alpha: 0.6),
                     ]
                   : [
-                      Colors.white.withValues(alpha: 0.15),
+                      AppColors.fg(context).withValues(alpha: 0.15),
                       Colors.blue.withValues(alpha: 0.08),
                     ],
             ),
@@ -133,7 +133,7 @@ class _NoticeBannerState extends ConsumerState<NoticeBanner>
             border: Border.all(
               color: isDark
                   ? AppColors.gradientColor1.withValues(alpha: 0.5)
-                  : Colors.white.withValues(alpha: 0.3),
+                  : AppColors.fg(context).withValues(alpha: 0.3),
               width: 1.5,
             ),
             boxShadow: [
@@ -320,7 +320,7 @@ class _NoticeDetailDialogState extends State<NoticeDetailDialog>
                             AppColors.gradientColor4,
                           ]
                         : [
-                            Colors.white.withValues(alpha: 0.2),
+                            AppColors.fg(context).withValues(alpha: 0.2),
                             Colors.blue.withValues(alpha: 0.1),
                           ],
                     stops: isDark ? [0.0, 0.5, 1.0] : null,
@@ -329,7 +329,7 @@ class _NoticeDetailDialogState extends State<NoticeDetailDialog>
                   border: Border.all(
                     color: isDark
                         ? AppColors.gradientColor1.withValues(alpha: 0.8)
-                        : Colors.white.withValues(alpha: 0.3),
+                        : AppColors.fg(context).withValues(alpha: 0.3),
                     width: 1.5,
                   ),
                   boxShadow: [

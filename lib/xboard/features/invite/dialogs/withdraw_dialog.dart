@@ -6,6 +6,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class WithdrawDialog extends ConsumerStatefulWidget {
   const WithdrawDialog({super.key});
@@ -58,12 +59,12 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                 end: Alignment.bottomRight,
                 colors: [
                   Colors.blue.withValues(alpha: 0.15),
-                  Colors.white.withValues(alpha: 0.08),
+                  AppColors.fg(context).withValues(alpha: 0.08),
                 ],
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: AppColors.fg(context).withValues(alpha: 0.2),
                 width: 1.5,
               ),
               boxShadow: [
@@ -87,13 +88,13 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: AppColors.fg(context).withValues(alpha: 0.08),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
                     border: Border(
                       bottom: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: AppColors.fg(context).withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -106,7 +107,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: AppColors.fg(context),
                                   ),
                         ),
                       ),
@@ -119,7 +120,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                             padding: const EdgeInsets.all(6.0),
                             child: Icon(
                               Icons.close_rounded,
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.6),
                               size: 20,
                             ),
                           ),
@@ -175,19 +177,19 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                               : _isWithdrawing
                                   ? Text(
                                       '提交中...',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: AppColors.fg(context),
                                       ),
                                       key: const ValueKey('loading-text'),
                                     )
                                   : Text(
                                       '可提现金额：¥${availableAmount.toStringAsFixed(2)}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: AppColors.fg(context),
                                       ),
                                       key: const ValueKey('balance-text'),
                                     ),
@@ -204,7 +206,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                     horizontal: 12, vertical: 16),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.2),
+                                    color: AppColors.fg(context)
+                                        .withValues(alpha: 0.2),
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -215,7 +218,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                     Row(
                                       children: [
                                         Icon(Icons.payment,
-                                            color: Colors.white
+                                            color: AppColors.fg(context)
                                                 .withValues(alpha: 0.7),
                                             size: 20),
                                         const SizedBox(width: 12),
@@ -223,8 +226,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                           _selectedMethod ?? '请选择提现方式',
                                           style: TextStyle(
                                             color: _selectedMethod != null
-                                                ? Colors.white
-                                                : Colors.white
+                                                ? AppColors.fg(context)
+                                                : AppColors.fg(context)
                                                     .withValues(alpha: 0.5),
                                           ),
                                         ),
@@ -232,8 +235,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                     ),
                                     Icon(
                                       Icons.arrow_drop_down,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.5),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.5),
                                     ),
                                   ],
                                 ),
@@ -243,26 +246,30 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                           const SizedBox(height: 12),
                           TextField(
                             controller: _accountController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: AppColors.fg(context)),
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(context)
                                   .xboardWithdrawAccount,
                               labelStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7)),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.7)),
                               hintText: AppLocalizations.of(context)
                                   .xboardEnterAccount,
                               hintStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5)),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.5)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.2),
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.2),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -273,7 +280,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                 ),
                               ),
                               prefixIcon: Icon(Icons.account_box,
-                                  color: Colors.white.withValues(alpha: 0.7)),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.7)),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -281,7 +289,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                             '提现申请将通过工单系统提交，请等待管理员审核',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.6),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -296,7 +305,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                   decoration: BoxDecoration(
                     border: Border(
                       top: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: AppColors.fg(context).withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -316,17 +325,19 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.2),
                                   width: 1,
                                 ),
                               ),
                               child: Text(
                                 appLocalizations.cancel,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -357,10 +368,10 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                   width: 1,
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 '提交申请',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -456,12 +467,12 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                   end: Alignment.bottomRight,
                   colors: [
                     Colors.blue.withValues(alpha: 0.15),
-                    Colors.white.withValues(alpha: 0.08),
+                    AppColors.fg(context).withValues(alpha: 0.08),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: AppColors.fg(context).withValues(alpha: 0.2),
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -484,13 +495,13 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                   Container(
                     padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.08),
+                      color: AppColors.fg(context).withValues(alpha: 0.08),
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: AppColors.fg(context).withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -505,7 +516,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                 .titleMedium
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: AppColors.fg(context),
                                 ),
                           ),
                         ),
@@ -518,7 +529,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                               padding: const EdgeInsets.all(6.0),
                               child: Icon(
                                 Icons.close_rounded,
-                                color: Colors.white.withValues(alpha: 0.6),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.6),
                                 size: 20,
                               ),
                             ),
@@ -556,7 +568,8 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                   border: Border.all(
                                     color: _selectedMethod == method
                                         ? Colors.blue.withValues(alpha: 0.5)
-                                        : Colors.white.withValues(alpha: 0.1),
+                                        : AppColors.fg(context)
+                                            .withValues(alpha: 0.1),
                                   ),
                                 ),
                                 child: Row(
@@ -565,7 +578,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                       _selectedMethod == method
                                           ? Icons.radio_button_checked
                                           : Icons.radio_button_unchecked,
-                                      color: Colors.white.withValues(
+                                      color: AppColors.fg(context).withValues(
                                         alpha: _selectedMethod == method
                                             ? 1.0
                                             : 0.6,
@@ -576,7 +589,7 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                                     Text(
                                       method,
                                       style: TextStyle(
-                                        color: Colors.white.withValues(
+                                        color: AppColors.fg(context).withValues(
                                           alpha: _selectedMethod == method
                                               ? 1.0
                                               : 0.7,

@@ -9,6 +9,7 @@ import 'package:flutter_xboard_sdk/flutter_xboard_sdk.dart';
 import 'package:fl_clash/xboard/features/auth/providers/xboard_user_provider.dart';
 import 'dart:async';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class QRCodePaymentPage extends ConsumerStatefulWidget {
   final String qrCodeData;
@@ -294,7 +295,7 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: AppColors.fg(context),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: Colors.grey.shade300,
@@ -305,7 +306,7 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                             version: QrVersions.auto,
                             size: 280,
                             gapless: true,
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColors.fg(context),
                             errorCorrectionLevel: QrErrorCorrectLevel.H,
                           ),
                         ),
@@ -437,7 +438,7 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                             Text(AppLocalizations.of(context).xboardCopyQrCode),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.purple,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppColors.fg(context),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
@@ -448,13 +449,13 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                         onPressed:
                             _isCheckingPayment ? null : _checkPaymentStatus,
                         icon: _isCheckingPayment
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 16,
                                 height: 16,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                                    AppColors.fg(context),
                                   ),
                                 ),
                               )
@@ -462,7 +463,7 @@ class _QRCodePaymentPageState extends ConsumerState<QRCodePaymentPage> {
                         label: Text(_isCheckingPayment ? '检查中...' : '检查状态'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppColors.fg(context),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),

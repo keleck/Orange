@@ -299,15 +299,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.white.withOpacity(0.15),
-                    Colors.white.withOpacity(0.05),
+                    AppColors.fg(context).withOpacity(0.15),
+                    AppColors.fg(context).withOpacity(0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: AppColors.fg(context).withOpacity(0.2),
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -327,7 +327,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.white.withOpacity(0.1),
+                          color: AppColors.fg(context).withOpacity(0.1),
                         ),
                       ),
                     ),
@@ -352,7 +352,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             Text(
                               appLocalizations.xboardBulkImportRules,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.fg(context),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -362,7 +362,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         IconButton(
                           icon: Icon(
                             Icons.close,
-                            color: Colors.white.withOpacity(0.6),
+                            color: AppColors.fg(context).withOpacity(0.6),
                           ),
                           onPressed: () => Navigator.pop(context),
                           padding: EdgeInsets.zero,
@@ -416,7 +416,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           Text(
                             appLocalizations.xboardRuleExamples,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.fg(context),
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
@@ -428,14 +428,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               color: Colors.black.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.1),
+                                color: AppColors.fg(context).withOpacity(0.1),
                               ),
                             ),
                             child: Text(
                               'DOMAIN,example.com,proxy-group-name\nDOMAIN-KEYWORD,youtube,node-name\nIP-CIDR,192.168.0.0/16,DIRECT\nGEOIP,CN,DIRECT',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Colors.white.withOpacity(0.7),
+                                color: AppColors.fg(context).withOpacity(0.7),
                                 fontFamily: 'monospace',
                                 height: 1.6,
                               ),
@@ -445,7 +445,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           Text(
                             appLocalizations.xboardPasteRulesHint,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.fg(context),
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
@@ -456,7 +456,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             maxLines: 10,
                             minLines: 6,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.fg(context),
                               fontSize: 12,
                               fontFamily: 'monospace',
                             ),
@@ -464,20 +464,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               hintText: AppLocalizations.of(context)
                                   .xboardRulesPerLineHint,
                               hintStyle: TextStyle(
-                                color: Colors.white.withOpacity(0.4),
+                                color: AppColors.fg(context).withOpacity(0.4),
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.05),
+                              fillColor:
+                                  AppColors.fg(context).withOpacity(0.05),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: Colors.white.withOpacity(0.15),
+                                  color:
+                                      AppColors.fg(context).withOpacity(0.15),
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: Colors.white.withOpacity(0.15),
+                                  color:
+                                      AppColors.fg(context).withOpacity(0.15),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -519,7 +522,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
-                          color: Colors.white.withOpacity(0.1),
+                          color: AppColors.fg(context).withOpacity(0.1),
                         ),
                       ),
                     ),
@@ -529,7 +532,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         TextButton(
                           onPressed: () => Navigator.pop(context),
                           style: TextButton.styleFrom(
-                            foregroundColor: Colors.white.withOpacity(0.7),
+                            foregroundColor:
+                                AppColors.fg(context).withOpacity(0.7),
                           ),
                           child: Text(AppLocalizations.of(context).cancel),
                         ),
@@ -571,13 +575,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                         Icon(
                                           Icons.cloud_upload,
                                           size: 16,
-                                          color: Colors.white,
+                                          color: AppColors.fg(context),
                                         ),
                                         SizedBox(width: 6),
                                         Text(
                                           appLocalizations.import,
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: AppColors.fg(context),
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -632,7 +636,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Column(
         children: [
           // 固定的 AppBar
@@ -691,12 +695,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       {required IconData icon}) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.white),
+        Icon(icon, size: 20, color: AppColors.fg(context)),
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: AppColors.fg(context),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -811,7 +815,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       trailing: Icon(
         Icons.chevron_right_rounded,
         size: 20,
-        color: Colors.white.withValues(alpha: 0.3),
+        color: AppColors.fg(context).withValues(alpha: 0.3),
       ),
       onTap: () {
         Navigator.of(context).push(
@@ -831,7 +835,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       trailing: Icon(
         Icons.chevron_right_rounded,
         size: 20,
-        color: Colors.white.withValues(alpha: 0.3),
+        color: AppColors.fg(context).withValues(alpha: 0.3),
       ),
       onTap: () {
         Navigator.of(context).push(
@@ -901,9 +905,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: AppColors.fg(context).withOpacity(0.1),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
+                      color: AppColors.fg(context).withOpacity(0.2),
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -921,7 +925,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 Text(
                                   appLocalizations.xboardCampusHosts,
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: AppColors.fg(context),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -930,7 +934,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 Text(
                                   '${hosts.length} 条穿透规则',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
+                                    color:
+                                        AppColors.fg(context).withOpacity(0.6),
                                     fontSize: 12,
                                   ),
                                 ),
@@ -978,7 +983,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       Text(
                         appLocalizations.xboardCampusHostsHint,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
+                          color: AppColors.fg(context).withOpacity(0.5),
                           fontSize: 11,
                         ),
                       ),
@@ -995,14 +1000,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.fg(context)),
                 ),
               ),
               SizedBox(width: 8),
               Text(
                 appLocalizations.xboardLoadingCampusConfig,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: AppColors.fg(context).withOpacity(0.7),
                   fontSize: 12,
                 ),
               ),
@@ -1053,12 +1059,13 @@ class _CardLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       width: 22,
       height: 22,
       child: CircularProgressIndicator(
         strokeWidth: 2,
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+        valueColor: AlwaysStoppedAnimation<Color>(
+            AppColors.fg(context).withValues(alpha: 0.7)),
       ),
     );
   }

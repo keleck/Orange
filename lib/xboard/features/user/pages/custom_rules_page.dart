@@ -171,7 +171,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     final primary = Theme.of(context).colorScheme.primary;
 
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
@@ -194,7 +194,8 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                             style: TextStyle(
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white.withValues(alpha: 0.75),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.75),
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -203,7 +204,8 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                             '${rules.length} ${appLocalizations.xboardRulesUnit}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.35),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.35),
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -247,16 +249,16 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: AppColors.fg(context).withValues(alpha: 0.06),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: AppColors.fg(context).withValues(alpha: 0.08),
                 ),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 16,
-                color: Colors.white,
+                color: AppColors.fg(context),
               ),
             ),
           ),
@@ -266,7 +268,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: AppColors.fg(context),
               decoration: TextDecoration.none,
             ),
           ),
@@ -366,7 +368,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
             style: TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: AppColors.fg(context),
               decoration: TextDecoration.none,
             ),
           ),
@@ -389,10 +391,10 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.10),
+                    color: AppColors.fg(context).withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.30),
+                      color: AppColors.fg(context).withValues(alpha: 0.30),
                     ),
                   ),
                   child: Text(
@@ -400,7 +402,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                       decoration: TextDecoration.none,
                     ),
                   ),
@@ -424,10 +426,10 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.fromLTRB(13, 11, 6, 11),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.035),
+        color: AppColors.fg(context).withValues(alpha: 0.035),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: AppColors.fg(context).withValues(alpha: 0.06),
         ),
       ),
       child: Row(
@@ -454,9 +456,9 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -465,7 +467,7 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
                   '${_typeLabel(type)} · ${_targetLabel(target)}',
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.white.withValues(alpha: 0.38),
+                    color: AppColors.fg(context).withValues(alpha: 0.38),
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -517,10 +519,10 @@ class _Panel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.035),
+        color: AppColors.fg(context).withValues(alpha: 0.035),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: AppColors.fg(context).withValues(alpha: 0.07),
         ),
       ),
       child: child,
@@ -546,19 +548,19 @@ class _InputField extends StatelessWidget {
       child: TextField(
         controller: controller,
         onSubmitted: onSubmitted,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 13.5,
-          color: Colors.white,
+          color: AppColors.fg(context),
         ),
         cursorColor: Theme.of(context).colorScheme.primary,
         decoration: InputDecoration(
           isDense: true,
           filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.05),
+          fillColor: AppColors.fg(context).withValues(alpha: 0.05),
           hintText: hint,
           hintStyle: TextStyle(
             fontSize: 13,
-            color: Colors.white.withValues(alpha: 0.28),
+            color: AppColors.fg(context).withValues(alpha: 0.28),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 14,
@@ -567,7 +569,7 @@ class _InputField extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.07),
+              color: AppColors.fg(context).withValues(alpha: 0.07),
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -612,10 +614,10 @@ class _AddButton extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(
+        child: Icon(
           Icons.add_rounded,
           size: 22,
-          color: Colors.white,
+          color: AppColors.fg(context),
         ),
       ),
     );
@@ -660,10 +662,10 @@ class _PickerField extends StatelessWidget {
         height: 46,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: AppColors.fg(context).withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.07),
+            color: AppColors.fg(context).withValues(alpha: 0.07),
           ),
         ),
         child: Row(
@@ -671,7 +673,7 @@ class _PickerField extends StatelessWidget {
             Icon(
               icon,
               size: 16,
-              color: Colors.white.withValues(alpha: 0.55),
+              color: AppColors.fg(context).withValues(alpha: 0.55),
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -679,9 +681,9 @@ class _PickerField extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13.5,
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -689,7 +691,7 @@ class _PickerField extends StatelessWidget {
             Icon(
               Icons.keyboard_arrow_down_rounded,
               size: 18,
-              color: Colors.white.withValues(alpha: 0.4),
+              color: AppColors.fg(context).withValues(alpha: 0.4),
             ),
           ],
         ),
@@ -765,7 +767,7 @@ class _OptionSheet<T> extends StatelessWidget {
         ),
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: AppColors.fg(context).withValues(alpha: 0.08),
           ),
         ),
       ),
@@ -778,10 +780,10 @@ class _OptionSheet<T> extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: AppColors.fg(context),
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -789,7 +791,7 @@ class _OptionSheet<T> extends StatelessWidget {
             Divider(
               height: 1,
               thickness: 1,
-              color: Colors.white.withValues(alpha: 0.06),
+              color: AppColors.fg(context).withValues(alpha: 0.06),
             ),
             Flexible(
               child: ListView.builder(
@@ -814,7 +816,7 @@ class _OptionSheet<T> extends StatelessWidget {
                             size: 21,
                             color: isSelected
                                 ? primary
-                                : Colors.white.withValues(alpha: 0.55),
+                                : AppColors.fg(context).withValues(alpha: 0.55),
                           ),
                           const SizedBox(width: 14),
                           Expanded(
@@ -827,7 +829,8 @@ class _OptionSheet<T> extends StatelessWidget {
                                     : FontWeight.w400,
                                 color: isSelected
                                     ? primary
-                                    : Colors.white.withValues(alpha: 0.9),
+                                    : AppColors.fg(context)
+                                        .withValues(alpha: 0.9),
                                 decoration: TextDecoration.none,
                               ),
                             ),

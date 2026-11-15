@@ -2,6 +2,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class QrCodeWidget extends StatelessWidget {
   final String data;
@@ -24,7 +25,7 @@ class QrCodeWidget extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: backgroundColor ?? Colors.white,
+          color: backgroundColor ?? AppColors.fg(context),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade300),
         ),
@@ -54,7 +55,7 @@ class QrCodeWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: backgroundColor ?? Colors.white,
+        color: backgroundColor ?? AppColors.fg(context),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -62,7 +63,7 @@ class QrCodeWidget extends StatelessWidget {
         data: data,
         version: QrVersions.auto,
         size: size,
-        backgroundColor: backgroundColor ?? Colors.white,
+        backgroundColor: backgroundColor ?? AppColors.fg(context),
         eyeStyle: QrEyeStyle(
           eyeShape: QrEyeShape.square,
           color: foregroundColor ?? Colors.black,

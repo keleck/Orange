@@ -18,7 +18,7 @@ class OrderPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      decoration: AppColors.getBackgroundDecoration(),
+      decoration: AppColors.backgroundDecoration(context),
       child: Column(
         children: [
           // 固定的 AppBar
@@ -87,10 +87,10 @@ class _OrderCard extends ConsumerWidget {
                   order.planName ?? appLocalizations.xboardUnknownPlan,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -114,7 +114,7 @@ class _OrderCard extends ConsumerWidget {
                 createdAt,
                 style: TextStyle(
                   fontSize: 11.5,
-                  color: Colors.white.withValues(alpha: 0.32),
+                  color: AppColors.fg(context).withValues(alpha: 0.32),
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -129,7 +129,7 @@ class _OrderCard extends ConsumerWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withValues(alpha: 0.24),
+              color: AppColors.fg(context).withValues(alpha: 0.24),
               decoration: TextDecoration.none,
             ),
           ),
@@ -137,7 +137,7 @@ class _OrderCard extends ConsumerWidget {
           Divider(
             height: 1,
             thickness: 1,
-            color: Colors.white.withValues(alpha: 0.06),
+            color: AppColors.fg(context).withValues(alpha: 0.06),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -155,7 +155,7 @@ class _OrderCard extends ConsumerWidget {
                       appLocalizations.xboardCancelOrder,
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: AppColors.fg(context).withValues(alpha: 0.45),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -198,20 +198,20 @@ class _OrderCard extends ConsumerWidget {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.035),
+      color: AppColors.fg(context).withValues(alpha: 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: AppColors.fg(context).withValues(alpha: 0.07),
       ),
     );
   }
 
   BoxDecoration _detailGlassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.04),
+      color: AppColors.fg(context).withValues(alpha: 0.04),
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: AppColors.fg(context).withValues(alpha: 0.06),
       ),
     );
   }

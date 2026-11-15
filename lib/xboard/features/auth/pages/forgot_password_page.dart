@@ -167,29 +167,29 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: TextFormField(
               controller: _emailController,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.fg(context),
                 fontSize: 16,
               ),
               decoration: InputDecoration(
                 labelText: null,
                 hintText: AppLocalizations.of(context).pleaseEnterEmail,
                 hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.fg(context).withValues(alpha: 0.5),
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.04),
+                fillColor: AppColors.fg(context).withValues(alpha: 0.04),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -197,7 +197,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 prefixIcon: Icon(
                   Icons.email_outlined,
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: AppColors.fg(context).withValues(alpha: 0.6),
                 ),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -223,24 +223,24 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             onPressed: _isLoading ? null : _sendVerificationCode,
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF5FD68A),
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.fg(context),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                     ),
                   )
                 : Text(
                     AppLocalizations.of(context).sendVerificationCode,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.fg(context),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -269,8 +269,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: TextFormField(
               controller: _codeController,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.fg(context),
                 fontSize: 16,
               ),
               decoration: InputDecoration(
@@ -278,21 +278,21 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 hintText:
                     AppLocalizations.of(context).pleaseEnterVerificationCode,
                 hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.fg(context).withValues(alpha: 0.5),
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.04),
+                fillColor: AppColors.fg(context).withValues(alpha: 0.04),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -300,7 +300,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 prefixIcon: Icon(
                   Icons.verified_user_outlined,
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: AppColors.fg(context).withValues(alpha: 0.6),
                 ),
               ),
               keyboardType: TextInputType.number,
@@ -327,29 +327,29 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             child: TextFormField(
               controller: _passwordController,
               obscureText: _obscurePassword,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.fg(context),
                 fontSize: 16,
               ),
               decoration: InputDecoration(
                 labelText: null,
                 hintText: AppLocalizations.of(context).pleaseEnterNewPassword,
                 hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.fg(context).withValues(alpha: 0.5),
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.04),
+                fillColor: AppColors.fg(context).withValues(alpha: 0.04),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -357,14 +357,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 prefixIcon: Icon(
                   Icons.lock_outlined,
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: AppColors.fg(context).withValues(alpha: 0.6),
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: AppColors.fg(context).withValues(alpha: 0.6),
                   ),
                   onPressed: () {
                     setState(() {
@@ -394,29 +394,29 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             child: TextFormField(
               controller: _confirmPasswordController,
               obscureText: _obscureConfirmPassword,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.fg(context),
                 fontSize: 16,
               ),
               decoration: InputDecoration(
                 labelText: null,
                 hintText: AppLocalizations.of(context).pleaseConfirmNewPassword,
                 hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.fg(context).withValues(alpha: 0.5),
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.04),
+                fillColor: AppColors.fg(context).withValues(alpha: 0.04),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: AppColors.fg(context).withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -424,14 +424,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 prefixIcon: Icon(
                   Icons.lock_outlined,
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: AppColors.fg(context).withValues(alpha: 0.6),
                 ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscureConfirmPassword
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: AppColors.fg(context).withValues(alpha: 0.6),
                   ),
                   onPressed: () {
                     setState(() {
@@ -461,24 +461,24 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             onPressed: _isLoading ? null : _resetPassword,
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF5FD68A),
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.fg(context),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                     ),
                   )
                 : Text(
                     AppLocalizations.of(context).resetPassword,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.fg(context),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -532,7 +532,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                               Text(
                                 _appTitle,
                                 style: textTheme.displaySmall?.copyWith(
-                                  color: Colors.white,
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -540,7 +540,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                               Text(
                                 'Let\'s start here!',
                                 style: textTheme.headlineSmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                  color: AppColors.fg(context)
+                                      .withValues(alpha: 0.9),
                                 ),
                               ),
                             ],
@@ -553,7 +554,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 Expanded(
                   flex: 4,
                   child: Container(
-                    color: Colors.white, // Right side background
+                    color: AppColors.fg(context), // Right side background
                     child: Center(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 48.0),
@@ -572,7 +573,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             // Mobile Layout - 深色模式紫色和海军蓝渐变
             final isDark = Theme.of(context).brightness == Brightness.dark;
             return Container(
-              decoration: AppColors.getBackgroundDecoration(),
+              decoration: AppColors.backgroundDecoration(context),
               child: Center(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
@@ -638,10 +639,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.lock_reset_outlined,
                       size: 40,
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                     ),
                   ),
                   const SizedBox(height: 24),

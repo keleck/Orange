@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 连接按钮的圆盘直径
 const double kConnectDiscSize = 180;
@@ -205,7 +206,7 @@ class ConnectActiveDisc extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.85),
+                    color: AppColors.fg(context).withValues(alpha: 0.85),
                     width: 1.4,
                   ),
                 ),
@@ -216,7 +217,7 @@ class ConnectActiveDisc extends StatelessWidget {
             child: Icon(
               Icons.power_settings_new_rounded,
               size: size * 0.42,
-              color: Colors.white.withValues(alpha: 0.95),
+              color: AppColors.fg(context).withValues(alpha: 0.95),
             ),
           ),
         ],
@@ -260,7 +261,7 @@ class ConnectIdleDisc extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.85),
+                    color: AppColors.fg(context).withValues(alpha: 0.85),
                     width: 1.4,
                   ),
                 ),
@@ -271,7 +272,7 @@ class ConnectIdleDisc extends StatelessWidget {
             child: Icon(
               Icons.power_settings_new_rounded,
               size: size * 0.42,
-              color: Colors.white.withValues(alpha: 0.95),
+              color: AppColors.fg(context).withValues(alpha: 0.95),
             ),
           ),
         ],

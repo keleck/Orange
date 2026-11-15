@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fl_clash/common/common.dart';
 import '../models/update_check_state.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class UpdateDialog extends ConsumerWidget {
   final UpdateCheckState state;
@@ -129,7 +130,7 @@ class UpdateDialog extends ConsumerWidget {
           style: state.forceUpdate
               ? ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.fg(context),
                 )
               : null,
         ),

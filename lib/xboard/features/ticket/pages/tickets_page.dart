@@ -24,7 +24,7 @@ class TicketsPage extends ConsumerWidget {
         surfaceTintColor: Colors.transparent,
       ),
       body: Container(
-        decoration: AppColors.getBackgroundDecoration(),
+        decoration: AppColors.backgroundDecoration(context),
         child: Padding(
           // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
           padding: EdgeInsets.only(
@@ -84,14 +84,16 @@ class TicketsPage extends ConsumerWidget {
                           Icon(
                             Icons.cloud_off_rounded,
                             size: 40,
-                            color: Colors.white.withValues(alpha: 0.25),
+                            color:
+                                AppColors.fg(context).withValues(alpha: 0.25),
                           ),
                           SizedBox(height: 12),
                           Text(
                             appLocalizations.xboardTicketLoadFailed,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.7),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -104,7 +106,8 @@ class TicketsPage extends ConsumerWidget {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.white.withValues(alpha: 0.35),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.35),
                               ),
                             ),
                           ),
@@ -173,7 +176,7 @@ class _HeaderSummary extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.07),
+            color: AppColors.fg(context).withValues(alpha: 0.07),
           ),
         ),
         child: Column(
@@ -187,7 +190,7 @@ class _HeaderSummary extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -196,7 +199,7 @@ class _HeaderSummary extends StatelessWidget {
                   '共 $total 条',
                   style: TextStyle(
                     fontSize: 11.5,
-                    color: Colors.white.withValues(alpha: 0.35),
+                    color: AppColors.fg(context).withValues(alpha: 0.35),
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -220,7 +223,7 @@ class _HeaderSummary extends StatelessWidget {
                 _StatItem(
                   value: closedCount,
                   label: AppLocalizations.of(context).xboardClosed,
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: AppColors.fg(context).withValues(alpha: 0.45),
                 ),
               ],
             ),
@@ -262,7 +265,7 @@ class _StatItem extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withValues(alpha: 0.42),
+              color: AppColors.fg(context).withValues(alpha: 0.42),
               decoration: TextDecoration.none,
             ),
           ),
@@ -280,7 +283,7 @@ class _StatDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 22,
-      color: Colors.white.withValues(alpha: 0.07),
+      color: AppColors.fg(context).withValues(alpha: 0.07),
     );
   }
 }
@@ -318,7 +321,7 @@ class _EmptyState extends StatelessWidget {
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: AppColors.fg(context),
               decoration: TextDecoration.none,
             ),
           ),
@@ -329,7 +332,7 @@ class _EmptyState extends StatelessWidget {
             style: TextStyle(
               fontSize: 12.5,
               height: 1.5,
-              color: Colors.white.withValues(alpha: 0.4),
+              color: AppColors.fg(context).withValues(alpha: 0.4),
               decoration: TextDecoration.none,
             ),
           ),
@@ -347,14 +350,15 @@ class _TicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-    final statusColor =
-        ticket.status == 0 ? primary : Colors.white.withValues(alpha: 0.35);
+    final statusColor = ticket.status == 0
+        ? primary
+        : AppColors.fg(context).withValues(alpha: 0.35);
     final messagePreview = (ticket.message ?? '').trim();
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
       child: Material(
-        color: Colors.white.withValues(alpha: 0.035),
+        color: AppColors.fg(context).withValues(alpha: 0.035),
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () => context.push('/user/tickets/${ticket.id}'),
@@ -364,7 +368,7 @@ class _TicketCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: AppColors.fg(context).withValues(alpha: 0.06),
               ),
             ),
             child: Column(
@@ -386,10 +390,10 @@ class _TicketCard extends StatelessWidget {
                         ticket.subject,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: AppColors.fg(context),
                           height: 1.3,
                           decoration: TextDecoration.none,
                         ),
@@ -399,7 +403,7 @@ class _TicketCard extends StatelessWidget {
                     Icon(
                       Icons.chevron_right,
                       size: 18,
-                      color: Colors.white.withValues(alpha: 0.22),
+                      color: AppColors.fg(context).withValues(alpha: 0.22),
                     ),
                   ],
                 ),
@@ -410,7 +414,7 @@ class _TicketCard extends StatelessWidget {
                       '#${ticket.id}',
                       style: TextStyle(
                         fontSize: 11.5,
-                        color: Colors.white.withValues(alpha: 0.32),
+                        color: AppColors.fg(context).withValues(alpha: 0.32),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -418,7 +422,7 @@ class _TicketCard extends StatelessWidget {
                       '  ·  ',
                       style: TextStyle(
                         fontSize: 11.5,
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: AppColors.fg(context).withValues(alpha: 0.2),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -426,7 +430,7 @@ class _TicketCard extends StatelessWidget {
                       _relativeTime(ticket.createdAt),
                       style: TextStyle(
                         fontSize: 11.5,
-                        color: Colors.white.withValues(alpha: 0.32),
+                        color: AppColors.fg(context).withValues(alpha: 0.32),
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -449,7 +453,7 @@ class _TicketCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.5,
                       height: 1.5,
-                      color: Colors.white.withValues(alpha: 0.48),
+                      color: AppColors.fg(context).withValues(alpha: 0.48),
                       decoration: TextDecoration.none,
                     ),
                   ),
@@ -503,7 +507,7 @@ class _ReplyTag extends StatelessWidget {
     final isWaiting = replyStatus == 1;
     final color = isWaiting
         ? const Color(0xFFFFC061)
-        : Colors.white.withValues(alpha: 0.32);
+        : AppColors.fg(context).withValues(alpha: 0.32);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -562,14 +566,14 @@ class _CreateTicketButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.add_rounded, size: 18, color: Colors.white),
+            Icon(Icons.add_rounded, size: 18, color: AppColors.fg(context)),
             SizedBox(width: 6),
             Text(
               appLocalizations.xboardNewTicket,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: AppColors.fg(context),
                 decoration: TextDecoration.none,
               ),
             ),

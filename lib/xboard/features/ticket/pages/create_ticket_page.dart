@@ -88,7 +88,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -137,7 +137,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
         surfaceTintColor: Colors.transparent,
       ),
       body: Container(
-        decoration: AppColors.getBackgroundDecoration(),
+        decoration: AppColors.backgroundDecoration(context),
         child: Padding(
           // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
           padding: EdgeInsets.only(
@@ -156,7 +156,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                       Text(
                         '优先级',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: AppColors.fg(context).withValues(alpha: 0.7),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -188,13 +188,13 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.white.withValues(alpha: 0.1),
+                            AppColors.fg(context).withValues(alpha: 0.1),
                             Colors.blue.withValues(alpha: 0.05),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: AppColors.fg(context).withValues(alpha: 0.2),
                           width: 1.5,
                         ),
                       ),
@@ -202,13 +202,15 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                         padding: const EdgeInsets.all(4),
                         child: TextFormField(
                           controller: _subjectController,
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(color: AppColors.fg(context)),
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context).xboardTitle,
                             labelStyle: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7)),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.7)),
                             hintStyle: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5)),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.5)),
                             border: InputBorder.none,
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 12),
@@ -233,13 +235,13 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.white.withValues(alpha: 0.1),
+                            AppColors.fg(context).withValues(alpha: 0.1),
                             Colors.blue.withValues(alpha: 0.05),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: AppColors.fg(context).withValues(alpha: 0.2),
                           width: 1.5,
                         ),
                       ),
@@ -247,13 +249,15 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                         padding: const EdgeInsets.all(4),
                         child: TextFormField(
                           controller: _messageController,
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(color: AppColors.fg(context)),
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context).content,
                             labelStyle: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7)),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.7)),
                             hintStyle: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5)),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.5)),
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 12),
@@ -293,16 +297,17 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage> {
                       ),
                       child: Center(
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.white),
+                                    strokeWidth: 2,
+                                    color: AppColors.fg(context)),
                               )
-                            : const Text(
+                            : Text(
                                 '提交',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.fg(context),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
                                 ),

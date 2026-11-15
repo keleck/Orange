@@ -176,13 +176,13 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withValues(alpha: 0.10),
-                    Colors.white.withValues(alpha: 0.04),
+                    AppColors.fg(context).withValues(alpha: 0.10),
+                    AppColors.fg(context).withValues(alpha: 0.04),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.25),
+                  color: AppColors.fg(context).withValues(alpha: 0.25),
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -225,7 +225,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           child: Icon(
                             Icons.edit_rounded,
                             size: 20,
-                            color: Colors.white,
+                            color: AppColors.fg(context),
                           ),
                         ),
                         SizedBox(width: 12),
@@ -234,7 +234,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.fg(context),
                           ),
                         ),
                       ],
@@ -244,7 +244,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                       appLocalizations.xboardEnterTopupAmount,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: AppColors.fg(context).withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -256,13 +256,14 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Colors.white.withValues(alpha: 0.06),
-                                Colors.white.withValues(alpha: 0.03),
+                                AppColors.fg(context).withValues(alpha: 0.06),
+                                AppColors.fg(context).withValues(alpha: 0.03),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.2),
                               width: 1.5,
                             ),
                           ),
@@ -270,8 +271,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             controller: controller,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppColors.fg(context),
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
@@ -279,7 +280,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               labelText: AppLocalizations.of(context)
                                   .xboardTopupAmount,
                               labelStyle: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.6),
                                 fontSize: 14,
                               ),
                               prefixIcon: Padding(
@@ -300,7 +302,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                   const EdgeInsets.symmetric(vertical: 12),
                               hintText: '0.00',
                               hintStyle: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.3),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.3),
                               ),
                             ),
                             autofocus: true,
@@ -327,14 +330,16 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        Colors.white.withValues(alpha: 0.08),
-                                        Colors.white.withValues(alpha: 0.04),
+                                        AppColors.fg(context)
+                                            .withValues(alpha: 0.08),
+                                        AppColors.fg(context)
+                                            .withValues(alpha: 0.04),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.2),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.2),
                                       width: 1.5,
                                     ),
                                   ),
@@ -343,8 +348,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.7),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ),
@@ -386,8 +391,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.10),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.10),
                                       width: 1.5,
                                     ),
                                     boxShadow: [
@@ -405,7 +410,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: AppColors.fg(context),
                                     ),
                                   ),
                                 ),
@@ -427,10 +432,10 @@ class _WalletCardState extends ConsumerState<WalletCard> {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.035),
+      color: AppColors.fg(context).withValues(alpha: 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: AppColors.fg(context).withValues(alpha: 0.07),
       ),
     );
   }
@@ -464,7 +469,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
             ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.07),
+              color: AppColors.fg(context).withValues(alpha: 0.07),
             ),
           ),
           child: Padding(
@@ -503,7 +508,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: AppColors.fg(context).withValues(alpha: 0.9),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -518,7 +523,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                       style: TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                         letterSpacing: -1.5,
                         height: 1.1,
                       ),
@@ -555,7 +560,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: AppColors.fg(context).withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -604,7 +609,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
-                              color: Colors.white,
+                              color: AppColors.fg(context),
                             ),
                           ),
                           SizedBox(height: 2),
@@ -612,7 +617,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             appLocalizations.xboardAutoRenewHint,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -693,7 +699,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           child: Icon(
                             Icons.add_card_rounded,
                             size: 22,
-                            color: Colors.white,
+                            color: AppColors.fg(context),
                           ),
                         ),
                         SizedBox(width: 12),
@@ -702,7 +708,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: AppColors.fg(context),
                           ),
                         ),
                       ],
@@ -711,10 +717,10 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                     Container(
                       padding: const EdgeInsets.all(13),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.04),
+                        color: AppColors.fg(context).withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.06),
+                          color: AppColors.fg(context).withValues(alpha: 0.06),
                           width: 1,
                         ),
                       ),
@@ -740,7 +746,8 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.white.withValues(alpha: 0.8),
+                                color: AppColors.fg(context)
+                                    .withValues(alpha: 0.8),
                               ),
                             ),
                           ),
@@ -771,11 +778,11 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                 child: Ink(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(14),
-                                    color:
-                                        Colors.white.withValues(alpha: 0.045),
+                                    color: AppColors.fg(context)
+                                        .withValues(alpha: 0.045),
                                     border: Border.all(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.08),
+                                      color: AppColors.fg(context)
+                                          .withValues(alpha: 0.08),
                                       width: 1,
                                     ),
                                   ),
@@ -785,7 +792,7 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: AppColors.fg(context),
                                         letterSpacing: 0.3,
                                       ),
                                     ),
@@ -816,13 +823,13 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                                color: AppColors.fg(context),
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.primary
                                   .withValues(alpha: 0.15),
-                              foregroundColor: Colors.white,
+                              foregroundColor: AppColors.fg(context),
                               elevation: 0,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(

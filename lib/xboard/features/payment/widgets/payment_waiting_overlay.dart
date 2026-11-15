@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/xboard/core/core.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import '../models/payment_step.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 // 初始化文件级日志器
 final _logger = FileLogger('payment_waiting_overlay.dart');
@@ -343,7 +344,7 @@ class _PaymentWaitingOverlayState extends ConsumerState<PaymentWaitingOverlay>
                     onPressed: widget.onPaymentSuccess,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.fg(context),
                     ),
                     child: Text(AppLocalizations.of(context).xboardConfirm),
                   ),

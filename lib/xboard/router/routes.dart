@@ -246,7 +246,7 @@ final List<RouteBase> routes = [
     name: 'loading',
     pageBuilder: (context, state) => MaterialPage(
       child: Container(
-        decoration: AppColors.getBackgroundDecoration(),
+        decoration: AppColors.backgroundDecoration(context),
         child: const Scaffold(
           body: Center(
             child: CircularProgressIndicator(),

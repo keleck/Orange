@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 优惠券输入区域
 class CouponInputSection extends StatelessWidget {
@@ -98,12 +99,12 @@ class _DiscountBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_circle, color: Colors.white, size: 14),
+          Icon(Icons.check_circle, color: AppColors.fg(context), size: 14),
           const SizedBox(width: 4),
           Text(
             '-¥${discountAmount.toStringAsFixed(2)}',
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.fg(context),
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
@@ -212,7 +213,7 @@ class _ValidateButton extends StatelessWidget {
               },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.orange.shade600,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.fg(context),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -220,12 +221,13 @@ class _ValidateButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
         ),
         child: isValidating
-            ? const SizedBox(
+            ? SizedBox(
                 width: 18,
                 height: 18,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.fg(context)),
                 ),
               )
             : Text(

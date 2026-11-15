@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 支付方式选择对话框
 class PaymentMethodSelectorDialog extends StatefulWidget {
@@ -121,7 +122,7 @@ class _PaymentMethodSelectorDialogState
               : () => Navigator.of(context).pop(_selectedMethod),
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.fg(context),
           ),
           child: Text(AppLocalizations.of(context).confirm),
         ),

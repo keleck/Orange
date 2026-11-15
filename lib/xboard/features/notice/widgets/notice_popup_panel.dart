@@ -100,7 +100,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
                     gradient: panelGradient,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.10),
+                      color: AppColors.fg(context).withValues(alpha: 0.10),
                       width: 1,
                     ),
                     boxShadow: [
@@ -151,7 +151,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: AppColors.fg(context),
                 letterSpacing: 0.2,
               ),
             ),
@@ -164,7 +164,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
               child: Icon(
                 Icons.close_rounded,
                 size: 18,
-                color: Colors.white.withValues(alpha: 0.45),
+                color: AppColors.fg(context).withValues(alpha: 0.45),
               ),
             ),
           ),
@@ -197,7 +197,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
               appLocalizations.xboardNoticeLoadFailed,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.75),
+                color: AppColors.fg(context).withValues(alpha: 0.75),
               ),
             ),
             const SizedBox(height: 6),
@@ -208,7 +208,7 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withValues(alpha: 0.35),
+                color: AppColors.fg(context).withValues(alpha: 0.35),
               ),
             ),
             const SizedBox(height: 14),
@@ -236,14 +236,14 @@ class _NoticePopupPanelState extends State<_NoticePopupPanel> {
             Icon(
               Icons.notifications_none,
               size: 30,
-              color: Colors.white.withValues(alpha: 0.25),
+              color: AppColors.fg(context).withValues(alpha: 0.25),
             ),
             SizedBox(height: 10),
             Text(
               appLocalizations.xboardNoNotices,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.white.withValues(alpha: 0.4),
+                color: AppColors.fg(context).withValues(alpha: 0.4),
               ),
             ),
           ],
@@ -304,19 +304,19 @@ class _NoticeRow extends StatelessWidget {
                   border: Border.all(
                     color: isUnread
                         ? primary
-                        : Colors.white.withValues(alpha: 0.35),
+                        : AppColors.fg(context).withValues(alpha: 0.35),
                     width: 1.3,
                   ),
                 ),
                 child: isUnread
-                    ? const Center(
+                    ? Center(
                         child: SizedBox(
                           width: 4,
                           height: 4,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white,
+                              color: AppColors.fg(context),
                             ),
                           ),
                         ),
@@ -333,10 +333,10 @@ class _NoticeRow extends StatelessWidget {
                     notice.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14.5,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white,
+                      color: AppColors.fg(context),
                       height: 1.3,
                       decoration: TextDecoration.none,
                     ),
@@ -349,7 +349,7 @@ class _NoticeRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.5,
                       height: 1.45,
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: AppColors.fg(context).withValues(alpha: 0.5),
                       decoration: TextDecoration.none,
                     ),
                   ),
@@ -358,7 +358,7 @@ class _NoticeRow extends StatelessWidget {
                     _formatDate(notice.createdAt),
                     style: TextStyle(
                       fontSize: 11.5,
-                      color: Colors.white.withValues(alpha: 0.32),
+                      color: AppColors.fg(context).withValues(alpha: 0.32),
                       decoration: TextDecoration.none,
                     ),
                   ),
@@ -371,7 +371,7 @@ class _NoticeRow extends StatelessWidget {
               child: Icon(
                 Icons.chevron_right,
                 size: 18,
-                color: Colors.white.withValues(alpha: 0.35),
+                color: AppColors.fg(context).withValues(alpha: 0.35),
               ),
             ),
           ],
@@ -394,7 +394,7 @@ class _PanelDivider extends StatelessWidget {
       thickness: 1,
       indent: indent,
       endIndent: endIndent,
-      color: Colors.white.withValues(alpha: 0.07),
+      color: AppColors.fg(context).withValues(alpha: 0.07),
     );
   }
 }
@@ -580,7 +580,7 @@ Future<void> showNoticeDetailDialog(
             gradient: noticePanelGradient(context),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.10),
+              color: AppColors.fg(context).withValues(alpha: 0.10),
             ),
             boxShadow: [
               BoxShadow(
@@ -608,10 +608,10 @@ Future<void> showNoticeDetailDialog(
                         notice.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: AppColors.fg(context),
                           decoration: TextDecoration.none,
                         ),
                       ),
@@ -624,7 +624,7 @@ Future<void> showNoticeDetailDialog(
                         child: Icon(
                           Icons.close_rounded,
                           size: 18,
-                          color: Colors.white.withValues(alpha: 0.45),
+                          color: AppColors.fg(context).withValues(alpha: 0.45),
                         ),
                       ),
                     ),
@@ -643,7 +643,7 @@ Future<void> showNoticeDetailDialog(
                         _formatDate(notice.createdAt),
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.white.withValues(alpha: 0.38),
+                          color: AppColors.fg(context).withValues(alpha: 0.38),
                           decoration: TextDecoration.none,
                         ),
                       ),
@@ -661,7 +661,8 @@ Future<void> showNoticeDetailDialog(
                               padding: HtmlPaddings.zero,
                               fontSize: FontSize(13.5),
                               lineHeight: const LineHeight(1.7),
-                              color: Colors.white.withValues(alpha: 0.86),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.86),
                               textDecoration: TextDecoration.none,
                             ),
                             'p': Style(
@@ -683,13 +684,14 @@ Future<void> showNoticeDetailDialog(
                             ),
                             'u': Style(
                               textDecoration: TextDecoration.none,
-                              color: Colors.white.withValues(alpha: 0.9),
+                              color:
+                                  AppColors.fg(context).withValues(alpha: 0.9),
                             ),
-                            'strong': Style(color: Colors.white),
-                            'b': Style(color: Colors.white),
+                            'strong': Style(color: AppColors.fg(context)),
+                            'b': Style(color: AppColors.fg(context)),
                             'mark': Style(
                               backgroundColor: Colors.transparent,
-                              color: Colors.white,
+                              color: AppColors.fg(context),
                               textDecoration: TextDecoration.none,
                             ),
                             'li': Style(
@@ -770,12 +772,12 @@ class _NoticeDialogButton extends StatelessWidget {
                   ],
                 )
               : null,
-          color: filled ? null : Colors.white.withValues(alpha: 0.06),
+          color: filled ? null : AppColors.fg(context).withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: filled
-                ? Colors.white.withValues(alpha: 0.12)
-                : Colors.white.withValues(alpha: 0.14),
+                ? AppColors.fg(context).withValues(alpha: 0.12)
+                : AppColors.fg(context).withValues(alpha: 0.14),
           ),
         ),
         child: Text(
@@ -783,7 +785,9 @@ class _NoticeDialogButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: filled ? Colors.white : Colors.white.withValues(alpha: 0.85),
+            color: filled
+                ? AppColors.fg(context)
+                : AppColors.fg(context).withValues(alpha: 0.85),
             decoration: TextDecoration.none,
           ),
         ),

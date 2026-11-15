@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 带滑动效果的分类过滤按钮
 class SlidingFilterButton extends StatefulWidget {
@@ -70,13 +71,13 @@ class _SlidingFilterButtonState extends State<SlidingFilterButton>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withValues(alpha: 0.08),
-            Colors.white.withValues(alpha: 0.05),
+            AppColors.fg(context).withValues(alpha: 0.08),
+            AppColors.fg(context).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(50),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.15),
+          color: AppColors.fg(context).withValues(alpha: 0.15),
           width: 1.5,
         ),
         boxShadow: [
@@ -185,8 +186,8 @@ class _SlidingFilterButtonState extends State<SlidingFilterButton>
                         // 根据距离计算透明度和颜色
                         final opacity = (1 - (distance * 0.3)).clamp(0.0, 1.0);
                         final textColor = Color.lerp(
-                          Colors.white.withValues(alpha: 0.6),
-                          Colors.white,
+                          AppColors.fg(context).withValues(alpha: 0.6),
+                          AppColors.fg(context),
                           opacity,
                         )!;
 

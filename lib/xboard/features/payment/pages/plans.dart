@@ -151,13 +151,13 @@ class _PlansViewState extends ConsumerState<PlansView> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.15),
-                Colors.white.withValues(alpha: 0.05),
+                AppColors.fg(context).withValues(alpha: 0.15),
+                AppColors.fg(context).withValues(alpha: 0.05),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: AppColors.fg(context).withValues(alpha: 0.2),
               width: 1.5,
             ),
             boxShadow: [
@@ -186,10 +186,10 @@ class _PlansViewState extends ConsumerState<PlansView> {
                       Expanded(
                         child: Text(
                           plan.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.fg(context),
                           ),
                         ),
                       ),
@@ -214,8 +214,8 @@ class _PlansViewState extends ConsumerState<PlansView> {
                           ),
                           child: Text(
                             _getLowestPrice(plan),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppColors.fg(context),
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -229,26 +229,26 @@ class _PlansViewState extends ConsumerState<PlansView> {
                       Icon(
                         Icons.data_usage,
                         size: 16,
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: AppColors.fg(context).withValues(alpha: 0.8),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${AppLocalizations.of(context).xboardTraffic}: ${_formatTraffic(plan.transferQuota.toDouble())}',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: AppColors.fg(context).withValues(alpha: 0.9),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Icon(
                         Icons.speed,
                         size: 16,
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: AppColors.fg(context).withValues(alpha: 0.8),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${AppLocalizations.of(context).xboardSpeedLimit}: ${_getSpeedLimitText(plan)}',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: AppColors.fg(context).withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -321,14 +321,14 @@ class _PlansViewState extends ConsumerState<PlansView> {
                         children: [
                           Icon(
                             Icons.shopping_bag_rounded,
-                            color: Colors.white,
+                            color: AppColors.fg(context),
                             size: 20,
                           ),
                           SizedBox(width: 10),
                           Text(
                             appLocalizations.xboardBuyNow,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppColors.fg(context),
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
                               letterSpacing: 0.5,
@@ -407,7 +407,7 @@ class _PlansViewState extends ConsumerState<PlansView> {
               onBack: _backToPlans,
             )
           : Container(
-              decoration: AppColors.getBackgroundDecoration(),
+              decoration: AppColors.backgroundDecoration(context),
               child: Padding(
                 // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
                 padding: EdgeInsets.only(

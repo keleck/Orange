@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/xboard/features/shared/widgets/glass_container.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class XBoardConnectButton extends ConsumerStatefulWidget {
   final bool isFloating; // 是否为浮动按钮模式
@@ -100,7 +101,7 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
       data: Theme.of(context).copyWith(
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: isStart ? startColor : stopColor,
-          foregroundColor: isDark ? Colors.black : Colors.white,
+          foregroundColor: isDark ? Colors.black : AppColors.fg(context),
           sizeConstraints: const BoxConstraints(
             minWidth: 56,
             maxWidth: 200,
@@ -149,7 +150,7 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
               overflow: TextOverflow.visible,
               style:
                   Theme.of(context).textTheme.titleMedium?.toSoftBold.copyWith(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : AppColors.fg(context),
                       ),
             );
           },
@@ -176,7 +177,7 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
             blur: 10,
             color: isStart ? startColor : stopColor,
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: AppColors.fg(context).withValues(alpha: 0.2),
               width: 1,
             ),
             child: Material(
@@ -196,7 +197,7 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
                         icon: AnimatedIcons.play_pause,
                         progress: _animation,
                         size: 24,
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : AppColors.fg(context),
                       ),
                       const SizedBox(width: 10),
                       Column(
@@ -210,7 +211,9 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
                                 .textTheme
                                 .titleMedium
                                 ?.copyWith(
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark
+                                      ? Colors.black
+                                      : AppColors.fg(context),
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
@@ -230,7 +233,7 @@ class _XBoardConnectButtonState extends ConsumerState<XBoardConnectButton>
                                         color: isDark
                                             ? Colors.black
                                                 .withValues(alpha: 0.7)
-                                            : Colors.white
+                                            : AppColors.fg(context)
                                                 .withValues(alpha: 0.9),
                                         fontSize: 12,
                                       ),

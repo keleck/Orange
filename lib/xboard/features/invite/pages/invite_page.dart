@@ -56,7 +56,7 @@ class _InvitePageState extends ConsumerState<InvitePage>
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        decoration: AppColors.getBackgroundDecoration(),
+        decoration: AppColors.backgroundDecoration(context),
         child: Padding(
           // AppBar 悬浮在 body 之上，顶部留白需等于「状态栏 + 工具栏」
           padding: EdgeInsets.only(
@@ -98,10 +98,10 @@ class _InvitePageState extends ConsumerState<InvitePage>
 /// 液态玻璃装饰 - 返回 BoxDecoration
 BoxDecoration glassmorphicDecoration(BuildContext context) {
   return BoxDecoration(
-    color: Colors.white.withValues(alpha: 0.035),
+    color: AppColors.fg(context).withValues(alpha: 0.035),
     borderRadius: BorderRadius.circular(18),
     border: Border.all(
-      color: Colors.white.withValues(alpha: 0.07),
+      color: AppColors.fg(context).withValues(alpha: 0.07),
     ),
   );
 }

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 /// 移动端底部导航栏（带滑动效果）
 class MobileNavigationBar extends StatefulWidget {
@@ -82,12 +83,12 @@ class _MobileNavigationBarState extends State<MobileNavigationBar>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withValues(alpha: 0.08), // 降低不透明度，更透明
-                  Colors.white.withValues(alpha: 0.03),
+                  AppColors.fg(context).withValues(alpha: 0.08), // 降低不透明度，更透明
+                  AppColors.fg(context).withValues(alpha: 0.03),
                 ],
               ),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1), // 降低边框不透明度
+                color: AppColors.fg(context).withValues(alpha: 0.1), // 降低边框不透明度
                 width: 1.5,
               ),
               borderRadius: BorderRadius.circular(24),
@@ -217,8 +218,8 @@ class _MobileNavigationBarState extends State<MobileNavigationBar>
             // 根据距离计算透明度和颜色
             final opacity = (1 - (distance * 0.4)).clamp(0.0, 1.0);
             final iconColor = Color.lerp(
-              Colors.white.withValues(alpha: 0.4),
-              Colors.white,
+              AppColors.fg(context).withValues(alpha: 0.4),
+              AppColors.fg(context),
               opacity,
             )!;
 

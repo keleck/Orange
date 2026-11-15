@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/xboard/features/invite/providers/invite_provider.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class InviteRulesCard extends ConsumerWidget {
   const InviteRulesCard({super.key});
@@ -58,10 +59,10 @@ class InviteRulesCard extends ConsumerWidget {
 
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.035),
+      color: AppColors.fg(context).withValues(alpha: 0.035),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: AppColors.fg(context).withValues(alpha: 0.07),
       ),
     );
   }

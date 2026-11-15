@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 const _amber = Color(0xFFF59E0B);
 const _green = Color(0xFF22C55E);
@@ -48,15 +49,16 @@ String _statusText(ServiceCheck? check, {required bool loading}) {
   return check.status.label;
 }
 
-Color _statusTextColor(ServiceCheck? check, {required bool loading}) {
+Color _statusTextColor(BuildContext context, ServiceCheck? check,
+    {required bool loading}) {
   if (loading) {
-    return Colors.white.withValues(alpha: 0.5);
+    return AppColors.fg(context).withValues(alpha: 0.5);
   }
   if (check == null) {
-    return Colors.white.withValues(alpha: 0.4);
+    return AppColors.fg(context).withValues(alpha: 0.4);
   }
   if (check.isOk) {
-    return Colors.white.withValues(alpha: 0.85);
+    return AppColors.fg(context).withValues(alpha: 0.85);
   }
   return _statusColor(check.status);
 }
@@ -183,20 +185,20 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     if (_targets.isEmpty) {
       return _Verdict(
         label: AppLocalizations.of(context).xboardDisabled,
-        color: Colors.white.withValues(alpha: 0.55),
+        color: AppColors.fg(context).withValues(alpha: 0.55),
       );
     }
     if (_probing) {
       return _Verdict(
         label: appLocalizations.xboardCheckingStatus,
-        color: Colors.white.withValues(alpha: 0.55),
+        color: AppColors.fg(context).withValues(alpha: 0.55),
       );
     }
     final done = _targets.where((t) => _checks.containsKey(t)).toList();
     if (done.isEmpty) {
       return _Verdict(
         label: AppLocalizations.of(context).xboardPending,
-        color: Colors.white.withValues(alpha: 0.55),
+        color: AppColors.fg(context).withValues(alpha: 0.55),
       );
     }
     final abnormal = done.where((t) => _checks[t]?.isOk != true).length;
@@ -240,10 +242,10 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: AppColors.fg(context).withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.12),
+            color: AppColors.fg(context).withValues(alpha: 0.12),
             width: 1,
           ),
         ),
@@ -255,7 +257,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                 Icon(
                   Icons.verified_user_outlined,
                   size: 18,
-                  color: Colors.white.withValues(alpha: 0.8),
+                  color: AppColors.fg(context).withValues(alpha: 0.8),
                 ),
                 SizedBox(width: 8),
                 Text(
@@ -263,7 +265,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                   ),
                 ),
                 const Spacer(),
@@ -272,7 +274,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                 Icon(
                   Icons.chevron_right,
                   size: 18,
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: AppColors.fg(context).withValues(alpha: 0.45),
                 ),
               ],
             ),
@@ -284,7 +286,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
                   appLocalizations.xboardNoProbeTargetsHint,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                 ),
               )
@@ -307,18 +309,18 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
     final check = _checks[target];
     final loading = _probing && check == null;
     final label = _statusText(check, loading: loading);
-    final color = _statusTextColor(check, loading: loading);
+    final color = _statusTextColor(context, check, loading: loading);
     final dotColor = loading
         ? null
         : (check == null
-            ? Colors.white.withValues(alpha: 0.3)
+            ? AppColors.fg(context).withValues(alpha: 0.3)
             : (check.isOk ? _green : _red));
 
     return Container(
       height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppColors.fg(context).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -497,7 +499,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.18),
+              color: AppColors.fg(context).withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -509,7 +511,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                   onPressed: () => Navigator.of(context).pop(),
                   icon: Icon(
                     Icons.close,
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: AppColors.fg(context).withValues(alpha: 0.9),
                   ),
                 ),
                 Expanded(
@@ -519,7 +521,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: AppColors.fg(context),
                       ),
                     ),
                   ),
@@ -529,7 +531,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                   tooltip: AppLocalizations.of(context).xboardManageServices,
                   icon: Icon(
                     Icons.tune,
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: AppColors.fg(context).withValues(alpha: 0.9),
                   ),
                 ),
                 IconButton(
@@ -543,7 +545,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                         )
                       : Icon(
                           Icons.refresh,
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: AppColors.fg(context).withValues(alpha: 0.9),
                         ),
                 ),
               ],
@@ -565,7 +567,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                       separatorBuilder: (_, __) => Divider(
                         height: 1,
                         indent: 60,
-                        color: Colors.white.withValues(alpha: 0.07),
+                        color: AppColors.fg(context).withValues(alpha: 0.07),
                       ),
                       itemBuilder: (_, index) => _buildRow(_enabled[index]),
                     ),
@@ -583,7 +585,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppColors.fg(context).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -591,14 +593,14 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
           Icon(
             Icons.public,
             size: 16,
-            color: Colors.white.withValues(alpha: 0.55),
+            color: AppColors.fg(context).withValues(alpha: 0.55),
           ),
           SizedBox(width: 8),
           Text(
             appLocalizations.xboardOutboundIp,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.55),
+              color: AppColors.fg(context).withValues(alpha: 0.55),
             ),
           ),
           const Spacer(),
@@ -608,7 +610,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
               height: 12,
               child: CircularProgressIndicator(
                 strokeWidth: 1.6,
-                color: Colors.white.withValues(alpha: 0.4),
+                color: AppColors.fg(context).withValues(alpha: 0.4),
               ),
             )
           else ...[
@@ -621,8 +623,9 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color:
-                    info == null ? Colors.white.withValues(alpha: 0.4) : _green,
+                color: info == null
+                    ? AppColors.fg(context).withValues(alpha: 0.4)
+                    : _green,
               ),
             ),
           ],
@@ -640,7 +643,7 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
             appLocalizations.xboardNoServicesEnabled,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.6),
+              color: AppColors.fg(context).withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 12),
@@ -657,11 +660,11 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
     final check = _checks[target];
     final loading = _probing && check == null;
     final label = _statusText(check, loading: loading);
-    final color = _statusTextColor(check, loading: loading);
+    final color = _statusTextColor(context, check, loading: loading);
     final dotColor = loading
         ? null
         : (check == null
-            ? Colors.white.withValues(alpha: 0.3)
+            ? AppColors.fg(context).withValues(alpha: 0.3)
             : (check.isOk ? _green : _red));
     // Google / GitHub 只判连通性、TikTok 的页面解析也可能拿不到地区，
     // 这类服务用出口 IP 的归属地兜底，保证每行都有旗帜。
@@ -687,10 +690,10 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                   target.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -706,7 +709,8 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withValues(alpha: 0.45),
+                            color:
+                                AppColors.fg(context).withValues(alpha: 0.45),
                           ),
                         ),
                       ),
@@ -719,8 +723,8 @@ class _ServiceStatusSheetState extends State<ServiceStatusSheet> {
                           style: TextStyle(
                             fontSize: 13,
                             color: _ipInfo == null
-                                ? Colors.white.withValues(alpha: 0.4)
-                                : Colors.white.withValues(alpha: 0.5),
+                                ? AppColors.fg(context).withValues(alpha: 0.4)
+                                : AppColors.fg(context).withValues(alpha: 0.5),
                           ),
                         ),
                       ),
@@ -808,7 +812,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.18),
+              color: AppColors.fg(context).withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -821,7 +825,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: AppColors.fg(context),
                   ),
                 ),
                 SizedBox(width: 8),
@@ -829,7 +833,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                   '${_selected.length}/${ServiceTarget.values.length}',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.45),
+                    color: AppColors.fg(context).withValues(alpha: 0.45),
                   ),
                 ),
                 Spacer(),
@@ -853,7 +857,7 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
               separatorBuilder: (_, __) => Divider(
                 height: 1,
                 indent: 60,
-                color: Colors.white.withValues(alpha: 0.07),
+                color: AppColors.fg(context).withValues(alpha: 0.07),
               ),
               itemBuilder: (_, index) {
                 final target = ServiceTarget.values[index];
@@ -876,9 +880,9 @@ class _ServiceManagerSheetState extends State<ServiceManagerSheet> {
                         Expanded(
                           child: Text(
                             target.label,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
-                              color: Colors.white,
+                              color: AppColors.fg(context),
                             ),
                           ),
                         ),
@@ -929,7 +933,7 @@ class ServiceIconBadge extends StatelessWidget {
             height: size,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: AppColors.fg(context).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(radius),
             ),
             child: SvgPicture.asset(
@@ -937,7 +941,7 @@ class ServiceIconBadge extends StatelessWidget {
               width: size * 0.55,
               height: size * 0.55,
               colorFilter: ColorFilter.mode(
-                Colors.white.withValues(alpha: 0.85),
+                AppColors.fg(context).withValues(alpha: 0.85),
                 BlendMode.srcIn,
               ),
             ),
