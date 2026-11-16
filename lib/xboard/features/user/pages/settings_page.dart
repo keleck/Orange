@@ -16,6 +16,7 @@ import 'package:fl_clash/xboard/features/user/pages/custom_rules_page.dart';
 import 'package:fl_clash/xboard/features/user/pages/access_control_page.dart';
 import 'package:fl_clash/xboard/features/user/widgets/settings_card.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/widgets/app_switch.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/common/app_localizations.dart';
 
@@ -714,16 +715,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       subtitle: AppLocalizations.of(context).xboardIpv6Hint,
       trailing: _ipv6Loading
           ? const _CardLoading()
-          : Switch(
+          : AppSwitch(
               value: _ipv6Enabled,
               onChanged: _updateIPv6Setting,
-              activeColor: Theme.of(context).colorScheme.primary,
-              inactiveThumbColor: AppColors.isDark(context)
-                  ? Colors.white.withValues(alpha: 0.6)
-                  : Colors.white,
-              inactiveTrackColor: AppColors.isDark(context)
-                  ? Colors.white.withValues(alpha: 0.15)
-                  : const Color(0xFFC9CFD8),
             ),
     );
   }
@@ -736,16 +730,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       subtitle: AppLocalizations.of(context).xboardAllowLanDevices,
       trailing: _lanProxyLoading
           ? const _CardLoading()
-          : Switch(
+          : AppSwitch(
               value: _lanProxyEnabled,
               onChanged: _updateLanProxySetting,
-              activeColor: Theme.of(context).colorScheme.primary,
-              inactiveThumbColor: AppColors.isDark(context)
-                  ? Colors.white.withValues(alpha: 0.6)
-                  : Colors.white,
-              inactiveTrackColor: AppColors.isDark(context)
-                  ? Colors.white.withValues(alpha: 0.15)
-                  : const Color(0xFFC9CFD8),
             ),
     );
   }
@@ -760,7 +747,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       accentColor: AppIconColors.blue,
       title: AppLocalizations.of(context).xboardUpdateSubscriptionViaProxy,
       subtitle: AppLocalizations.of(context).xboardUpdateViaLastNode,
-      trailing: Switch(
+      trailing: AppSwitch(
         value: enabled,
         onChanged: (value) {
           ref.read(appSettingProvider.notifier).updateState(
@@ -772,13 +759,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 : appLocalizations.xboardUpdateViaProxyOff,
           );
         },
-        activeColor: Theme.of(context).colorScheme.primary,
-        inactiveThumbColor: AppColors.isDark(context)
-            ? Colors.white.withValues(alpha: 0.6)
-            : Colors.white,
-        inactiveTrackColor: AppColors.isDark(context)
-            ? Colors.white.withValues(alpha: 0.15)
-            : const Color(0xFFC9CFD8),
       ),
     );
   }
@@ -957,8 +937,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               ],
                             ),
                           ),
-                          Switch(
+                          AppSwitch(
                             value: isEnabled,
+                            activeColor: Colors.green.shade600,
                             onChanged: _campusHostsLoading
                                 ? null
                                 : (value) async {
@@ -990,13 +971,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                       }
                                     }
                                   },
-                            activeColor: Colors.green.shade600,
-                            inactiveThumbColor: AppColors.isDark(context)
-                                ? Colors.white.withValues(alpha: 0.6)
-                                : Colors.white,
-                            inactiveTrackColor: AppColors.isDark(context)
-                                ? Colors.white.withValues(alpha: 0.15)
-                                : const Color(0xFFC9CFD8),
                           ),
                         ],
                       ),
