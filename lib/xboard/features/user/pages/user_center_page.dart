@@ -1207,17 +1207,46 @@ _Palette _palette(ThemeData theme, _TileTone tone, {bool danger = false}) {
 }
 
 /// 主题模式三段切换（跟随系统 / 白天 / 夜晚）
-class _ThemeModeToggle extends ConsumerWidget {
+///
+/// 支持点击单个图标切换，也支持在轨道上左右拖拽切换：
+/// 拖拽时高亮块跟手移动，松手后按位移/速度吸附到相邻档位。
+class _ThemeModeToggle extends ConsumerStatefulWidget {
   const _ThemeModeToggle();
 
+  @override
+  ConsumerState<_ThemeModeToggle> createState() => _ThemeModeToggleState();
+}
+
+class _ThemeModeToggleState extends ConsumerState<_ThemeModeToggle> {
   static const _items = <(ThemeMode, IconData)>[
     (ThemeMode.system, Icons.brightness_auto_rounded),
     (ThemeMode.light, Icons.light_mode_outlined),
     (ThemeMode.dark, Icons.dark_mode_outlined),
   ];
 
+  /// 单个选项宽度（图标 16 + 左右内边距各 9）
+  static const double _itemWidth = 34;
+
+  /// 单个选项高度（图标 16 + 上下内边距各 5）
+  static const double _itemHeight = 26;
+
+  /// 拖拽中的临时位移
+  double _dragDx = 0;
+  bool _dragging = false;
+
+  void _apply(ThemeMode mode) {
+    ref.read(themeSettingProvider.notifier).updateState(
+          (state) => state.copyWith(themeMode: mode),
+        );
+  }
+
+  void _select(int index) {
+    final safeIndex = index.clamp(0, _items.length - 1);
+    _apply(_items[safeIndex].$1);
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final mode = ref.watch(themeSettingProvider.select((s) => s.themeMode));
     final isDark = AppColors.isDark(context);
     final trackColor =
@@ -1228,31 +1257,66 @@ class _ThemeModeToggle extends ConsumerWidget {
     final inactiveColor =
         isDark ? Colors.white.withValues(alpha: 0.45) : const Color(0xFF9AA0A6);
 
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: trackColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final item in _items)
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                ref.read(themeSettingProvider.notifier).updateState(
-                      (state) => state.copyWith(themeMode: item.$1),
-                    );
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOut,
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+    final currentIndex = _items.indexWhere((item) => item.$1 == mode);
+    final safeIndex = currentIndex < 0 ? 0 : currentIndex;
+    // 高亮块不能拖出轨道两端
+    final offset = _dragDx
+        .clamp(
+          -safeIndex * _itemWidth,
+          (_items.length - 1 - safeIndex) * _itemWidth,
+        )
+        .toDouble();
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragStart: (_) {
+        setState(() => _dragging = true);
+      },
+      onHorizontalDragUpdate: (details) {
+        setState(() => _dragDx += details.delta.dx);
+      },
+      onHorizontalDragEnd: (details) {
+        final velocity = details.velocity.pixelsPerSecond.dx;
+        var steps = (_dragDx / _itemWidth).round();
+        // 轻扫一下也能换档
+        if (steps == 0 && velocity.abs() > 260) {
+          steps = velocity > 0 ? 1 : -1;
+        }
+        final target =
+            (safeIndex + steps).clamp(0, _items.length - 1).toInt();
+        setState(() {
+          _dragDx = 0;
+          _dragging = false;
+        });
+        if (target != safeIndex) _select(target);
+      },
+      onHorizontalDragCancel: () {
+        setState(() {
+          _dragDx = 0;
+          _dragging = false;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: trackColor,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+              duration:
+                  _dragging ? Duration.zero : const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              left: safeIndex * _itemWidth + offset,
+              top: 0,
+              width: _itemWidth,
+              height: _itemHeight,
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: mode == item.$1 ? selectedBg : Colors.transparent,
+                  color: selectedBg,
                   borderRadius: BorderRadius.circular(999),
-                  boxShadow: mode == item.$1 && !isDark
+                  boxShadow: !isDark
                       ? [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.08),
@@ -1262,14 +1326,32 @@ class _ThemeModeToggle extends ConsumerWidget {
                         ]
                       : null,
                 ),
-                child: Icon(
-                  item.$2,
-                  size: 16,
-                  color: mode == item.$1 ? activeColor : inactiveColor,
-                ),
               ),
             ),
-        ],
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final item in _items)
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      setState(() => _dragDx = 0);
+                      _select(_items.indexOf(item));
+                    },
+                    child: SizedBox(
+                      width: _itemWidth,
+                      height: _itemHeight,
+                      child: Icon(
+                        item.$2,
+                        size: 16,
+                        color: mode == item.$1 ? activeColor : inactiveColor,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
