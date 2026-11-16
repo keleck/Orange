@@ -57,8 +57,9 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
   static const _stoppedColor = Color(0xFF9CA3AF);
   static const _restartingColor = Color(0xFFF59E0B);
 
-  /// 胶囊文字颜色（浅灰，避免白字压在浅色底上看不清）
-  static const _labelColor = Color(0xFF6B7280);
+  /// 胶囊文字颜色：夜间白色，白天浅灰（白字压在浅绿底上看不清）
+  static Color _labelColorOf(BuildContext context) =>
+      AppColors.isDark(context) ? Colors.white : const Color(0xFF6B7280);
 
   CoreHealthStatus _status = CoreHealthStatus.checking;
   Timer? _timer;
@@ -268,10 +269,10 @@ class _CoreStatusButtonState extends ConsumerState<CoreStatusButton> {
                 const SizedBox(width: 5),
                 Text(
                   _label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     height: 1.0,
-                    color: _labelColor,
+                    color: _labelColorOf(context),
                     fontWeight: FontWeight.w600,
                   ),
                 ),

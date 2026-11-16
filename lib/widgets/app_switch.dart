@@ -32,7 +32,8 @@ class AppSwitch extends StatelessWidget {
       value: value,
       onChanged: onChanged,
       activeColor: activeColor ?? Theme.of(context).colorScheme.primary,
-      inactiveThumbColor: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.white,
+      // 滑块始终纯白（夜间也用白色，不要半透明灰）
+      inactiveThumbColor: Colors.white,
       inactiveTrackColor:
           isDark ? Colors.white.withValues(alpha: 0.15) : const Color(0xFFC9CFD8),
     );
