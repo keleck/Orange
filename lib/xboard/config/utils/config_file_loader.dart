@@ -24,7 +24,7 @@ class ConfigFileLoader {
     (
       name: 'redirect',
       encryptedUrl:
-          'CeLpWHfIgRtNEc0z+8fR6mB+f3x+NCA/Y3NkOnJ/Y3t2fn4yfnFyD0pHT0FGTQhcY2JhemR+IGJwZTx5dH95N2t/dnNpezFDTkxFTUIITVtnZET4Q7y96fbo7P3OFzaKmBeAZznB4aR32lOlrbP0bPnd',
+          's0YBfQOVUVqgfa7vV9PnsmB+f3x+NCA/c3tndmB1fH1tNHRuejFrS0lIVU1VCUNabWtmb2EhfXFmPXIncXMhLC4jfy4tJn1GE0AVRkZEFB8xaDw5bD1sdiJxICxwJCZ9KCk0bnhzcFREDEBLS0BOTyZgeGNjqgrC3KPPHdU3jELDAxyTEmt9YQYir7fNfPukPVhirJ4=',
       priority: 100
     ),
     // (name: 'redirect-2', encryptedUrl: 'PrX6v/3cDA85G7BQW5Ole2B+f3x+NCA/ZmVkOm14OjUgcWplLCh9FlJEDUpAUghLZ2RtZWogZWN+fIgDDgWxeAGVRjsOCAora4mtddkUx08dkIn+eqrVdQ7N', priority: 100),
