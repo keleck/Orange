@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_ext/window_ext.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 
 class WindowManager extends ConsumerStatefulWidget {
   final Widget child;
@@ -221,6 +222,17 @@ class _WindowButtonState extends State<_WindowButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
+    // 夜间：白图标 + 白色半透明悬停底；白天：深灰图标 + 灰色悬停底 + 浅阴影
+    final iconColor = widget.isClose && _isHovered
+        ? Colors.white
+        : (isDark ? Colors.white.withValues(alpha: 0.95) : const Color(0xFF3C4048));
+    final hoverColor = widget.isClose
+        ? const Color(0xFFE81123).withValues(alpha: isDark ? 0.75 : 0.9)
+        : (isDark
+            ? Colors.white.withValues(alpha: 0.15)
+            : Colors.black.withValues(alpha: 0.08));
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _isHovered = true),
@@ -231,18 +243,23 @@ class _WindowButtonState extends State<_WindowButton> {
           width: 28,
           height: 28,
           decoration: BoxDecoration(
-            color: _isHovered
-                ? (widget.isClose
-                    ? Colors.red.withOpacity(0.6)
-                    : Colors.white.withOpacity(0.15))
-                : Colors.transparent,
+            color: _isHovered ? hoverColor : Colors.transparent,
             borderRadius: BorderRadius.circular(4),
+            boxShadow: _isHovered
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
+                      blurRadius: 6,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                : null,
           ),
           child: Center(
             child: Icon(
               widget.icon,
               size: 14,
-              color: Colors.white.withOpacity(0.95),
+              color: iconColor,
             ),
           ),
         ),
