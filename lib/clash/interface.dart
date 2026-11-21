@@ -26,6 +26,9 @@ mixin ClashInterface {
 
   FutureOr<Result> getConfig(String path);
 
+  /// 直接解析内存中的配置内容（不落盘），用于解密后的订阅配置
+  FutureOr<Result> getConfigByContent(String content);
+
   Future<String> asyncTestDelay(String url, String proxyName);
 
   FutureOr<String> updateConfig(UpdateParams updateParams);
@@ -108,6 +111,7 @@ abstract class ClashHandlerInterface with ClashInterface {
           completer?.complete(true);
           return;
         case ActionMethod.getConfig:
+        case ActionMethod.getConfigByContent:
           completer?.complete(result.toResult);
           return;
         default:
@@ -238,6 +242,17 @@ abstract class ClashHandlerInterface with ClashInterface {
     final res = await invoke<Result>(
       method: ActionMethod.getConfig,
       data: path,
+      timeout: Duration(minutes: 2),
+      defaultValue: Result.success({}),
+    );
+    return res;
+  }
+
+  @override
+  Future<Result> getConfigByContent(String content) async {
+    final res = await invoke<Result>(
+      method: ActionMethod.getConfigByContent,
+      data: content,
       timeout: Duration(minutes: 2),
       defaultValue: Result.success({}),
     );

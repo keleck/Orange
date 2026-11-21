@@ -259,6 +259,7 @@ enum ActionMethod {
   convertSubscription,
   updateConfig,
   getConfig,
+  getConfigByContent,
   getProxies,
   changeProxy,
   getTraffic,

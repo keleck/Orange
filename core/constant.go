@@ -107,6 +107,8 @@ const (
 	crashMethod                    Method = "crash"
 	setupConfigMethod              Method = "setupConfig"
 	getConfigMethod                Method = "getConfig"
+	// 直接解析内存中的配置内容，避免为了给内核解析而在磁盘上落一份明文 yaml
+	getConfigByContentMethod Method = "getConfigByContent"
 	serviceCheckMethod             Method = "serviceCheck"
 	outboundIpMethod               Method = "getOutboundIp"
 )

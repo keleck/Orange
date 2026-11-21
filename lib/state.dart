@@ -477,23 +477,25 @@ class GlobalState {
     // 配置固定加密存放在 profiles/config.bin，不再常驻内存
     final bytes = await ConfigVault.load();
     if (bytes != null) {
-      // 内核解析 YAML 需要落一次盘：写临时文件，解析完立即删除，
-      // 磁盘上不会留下明文配置。
-      final tempPath = await appPath.getProfilePath(profileId);
-      final tempFile = File(tempPath);
-      await tempFile.parent.create(recursive: true);
-      await tempFile.writeAsBytes(bytes);
-
-      configMap = await switch (clashLibHandler != null) {
-        true => clashLibHandler!.getConfig(profileId),
-        false => clashCore.getConfig(profileId),
-      };
-
-      try {
-        await tempFile.delete();
-        commonPrint.log('已删除临时配置文件: $tempPath');
-      } catch (e) {
-        commonPrint.log('删除临时配置文件失败: $e');
+      if (clashLibHandler != null) {
+        // Android in-process 内核只支持按路径读，只能落一次临时文件（应用私有目录）
+        final tempPath = await appPath.getProfilePath(profileId);
+        final tempFile = File(tempPath);
+        await tempFile.parent.create(recursive: true);
+        await tempFile.writeAsBytes(bytes);
+        configMap = await clashLibHandler!.getConfig(profileId);
+        try {
+          await tempFile.delete();
+          commonPrint.log('已删除临时配置文件: $tempPath');
+        } catch (e) {
+          commonPrint.log('删除临时配置文件失败: $e');
+        }
+      } else {
+        // 解密后的内容直接交给内核解析，不再落明文 yaml：
+        // 避免节点信息在「生成 yaml → 加密」这段过程中被其他进程读到
+        configMap = await clashCore.getConfigByContent(
+          utf8.decode(bytes, allowMalformed: true),
+        );
       }
     } else {
       // 兼容旧版本残留的明文 yaml：读一次后立即清理

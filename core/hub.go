@@ -504,6 +504,16 @@ func handleGetConfig(path string) (*config.RawConfig, error) {
 	return prof, nil
 }
 
+// handleGetConfigByContent 与 handleGetConfig 行为一致，只是配置内容直接由调用方传入，
+// 不需要先在磁盘上落一份明文 yaml，避免解密后的订阅内容被其他进程读到。
+func handleGetConfigByContent(content string) (*config.RawConfig, error) {
+	prof, err := config.UnmarshalRawConfig([]byte(content))
+	if err != nil {
+		return nil, err
+	}
+	return prof, nil
+}
+
 func handleCrash() {
 	panic("handle invoke crash")
 }

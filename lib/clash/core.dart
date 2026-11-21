@@ -289,6 +289,16 @@ class ClashCore {
     }
   }
 
+  /// 直接把配置内容交给内核解析，不落盘
+  Future<Map<String, dynamic>> getConfigByContent(String content) async {
+    final res = await clashInterface.getConfigByContent(content);
+    if (res.isSuccess) {
+      return res.data as Map<String, dynamic>;
+    } else {
+      throw res.message;
+    }
+  }
+
   Future<Traffic> getTraffic() async {
     final trafficString = await clashInterface.getTraffic();
     if (trafficString.isEmpty) {
