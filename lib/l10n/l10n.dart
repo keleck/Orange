@@ -5609,6 +5609,86 @@ class AppLocalizations {
     );
   }
 
+  /// `Clear cache`
+  String get xboardClearCache {
+    return Intl.message(
+      'Clear cache',
+      name: 'xboardClearCache',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear cached app data`
+  String get xboardClearCacheHint {
+    return Intl.message(
+      'Clear cached app data',
+      name: 'xboardClearCacheHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear cache`
+  String get xboardClearCacheDialogTitle {
+    return Intl.message(
+      'Clear cache',
+      name: 'xboardClearCacheDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The app will restart after clearing the cache.`
+  String get xboardClearCacheDialogBody {
+    return Intl.message(
+      'The app will restart after clearing the cache.\n\nYour login session will be kept.',
+      name: 'xboardClearCacheDialogBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get xboardClearCacheAction {
+    return Intl.message(
+      'Clear',
+      name: 'xboardClearCacheAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cache cleared, restarting…`
+  String get xboardClearCacheDone {
+    return Intl.message(
+      'Cache cleared, restarting…',
+      name: 'xboardClearCacheDone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cache cleared, please restart the app manually`
+  String get xboardClearCacheRestartHint {
+    return Intl.message(
+      'Cache cleared, please restart the app manually',
+      name: 'xboardClearCacheRestartHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to clear cache`
+  String get xboardClearCacheFailed {
+    return Intl.message(
+      'Failed to clear cache',
+      name: 'xboardClearCacheFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remember Password`
   String get xboardRememberPassword {
     return Intl.message(

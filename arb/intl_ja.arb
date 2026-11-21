@@ -1040,5 +1040,13 @@
   "xboardCoreRestartTimeout": "再起動後に応答がありません。後で再試行してください",
   "xboardCoreRestartedRefreshFailed": "コアは再起動しましたが更新に失敗しました",
   "xboardCoreRestartedRefreshed": "コアを再起動し、サブスクを更新しました",
-  "xboardRulesUnit": "件"
+  "xboardRulesUnit": "件",
+  "xboardClearCache": "キャッシュを削除",
+  "xboardClearCacheHint": "アプリのキャッシュデータを削除します",
+  "xboardClearCacheDialogTitle": "キャッシュを削除",
+  "xboardClearCacheDialogBody": "キャッシュを削除するとアプリが再起動します。\n\nログイン状態は保持されます。",
+  "xboardClearCacheAction": "削除する",
+  "xboardClearCacheDone": "キャッシュを削除しました。再起動します…",
+  "xboardClearCacheRestartHint": "キャッシュを削除しました。アプリを手動で再起動してください",
+  "xboardClearCacheFailed": "キャッシュの削除に失敗しました"
 }

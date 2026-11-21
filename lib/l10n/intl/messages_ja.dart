@@ -1571,5 +1571,20 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardCoreRestartedRefreshed":
             MessageLookupByLibrary.simpleMessage("コアを再起動し、サブスクを更新しました"),
         "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("件"),
+        "xboardClearCache":
+            MessageLookupByLibrary.simpleMessage("キャッシュを削除"),
+        "xboardClearCacheHint":
+            MessageLookupByLibrary.simpleMessage("アプリのキャッシュデータを削除します"),
+        "xboardClearCacheDialogTitle":
+            MessageLookupByLibrary.simpleMessage("キャッシュを削除"),
+        "xboardClearCacheDialogBody": MessageLookupByLibrary.simpleMessage(
+            "キャッシュを削除するとアプリが再起動します。\n\nログイン状態は保持されます。"),
+        "xboardClearCacheAction": MessageLookupByLibrary.simpleMessage("削除する"),
+        "xboardClearCacheDone": MessageLookupByLibrary.simpleMessage(
+            "キャッシュを削除しました。再起動します…"),
+        "xboardClearCacheRestartHint": MessageLookupByLibrary.simpleMessage(
+            "キャッシュを削除しました。アプリを手動で再起動してください"),
+        "xboardClearCacheFailed":
+            MessageLookupByLibrary.simpleMessage("キャッシュの削除に失敗しました"),
       };
 }

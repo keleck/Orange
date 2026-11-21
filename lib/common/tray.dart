@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:tray_manager/tray_manager.dart';
 
 import 'app_localizations.dart';
+import 'cache.dart';
 import 'constant.dart';
 import 'window.dart';
 import 'package:fl_clash/common/app_localizations.dart';
@@ -154,6 +155,14 @@ class Tray {
     menuItems.add(autoStartMenuItem);
     menuItems.add(copyEnvVarMenuItem);
     menuItems.add(MenuItem.separator());
+    menuItems.add(
+      MenuItem(
+        label: appLocalizations.xboardClearCache,
+        onClick: (_) async {
+          await _clearCache();
+        },
+      ),
+    );
     final exitMenuItem = MenuItem(
       label: appLocalizations.exit,
       onClick: (_) async {
@@ -182,6 +191,32 @@ class Tray {
     //     "${traffic.up.shortShow} ↑ \n${traffic.down.shortShow} ↓",
     //   );
     // }
+  }
+
+  /// 托盘菜单里清理缓存：清完直接重启，登录态保留
+  Future<void> _clearCache() async {
+    try {
+      await AppCacheService.clear();
+      globalState.showMessage(
+        title: appLocalizations.xboardClearCache,
+        message: TextSpan(text: appLocalizations.xboardClearCacheDone),
+      );
+      final restarted = await AppCacheService.restart();
+      if (!restarted) {
+        globalState.showMessage(
+          title: appLocalizations.xboardClearCache,
+          message:
+              TextSpan(text: appLocalizations.xboardClearCacheRestartHint),
+        );
+      }
+    } catch (e) {
+      globalState.showMessage(
+        title: appLocalizations.xboardClearCache,
+        message: TextSpan(
+          text: '${appLocalizations.xboardClearCacheFailed}: $e',
+        ),
+      );
+    }
   }
 
   Future<void> _copyEnv(int port) async {

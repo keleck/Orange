@@ -1614,5 +1614,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardCoreRestartedRefreshed":
             MessageLookupByLibrary.simpleMessage("内核已重启，订阅已刷新"),
         "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("条"),
+        "xboardClearCache": MessageLookupByLibrary.simpleMessage("清理缓存"),
+        "xboardClearCacheHint":
+            MessageLookupByLibrary.simpleMessage("清除应用缓存数据"),
+        "xboardClearCacheDialogTitle":
+            MessageLookupByLibrary.simpleMessage("清除缓存"),
+        "xboardClearCacheDialogBody": MessageLookupByLibrary.simpleMessage(
+            "清除缓存后将重启应用。\n\n您的登录状态将保留。"),
+        "xboardClearCacheAction": MessageLookupByLibrary.simpleMessage("确认清除"),
+        "xboardClearCacheDone":
+            MessageLookupByLibrary.simpleMessage("缓存已清理，正在重启…"),
+        "xboardClearCacheRestartHint":
+            MessageLookupByLibrary.simpleMessage("缓存已清理，请手动重启应用"),
+        "xboardClearCacheFailed":
+            MessageLookupByLibrary.simpleMessage("清理缓存失败"),
       };
 }

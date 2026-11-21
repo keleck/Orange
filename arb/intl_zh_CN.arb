@@ -1273,5 +1273,13 @@
   "xboardCoreRestartTimeout": "内核重启后无响应，请稍后重试",
   "xboardCoreRestartedRefreshFailed": "内核已重启，但订阅刷新失败，请手动刷新订阅",
   "xboardCoreRestartedRefreshed": "内核已重启，订阅已刷新",
-  "xboardRulesUnit": "条"
+  "xboardRulesUnit": "条",
+  "xboardClearCache": "清理缓存",
+  "xboardClearCacheHint": "清除应用缓存数据",
+  "xboardClearCacheDialogTitle": "清除缓存",
+  "xboardClearCacheDialogBody": "清除缓存后将重启应用。\n\n您的登录状态将保留。",
+  "xboardClearCacheAction": "确认清除",
+  "xboardClearCacheDone": "缓存已清理，正在重启…",
+  "xboardClearCacheRestartHint": "缓存已清理，请手动重启应用",
+  "xboardClearCacheFailed": "清理缓存失败"
 }

@@ -2019,5 +2019,20 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardCoreRestartedRefreshed": MessageLookupByLibrary.simpleMessage(
             "Ядро перезапущено, подписка обновлена"),
         "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("прав."),
+        "xboardClearCache":
+            MessageLookupByLibrary.simpleMessage("Очистить кеш"),
+        "xboardClearCacheHint":
+            MessageLookupByLibrary.simpleMessage("Удалить кэш приложения"),
+        "xboardClearCacheDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Очистка кэша"),
+        "xboardClearCacheDialogBody": MessageLookupByLibrary.simpleMessage(
+            "После очистки кеша приложение будет перезапущено.\n\nВы останетесь в системе."),
+        "xboardClearCacheAction": MessageLookupByLibrary.simpleMessage("Очистить"),
+        "xboardClearCacheDone": MessageLookupByLibrary.simpleMessage(
+            "Кеш очищен, перезапуск…"),
+        "xboardClearCacheRestartHint": MessageLookupByLibrary.simpleMessage(
+            "Кеш очищен, перезапустите приложение вручную"),
+        "xboardClearCacheFailed":
+            MessageLookupByLibrary.simpleMessage("Не удалось очистить кеш"),
       };
 }

@@ -1304,5 +1304,13 @@
   "xboardCoreRestartTimeout": "Core did not respond after restart, retry later",
   "xboardCoreRestartedRefreshFailed": "Core restarted but subscription refresh failed",
   "xboardCoreRestartedRefreshed": "Core restarted and subscription refreshed",
-  "xboardRulesUnit": "rules"
+  "xboardRulesUnit": "rules",
+  "xboardClearCache": "Clear cache",
+  "xboardClearCacheHint": "Clear cached app data",
+  "xboardClearCacheDialogTitle": "Clear cache",
+  "xboardClearCacheDialogBody": "The app will restart after clearing the cache.\n\nYour login session will be kept.",
+  "xboardClearCacheAction": "Clear",
+  "xboardClearCacheDone": "Cache cleared, restarting…",
+  "xboardClearCacheRestartHint": "Cache cleared, please restart the app manually",
+  "xboardClearCacheFailed": "Failed to clear cache"
 }

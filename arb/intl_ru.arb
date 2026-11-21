@@ -1040,5 +1040,13 @@
   "xboardCoreRestartTimeout": "Ядро не отвечает после перезапуска, повторите позже",
   "xboardCoreRestartedRefreshFailed": "Ядро перезапущено, но обновление не удалось",
   "xboardCoreRestartedRefreshed": "Ядро перезапущено, подписка обновлена",
-  "xboardRulesUnit": "прав."
+  "xboardRulesUnit": "прав.",
+  "xboardClearCache": "Очистить кеш",
+  "xboardClearCacheHint": "Удалить кэш приложения",
+  "xboardClearCacheDialogTitle": "Очистка кэша",
+  "xboardClearCacheDialogBody": "После очистки кеша приложение будет перезапущено.\n\nВы останетесь в системе.",
+  "xboardClearCacheAction": "Очистить",
+  "xboardClearCacheDone": "Кеш очищен, перезапуск…",
+  "xboardClearCacheRestartHint": "Кеш очищен, перезапустите приложение вручную",
+  "xboardClearCacheFailed": "Не удалось очистить кеш"
 }

@@ -2215,5 +2215,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "xboardCoreRestartedRefreshed": MessageLookupByLibrary.simpleMessage(
             "Core restarted and subscription refreshed"),
         "xboardRulesUnit": MessageLookupByLibrary.simpleMessage("rules"),
+        "xboardClearCache": MessageLookupByLibrary.simpleMessage("Clear cache"),
+        "xboardClearCacheHint":
+            MessageLookupByLibrary.simpleMessage("Clear cached app data"),
+        "xboardClearCacheDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Clear cache"),
+        "xboardClearCacheDialogBody": MessageLookupByLibrary.simpleMessage(
+            "The app will restart after clearing the cache.\n\nYour login session will be kept."),
+        "xboardClearCacheAction": MessageLookupByLibrary.simpleMessage("Clear"),
+        "xboardClearCacheDone":
+            MessageLookupByLibrary.simpleMessage("Cache cleared, restarting…"),
+        "xboardClearCacheRestartHint": MessageLookupByLibrary.simpleMessage(
+            "Cache cleared, please restart the app manually"),
+        "xboardClearCacheFailed":
+            MessageLookupByLibrary.simpleMessage("Failed to clear cache"),
       };
 }

@@ -11,6 +11,7 @@ import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/cache.dart';
 import 'package:fl_clash/xboard/features/user/providers/campus_hosts_provider.dart';
 import 'package:fl_clash/xboard/features/user/pages/custom_rules_page.dart';
 import 'package:fl_clash/xboard/features/user/pages/access_control_page.dart';
@@ -667,6 +668,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 const SizedBox(height: 10),
                 _buildGeoDatabaseSection(context),
                 const SizedBox(height: 10),
+                _buildClearCacheEntry(context),
+                const SizedBox(height: 10),
                 _buildCampusHostsSection(context),
                 if (Platform.isAndroid) ...[
                   SizedBox(height: 10),
@@ -877,6 +880,120 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       if (mounted) {
         setState(() => _geoUpdating = false);
       }
+    }
+  }
+
+  /// 清理缓存入口（放在校园网 Hosts 上方）
+  Widget _buildClearCacheEntry(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context);
+    return SettingsCard(
+      icon: Icons.cleaning_services_rounded,
+      accentColor: AppIconColors.orange,
+      title: appLocalizations.xboardClearCache,
+      subtitle: appLocalizations.xboardClearCacheHint,
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        size: 20,
+        color: AppColors.fg(context).withValues(alpha: 0.3),
+      ),
+      onTap: _confirmClearCache,
+    );
+  }
+
+  /// 二次确认后再清，避免误触把缓存连登录态一起清了
+  Future<void> _confirmClearCache() async {
+    final appLocalizations = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: AppColors.panel(dialogContext),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 22, 16, 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                appLocalizations.xboardClearCacheDialogTitle,
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.fg(dialogContext),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                appLocalizations.xboardClearCacheDialogBody,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.55,
+                  color: AppColors.fg(dialogContext).withValues(alpha: 0.65),
+                ),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text(
+                      appLocalizations.xboardCancel,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color:
+                            AppColors.fg(dialogContext).withValues(alpha: 0.55),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child: Text(
+                      appLocalizations.xboardClearCacheAction,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFFF59E0B),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+    await _performClearCache();
+  }
+
+  Future<void> _performClearCache() async {
+    final appLocalizations = AppLocalizations.of(context);
+    try {
+      await AppCacheService.clear();
+      if (!mounted) {
+        return;
+      }
+      XBoardNotification.showSuccess(appLocalizations.xboardClearCacheDone);
+      final restarted = await AppCacheService.restart();
+      if (!restarted && mounted) {
+        // Android 不支持自重启，退化成提示
+        XBoardNotification.showSuccess(
+          appLocalizations.xboardClearCacheRestartHint,
+        );
+      }
+    } catch (e) {
+      if (!mounted) {
+        return;
+      }
+      XBoardNotification.showError(
+        '${appLocalizations.xboardClearCacheFailed}: $e',
+      );
     }
   }
 
