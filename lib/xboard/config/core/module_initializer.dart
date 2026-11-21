@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'service_locator.dart';
 import 'config_settings.dart';
 import '../fetchers/remote_config_manager.dart';
@@ -150,6 +152,7 @@ class ModuleInitializer {
   static Future<XBoardConfigAccessor> createConfigAccessor({
     ConfigSettings? settings,
     bool autoWarmUp = true,
+    bool awaitWarmUp = true,
   }) async {
     await initialize(settings: settings);
 
@@ -159,13 +162,22 @@ class ModuleInitializer {
       // 预热会发起远程配置请求（含域名竞速）。无网络时如果无限等待，
       // 会把整个启动流程卡住几十秒（表现为白窗口长时间不消失）。
       // 这里最多等 4 秒，超时后让刷新在后台继续，不阻塞 UI 启动。
-      try {
-        await accessor
-            .refreshConfiguration()
-            .timeout(const Duration(seconds: 4));
-      } catch (e) {
-        _logger.warning(
-            'Config warm-up timed out or failed, continuing in background', e);
+      final warmUpFuture = accessor.refreshConfiguration();
+      if (awaitWarmUp) {
+        try {
+          await warmUpFuture.timeout(const Duration(seconds: 4));
+        } catch (e) {
+          _logger.warning(
+              'Config warm-up timed out or failed, continuing in background', e);
+        }
+      } else {
+        // 启动阶段不等预热：首帧要尽快出来，否则窗口会先露一段黑底。
+        // 刷新放后台继续跑，失败也不影响启动。
+        unawaited(
+          warmUpFuture.catchError((Object e) {
+            _logger.warning('Config warm-up failed in background', e);
+          }),
+        );
       }
     }
 

@@ -43,6 +43,16 @@ class Window {
     );
     if (!Platform.isMacOS || version > 10) {
       await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+      // setTitleBarStyle 会把窗口底色设成透明，首帧渲染前露出的是引擎黑底，
+      // 这里按当前主题补一层底色，避免启动瞬间闪一下黑
+      final themeMode = globalState.config.themeProps.themeMode;
+      final isDark = themeMode == ThemeMode.dark ||
+          (themeMode == ThemeMode.system &&
+              WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+                  Brightness.dark);
+      await windowManager.setBackgroundColor(
+        isDark ? const Color(0xFF0F0E1D) : const Color(0xFFEDF3FD),
+      );
     }
     if (!Platform.isMacOS) {
       final left = props.left ?? 0;

@@ -652,7 +652,7 @@ class AppController {
   Future<void> _showWindowAfterPaint() async {
     try {
       await WidgetsBinding.instance.waitUntilFirstFrameRasterized
-          .timeout(const Duration(seconds: 2));
+          .timeout(const Duration(seconds: 6));
     } catch (_) {
       // 超时或平台不支持时也要把窗口显示出来，不能卡住启动
     }

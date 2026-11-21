@@ -117,7 +117,11 @@ Future<void> _initializeXBoardServices() async {
     print('[Main] 安全配置加载成功');
 
     // 3. 初始化V2配置模块
-    await XBoardConfig.initialize(settings: configSettings);
+    // 不阻塞启动等预热：无网络时远程配置请求会拖 4 秒以上，首帧出不来就会先露黑窗
+    await XBoardConfig.initialize(
+      settings: configSettings,
+      awaitWarmUp: false,
+    );
     print('[Main] XBoard配置模块初始化成功');
 
     // SDK 初始化已移至 xboardSdkProvider，由 Riverpod 统一管理
