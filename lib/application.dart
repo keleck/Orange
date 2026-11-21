@@ -277,20 +277,9 @@ class ApplicationState extends ConsumerState<Application> {
                 GlobalWidgetsLocalizations.delegate
               ],
               builder: (_, child) {
-                // 路由重定向落地前可能先渲染一帧空内容，不铺底色会露出原生黑底
-                // （无网络时初始化慢，这一帧会被拉长，看起来就是「先黑一下」）
-                final isDarkBg = themeProps.themeMode == ThemeMode.dark ||
-                    (themeProps.themeMode == ThemeMode.system &&
-                        MediaQuery.maybePlatformBrightnessOf(context) ==
-                            Brightness.dark);
-                return ColoredBox(
-                  color: isDarkBg
-                      ? const Color(0xFF0F0E1D)
-                      : AppColors.lightScaffold,
-                  child: AppEnvManager(
-                    child: _buildPlatformApp(
-                      _buildApp(child!),
-                    ),
+                return AppEnvManager(
+                  child: _buildPlatformApp(
+                    _buildApp(child!),
                   ),
                 );
               },

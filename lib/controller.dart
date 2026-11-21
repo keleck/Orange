@@ -645,34 +645,6 @@ class AppController {
     }
   }
 
-  /// 等 loading 页真正画出来再显示窗口。
-  ///
-  /// 冷启动首帧可能还是空内容（路由 redirect 未落地），直接 show 会先露出原生黑底；
-  /// 无网络时初始化更慢，这一下会被拉长成明显的黑窗口。最多等 1.5 秒兜底。
-  Future<void> _showWindowAfterPaint() async {
-    final binding = WidgetsBinding.instance;
-    try {
-      await Future.any<void>([
-        () async {
-          for (var i = 0; i < 2; i++) {
-            final completer = Completer<void>();
-            binding.addPostFrameCallback((_) {
-              if (!completer.isCompleted) {
-                completer.complete();
-              }
-            });
-            binding.scheduleFrame();
-            await completer.future;
-          }
-        }(),
-        Future<void>.delayed(const Duration(milliseconds: 1500)),
-      ]);
-    } catch (_) {
-      // 等帧异常也要把窗口显示出来，不能卡住启动
-    }
-    await window?.show();
-  }
-
   init() async {
     FlutterError.onError = (details) {
       commonPrint.log(details.stack.toString());
@@ -680,9 +652,8 @@ class AppController {
     updateTray(true);
     // 此时 Flutter 已完成首帧渲染，先把窗口显示出来，
     // 不要等内核初始化完成再显示，否则启动时窗口会长时间不出现（无网络时尤其明显）。
-    // 但要等 loading 页真正画出来再 show，否则会先露出原生黑底。
     if (!_ref.read(appSettingProvider).silentLaunch) {
-      unawaited(_showWindowAfterPaint());
+      window?.show();
     } else {
       window?.hide();
     }
