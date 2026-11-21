@@ -152,14 +152,12 @@ class XBoardConfig {
   static Future<void> initialize({
     String provider = 'Flclash',
     ConfigSettings? settings,
-    bool awaitWarmUp = true,
   }) async {
     final config = settings ?? ConfigSettings(currentProvider: provider);
 
     _instance = await ModuleInitializer.createConfigAccessor(
       settings: config,
       autoWarmUp: true,
-      awaitWarmUp: awaitWarmUp,
     );
 
     // 创建配置提供者实例
