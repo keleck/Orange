@@ -645,30 +645,16 @@ class AppController {
     }
   }
 
-  /// 等 loading 页真正画出来再显示窗口。
+  /// 等第一帧真正光栅化之后再显示窗口，避免露出任何空画面。
   ///
-  /// 冷启动首帧可能还是空内容（路由 redirect 未落地），直接 show 会先露出原生黑底；
-  /// 无网络时初始化更慢，这一下会被拉长成明显的黑窗口。最多等 1.5 秒兜底。
+  /// 冷启动时窗口一旦可见，内容区还没画出来就是引擎默认黑底；
+  /// 无网络时初始化慢，这一下会被拉长成明显的黑窗口。最多等 2 秒兜底。
   Future<void> _showWindowAfterPaint() async {
-    final binding = WidgetsBinding.instance;
     try {
-      await Future.any<void>([
-        () async {
-          for (var i = 0; i < 2; i++) {
-            final completer = Completer<void>();
-            binding.addPostFrameCallback((_) {
-              if (!completer.isCompleted) {
-                completer.complete();
-              }
-            });
-            binding.scheduleFrame();
-            await completer.future;
-          }
-        }(),
-        Future<void>.delayed(const Duration(milliseconds: 1500)),
-      ]);
+      await WidgetsBinding.instance.waitUntilFirstFrameRasterized
+          .timeout(const Duration(seconds: 2));
     } catch (_) {
-      // 等帧异常也要把窗口显示出来，不能卡住启动
+      // 超时或平台不支持时也要把窗口显示出来，不能卡住启动
     }
     await window?.show();
   }
