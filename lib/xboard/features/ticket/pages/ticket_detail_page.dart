@@ -345,8 +345,8 @@ class _TicketHeader extends StatelessWidget {
   BoxDecoration _glassmorphicDecoration(BuildContext context) {
     final theme = Theme.of(context);
     return BoxDecoration(
-      // 白天用白底，夜间保留主色玻璃质感
-      color: AppColors.isDark(context) ? null : Colors.white,
+      // 白天用柔和白底，夜间保留主色玻璃质感
+      color: AppColors.isDark(context) ? null : AppColors.lightSurface,
       gradient: AppColors.isDark(context)
           ? LinearGradient(
               begin: Alignment.topLeft,

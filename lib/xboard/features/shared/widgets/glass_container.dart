@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class GlassContainer extends StatelessWidget {
@@ -36,13 +37,16 @@ class GlassContainer extends StatelessWidget {
     final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(16);
     final baseColor = color ?? theme.colorScheme.surface;
 
-    // 白天：纯白实色，不做模糊叠加，避免发灰；夜间：保持原来的玻璃质感
+    // 白天：柔和白实色，不做模糊叠加，避免发灰；夜间：保持原来的玻璃质感
     final decoration = BoxDecoration(
-      color: isDark ? baseColor.withValues(alpha: opacity) : Colors.white,
+      color: isDark
+          ? baseColor.withValues(alpha: opacity)
+          : AppColors.lightSurface,
       borderRadius: effectiveBorderRadius,
       border: border ??
           Border.all(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+            color: theme.colorScheme.onSurface
+                .withValues(alpha: isDark ? 0.1 : 0.06),
             width: 1,
           ),
       gradient: isDark
@@ -56,14 +60,14 @@ class GlassContainer extends StatelessWidget {
                   ],
             )
           : null,
-      // 白天给白卡片一层很淡的灰阴影，拉开层次
+      // 白天给柔和白卡片一层很淡的冷调阴影，拉开层次又不显脏
       boxShadow: isDark
           ? null
           : [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
+                color: const Color(0xFF6B7F9B).withValues(alpha: 0.13),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
             ],
     );

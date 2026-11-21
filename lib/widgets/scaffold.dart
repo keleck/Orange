@@ -143,7 +143,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
         appBarTheme: theme.appBarTheme.copyWith(
           backgroundColor: colorScheme.brightness == Brightness.dark
               ? Colors.grey[900]
-              : Colors.white,
+              : AppColors.lightSurface,
           iconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
           titleTextStyle: theme.textTheme.titleLarge,
           toolbarTextStyle: theme.textTheme.bodyMedium,

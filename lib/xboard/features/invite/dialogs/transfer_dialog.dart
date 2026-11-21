@@ -60,7 +60,9 @@ class _TransferDialogState extends ConsumerState<TransferDialog> {
                       ],
                     )
                   : null,
-              color: AppColors.isDark(context) ? null : Colors.white,
+              color: AppColors.isDark(context)
+                  ? null
+                  : AppColors.lightSurfaceElevated,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: AppColors.fg(context).withValues(alpha: 0.2),

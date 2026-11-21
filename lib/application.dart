@@ -9,6 +9,7 @@ import 'package:fl_clash/manager/manager.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -288,11 +289,11 @@ class ApplicationState extends ConsumerState<Application> {
               locale: utils.getLocaleForString(locale),
               supportedLocales: AppLocalizations.delegate.supportedLocales,
               themeMode: themeProps.themeMode, // 跟随「主题模式」设置
-              // 白天主题：淡蓝背景 + 白色卡片 + 蓝色主色
+              // 白天主题：淡蓝背景 + 柔和白卡片 + 蓝色主色
               theme: ThemeData(
                 useMaterial3: true,
                 pageTransitionsTheme: _pageTransitionsTheme,
-                scaffoldBackgroundColor: const Color(0xFFEAF2FE),
+                scaffoldBackgroundColor: AppColors.lightScaffold,
                 appBarTheme: const AppBarTheme(
                   backgroundColor: Colors.transparent,
                   elevation: 0,
@@ -307,8 +308,13 @@ class ApplicationState extends ConsumerState<Application> {
                   brightness: Brightness.light,
                   primaryColor: themeProps.primaryColor,
                 ).copyWith(
-                  surface: Colors.white,
-                  surfaceContainer: const Color(0xFFF2F6FD),
+                  // 统一走柔和白，避免大面积纯白在白天刺眼
+                  surface: AppColors.lightSurface,
+                  surfaceContainerLowest: AppColors.lightSurface,
+                  surfaceContainerLow: AppColors.lightSurface,
+                  surfaceContainer: AppColors.lightSurfaceSubtle,
+                  surfaceContainerHigh: const Color(0xFFEBF1F8),
+                  surfaceContainerHighest: const Color(0xFFDFE7F0),
                   onSurface: const Color(0xFF1B1B1F),
                 ),
               ),

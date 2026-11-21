@@ -67,7 +67,9 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                       ],
                     )
                   : null,
-              color: AppColors.isDark(context) ? null : Colors.white,
+              color: AppColors.isDark(context)
+                  ? null
+                  : AppColors.lightSurfaceElevated,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: AppColors.fg(context).withValues(alpha: 0.2),
@@ -478,7 +480,9 @@ class _WithdrawDialogState extends ConsumerState<WithdrawDialog> {
                         ],
                       )
                     : null,
-                color: AppColors.isDark(context) ? null : Colors.white,
+                color: AppColors.isDark(context)
+                    ? null
+                    : AppColors.lightSurfaceElevated,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: AppColors.fg(context).withValues(alpha: 0.2),

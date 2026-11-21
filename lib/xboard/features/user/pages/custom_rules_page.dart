@@ -768,8 +768,8 @@ class _OptionSheet<T> extends StatelessWidget {
                   const Color(0xFF14161F),
                 ]
               : [
-                  Colors.white,
-                  const Color(0xFFF7FAFF),
+                  AppColors.lightSurface,
+                  const Color(0xFFF4F8FE),
                 ],
         ),
         borderRadius: const BorderRadius.vertical(

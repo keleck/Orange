@@ -127,7 +127,7 @@ class _IpQualityBadgeState extends ConsumerState<IpQualityBadge> {
                 text: usage.label,
                 background: AppColors.isDark(context)
                     ? Colors.white.withValues(alpha: 0.10)
-                    : const Color(0xFFF1F3F7),
+                    : AppColors.lightSurfaceSubtle,
                 foreground: AppColors.isDark(context)
                     ? Colors.white.withValues(alpha: 0.75)
                     : const Color(0xFF5A6270),

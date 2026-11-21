@@ -241,9 +241,11 @@ class ConnectIdleDisc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 白天用白盘 + 深色描边，夜间保持深灰蓝
+    // 白天用柔和白盘 + 深色描边，夜间保持深灰蓝
     final discColor = color ??
-        (AppColors.isDark(context) ? const Color(0xFF1D2229) : Colors.white);
+        (AppColors.isDark(context)
+            ? const Color(0xFF1D2229)
+            : AppColors.lightSurface);
     return SizedBox(
       width: size,
       height: size,

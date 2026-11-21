@@ -1249,10 +1249,11 @@ class _ThemeModeToggleState extends ConsumerState<_ThemeModeToggle> {
   Widget build(BuildContext context) {
     final mode = ref.watch(themeSettingProvider.select((s) => s.themeMode));
     final isDark = AppColors.isDark(context);
-    final trackColor =
-        isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFEFF1F5);
+    final trackColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : AppColors.lightSurfaceStrong;
     final selectedBg =
-        isDark ? Colors.white.withValues(alpha: 0.18) : Colors.white;
+        isDark ? Colors.white.withValues(alpha: 0.18) : AppColors.lightSurface;
     final activeColor = isDark ? Colors.white : const Color(0xFF1B1B1F);
     final inactiveColor =
         isDark ? Colors.white.withValues(alpha: 0.45) : const Color(0xFF9AA0A6);

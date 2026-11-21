@@ -12,10 +12,18 @@ class AppColors {
   static const Color gradientColor4 = Color(0xFF1A0F2E); // 深紫色
 
   // ------------------------------------------------------------ 浅色（白天）
-  static const Color lightGradientColor1 = Color(0xFFD8EAFB); // 顶部淡蓝
-  static const Color lightGradientColor2 = Color(0xFFEAF3FE); // 中部更浅
-  static const Color lightGradientColor3 = Color(0xFFF6FAFF); // 接近白
-  static const Color lightGradientColor4 = Color(0xFFE8F1FC); // 底部回蓝
+  // 白天不再使用纯白 #FFFFFF：大面积纯白在亮环境下刺眼、边缘发灰。
+  // 统一改成带一丝冷调的「柔和白」，并保留由低到高的层级差异。
+  static const Color lightSurface = Color(0xFFF8FAFC); // 卡片 / 面板主底色
+  static const Color lightSurfaceElevated = Color(0xFFFBFCFE); // 弹层 / 浮起卡片
+  static const Color lightSurfaceSubtle = Color(0xFFF1F5F9); // 卡片内次级块
+  static const Color lightSurfaceStrong = Color(0xFFE9EFF6); // 嵌套块 / 输入框
+  static const Color lightScaffold = Color(0xFFEDF3FD); // 页面底色（渐变中段）
+
+  static const Color lightGradientColor1 = Color(0xFFDCEAFB); // 顶部淡蓝
+  static const Color lightGradientColor2 = Color(0xFFE8F1FD); // 中上部
+  static const Color lightGradientColor3 = Color(0xFFEFF5FE); // 中下部
+  static const Color lightGradientColor4 = Color(0xFFE3EDFA); // 底部回蓝
 
   static const List<double> gradientStops = [0.0, 0.3, 0.7, 1.0];
 
@@ -37,11 +45,11 @@ class AppColors {
   static Color fgSecondary(BuildContext context, [double alpha = 0.7]) =>
       fg(context).withValues(alpha: alpha);
 
-  /// 自适应卡片底色：深色下半透明白，浅色下白色
+  /// 自适应卡片底色：深色下半透明白，浅色下柔和白
   static Color card(BuildContext context, [double alpha = 0.1]) =>
-      isDark(context) ? Colors.white.withValues(alpha: alpha) : Colors.white;
+      isDark(context) ? Colors.white.withValues(alpha: alpha) : lightSurface;
 
-  /// 卡片渐变（跟随当前主题）：深色为深紫/海军蓝，浅色为白色/淡蓝
+  /// 卡片渐变（跟随当前主题）：深色为深紫/海军蓝，浅色为柔和白/淡蓝
   static List<Color> cardGradientColors(BuildContext context, {Color? accent}) {
     final primary = accent ?? Theme.of(context).colorScheme.primary;
     if (isDark(context)) {
@@ -51,36 +59,36 @@ class AppColors {
       ];
     }
     return [
-      Colors.white,
+      lightSurface,
       Color.alphaBlend(
-          primary.withValues(alpha: 0.05), const Color(0xFFF4F8FF)),
+          primary.withValues(alpha: 0.05), const Color(0xFFF3F7FD)),
     ];
   }
 
-  /// 卡片 / 弹层背景：深色下半透明白，浅色下纯白（不做透明叠加）
+  /// 卡片 / 弹层背景：深色下半透明白，浅色下柔和白（不做透明叠加）
   static Color surface(BuildContext context, [double darkAlpha = 0.06]) =>
       isDark(context)
           ? Colors.white.withValues(alpha: darkAlpha)
-          : Colors.white;
+          : lightSurface;
 
   /// 卡片内的次级块（图标块 / 小标签底）：夜间半透明白，白天浅灰
   static Color subtle(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.06)
-      : const Color(0xFFF4F6FA);
+      : lightSurfaceSubtle;
 
   /// 分割线：夜间半透明白，白天浅灰
   static Color divider(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.10)
-      : const Color(0xFFE3E7EE);
+      : const Color(0xFFE5EAF2);
 
   /// 细描边：夜间半透明白，白天浅灰
   static Color outline(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.14)
-      : const Color(0xFFDCE2EA);
+      : const Color(0xFFDCE3EE);
 
   /// 弹层 / 面板底色（跟随当前主题）
   static Color panel(BuildContext context) =>
-      isDark(context) ? const Color(0xFF1A1535) : Colors.white;
+      isDark(context) ? const Color(0xFF1A1535) : lightSurfaceElevated;
 
   /// 获取背景渐变（跟随当前主题）
   static LinearGradient backgroundGradient(BuildContext context) {
