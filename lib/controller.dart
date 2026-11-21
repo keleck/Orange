@@ -26,6 +26,13 @@ import 'package:fl_clash/common/app_localizations.dart';
 class AppController {
   int? lastProfileModified;
 
+  /// 配置自愈：内核没拿到节点配置时最多补下发几次，避免无限重试
+  static const int _maxConfigRecoveryTimes = 3;
+  static const Duration _configRecoveryInterval = Duration(seconds: 20);
+  int _configRecoveryTimes = 0;
+  DateTime? _lastConfigRecoveryAt;
+  bool _configRecovering = false;
+
   final BuildContext context;
   final WidgetRef _ref;
 
@@ -363,10 +370,16 @@ class AppController {
       await _applyProfile();
     } else {
       final commonScaffoldState = globalState.homeScaffoldKey.currentState;
-      if (commonScaffoldState?.mounted != true) return;
-      await commonScaffoldState?.loadingRun(() async {
+      if (commonScaffoldState?.mounted == true) {
+        await commonScaffoldState?.loadingRun(() async {
+          await _applyProfile();
+        });
+      } else {
+        // 新路由（xboard）里没有 pages/home.dart 的 CommonScaffold，
+        // homeScaffoldKey 一直是空的。以前这里直接 return，配置压根没下发，
+        // 表现为首页一直卡在「正在加载节点」，切一次规则/全局才恢复。
         await _applyProfile();
-      });
+      }
     }
     addCheckIpNumDebounce();
   }
@@ -405,15 +418,48 @@ class AppController {
 
   Future<void> updateGroups() async {
     try {
-      _ref.read(groupsProvider.notifier).value = await retry(
+      final groups = await retry(
         task: () async {
           return await clashCore.getProxiesGroups();
         },
         retryIf: (res) => res.isEmpty,
       );
+      _ref.read(groupsProvider.notifier).value = groups;
+      if (groups.isEmpty) {
+        _recoverConfigIfNeeded();
+      }
     } catch (_) {
       _ref.read(groupsProvider.notifier).value = [];
+      _recoverConfigIfNeeded();
     }
+  }
+
+  /// 节点列表为空时补下发一次配置。
+  ///
+  /// 冷启动竞态、内核重启后配置丢失，都会让 /proxies 返回空，
+  /// 以前只能靠用户去托盘切规则/全局自救；这里自动补一次，最多补 3 次。
+  void _recoverConfigIfNeeded() {
+    if (_configRecovering) return;
+    if (_configRecoveryTimes >= _maxConfigRecoveryTimes) return;
+    if (_ref.read(currentProfileProvider) == null) return;
+    final now = DateTime.now();
+    final last = _lastConfigRecoveryAt;
+    if (last != null && now.difference(last) < _configRecoveryInterval) {
+      return;
+    }
+    _configRecoveryTimes++;
+    _lastConfigRecoveryAt = now;
+    _configRecovering = true;
+    Future(() async {
+      try {
+        commonPrint.log('groups empty, re-apply config ($_configRecoveryTimes)');
+        await _applyProfile();
+      } catch (e) {
+        commonPrint.log('re-apply config failed: $e');
+      } finally {
+        _configRecovering = false;
+      }
+    });
   }
 
   updateProfiles() async {
@@ -590,7 +636,13 @@ class AppController {
         globalState.getCoreState(),
       );
     }
-    await applyProfile();
+    // 启动时用 silence 模式强制下发一次配置：新路由里首页不是 pages/home.dart，
+    // 非 silence 的 applyProfile 拿不到 scaffold，配置会漏下发导致节点列表为空。
+    try {
+      await applyProfile(silence: true);
+    } catch (e) {
+      commonPrint.log('init apply profile failed: $e');
+    }
   }
 
   init() async {

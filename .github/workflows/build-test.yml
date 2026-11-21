@@ -1,0 +1,207 @@
+name: Build Test (Windows / macOS)
+
+# 测试版专用：只打包，不创建 Release、不影响 v* 正式发版。
+# 触发方式（推标签）：
+#   test-*  → Windows + macOS 都打
+#   win-*   → 只打 Windows
+#   mac-*   → 只打 macOS
+# 也可在 Actions 页面手动触发（默认两个平台都打）。
+# 产物：Actions 页面的 windows-test-<版本> / macos-test-<版本> artifact。
+
+on:
+  push:
+    tags:
+      - 'test-*'
+      - 'win-*'
+      - 'mac-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: '3.38.5'
+  GO_VERSION: '1.25.x'
+
+concurrency:
+  group: build-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------- Windows
+  windows:
+    name: Windows
+    # windows-latest 已升级到 VS 2026，其 STL 移除了 /await 实验性协程支持，
+    # 而 webview_windows 0.4.0（无更新版本）仍依赖它，故固定使用 VS 2022 镜像
+    runs-on: windows-2022
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.ref_name, 'win-') ||
+      startsWith(github.ref_name, 'test-')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - name: Check Rust toolchain
+        shell: bash
+        run: |
+          if ! command -v cargo &> /dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+            echo "$USERPROFILE/.cargo/bin" >> "$GITHUB_PATH"
+          fi
+          cargo --version
+
+      - name: Install Inno Setup
+        shell: bash
+        run: |
+          choco install innosetup -y --no-progress
+          echo "C:/Program Files (x86)/Inno Setup 6" >> "$GITHUB_PATH"
+
+      - name: Add pub cache to PATH
+        shell: bash
+        run: echo "$LOCALAPPDATA/Pub/Cache/bin" >> "$GITHUB_PATH"
+
+      - name: Prepare app config
+        shell: bash
+        env:
+          XBOARD_CONFIG: ${{ secrets.XBOARD_CONFIG }}
+        run: |
+          mkdir -p assets/config
+          if [ -n "$XBOARD_CONFIG" ]; then
+            echo "$XBOARD_CONFIG" | base64 --decode > assets/config/xboard.config.yaml
+            echo "==> 使用 XBOARD_CONFIG 密钥注入配置"
+          elif [ ! -f assets/config/xboard.config.yaml ]; then
+            cp assets/config/xboard.config.example.yaml assets/config/xboard.config.yaml
+            echo "==> 未配置 XBOARD_CONFIG，使用示例配置占位"
+          fi
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate SDK code
+        shell: bash
+        run: |
+          cd lib/sdk/flutter_xboard_sdk
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+          cd ../../..
+
+      - name: Generate project code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Read version
+        shell: bash
+        run: |
+          v=$(grep -m1 '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//' | cut -d+ -f1)
+          echo "APP_VERSION=$v" >> "$GITHUB_ENV"
+          echo "版本：$v"
+
+      - name: Build EXE
+        run: dart setup.dart windows --arch amd64
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-test-${{ env.APP_VERSION }}
+          path: |
+            dist/*.exe
+            dist/*.zip
+          if-no-files-found: error
+
+  # ------------------------------------------------------------------ macOS
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.ref_name, 'mac-') ||
+      startsWith(github.ref_name, 'test-')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - name: Install appdmg
+        run: npm install -g appdmg
+
+      - name: Clean Swift Package Manager cache
+        run: |
+          find macos -name "Package.resolved" -delete || true
+          rm -rf macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/ || true
+          rm -rf macos/Runner.xcworkspace/xcshareddata/swiftpm/ || true
+
+      - name: Prepare app config
+        shell: bash
+        env:
+          XBOARD_CONFIG: ${{ secrets.XBOARD_CONFIG }}
+        run: |
+          mkdir -p assets/config
+          if [ -n "$XBOARD_CONFIG" ]; then
+            echo "$XBOARD_CONFIG" | base64 --decode > assets/config/xboard.config.yaml
+            echo "==> 使用 XBOARD_CONFIG 密钥注入配置"
+          elif [ ! -f assets/config/xboard.config.yaml ]; then
+            cp assets/config/xboard.config.example.yaml assets/config/xboard.config.yaml
+            echo "==> 未配置 XBOARD_CONFIG，使用示例配置占位"
+          fi
+
+      - name: Add pub cache to PATH
+        run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate SDK code
+        run: |
+          cd lib/sdk/flutter_xboard_sdk
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+          cd ../../..
+
+      - name: Generate project code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Read version
+        id: ver
+        run: |
+          v=$(grep -m1 '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//' | cut -d+ -f1)
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "版本：$v"
+
+      - name: Build universal DMG
+        run: dart setup.dart macos --universal
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-test-${{ steps.ver.outputs.version }}
+          path: dist/*.dmg
+          if-no-files-found: error
