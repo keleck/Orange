@@ -493,32 +493,9 @@ class GlobalState {
       } else {
         // 解密后的内容直接交给内核解析，不再落明文 yaml：
         // 避免节点信息在「生成 yaml → 加密」这段过程中被其他进程读到
-        Map<String, dynamic>? parsed;
-        try {
-          final content = utf8.decode(bytes, allowMalformed: true);
-          parsed = await clashCore.getConfigByContent(content);
-        } catch (e) {
-          commonPrint.log('内存解析配置失败，回退临时文件: $e');
-        }
-        if (parsed != null && parsed.isNotEmpty) {
-          configMap = parsed;
-        } else {
-          // 兜底：超时 / 内存吃紧导致内存解析失败时，退回按路径解析，
-          // 保证功能不退化；临时文件用完立即删除。
-          final tempPath = await appPath.getProfilePath(profileId);
-          final tempFile = File(tempPath);
-          await tempFile.parent.create(recursive: true);
-          await tempFile.writeAsBytes(bytes);
-          try {
-            configMap = await clashCore.getConfig(profileId);
-          } finally {
-            try {
-              await tempFile.delete();
-            } catch (e) {
-              commonPrint.log('删除临时配置文件失败: $e');
-            }
-          }
-        }
+        configMap = await clashCore.getConfigByContent(
+          utf8.decode(bytes, allowMalformed: true),
+        );
       }
     } else {
       // 兼容旧版本残留的明文 yaml：读一次后立即清理
