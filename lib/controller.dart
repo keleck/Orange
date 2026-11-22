@@ -14,6 +14,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -645,6 +646,30 @@ class AppController {
     }
   }
 
+  /// 收起原生启动画面（macOS 的 MainFlutterWindow 里盖的那一层）。
+  ///
+  /// 等首帧真正上屏之后再收，避免露出空画面；超时也要收，不能一直挡着。
+  static final MethodChannel _splashChannel =
+      MethodChannel('mxycloud/splash');
+
+  Future<void> _hideNativeSplash() async {
+    if (!system.isDesktop) {
+      return;
+    }
+    try {
+      await WidgetsBinding.instance.waitUntilFirstFrameRasterized
+          .timeout(const Duration(seconds: 4));
+    } catch (_) {
+      // 超时继续往下走
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    try {
+      await _splashChannel.invokeMethod('hide');
+    } catch (_) {
+      // Windows/Linux 没实现这个通道，忽略
+    }
+  }
+
   init() async {
     FlutterError.onError = (details) {
       commonPrint.log(details.stack.toString());
@@ -657,6 +682,7 @@ class AppController {
     } else {
       window?.hide();
     }
+    unawaited(_hideNativeSplash());
     await _initCore();
     await _initStatus();
     autoLaunch?.updateStatus(

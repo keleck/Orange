@@ -79,6 +79,13 @@ class Window {
       await windowManager.setPreventClose(true);
       await windowManager.setResizable(false); // 禁用窗口缩放
     });
+
+    // 原生层已经盖好启动画面（macos/Runner/MainFlutterWindow.swift），
+    // 这里先把窗口显示出来，让用户立刻看到品牌启动页，而不是黑框或“点了没反应”。
+    // 只在 macOS 提前显示：Windows/Linux 没有这层启动画面，提前 show 会露白底。
+    if (Platform.isMacOS && !globalState.config.appSetting.silentLaunch) {
+      await show();
+    }
   }
 
   show() async {
