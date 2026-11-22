@@ -19,18 +19,22 @@ ArchitecturesAllowed={{ARCH}}
 ArchitecturesInstallIn64BitMode={{ARCH}}
 
 [Code]
+// 结束本安装目录下的进程。
+//
+// 原来按进程名 taskkill：一是名字表里还是旧的 Flclash.exe（实际叫 mxycloud.exe），
+// 主程序根本没被杀掉；二是同名进程可能属于另一份安装（便携版 / 旧版本），
+// 按名字杀会把别处的实例一起干掉。改成按可执行文件路径过滤，只杀 {app} 下的。
 procedure KillProcesses;
 var
-  Processes: TArrayOfString;
-  i: Integer;
+  AppDir: String;
   ResultCode: Integer;
 begin
-  Processes := ['Flclash.exe', 'FlClashCore.exe', 'FlClashHelperService.exe'];
-
-  for i := 0 to GetArrayLength(Processes)-1 do
-  begin
-    Exec('taskkill', '/f /im ' + Processes[i], '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-  end;
+  AppDir := AddBackslash(ExpandConstant('{app}'));
+  StringChangeEx(AppDir, '''', '''''', True);
+  Exec('powershell.exe',
+    '-NoProfile -NonInteractive -Command "Get-Process -ErrorAction SilentlyContinue | ' +
+    'Where-Object { $_.Path -and $_.Path.StartsWith(''' + AppDir + ''', [StringComparison]::OrdinalIgnoreCase) } | Stop-Process -Force"',
+    '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 function InitializeSetup(): Boolean;
