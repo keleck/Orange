@@ -645,15 +645,29 @@ class AppController {
     }
   }
 
+  /// 等首帧真正光栅化之后再显示窗口，避免露出任何空画面。
+  ///
+  /// 冷启动时窗口一旦可见，内容区还没画出来就是引擎默认黑底。
+  /// 最多等 3 秒兜底：等不到也要把窗口显示出来，不能卡住启动。
+  Future<void> _showWindowAfterPaint() async {
+    try {
+      await WidgetsBinding.instance.waitUntilFirstFrameRasterized
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {
+      // 超时或平台不支持时继续走下面的 show
+    }
+    await window?.show();
+  }
+
   init() async {
     FlutterError.onError = (details) {
       commonPrint.log(details.stack.toString());
     };
     updateTray(true);
-    // 此时 Flutter 已完成首帧渲染，先把窗口显示出来，
-    // 不要等内核初始化完成再显示，否则启动时窗口会长时间不出现（无网络时尤其明显）。
+    // 窗口要等首帧真正上屏之后再显示，否则会先露一个黑框（引擎默认黑底）。
+    // 这里等 waitUntilFirstFrameRasterized，最多 3 秒兜底，避免极端情况下窗口不出来。
     if (!_ref.read(appSettingProvider).silentLaunch) {
-      window?.show();
+      unawaited(_showWindowAfterPaint());
     } else {
       window?.hide();
     }
