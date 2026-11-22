@@ -37,9 +37,19 @@ begin
     '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
+// 旧版本用 FlClashHelperService 这个名字注册过提权助手服务，
+// 改名后旧服务会残留并指向已不存在的 exe，这里顺手清掉
+procedure RemoveLegacyHelperService;
+var
+  ResultCode: Integer;
+begin
+  Exec('sc.exe', 'delete FlClashHelperService', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+end;
+
 function InitializeSetup(): Boolean;
 begin
   KillProcesses;
+  RemoveLegacyHelperService;
   Result := True;
 end;
 

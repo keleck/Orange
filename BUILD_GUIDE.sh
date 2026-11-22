@@ -57,20 +57,20 @@ cat << 'EOF'
 ✅ 验证构建成功：
 
   # 检查通用二进制
-  file libclash/macos/universal/FlClashCore
+  file libclash/macos/universal/mxycloudCore
   # 应该输出: Mach-O universal binary with 2 architectures
 
   # 查看包含的架构
-  lipo -info libclash/macos/universal/FlClashCore
+  lipo -info libclash/macos/universal/mxycloudCore
   # 应该输出: Architectures in the fat file: x86_64 arm64
 
 ═══════════════════════════════════════════════════════════════════════════════
 
 📊 构建时间和产物：
 
-  ARM64 编译      5-15 分钟   → libclash/macos/arm64/FlClashCore
-  AMD64 编译      5-15 分钟   → libclash/macos/amd64/FlClashCore
-  二进制合并      < 1 分钟    → libclash/macos/universal/FlClashCore
+  ARM64 编译      5-15 分钟   → libclash/macos/arm64/mxycloudCore
+  AMD64 编译      5-15 分钟   → libclash/macos/amd64/mxycloudCore
+  二进制合并      < 1 分钟    → libclash/macos/universal/mxycloudCore
   DMG 打包        10-20 分钟  → dist/mxycloud-universal.dmg
   ─────────────────────────────────────────────────────────
   总耗时          25-51 分钟  完整构建周期（首次较长）
@@ -96,7 +96,7 @@ cat << 'EOF'
 
 【 场景 2 】只想构建核心库用于测试
   $ make macos_universal_core
-  完成后在 libclash/macos/universal/ 找到 FlClashCore
+  完成后在 libclash/macos/universal/ 找到 mxycloudCore
 
 【 场景 3 】只需要 Apple Silicon 版本
   $ make macos_arm64
@@ -148,7 +148,7 @@ cat << 'EOF'
 
   3. 验证产物：
      ls -lh dist/
-     file libclash/macos/universal/FlClashCore
+     file libclash/macos/universal/mxycloudCore
 
   4. 测试应用：
      # 在 Intel Mac 和 Apple Silicon Mac 上都能运行

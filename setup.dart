@@ -136,7 +136,7 @@ class Build {
 
   static String get appName => "梦想云";
 
-  static String get coreName => "FlClashCore";
+  static String get coreName => "mxycloudCore";
 
   static String get libName => "libclash";
 
@@ -343,7 +343,7 @@ class Build {
     final targetPath = join(
       outDir,
       target.name,
-      "FlClashHelperService${target.executableExtensionName}",
+      "mxycloudHelperService${target.executableExtensionName}",
     );
     await File(outPath).copy(targetPath);
   }
@@ -670,7 +670,7 @@ class BuildCommand extends Command {
     
     // Create universal binary by merging both architectures
     final universalCoreDir = join(Build.outDir, Target.macos.name, "universal");
-    final universalCoreFile = join(universalCoreDir, "FlClashCore");
+    final universalCoreFile = join(universalCoreDir, "mxycloudCore");
     
     print("Creating universal binary...");
     await Build.createUniversalBinary(
@@ -686,7 +686,7 @@ class BuildCommand extends Command {
     }
     
     // Copy universal binary to the location where Flutter expects it
-    final flutterExpectedPath = join(Build.outDir, Target.macos.name, "FlClashCore");
+    final flutterExpectedPath = join(Build.outDir, Target.macos.name, "mxycloudCore");
     print("Copying universal binary for Flutter: $flutterExpectedPath");
     await Build.exec(
       ["cp", universalCoreFile, flutterExpectedPath],

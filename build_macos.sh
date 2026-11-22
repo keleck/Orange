@@ -138,7 +138,7 @@ build_single_arch() {
 }
 
 verify_universal_binary() {
-    local binary_path="libclash/macos/universal/FlClashCore"
+    local binary_path="libclash/macos/universal/mxycloudCore"
     
     if [ ! -f "$binary_path" ]; then
         print_warning "Universal binary not found at $binary_path"
@@ -203,7 +203,7 @@ main() {
             print_info "Output location: dist/"
             print_info "Supported platforms: Intel Mac + Apple Silicon Mac"
         else
-            print_info "Core library: libclash/macos/universal/FlClashCore"
+            print_info "Core library: libclash/macos/universal/mxycloudCore"
         fi
     else
         print_info "Architecture: $BUILD_TYPE"

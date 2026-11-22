@@ -72,7 +72,7 @@ Future<void> main() async {
   // 窗口尺寸/位置必须在窗口显示之前设置好，否则会先以原生初始尺寸露出白底。
   // 原生初始尺寸已同步为 420x780（windows/runner/main.cpp），二者保持一致。
   await window?.init(version);
-  HttpOverrides.global = FlClashHttpOverrides();
+  HttpOverrides.global = MxycloudHttpOverrides();
 
   // 注册 WidgetsBindingObserver 来监听应用生命周期事件
   WidgetsBinding.instance.addObserver(AppLifecycleObserver());

@@ -4,7 +4,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/xboard/utils/url_masker.dart';
 
-class FlClashHttpOverrides extends HttpOverrides {
+class MxycloudHttpOverrides extends HttpOverrides {
   static String handleFindProxy(Uri url) {
     if ([localhost].contains(url.host)) {
       return "DIRECT";
