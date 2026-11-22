@@ -23,13 +23,17 @@ ArchitecturesInstallIn64BitMode={{ARCH}}
 //
 // 原来按进程名 taskkill：一是名字表里还是旧的 Flclash.exe（实际叫 mxycloud.exe），
 // 主程序根本没被杀掉；二是同名进程可能属于另一份安装（便携版 / 旧版本），
-// 按名字杀会把别处的实例一起干掉。改成按可执行文件路径过滤，只杀 {app} 下的。
+// 按名字杀会把别处的实例一起干掉。改成按可执行文件路径过滤，只杀安装目录下的。
+//
+// 注意：这里必须用 WizardDirValue 而不是 ExpandConstant('{app}')，
+// 并且只能在 PrepareToInstall 之后调用——{app} 在 InitializeSetup 阶段还没初始化，
+// 提前展开会直接弹 "An attempt was made to expand the app constant before it was initialized"。
 procedure KillProcesses;
 var
   AppDir: String;
   ResultCode: Integer;
 begin
-  AppDir := AddBackslash(ExpandConstant('{app}'));
+  AppDir := AddBackslash(WizardDirValue);
   StringChangeEx(AppDir, '''', '''''', True);
   Exec('powershell.exe',
     '-NoProfile -NonInteractive -Command "Get-Process -ErrorAction SilentlyContinue | ' +
@@ -46,11 +50,11 @@ begin
   Exec('sc.exe', 'delete FlClashHelperService', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
-function InitializeSetup(): Boolean;
+function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-  KillProcesses;
   RemoveLegacyHelperService;
-  Result := True;
+  KillProcesses;
+  Result := '';
 end;
 
 [Languages]
