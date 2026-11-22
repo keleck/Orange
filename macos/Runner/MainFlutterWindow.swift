@@ -9,9 +9,11 @@ class MainFlutterWindow: NSWindow {
 
     override func awakeFromNib() {
         let flutterViewController = FlutterViewController()
-        let windowFrame = self.frame
         self.contentViewController = flutterViewController
-        self.setFrame(windowFrame, display: true)
+        // 窗口尺寸/位置在这里就定死并居中，避免启动画面先以 xib 的尺寸露出、
+        // 等 Dart 侧 setSize 之后又跳一下（看起来就是窗口突然变形）
+        self.setContentSize(NSSize(width: 420, height: 780))
+        self.center()
 
         FlutterMethodChannel(
             name: "launch_at_startup", binaryMessenger: flutterViewController.engine.binaryMessenger
@@ -116,10 +118,5 @@ class MainFlutterWindow: NSWindow {
         }, completionHandler: {
             splash.removeFromSuperview()
         })
-    }
-
-    override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
-        super.order(place, relativeTo: otherWin)
-        hiddenWindowAtLaunch()
     }
 }
