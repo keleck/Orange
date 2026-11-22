@@ -377,28 +377,29 @@ func handleGetExternalProvider(externalProviderName string) string {
 
 func handleUpdateGeoData(geoType string, geoName string, fn func(value string)) {
 	go func() {
-		path := constant.Path.Resolve(geoName)
+		// 上游把「带路径」的更新函数合并成了无参版本，落盘位置由
+		// constant.Path 决定（初始化时已 SetHomeDir 到 App 数据目录）
 		switch geoType {
 		case "MMDB":
-			err := updater.UpdateMMDBWithPath(path)
+			err := updater.UpdateMMDB()
 			if err != nil {
 				fn(err.Error())
 				return
 			}
 		case "ASN":
-			err := updater.UpdateASNWithPath(path)
+			err := updater.UpdateASN()
 			if err != nil {
 				fn(err.Error())
 				return
 			}
 		case "GeoIp":
-			err := updater.UpdateGeoIpWithPath(path)
+			err := updater.UpdateGeoIp()
 			if err != nil {
 				fn(err.Error())
 				return
 			}
 		case "GeoSite":
-			err := updater.UpdateGeoSiteWithPath(path)
+			err := updater.UpdateGeoSite()
 			if err != nil {
 				fn(err.Error())
 				return
@@ -544,12 +545,13 @@ func handleSetupConfig(bytes []byte) string {
 }
 
 func init() {
-	adapter.UrlTestHook = func(url string, name string, delay uint16) {
+	adapter.UrlTestHook = func(url string, name string, delay uint16, timedOut bool) {
 		delayData := &Delay{
 			Url:  url,
 			Name: name,
 		}
-		if delay == 0 {
+		// timedOut：测试上下文已结束（504），按失败处理
+		if timedOut || delay == 0 {
 			delayData.Value = -1
 		} else {
 			delayData.Value = int32(delay)
