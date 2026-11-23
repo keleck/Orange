@@ -150,6 +150,10 @@ class ApplicationState extends ConsumerState<Application> {
 
   /// 检查应用更新
   void _checkForUpdates() {
+    // 跟随「自动检查更新」开关：关掉后启动不再自动检查（关于页/用户中心的手动入口仍可用）
+    if (!ref.read(appSettingProvider).autoCheckUpdate) {
+      return;
+    }
     // 延迟5秒后检查更新，确保应用完全启动
     Future.delayed(const Duration(seconds: 5), () async {
       try {
