@@ -103,14 +103,14 @@ class AppColors {
     }
     return const [
       BoxShadow(
-        color: Color(0x0D12203A),
-        blurRadius: 3,
-        offset: Offset(0, 1),
+        color: Color(0x1A12203A),
+        blurRadius: 4,
+        offset: Offset(0, 2),
       ),
       BoxShadow(
-        color: Color(0x1412203A),
-        blurRadius: 22,
-        offset: Offset(0, 10),
+        color: Color(0x2412203A),
+        blurRadius: 26,
+        offset: Offset(0, 12),
       ),
     ];
   }
@@ -166,24 +166,24 @@ class AppColors {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Color(0xFFE9F1FC),
           Color(0xFFDDE8F7),
-          Color(0xFFE4EDFA),
+          Color(0xFFD3E1F4),
+          Color(0xFFDBE7F7),
         ],
         stops: [0.0, 0.55, 1.0],
       ),
-      // 右上光晕
+      // 左上光晕：半径要小，光才是一团，而不是把整屏冲白
       RadialGradient(
-        center: Alignment(0.95, -1.05),
-        radius: 0.95,
-        colors: [Color(0x8CFFFFFF), Color(0x00FFFFFF)],
+        center: Alignment(-0.75, -1.0),
+        radius: 0.62,
+        colors: [Color(0xE6FFFFFF), Color(0x00FFFFFF)],
         stops: [0.0, 1.0],
       ),
-      // 左下光晕
+      // 右下光晕：弱一些，只托一下边缘
       RadialGradient(
-        center: Alignment(-1.0, 1.05),
-        radius: 0.9,
-        colors: [Color(0x5CFFFFFF), Color(0x00FFFFFF)],
+        center: Alignment(1.0, 1.05),
+        radius: 0.55,
+        colors: [Color(0x4DFFFFFF), Color(0x00FFFFFF)],
         stops: [0.0, 1.0],
       ),
     ]);
