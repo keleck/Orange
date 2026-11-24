@@ -293,69 +293,11 @@ class ApplicationState extends ConsumerState<Application> {
               locale: utils.getLocaleForString(locale),
               supportedLocales: AppLocalizations.delegate.supportedLocales,
               themeMode: themeProps.themeMode, // 跟随「主题模式」设置
-              // 白天主题：冷调浅蓝灰底 + 纯白卡片
-              // 底色只带一点冷蓝，卡片用纯白才「浮」得出来；层级靠明度差，
-              // 描边只做极淡的辅助，不抢内容。
+              // 白天主题：淡蓝背景 + 柔和白卡片 + 蓝色主色
               theme: ThemeData(
                 useMaterial3: true,
                 pageTransitionsTheme: _pageTransitionsTheme,
                 scaffoldBackgroundColor: AppColors.lightScaffold,
-                // 正文/标题统一走深墨蓝灰，白底上清晰但不刺眼
-                textTheme: ThemeData.light().textTheme.apply(
-                  bodyColor: AppColors.lightForeground,
-                  displayColor: AppColors.lightForeground,
-                ),
-                iconTheme: const IconThemeData(
-                  color: AppColors.lightForegroundSecondary,
-                ),
-                dividerTheme: const DividerThemeData(
-                  color: Color(0xFFE6EBF2),
-                  thickness: 0.8,
-                  space: 0.8,
-                ),
-                // 卡片：纯白 + 零描边 + 16 圆角，靠底色对比分层
-                cardTheme: CardThemeData(
-                  color: AppColors.lightSurface,
-                  elevation: 0,
-                  margin: EdgeInsets.zero,
-                  surfaceTintColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                // 输入框：浅灰填充 + 极淡描边，聚焦才用主色
-                inputDecorationTheme: InputDecorationThemeData(
-                  filled: true,
-                  fillColor: AppColors.lightSurfaceSubtle,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Color(0xFFDDE4EE),
-                      width: 0.8,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Color(0xFFDDE4EE),
-                      width: 0.8,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: themeProps.primaryColor != null
-                          ? Color(themeProps.primaryColor!)
-                          : const Color(0xFF2563EB),
-                      width: 1.2,
-                    ),
-                  ),
-                ),
                 appBarTheme: const AppBarTheme(
                   backgroundColor: Colors.transparent,
                   elevation: 0,
@@ -370,16 +312,14 @@ class ApplicationState extends ConsumerState<Application> {
                   brightness: Brightness.light,
                   primaryColor: themeProps.primaryColor,
                 ).copyWith(
+                  // 统一走柔和白，避免大面积纯白在白天刺眼
                   surface: AppColors.lightSurface,
                   surfaceContainerLowest: AppColors.lightSurface,
                   surfaceContainerLow: AppColors.lightSurface,
                   surfaceContainer: AppColors.lightSurfaceSubtle,
-                  surfaceContainerHigh: const Color(0xFFEAEFF7),
-                  surfaceContainerHighest: const Color(0xFFE1E8F2),
-                  onSurface: AppColors.lightForeground,
-                  onSurfaceVariant: AppColors.lightForegroundSecondary,
-                  outline: const Color(0xFFDDE4EE),
-                  outlineVariant: const Color(0xFFE6EBF2),
+                  surfaceContainerHigh: const Color(0xFFEBF1F8),
+                  surfaceContainerHighest: const Color(0xFFDFE7F0),
+                  onSurface: const Color(0xFF1B1B1F),
                 ),
               ),
               darkTheme: ThemeData(
