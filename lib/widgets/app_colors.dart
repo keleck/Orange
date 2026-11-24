@@ -12,23 +12,32 @@ class AppColors {
   static const Color gradientColor4 = Color(0xFF1A0F2E); // 深紫色
 
   // ------------------------------------------------------------ 浅色（白天）
-  // 白天不再使用纯白 #FFFFFF：大面积纯白在亮环境下刺眼、边缘发灰。
-  // 统一改成带一丝冷调的「柔和白」，并保留由低到高的层级差异。
-  static const Color lightSurface = Color(0xFFF8FAFC); // 卡片 / 面板主底色
-  static const Color lightSurfaceElevated = Color(0xFFFBFCFE); // 弹层 / 浮起卡片
-  static const Color lightSurfaceSubtle = Color(0xFFF1F5F9); // 卡片内次级块
-  static const Color lightSurfaceStrong = Color(0xFFE9EFF6); // 嵌套块 / 输入框
-  static const Color lightScaffold = Color(0xFFEDF3FD); // 页面底色（渐变中段）
+  // 冷调浅蓝灰底 + 纯白卡片：底色只带一点冷蓝，白卡才"跳"得出来，
+  // 大面积仍然是低饱和的近中性色，不刺眼。
+  // 层级靠「白卡 → 浅灰次级块 → 更深嵌套块」的明度差，不靠重描边。
+  static const Color lightSurface = Color(0xFFFFFFFF); // 卡片 / 面板（纯白）
+  static const Color lightSurfaceElevated = Color(0xFFFFFFFF); // 弹层
+  static const Color lightSurfaceSubtle = Color(0xFFF4F7FB); // 卡片内次级块
+  static const Color lightSurfaceStrong = Color(0xFFE8EEF6); // 嵌套块 / 输入框
+  static const Color lightScaffold = Color(0xFFF0F3F8); // 页面底色
 
-  static const Color lightGradientColor1 = Color(0xFFDCEAFB); // 顶部淡蓝
-  static const Color lightGradientColor2 = Color(0xFFE8F1FD); // 中上部
-  static const Color lightGradientColor3 = Color(0xFFEFF5FE); // 中下部
-  static const Color lightGradientColor4 = Color(0xFFE3EDFA); // 底部回蓝
+  // 背景渐变：冷调浅蓝灰，明度差极小，避免出现明显色带
+  static const Color lightGradientColor1 = Color(0xFFF6F9FC); // 顶部
+  static const Color lightGradientColor2 = Color(0xFFF0F4FA); // 中上部
+  static const Color lightGradientColor3 = Color(0xFFF2F6FB); // 中下部
+  static const Color lightGradientColor4 = Color(0xFFEFF4FA); // 底部
 
   static const List<double> gradientStops = [0.0, 0.3, 0.7, 1.0];
 
   /// 浅色主题下的前景色（文字 / 图标）
-  static const Color lightForeground = Color(0xFF1B1B1F);
+  /// 白卡上用深墨蓝灰，比纯黑柔和，但在纯白上依然清晰锐利。
+  static const Color lightForeground = Color(0xFF1B2430);
+
+  /// 次级文字（说明、副标题）
+  static const Color lightForegroundSecondary = Color(0xFF6E7A8A);
+
+  /// 三级文字（占位、辅助信息）
+  static const Color lightForegroundTertiary = Color(0xFF96A0AD);
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
