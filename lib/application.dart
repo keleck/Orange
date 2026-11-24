@@ -293,11 +293,66 @@ class ApplicationState extends ConsumerState<Application> {
               locale: utils.getLocaleForString(locale),
               supportedLocales: AppLocalizations.delegate.supportedLocales,
               themeMode: themeProps.themeMode, // 跟随「主题模式」设置
-              // 白天主题：淡蓝背景 + 柔和白卡片 + 蓝色主色
+              // 白天主题：蓝白 + 光感
+              // 背景是左上角发散的柔光渐变，卡片用半透明白（磨砂），
+              // 让光透上来形成层次；描边只做极淡辅助。
               theme: ThemeData(
                 useMaterial3: true,
                 pageTransitionsTheme: _pageTransitionsTheme,
                 scaffoldBackgroundColor: AppColors.lightScaffold,
+                textTheme: ThemeData.light().textTheme.apply(
+                  bodyColor: AppColors.lightForeground,
+                  displayColor: AppColors.lightForeground,
+                ),
+                iconTheme: const IconThemeData(
+                  color: AppColors.lightForegroundSecondary,
+                ),
+                dividerTheme: const DividerThemeData(
+                  color: Color(0xFFE3EBF7),
+                  thickness: 0.8,
+                  space: 0.8,
+                ),
+                cardTheme: CardThemeData(
+                  color: AppColors.lightSurface,
+                  elevation: 0,
+                  margin: EdgeInsets.zero,
+                  surfaceTintColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                inputDecorationTheme: InputDecorationThemeData(
+                  filled: true,
+                  fillColor: AppColors.lightSurfaceSubtle,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFD7E2F2),
+                      width: 0.8,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFD7E2F2),
+                      width: 0.8,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: themeProps.primaryColor != null
+                          ? Color(themeProps.primaryColor!)
+                          : const Color(0xFF2F6BFF),
+                      width: 1.2,
+                    ),
+                  ),
+                ),
                 appBarTheme: const AppBarTheme(
                   backgroundColor: Colors.transparent,
                   elevation: 0,
@@ -312,14 +367,16 @@ class ApplicationState extends ConsumerState<Application> {
                   brightness: Brightness.light,
                   primaryColor: themeProps.primaryColor,
                 ).copyWith(
-                  // 统一走柔和白，避免大面积纯白在白天刺眼
                   surface: AppColors.lightSurface,
                   surfaceContainerLowest: AppColors.lightSurface,
                   surfaceContainerLow: AppColors.lightSurface,
                   surfaceContainer: AppColors.lightSurfaceSubtle,
-                  surfaceContainerHigh: const Color(0xFFEBF1F8),
-                  surfaceContainerHighest: const Color(0xFFDFE7F0),
-                  onSurface: const Color(0xFF1B1B1F),
+                  surfaceContainerHigh: const Color(0xFFEAEFF9),
+                  surfaceContainerHighest: const Color(0xFFDFE8F6),
+                  onSurface: AppColors.lightForeground,
+                  onSurfaceVariant: AppColors.lightForegroundSecondary,
+                  outline: const Color(0xFFD7E2F2),
+                  outlineVariant: const Color(0xFFE3EBF7),
                 ),
               ),
               darkTheme: ThemeData(

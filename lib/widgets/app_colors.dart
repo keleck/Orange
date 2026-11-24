@@ -12,23 +12,33 @@ class AppColors {
   static const Color gradientColor4 = Color(0xFF1A0F2E); // 深紫色
 
   // ------------------------------------------------------------ 浅色（白天）
-  // 白天不再使用纯白 #FFFFFF：大面积纯白在亮环境下刺眼、边缘发灰。
-  // 统一改成带一丝冷调的「柔和白」，并保留由低到高的层级差异。
-  static const Color lightSurface = Color(0xFFF8FAFC); // 卡片 / 面板主底色
-  static const Color lightSurfaceElevated = Color(0xFFFBFCFE); // 弹层 / 浮起卡片
-  static const Color lightSurfaceSubtle = Color(0xFFF1F5F9); // 卡片内次级块
-  static const Color lightSurfaceStrong = Color(0xFFE9EFF6); // 嵌套块 / 输入框
-  static const Color lightScaffold = Color(0xFFEDF3FD); // 页面底色（渐变中段）
+  // 蓝白 + 光感：底色是一层极淡的冷蓝，左上角带一团柔光，
+  // 卡片用半透明白（磨砂感），让光透上来形成层次，而不是靠描边硬切。
+  static const Color lightSurface = Color(0xFFFFFFFF); // 卡片（不透明白，用于弹层）
+  static const Color lightSurfaceElevated = Color(0xFFFFFFFF); // 弹层
+  static const Color lightSurfaceSubtle = Color(0xFFF4F8FE); // 卡片内次级块
+  static const Color lightSurfaceStrong = Color(0xFFE8EFFA); // 嵌套块 / 输入框
+  static const Color lightScaffold = Color(0xFFE7EFFA); // 页面底色（渐变深处）
 
-  static const Color lightGradientColor1 = Color(0xFFDCEAFB); // 顶部淡蓝
-  static const Color lightGradientColor2 = Color(0xFFE8F1FD); // 中上部
-  static const Color lightGradientColor3 = Color(0xFFEFF5FE); // 中下部
-  static const Color lightGradientColor4 = Color(0xFFE3EDFA); // 底部回蓝
+  // 磨砂卡片：半透明白，让背景的光晕透上来
+  static const Color lightGlass = Color(0xD9FFFFFF); // 85% 白
+
+  // 背景：左上角柔光 → 右下角略深，形成斜向的光感
+  static const Color lightGradientColor1 = Color(0xFFFCFDFF); // 光心
+  static const Color lightGradientColor2 = Color(0xFFEDF4FD); // 过渡
+  static const Color lightGradientColor3 = Color(0xFFE6EEF9); // 中段
+  static const Color lightGradientColor4 = Color(0xFFE1EAF7); // 边缘
 
   static const List<double> gradientStops = [0.0, 0.3, 0.7, 1.0];
 
   /// 浅色主题下的前景色（文字 / 图标）
-  static const Color lightForeground = Color(0xFF1B1B1F);
+  static const Color lightForeground = Color(0xFF101E36);
+
+  /// 次级文字（说明、副标题）
+  static const Color lightForegroundSecondary = Color(0xFF6A7A94);
+
+  /// 三级文字（占位、辅助信息）
+  static const Color lightForegroundTertiary = Color(0xFF8A99B0);
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -69,7 +79,7 @@ class AppColors {
   static Color surface(BuildContext context, [double darkAlpha = 0.06]) =>
       isDark(context)
           ? Colors.white.withValues(alpha: darkAlpha)
-          : lightSurface;
+          : lightGlass;
 
   /// 卡片内的次级块（图标块 / 小标签底）：夜间半透明白，白天浅灰
   static Color subtle(BuildContext context) => isDark(context)
@@ -91,7 +101,7 @@ class AppColors {
       isDark(context) ? const Color(0xFF1A1535) : lightSurfaceElevated;
 
   /// 获取背景渐变（跟随当前主题）
-  static LinearGradient backgroundGradient(BuildContext context) {
+  static Gradient backgroundGradient(BuildContext context) {
     if (isDark(context)) {
       return const LinearGradient(
         begin: Alignment.topLeft,
@@ -105,9 +115,10 @@ class AppColors {
         stops: gradientStops,
       );
     }
-    return const LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
+    // 左上角光心向外扩散，右下角最沉——斜向的光感
+    return const RadialGradient(
+      center: Alignment(-0.9, -1.0),
+      radius: 1.65,
       colors: [
         lightGradientColor1,
         lightGradientColor2,
