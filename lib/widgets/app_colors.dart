@@ -24,10 +24,10 @@ class AppColors {
   static const Color lightGlass = Color(0xD9FFFFFF); // 85% 白
 
   // 背景：左上角柔光 → 右下角略深，形成斜向的光感
-  static const Color lightGradientColor1 = Color(0xFFFCFDFF); // 光心
-  static const Color lightGradientColor2 = Color(0xFFEDF4FD); // 过渡
-  static const Color lightGradientColor3 = Color(0xFFE6EEF9); // 中段
-  static const Color lightGradientColor4 = Color(0xFFE1EAF7); // 边缘
+  static const Color lightGradientColor1 = Color(0xFFF9FCFF); // 左下光心
+  static const Color lightGradientColor2 = Color(0xFFE9F1FC); // 过渡
+  static const Color lightGradientColor3 = Color(0xFFDEE8F6); // 中段最沉
+  static const Color lightGradientColor4 = Color(0xFFFBFDFF); // 右上光心
 
   static const List<double> gradientStops = [0.0, 0.3, 0.7, 1.0];
 
@@ -115,17 +115,21 @@ class AppColors {
         stops: gradientStops,
       );
     }
-    // 左上角光心向外扩散，右下角最沉——斜向的光感
-    return const RadialGradient(
-      center: Alignment(-0.9, -1.0),
-      radius: 1.65,
+    // 双光晕：左下 + 右上两处偏亮，中间最沉。
+    // BoxDecoration 只能挂一个 gradient，所以用一条对角渐变模拟「两团柔光」：
+    // 两端亮、中段暗，视觉上就是两处光源。真正的径向双光晕需要包一层
+    // Stack 叠两个 RadialGradient，那要改页面结构，暂不做。
+    return const LinearGradient(
+      begin: Alignment.bottomLeft,
+      end: Alignment.topRight,
       colors: [
-        lightGradientColor1,
+        lightGradientColor1, // 左下光
         lightGradientColor2,
-        lightGradientColor3,
-        lightGradientColor4,
+        lightGradientColor3, // 中段最沉
+        lightGradientColor2,
+        lightGradientColor4, // 右上光
       ],
-      stops: gradientStops,
+      stops: [0.0, 0.26, 0.5, 0.74, 1.0],
     );
   }
 
