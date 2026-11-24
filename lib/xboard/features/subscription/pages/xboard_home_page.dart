@@ -979,11 +979,12 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             decoration: BoxDecoration(
               color: AppColors.surface(context, 0.1),
               borderRadius: BorderRadius.circular(16),
+              boxShadow: AppColors.cardShadow(context),
               border: Border.all(
                 color: isExpiringSoon
                     ? const Color.fromARGB(255, 255, 110, 38)
                         .withValues(alpha: 0.4)
-                    : AppColors.fg(context).withValues(alpha: 0.2),
+                    : AppColors.fg(context).withValues(alpha: 0.06),
                 width: isExpiringSoon ? 1.5 : 1,
               ),
             ),

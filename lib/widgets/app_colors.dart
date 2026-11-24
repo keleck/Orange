@@ -21,7 +21,7 @@ class AppColors {
   static const Color lightScaffold = Color(0xFFE7EFFA); // 页面底色（渐变深处）
 
   // 磨砂卡片：半透明白，让背景的光晕透上来
-  static const Color lightGlass = Color(0xD9FFFFFF); // 85% 白
+  static const Color lightGlass = Color(0xF2FFFFFF); // 95% 白
 
   // 背景：左上角柔光 → 右下角略深，形成斜向的光感
   static const Color lightGradientColor1 = Color(0xFFF9FCFF); // 左下光心
@@ -96,6 +96,25 @@ class AppColors {
       ? Colors.white.withValues(alpha: 0.14)
       : const Color(0xFFDCE3EE);
 
+  /// 卡片柔和阴影：浅色下用双层投影（贴近 + 扩散），营造浮起感
+  static List<BoxShadow> cardShadow(BuildContext context) {
+    if (isDark(context)) {
+      return const [];
+    }
+    return const [
+      BoxShadow(
+        color: Color(0x0D12203A),
+        blurRadius: 3,
+        offset: Offset(0, 1),
+      ),
+      BoxShadow(
+        color: Color(0x1412203A),
+        blurRadius: 22,
+        offset: Offset(0, 10),
+      ),
+    ];
+  }
+
   /// 弹层 / 面板底色（跟随当前主题）
   static Color panel(BuildContext context) =>
       isDark(context) ? const Color(0xFF1A1535) : lightSurfaceElevated;
@@ -147,24 +166,24 @@ class AppColors {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Color(0xFFF3F8FE),
-          Color(0xFFE9F1FB),
-          Color(0xFFE2EBF7),
+          Color(0xFFE9F1FC),
+          Color(0xFFDDE8F7),
+          Color(0xFFE4EDFA),
         ],
         stops: [0.0, 0.55, 1.0],
       ),
       // 右上光晕
       RadialGradient(
-        center: Alignment(0.92, -1.0),
-        radius: 1.15,
-        colors: [Color(0xD9FFFFFF), Color(0x00FFFFFF)],
+        center: Alignment(0.95, -1.05),
+        radius: 0.95,
+        colors: [Color(0x8CFFFFFF), Color(0x00FFFFFF)],
         stops: [0.0, 1.0],
       ),
       // 左下光晕
       RadialGradient(
-        center: Alignment(-0.95, 1.0),
-        radius: 1.05,
-        colors: [Color(0xA6FFFFFF), Color(0x00FFFFFF)],
+        center: Alignment(-1.0, 1.05),
+        radius: 0.9,
+        colors: [Color(0x5CFFFFFF), Color(0x00FFFFFF)],
         stops: [0.0, 1.0],
       ),
     ]);
