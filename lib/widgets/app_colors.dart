@@ -133,11 +133,41 @@ class AppColors {
     );
   }
 
-  /// 获取背景渐变的 BoxDecoration（跟随当前主题）
-  static BoxDecoration backgroundDecoration(BuildContext context) {
-    return BoxDecoration(
-      gradient: backgroundGradient(context),
-    );
+  /// 获取背景装饰（跟随当前主题）
+  ///
+  /// 白天用「底色 + 右上光晕 + 左下光晕」三层叠加，做出真正的双光晕；
+  /// 夜晚保持原来的四段线性渐变。
+  static Decoration backgroundDecoration(BuildContext context) {
+    if (isDark(context)) {
+      return MultiGradientDecoration([backgroundGradient(context)]);
+    }
+    return const MultiGradientDecoration([
+      // 底色：极淡的冷蓝，从上到下略微加深
+      LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFFF3F8FE),
+          Color(0xFFE9F1FB),
+          Color(0xFFE2EBF7),
+        ],
+        stops: [0.0, 0.55, 1.0],
+      ),
+      // 右上光晕
+      RadialGradient(
+        center: Alignment(0.92, -1.0),
+        radius: 1.15,
+        colors: [Color(0xD9FFFFFF), Color(0x00FFFFFF)],
+        stops: [0.0, 1.0],
+      ),
+      // 左下光晕
+      RadialGradient(
+        center: Alignment(-0.95, 1.0),
+        radius: 1.05,
+        colors: [Color(0xA6FFFFFF), Color(0x00FFFFFF)],
+        stops: [0.0, 1.0],
+      ),
+    ]);
   }
 
   /// 兼容旧调用：固定深色渐变（新代码请用 [backgroundDecoration]）
@@ -164,4 +194,59 @@ class AppColors {
   // 卡片渐变背景颜色
   static const Color cardGradientColor1 = Color(0xFF1A1535); // 半透明深紫
   static const Color cardGradientColor2 = Color(0xFF1E2A47); // 半透明海军蓝
+}
+
+
+/// 多层渐变装饰。
+///
+/// Flutter 的 [BoxDecoration] 只能挂一个 gradient，做不出「底色 + 两团光晕」
+/// 这种多光源背景。这里自己实现一个 [Decoration]，按顺序把多层渐变画在
+/// 同一个矩形上，外层用透明到透明的径向渐变就能叠出柔光。
+class MultiGradientDecoration extends Decoration {
+  const MultiGradientDecoration(this.layers);
+
+  final List<Gradient> layers;
+
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return _MultiGradientPainter(layers);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! MultiGradientDecoration ||
+        other.layers.length != layers.length) {
+      return false;
+    }
+    for (var i = 0; i < layers.length; i++) {
+      if (other.layers[i] != layers[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(layers);
+}
+
+class _MultiGradientPainter extends BoxPainter {
+  _MultiGradientPainter(this.layers);
+
+  final List<Gradient> layers;
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    final size = configuration.size;
+    if (size == null || size.isEmpty) {
+      return;
+    }
+    final rect = offset & size;
+    for (final layer in layers) {
+      canvas.drawRect(rect, Paint()..shader = layer.createShader(rect));
+    }
+  }
 }
