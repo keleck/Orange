@@ -293,73 +293,11 @@ class ApplicationState extends ConsumerState<Application> {
               locale: utils.getLocaleForString(locale),
               supportedLocales: AppLocalizations.delegate.supportedLocales,
               themeMode: themeProps.themeMode, // 跟随「主题模式」设置
-              // 白天主题：近中性冷灰底 + 柔和白卡片 + 蓝色主色
-              // 原则：大面积色块压饱和、压对比；分区靠明度层级和细描边，
-              // 不靠重阴影；文字用深灰而不是纯黑。
+              // 白天主题：淡蓝背景 + 柔和白卡片 + 蓝色主色
               theme: ThemeData(
                 useMaterial3: true,
                 pageTransitionsTheme: _pageTransitionsTheme,
                 scaffoldBackgroundColor: AppColors.lightScaffold,
-                // 正文/标题统一走深灰，避免纯黑在浅底上发"硬"
-                textTheme: ThemeData.light().textTheme.apply(
-                  bodyColor: AppColors.lightForeground,
-                  displayColor: AppColors.lightForeground,
-                ),
-                iconTheme: const IconThemeData(
-                  color: AppColors.lightForegroundSecondary,
-                ),
-                dividerTheme: const DividerThemeData(
-                  color: Color(0xFFE4E9EF),
-                  thickness: 0.8,
-                  space: 0.8,
-                ),
-                // 卡片：零阴影 + 1px 细描边，靠描边分层，避免浅色下阴影发脏
-                cardTheme: CardThemeData(
-                  color: AppColors.lightSurface,
-                  elevation: 0,
-                  margin: EdgeInsets.zero,
-                  surfaceTintColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: const BorderSide(
-                      color: Color(0xFFD9DFE7),
-                      width: 0.8,
-                    ),
-                  ),
-                ),
-                // 输入框：填充浅灰底 + 细描边，聚焦时才用主色
-                inputDecorationTheme: InputDecorationThemeData(
-                  filled: true,
-                  fillColor: AppColors.lightSurfaceSubtle,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Color(0xFFD9DFE7),
-                      width: 0.8,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Color(0xFFD9DFE7),
-                      width: 0.8,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: themeProps.primaryColor != null
-                          ? Color(themeProps.primaryColor!)
-                          : const Color(0xFF4C8DFF),
-                      width: 1.2,
-                    ),
-                  ),
-                ),
                 appBarTheme: const AppBarTheme(
                   backgroundColor: Colors.transparent,
                   elevation: 0,
@@ -379,12 +317,9 @@ class ApplicationState extends ConsumerState<Application> {
                   surfaceContainerLowest: AppColors.lightSurface,
                   surfaceContainerLow: AppColors.lightSurface,
                   surfaceContainer: AppColors.lightSurfaceSubtle,
-                  surfaceContainerHigh: const Color(0xFFE9EEF3),
-                  surfaceContainerHighest: const Color(0xFFDFE5EB),
-                  onSurface: AppColors.lightForeground,
-                  onSurfaceVariant: AppColors.lightForegroundSecondary,
-                  outline: const Color(0xFFD9DFE7),
-                  outlineVariant: const Color(0xFFE4E9EF),
+                  surfaceContainerHigh: const Color(0xFFEBF1F8),
+                  surfaceContainerHighest: const Color(0xFFDFE7F0),
+                  onSurface: const Color(0xFF1B1B1F),
                 ),
               ),
               darkTheme: ThemeData(

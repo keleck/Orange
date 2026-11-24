@@ -12,34 +12,23 @@ class AppColors {
   static const Color gradientColor4 = Color(0xFF1A0F2E); // 深紫色
 
   // ------------------------------------------------------------ 浅色（白天）
-  // 白天不用纯白 #FFFFFF：大面积纯白在亮环境下刺眼、卡片边缘发灰。
-  // 也刻意压低蓝味——背景是大面积色块，饱和度一高整屏就"泛蓝"，看久了累。
-  // 层级从低到高（页面 → 卡片 → 次级块 → 嵌套块）逐级加深，靠明度差分区，
-  // 而不是靠重描边或重阴影。
-  static const Color lightSurface = Color(0xFFFAFBFC); // 卡片 / 面板主底色
-  static const Color lightSurfaceElevated = Color(0xFFFCFDFE); // 弹层 / 浮起卡片
-  static const Color lightSurfaceSubtle = Color(0xFFF1F4F8); // 卡片内次级块
-  static const Color lightSurfaceStrong = Color(0xFFE7ECF2); // 嵌套块 / 输入框
-  static const Color lightScaffold = Color(0xFFEFF2F6); // 页面底色
+  // 白天不再使用纯白 #FFFFFF：大面积纯白在亮环境下刺眼、边缘发灰。
+  // 统一改成带一丝冷调的「柔和白」，并保留由低到高的层级差异。
+  static const Color lightSurface = Color(0xFFF8FAFC); // 卡片 / 面板主底色
+  static const Color lightSurfaceElevated = Color(0xFFFBFCFE); // 弹层 / 浮起卡片
+  static const Color lightSurfaceSubtle = Color(0xFFF1F5F9); // 卡片内次级块
+  static const Color lightSurfaceStrong = Color(0xFFE9EFF6); // 嵌套块 / 输入框
+  static const Color lightScaffold = Color(0xFFEDF3FD); // 页面底色（渐变中段）
 
-  // 背景渐变：近中性的冷灰蓝，明度差很小，避免顶部一条明显蓝带
-  static const Color lightGradientColor1 = Color(0xFFE8EDF3); // 顶部
-  static const Color lightGradientColor2 = Color(0xFFF0F3F7); // 中上部
-  static const Color lightGradientColor3 = Color(0xFFF4F7FA); // 中下部
-  static const Color lightGradientColor4 = Color(0xFFEAF0F6); // 底部
+  static const Color lightGradientColor1 = Color(0xFFDCEAFB); // 顶部淡蓝
+  static const Color lightGradientColor2 = Color(0xFFE8F1FD); // 中上部
+  static const Color lightGradientColor3 = Color(0xFFEFF5FE); // 中下部
+  static const Color lightGradientColor4 = Color(0xFFE3EDFA); // 底部回蓝
 
   static const List<double> gradientStops = [0.0, 0.3, 0.7, 1.0];
 
   /// 浅色主题下的前景色（文字 / 图标）
-  /// 不用近黑 #1B1B1F：在浅底上对比过强，长时间阅读发"硬"。
-  /// #2C333B 与 #FAFBFC 的对比度约 12:1，仍然远超可读性要求。
-  static const Color lightForeground = Color(0xFF2C333B);
-
-  /// 次级文字（说明、副标题）
-  static const Color lightForegroundSecondary = Color(0xFF5A6673);
-
-  /// 三级文字（占位、辅助信息）
-  static const Color lightForegroundTertiary = Color(0xFF8A94A0);
+  static const Color lightForeground = Color(0xFF1B1B1F);
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -90,12 +79,12 @@ class AppColors {
   /// 分割线：夜间半透明白，白天浅灰
   static Color divider(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.10)
-      : const Color(0xFFE4E9EF);
+      : const Color(0xFFE5EAF2);
 
   /// 细描边：夜间半透明白，白天浅灰
   static Color outline(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.14)
-      : const Color(0xFFD9DFE7);
+      : const Color(0xFFDCE3EE);
 
   /// 弹层 / 面板底色（跟随当前主题）
   static Color panel(BuildContext context) =>
