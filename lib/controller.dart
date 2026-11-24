@@ -363,6 +363,50 @@ class AppController {
     await _setupClashConfig();
     await updateGroups();
     await updateProviders();
+    await _ensureGroupsSelected();
+  }
+
+  /// 冷启动兜底：给「没选上成员」的选择组补一个成员。
+  ///
+  /// 订阅里的组如果成员来自 proxy-provider，内核构造组的那一刻提供者还是空的，
+  /// 组的 now 就会是空串；之后提供者下载完，组也不会自动补选，表现就是
+  /// 「当前节点 -1ms、流量 0 B、连不通」，手动点一次节点才恢复。
+  /// 这里只在 now 为空（或指向不存在的成员）时补一次，不动用户已有的选择。
+  Future<void> _ensureGroupsSelected() async {
+    final groups = _ref.read(groupsProvider);
+    if (groups.isEmpty) {
+      return;
+    }
+    var changed = false;
+    for (final group in groups) {
+      if (group.type != GroupType.Selector) {
+        continue;
+      }
+      final now = group.now ?? '';
+      if (now.isNotEmpty && group.all.any((proxy) => proxy.name == now)) {
+        continue;
+      }
+      if (group.all.isEmpty) {
+        continue;
+      }
+      final target = group.all.firstWhereOrNull(
+            (proxy) =>
+                proxy.name.contains('自动') ||
+                proxy.name.toLowerCase().contains('auto'),
+          ) ??
+          group.all.first;
+      try {
+        await clashCore.changeProxy(
+          ChangeProxyParams(groupName: group.name, proxyName: target.name),
+        );
+        changed = true;
+      } catch (e) {
+        commonPrint.log('ensure group ${group.name} selected failed: $e');
+      }
+    }
+    if (changed) {
+      await updateGroups();
+    }
   }
 
   Future applyProfile({bool silence = false}) async {
