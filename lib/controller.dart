@@ -388,10 +388,10 @@ class AppController {
     if (emptyGroups.isEmpty) {
       return;
     }
-    final testUrl = _ref.read(patchClashConfigProvider).testUrl;
+    final testUrl = _ref.read(appSettingProvider).testUrl;
     for (final group in emptyGroups) {
       try {
-        await clashCore.asyncTestDelay(testUrl, group.name);
+        await clashCore.getDelay(testUrl, group.name);
       } catch (e) {
         commonPrint.log('retest group ${group.name} failed: $e');
       }
