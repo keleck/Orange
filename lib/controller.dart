@@ -363,6 +363,41 @@ class AppController {
     await _setupClashConfig();
     await updateGroups();
     await updateProviders();
+    await _retestEmptyGroups();
+  }
+
+  /// 冷启动后给「还没选出节点」的自动组补一次测速。
+  ///
+  /// url-test / fallback 组在内核刚起来时那一次测速很容易全部失败（网络栈、
+  /// 订阅提供者都还没就绪），失败后要等一个 interval 才会重测，期间组没有
+  /// 可用节点，表现就是「自动选择 -1ms、流量 0 B」，手动点一次节点再切回来
+  /// 才会恢复。这里在配置下发后主动补测一次。
+  Future<void> _retestEmptyGroups() async {
+    final groups = _ref.read(groupsProvider);
+    if (groups.isEmpty) {
+      return;
+    }
+    final emptyGroups = groups
+        .where(
+          (group) =>
+              (group.type == GroupType.URLTest ||
+                  group.type == GroupType.Fallback) &&
+              (group.now == null || group.now!.isEmpty),
+        )
+        .toList();
+    if (emptyGroups.isEmpty) {
+      return;
+    }
+    final testUrl = _ref.read(patchClashConfigProvider).testUrl;
+    for (final group in emptyGroups) {
+      try {
+        await clashCore.asyncTestDelay(testUrl, group.name);
+      } catch (e) {
+        commonPrint.log('retest group ${group.name} failed: $e');
+      }
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    await updateGroups();
   }
 
   Future applyProfile({bool silence = false}) async {
