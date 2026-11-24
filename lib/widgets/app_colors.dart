@@ -115,6 +115,40 @@ class AppColors {
     ];
   }
 
+  /// 玻璃卡片装饰：上白下微灰的竖向渐变 + 1px 亮边 + 柔阴影。
+  ///
+  /// 「光泽」不是靠颜色，而是靠三点：表面有极淡的明度渐变（像反光）、
+  /// 边缘有一圈比底色更亮的高光边、底下有扩散阴影。
+  static BoxDecoration glassDecoration(
+    BuildContext context, {
+    double radius = 20,
+  }) {
+    final dark = isDark(context);
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(radius),
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: dark
+            ? [
+                Colors.white.withValues(alpha: 0.10),
+                Colors.white.withValues(alpha: 0.04),
+              ]
+            : [
+                const Color(0xFFFFFFFF),
+                const Color(0xFFF6FAFF),
+              ],
+      ),
+      border: Border.all(
+        color: dark
+            ? Colors.white.withValues(alpha: 0.14)
+            : const Color(0xFFFFFFFF),
+        width: 1,
+      ),
+      boxShadow: cardShadow(context),
+    );
+  }
+
   /// 弹层 / 面板底色（跟随当前主题）
   static Color panel(BuildContext context) =>
       isDark(context) ? const Color(0xFF1A1535) : lightSurfaceElevated;
@@ -166,9 +200,9 @@ class AppColors {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Color(0xFFDDE8F7),
-          Color(0xFFD3E1F4),
-          Color(0xFFDBE7F7),
+          Color(0xFFE7EFFB),
+          Color(0xFFDCE8F7),
+          Color(0xFFE2ECFA),
         ],
         stops: [0.0, 0.55, 1.0],
       ),
