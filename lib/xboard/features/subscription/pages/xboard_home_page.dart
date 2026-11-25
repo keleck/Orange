@@ -742,14 +742,15 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             duration: const Duration(
                                                 milliseconds: 200),
                                             style: TextStyle(
-                                              color: AppColors.fg(context)
-                                                  .withValues(
-                                                alpha: isNodeLoading
-                                                    ? 0.4
-                                                    : (mode == Mode.rule
-                                                        ? 1.0
-                                                        : 0.6),
-                                              ),
+                                              // 选中态落在蓝色滑块上，文字必须用白色
+                                              color: mode == Mode.rule
+                                                  ? Colors.white
+                                                  : AppColors.fg(context)
+                                                      .withValues(
+                                                      alpha: isNodeLoading
+                                                          ? 0.4
+                                                          : 0.6,
+                                                    ),
                                               fontSize: 12,
                                               fontWeight: mode == Mode.rule
                                                   ? FontWeight.w600
@@ -776,14 +777,14 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                                             duration: const Duration(
                                                 milliseconds: 200),
                                             style: TextStyle(
-                                              color: AppColors.fg(context)
-                                                  .withValues(
-                                                alpha: isNodeLoading
-                                                    ? 0.4
-                                                    : (mode == Mode.global
-                                                        ? 1.0
-                                                        : 0.6),
-                                              ),
+                                              color: mode == Mode.global
+                                                  ? Colors.white
+                                                  : AppColors.fg(context)
+                                                      .withValues(
+                                                      alpha: isNodeLoading
+                                                          ? 0.4
+                                                          : 0.6,
+                                                    ),
                                               fontSize: 12,
                                               fontWeight: mode == Mode.global
                                                   ? FontWeight.w600
