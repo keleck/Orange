@@ -92,7 +92,7 @@ class AppColors {
 
   static Color divider(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.10)
-      : const Color(0xFFE5EAF2);
+      : const Color(0xFFC0C9D6);
 
   /// 玻璃卡描边：白天用白色高光边，夜间用半透明白
   static Color glassBorder(BuildContext context) => isDark(context)
