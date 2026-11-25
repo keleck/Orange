@@ -277,18 +277,12 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                               fontWeight: FontWeight.w600,
                             ),
                             decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context)
-                                  .xboardTopupAmount,
-                              // 标签是浮动的，要给它留出上边距，否则会被容器边框压住
-                              contentPadding: const EdgeInsets.only(
-                                top: 26,
-                                bottom: 12,
-                                right: 12,
-                              ),
-                              labelStyle: TextStyle(
-                                color: AppColors.fg(context)
-                                    .withValues(alpha: 0.6),
-                                fontSize: 14,
+                              // 不用浮动标签：边框是外层 Container 画的，
+                              // 浮动标签会被容器顶边裁掉（截图里的半截字）。
+                              // 弹窗标题已经写了"自定义金额"，这里不再重复。
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 4,
                               ),
                               prefixIcon: Padding(
                                 padding:
