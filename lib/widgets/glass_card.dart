@@ -19,6 +19,7 @@ class GlassCard extends StatelessWidget {
     this.tint,
     this.darkFill = 0.08,
     this.darkBorder = 0.14,
+    this.shadow = true,
   });
 
   final Widget child;
@@ -38,6 +39,9 @@ class GlassCard extends StatelessWidget {
 
   /// 夜间模式的描边透明度
   final double darkBorder;
+
+  /// 是否要投影（小控件如分段切换器不需要）
+  final bool shadow;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +86,7 @@ class GlassCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: borderRadius,
         // 夜间不加阴影，保持原来的观感
-        boxShadow: dark
+        boxShadow: (dark || !shadow)
             ? const []
             : const [
                 BoxShadow(

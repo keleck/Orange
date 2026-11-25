@@ -690,19 +690,16 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                         compact: MediaQuery.sizeOf(context).width < 420,
                       ),
                       const SizedBox(width: 6),
-                      Container(
+                      SizedBox(
                         width: 120,
                         height: 32,
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface(context, 0.1),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: AppColors.fg(context).withValues(alpha: 0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: LayoutBuilder(
+                        child: GlassCard(
+                          radius: 18,
+                          shadow: false,
+                          darkFill: 0.10,
+                          darkBorder: 0.20,
+                          padding: const EdgeInsets.all(2),
+                          child: LayoutBuilder(
                           builder: (context, constraints) {
                             return Stack(
                               children: [
@@ -804,6 +801,7 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                               ],
                             );
                           },
+                        ),
                         ),
                       ),
                       if (!Platform.isAndroid) ...[
