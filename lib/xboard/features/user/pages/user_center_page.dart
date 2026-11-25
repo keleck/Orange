@@ -1046,8 +1046,8 @@ class _ActionTile extends StatelessWidget {
             borderRadius: BorderRadius.zero, // 移除圆角
             border: Border(
               bottom: BorderSide(
-                color: AppColors.glassBorder(context), // 底部分隔线
-                width: 0.5,
+                color: AppColors.divider(context), // 底部分隔线
+                width: 0.8,
               ),
             ),
           ),

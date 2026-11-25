@@ -87,6 +87,9 @@ class AppColors {
       : lightSurfaceSubtle;
 
   /// 分割线：夜间半透明白，白天浅灰
+  /// 列表分隔线 / 输入框描边：要看得见，不能用白色
+  static Color separator(BuildContext context) => divider(context);
+
   static Color divider(BuildContext context) => isDark(context)
       ? Colors.white.withValues(alpha: 0.10)
       : const Color(0xFFE5EAF2);

@@ -430,7 +430,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               color: (AppColors.isDark(context) ? Colors.black.withValues(alpha: 0.2) : const Color(0x1412203A)),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: AppColors.glassBorder(context),
+                                color: AppColors.divider(context),
                               ),
                             ),
                             child: Text(
@@ -473,13 +473,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppColors.glassBorder(context),
+                                  color: AppColors.divider(context),
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppColors.glassBorder(context),
+                                  color: AppColors.divider(context),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
