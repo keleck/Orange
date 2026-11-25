@@ -61,6 +61,8 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 GlassCard(
                   radius: 18,
                   padding: EdgeInsets.zero,
+                  darkFill: 0.035,
+                  darkBorder: 0.07,
                   child: Column(
                     children: [
                       _ActionTile(

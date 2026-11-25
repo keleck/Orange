@@ -979,6 +979,8 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.all(16),
             radius: 20,
+            darkFill: 0.10,
+            darkBorder: 0.20,
             child: shouldShowPurchaseButton
                 ? Center(
                     child: Container(

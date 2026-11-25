@@ -17,6 +17,8 @@ class GlassCard extends StatelessWidget {
     this.onTap,
     this.blur = 18,
     this.tint,
+    this.darkFill = 0.08,
+    this.darkBorder = 0.14,
   });
 
   final Widget child;
@@ -31,9 +33,16 @@ class GlassCard extends StatelessWidget {
   /// 玻璃的染色（默认无色，只留白）
   final Color? tint;
 
+  /// 夜间模式的填充透明度：夜间不套用白玻璃，沿用原来的半透明白
+  final double darkFill;
+
+  /// 夜间模式的描边透明度
+  final double darkBorder;
+
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(radius);
+    final dark = Theme.of(context).brightness == Brightness.dark;
     final base = tint ?? Colors.white;
 
     final glass = ClipRRect(
@@ -44,17 +53,22 @@ class GlassCard extends StatelessWidget {
           padding: padding,
           decoration: BoxDecoration(
             borderRadius: borderRadius,
-            // 上亮下微沉：模拟光从上方穿过玻璃
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                base.withValues(alpha: 0.78),
-                base.withValues(alpha: 0.56),
-              ],
-            ),
+            // 白天：上亮下微沉的白色玻璃；夜间：沿用原来的半透明白，不做改动
+            color: dark ? base.withValues(alpha: darkFill) : null,
+            gradient: dark
+                ? null
+                : LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      base.withValues(alpha: 0.78),
+                      base.withValues(alpha: 0.56),
+                    ],
+                  ),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: Colors.white.withValues(
+                alpha: dark ? darkBorder : 0.85,
+              ),
               width: 1,
             ),
           ),
@@ -67,18 +81,21 @@ class GlassCard extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         borderRadius: borderRadius,
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x140F1B2E),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-          BoxShadow(
-            color: Color(0x1F0F1B2E),
-            blurRadius: 28,
-            offset: Offset(0, 14),
-          ),
-        ],
+        // 夜间不加阴影，保持原来的观感
+        boxShadow: dark
+            ? const []
+            : const [
+                BoxShadow(
+                  color: Color(0x140F1B2E),
+                  blurRadius: 6,
+                  offset: Offset(0, 2),
+                ),
+                BoxShadow(
+                  color: Color(0x1F0F1B2E),
+                  blurRadius: 28,
+                  offset: Offset(0, 14),
+                ),
+              ],
       ),
       child: onTap == null
           ? glass
