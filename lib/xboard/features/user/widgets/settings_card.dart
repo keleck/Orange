@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_clash/xboard/features/shared/widgets/app_icon_tile.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
+import 'package:fl_clash/widgets/glass_card.dart';
 
 /// 设置类页面的统一卡片样式：
 /// 深色半透明底 + 细描边 + 左侧圆角图标块，标题/副标题上下排布。
@@ -29,15 +30,12 @@ class SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = Container(
+    return GlassCard(
+      radius: 18,
+      darkFill: 0.035,
+      darkBorder: 0.07,
+      onTap: onTap,
       padding: EdgeInsets.all(dense ? 14 : 16),
-      decoration: BoxDecoration(
-        color: AppColors.surface(context, 0.035),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.surface(context, 0.07),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -89,17 +87,6 @@ class SettingsCard extends StatelessWidget {
             child!,
           ],
         ],
-      ),
-    );
-
-    if (onTap == null) return content;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: content,
       ),
     );
   }
