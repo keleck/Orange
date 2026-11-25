@@ -8,6 +8,8 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/xboard/domain/domain.dart';
 import 'package:flutter/material.dart';
+
+import 'package:fl_clash/widgets/glass_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_clash/l10n/l10n.dart';
@@ -973,21 +975,10 @@ class _XBoardHomePageState extends ConsumerState<XBoardHomePage>
                   _showProxySelector(context, ref);
                 }
               : null,
-          child: Container(
+          child: GlassCard(
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.all(16),
-            decoration: isExpiringSoon
-                ? BoxDecoration(
-                    color: AppColors.surface(context, 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: AppColors.cardShadow(context),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 255, 110, 38)
-                          .withValues(alpha: 0.4),
-                      width: 1.5,
-                    ),
-                  )
-                : AppColors.glassDecoration(context),
+            radius: 20,
             child: shouldShowPurchaseButton
                 ? Center(
                     child: Container(

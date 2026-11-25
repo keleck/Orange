@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:fl_clash/widgets/glass_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_clash/xboard/features/invite/dialogs/logout_dialog.dart';
@@ -56,16 +58,9 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                     icon: Icons.grid_view_rounded),
                 const SizedBox(height: 12),
                 // 垂直列表样式的快捷入口 - 包装在一个容器中
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.surface(context, 0.035),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: AppColors.surface(context, 0.07),
-                      width: 1,
-                    ),
-                  ),
-                  clipBehavior: Clip.antiAlias,
+                GlassCard(
+                  radius: 18,
+                  padding: EdgeInsets.zero,
                   child: Column(
                     children: [
                       _ActionTile(
