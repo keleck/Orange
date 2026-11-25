@@ -338,7 +338,8 @@ class ApplicationState extends ConsumerState<Application> {
                 ),
                 inputDecorationTheme: InputDecorationThemeData(
                   filled: true,
-                  fillColor: AppColors.lightSurfaceSubtle,
+                  // 输入框也用玻璃底：半透明白，能透出背景
+                  fillColor: const Color(0x99FFFFFF),
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,

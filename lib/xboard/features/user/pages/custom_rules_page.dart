@@ -3,6 +3,8 @@ import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/app_colors.dart';
 import 'package:fl_clash/xboard/utils/xboard_notification.dart';
 import 'package:flutter/material.dart';
+
+import 'package:fl_clash/widgets/glass_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_clash/l10n/l10n.dart';
@@ -422,16 +424,12 @@ class _CustomRulesPageState extends ConsumerState<CustomRulesPage> {
     final target = parts.length > 2 ? parts[2] : '';
     final isRemote = type == 'RULE-SET';
 
-    return Container(
+    return GlassCard(
       margin: const EdgeInsets.only(bottom: 8),
+      radius: 14,
+      darkFill: 0.035,
+      darkBorder: 0.06,
       padding: const EdgeInsets.fromLTRB(13, 11, 6, 11),
-      decoration: BoxDecoration(
-        color: AppColors.surface(context, 0.035),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.surface(context, 0.06),
-        ),
-      ),
       child: Row(
         children: [
           Container(
@@ -516,15 +514,11 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassCard(
+      radius: 18,
+      darkFill: 0.035,
+      darkBorder: 0.07,
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surface(context, 0.035),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.surface(context, 0.07),
-        ),
-      ),
       child: child,
     );
   }
