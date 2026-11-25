@@ -21,7 +21,7 @@ class AppColors {
   static const Color lightScaffold = Color(0xFFEDF2FB); // 页面底色（极光中段）
 
   // 磨砂卡片：半透明白，让背景的光晕透上来
-  static const Color lightGlass = Color(0xD1FFFFFF); // 82% 白，玻璃卡
+  static const Color lightGlass = Color(0xA8FFFFFF); // 66% 白，玻璃卡（能透出背景）
 
   // 背景：左上角柔光 → 右下角略深，形成斜向的光感
   static const Color lightGradientColor1 = Color(0xFFF9FCFF); // 左下光心

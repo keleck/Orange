@@ -1012,18 +1012,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             final isEnabled = isCampusHostsEnabled(ref, hosts);
 
             return ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(18),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColors.surface(context, 0.1),
                     border: Border.all(
                       color: AppColors.glassBorder(context),
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
