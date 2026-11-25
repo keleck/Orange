@@ -148,14 +148,10 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
                 const SizedBox(height: 12),
                 _buildWebsiteAndUpdateSection(context),
                 const SizedBox(height: 20),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.surface(context, 0.035),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: AppColors.surface(context, 0.07),
-                    ),
-                  ),
+                GlassCard(
+                  radius: 18,
+                  darkFill: 0.035,
+                  darkBorder: 0.07,
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
@@ -831,22 +827,10 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gradient = [
-      AppColors.surface(context, 0.15),
-      AppColors.surface(context, 0.1),
-    ];
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 240),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.outline(context)),
-      ),
+    return GlassCard(
+      radius: 16,
+      darkFill: 0.12,
+      darkBorder: 0.14,
       child: Column(
         children: [
           InkWell(
@@ -982,19 +966,13 @@ class _SmallActionTile extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: isLoading ? null : onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: AppColors.surface(context, 0.12),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.outline(context)),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          child: Row(
+    return GlassCard(
+      radius: 12,
+      darkFill: 0.12,
+      darkBorder: 0.14,
+      onTap: isLoading ? null : onTap,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (isLoading)
@@ -1038,8 +1016,6 @@ class _SmallActionTile extends StatelessWidget {
               ],
             ],
           ),
-        ),
-      ),
     );
   }
 }
