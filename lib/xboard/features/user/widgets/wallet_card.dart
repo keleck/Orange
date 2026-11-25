@@ -279,6 +279,12 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(context)
                                   .xboardTopupAmount,
+                              // 标签是浮动的，要给它留出上边距，否则会被容器边框压住
+                              contentPadding: const EdgeInsets.only(
+                                top: 26,
+                                bottom: 12,
+                                right: 12,
+                              ),
                               labelStyle: TextStyle(
                                 color: AppColors.fg(context)
                                     .withValues(alpha: 0.6),
@@ -298,8 +304,6 @@ class _WalletCardState extends ConsumerState<WalletCard> {
                                 ),
                               ),
                               border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 12),
                               hintText: '0.00',
                               hintStyle: TextStyle(
                                 color: AppColors.fg(context)
