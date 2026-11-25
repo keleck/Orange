@@ -18,10 +18,10 @@ class AppColors {
   static const Color lightSurfaceElevated = Color(0xFFFFFFFF); // 弹层
   static const Color lightSurfaceSubtle = Color(0xFFF4F8FE); // 卡片内次级块
   static const Color lightSurfaceStrong = Color(0xFFE8EFFA); // 嵌套块 / 输入框
-  static const Color lightScaffold = Color(0xFFE7EFFA); // 页面底色（渐变深处）
+  static const Color lightScaffold = Color(0xFFEFF4FA); // 页面底色（渐变深处）
 
   // 磨砂卡片：半透明白，让背景的光晕透上来
-  static const Color lightGlass = Color(0xF2FFFFFF); // 95% 白
+  static const Color lightGlass = Color(0xD1FFFFFF); // 82% 白，玻璃卡
 
   // 背景：左上角柔光 → 右下角略深，形成斜向的光感
   static const Color lightGradientColor1 = Color(0xFFF9FCFF); // 左下光心
@@ -135,8 +135,8 @@ class AppColors {
                 Colors.white.withValues(alpha: 0.04),
               ]
             : [
-                const Color(0xFFFFFFFF),
-                const Color(0xFFF6FAFF),
+                Colors.white.withValues(alpha: 0.92),
+                Colors.white.withValues(alpha: 0.74),
               ],
       ),
       border: Border.all(
@@ -200,24 +200,24 @@ class AppColors {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Color(0xFFE7EFFB),
-          Color(0xFFDCE8F7),
-          Color(0xFFE2ECFA),
+          Color(0xFFF4F7FC),
+          Color(0xFFE9EFF8),
+          Color(0xFFEFF4FA),
         ],
         stops: [0.0, 0.55, 1.0],
       ),
-      // 左上光晕：半径要小，光才是一团，而不是把整屏冲白
+      // 左上光晕：白，撑出亮部
       RadialGradient(
-        center: Alignment(-0.75, -1.0),
-        radius: 0.62,
-        colors: [Color(0xE6FFFFFF), Color(0x00FFFFFF)],
+        center: Alignment(-0.8, -1.0),
+        radius: 0.72,
+        colors: [Color(0xFFFFFFFF), Color(0x00FFFFFF)],
         stops: [0.0, 1.0],
       ),
-      // 右下光晕：弱一些，只托一下边缘
+      // 右下光晕：淡蓝，托出冷调
       RadialGradient(
         center: Alignment(1.0, 1.05),
-        radius: 0.55,
-        colors: [Color(0x4DFFFFFF), Color(0x00FFFFFF)],
+        radius: 0.7,
+        colors: [Color(0x66A9C7F5), Color(0x00A9C7F5)],
         stops: [0.0, 1.0],
       ),
     ]);
