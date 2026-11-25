@@ -225,7 +225,6 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
 
   Widget _buildTrafficUsageCard(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-
     // 优先使用 XBoard 用户状态中的订阅信息（实时API数据）
     final domainSubscription = ref.watch(subscriptionInfoProvider);
 
@@ -282,19 +281,11 @@ class _UserCenterPageState extends ConsumerState<UserCenterPage> {
     final email = ref.watch(userInfoProvider)?.email ??
         appLocalizations.xboardUserAccount;
 
-    return Container(
+    return GlassCard(
+      radius: 18,
+      darkFill: 0.10,
+      darkBorder: 0.07,
       padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: AppColors.cardGradientColors(context, accent: primary),
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.surface(context, 0.07),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -826,7 +817,6 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return GlassCard(
       radius: 16,
       darkFill: 0.12,
@@ -963,9 +953,6 @@ class _SmallActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return GlassCard(
       radius: 12,
       darkFill: 0.12,
