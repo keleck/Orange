@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fl_clash/clash/clash.dart';
@@ -250,10 +251,24 @@ class ApplicationState extends ConsumerState<Application> {
     );
   }
 
-  _buildApp(Widget child) {
+  _buildApp(BuildContext context, Widget child) {
+    var content = child;
+    // macOS 隐藏了原生标题栏（macOS 侧 titlebarAppearsTransparent +
+    // fullSizeContentView），内容会顶到红绿灯底下。这里补一个顶部安全区，
+    // 让 AppBar 之类的组件自动下移，红绿灯才不会压住标题。
+    if (Platform.isMacOS) {
+      final mediaQuery = MediaQuery.of(context);
+      content = MediaQuery(
+        data: mediaQuery.copyWith(
+          padding: mediaQuery.padding.copyWith(top: 28),
+          viewPadding: mediaQuery.viewPadding.copyWith(top: 28),
+        ),
+        child: content,
+      );
+    }
     return MessageManager(
       child: ThemeManager(
-        child: child,
+        child: content,
       ),
     );
   }
@@ -283,7 +298,7 @@ class ApplicationState extends ConsumerState<Application> {
               builder: (_, child) {
                 return AppEnvManager(
                   child: _buildPlatformApp(
-                    _buildApp(child!),
+                    _buildApp(context, child!),
                   ),
                 );
               },

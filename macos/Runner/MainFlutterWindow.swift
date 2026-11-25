@@ -15,6 +15,14 @@ class MainFlutterWindow: NSWindow {
         self.setContentSize(NSSize(width: 420, height: 780))
         self.center()
 
+        // 去掉原生标题栏的灰色横条：标题栏透明、标题文字隐藏，
+        // 内容视图延伸到窗口顶部（红绿灯浮在应用背景上）。
+        // Dart 侧会给顶部补 28pt 安全区，避免 AppBar 被红绿灯压住。
+        self.titlebarAppearsTransparent = true
+        self.titleVisibility = .hidden
+        self.styleMask.insert(.fullSizeContentView)
+        self.isMovableByWindowBackground = true
+
         FlutterMethodChannel(
             name: "launch_at_startup", binaryMessenger: flutterViewController.engine.binaryMessenger
         )
