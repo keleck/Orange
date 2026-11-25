@@ -18,7 +18,7 @@ class AppColors {
   static const Color lightSurfaceElevated = Color(0xFFFFFFFF); // 弹层
   static const Color lightSurfaceSubtle = Color(0xFFF4F8FE); // 卡片内次级块
   static const Color lightSurfaceStrong = Color(0xFFE8EFFA); // 嵌套块 / 输入框
-  static const Color lightScaffold = Color(0xFFEFF4FA); // 页面底色（渐变深处）
+  static const Color lightScaffold = Color(0xFFEDF2FB); // 页面底色（极光中段）
 
   // 磨砂卡片：半透明白，让背景的光晕透上来
   static const Color lightGlass = Color(0xD1FFFFFF); // 82% 白，玻璃卡
@@ -194,30 +194,22 @@ class AppColors {
     if (isDark(context)) {
       return MultiGradientDecoration([backgroundGradient(context)]);
     }
+    // 极光：蓝 → 青 → 淡紫 斜向流动，顶部再压一层白光
     return const MultiGradientDecoration([
-      // 底色：极淡的冷蓝，从上到下略微加深
       LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Color(0xFFF4F7FC),
-          Color(0xFFE9EFF8),
-          Color(0xFFEFF4FA),
+          Color(0xFFE9F2FE), // 淡蓝
+          Color(0xFFE4F4F2), // 青
+          Color(0xFFEDE9FA), // 淡紫
         ],
-        stops: [0.0, 0.55, 1.0],
+        stops: [0.0, 0.45, 1.0],
       ),
-      // 左上光晕：白，撑出亮部
       RadialGradient(
-        center: Alignment(-0.8, -1.0),
-        radius: 0.72,
-        colors: [Color(0xFFFFFFFF), Color(0x00FFFFFF)],
-        stops: [0.0, 1.0],
-      ),
-      // 右下光晕：淡蓝，托出冷调
-      RadialGradient(
-        center: Alignment(1.0, 1.05),
-        radius: 0.7,
-        colors: [Color(0x66A9C7F5), Color(0x00A9C7F5)],
+        center: Alignment(0.0, -1.0),
+        radius: 0.85,
+        colors: [Color(0xB3FFFFFF), Color(0x00FFFFFF)],
         stops: [0.0, 1.0],
       ),
     ]);
