@@ -309,12 +309,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 ),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: AppColors.outline(context),
+                  color: AppColors.glassBorder(context),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: (AppColors.isDark(context) ? Colors.black.withValues(alpha: 0.2) : const Color(0x1412203A)),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -329,7 +329,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: AppColors.outline(context),
+                          color: AppColors.glassBorder(context),
                         ),
                       ),
                     ),
@@ -427,10 +427,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.2),
+                              color: (AppColors.isDark(context) ? Colors.black.withValues(alpha: 0.2) : const Color(0x1412203A)),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: AppColors.outline(context),
+                                color: AppColors.glassBorder(context),
                               ),
                             ),
                             child: Text(
@@ -473,13 +473,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppColors.outline(context),
+                                  color: AppColors.glassBorder(context),
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppColors.outline(context),
+                                  color: AppColors.glassBorder(context),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -521,7 +521,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
-                          color: AppColors.outline(context),
+                          color: AppColors.glassBorder(context),
                         ),
                       ),
                     ),
@@ -1019,7 +1019,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   decoration: BoxDecoration(
                     color: AppColors.surface(context, 0.1),
                     border: Border.all(
-                      color: AppColors.outline(context),
+                      color: AppColors.glassBorder(context),
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),

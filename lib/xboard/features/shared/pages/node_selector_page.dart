@@ -278,7 +278,7 @@ class _NodeSelectorPageState extends ConsumerState<NodeSelectorPage> {
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.outline(context),
+              color: AppColors.glassBorder(context),
               width: 1.5,
             ),
             boxShadow: [

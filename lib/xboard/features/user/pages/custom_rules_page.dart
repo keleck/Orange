@@ -568,7 +568,7 @@ class _InputField extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.outline(context)),
+            borderSide: BorderSide(color: AppColors.glassBorder(context)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -662,7 +662,7 @@ class _PickerField extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.subtle(context),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.outline(context)),
+          border: Border.all(color: AppColors.glassBorder(context)),
           boxShadow: AppColors.isDark(context)
               ? null
               : [

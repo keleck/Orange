@@ -243,7 +243,7 @@ class _ServiceStatusCardState extends State<ServiceStatusCard> {
           color: AppColors.surface(context, 0.06),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: AppColors.outline(context),
+            color: AppColors.glassBorder(context),
             width: 1,
           ),
         ),

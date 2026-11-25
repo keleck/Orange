@@ -887,7 +887,7 @@ class _GiftCardRedeemWidgetState extends ConsumerState<_GiftCardRedeemWidget> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide:
-                            BorderSide(color: AppColors.outline(context)),
+                            BorderSide(color: AppColors.glassBorder(context)),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 12),
@@ -1046,7 +1046,7 @@ class _ActionTile extends StatelessWidget {
             borderRadius: BorderRadius.zero, // 移除圆角
             border: Border(
               bottom: BorderSide(
-                color: AppColors.outline(context), // 底部分隔线
+                color: AppColors.glassBorder(context), // 底部分隔线
                 width: 0.5,
               ),
             ),
