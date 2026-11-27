@@ -76,7 +76,8 @@ class MainFlutterWindow: NSWindow {
         splash.layer?.backgroundColor = background.cgColor
 
         let iconView = NSImageView()
-        iconView.image = NSApp.applicationIconImage
+        // 启动页用专门的 logo（火箭），没有配置时退回应用图标
+        iconView.image = NSImage(named: "SplashLogo") ?? NSApp.applicationIconImage
         iconView.imageScaling = .scaleProportionallyUpOrDown
         iconView.translatesAutoresizingMaskIntoConstraints = false
         splash.addSubview(iconView)
