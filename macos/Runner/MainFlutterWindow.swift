@@ -54,10 +54,18 @@ class MainFlutterWindow: NSWindow {
     private func installSplash() {
         guard let contentView = self.contentView else { return }
 
-        let isDark = NSApp.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        // 跟随应用内选择的主题，而不是系统外观：
+        // Dart 侧每次主题生效时把明暗写进 NSUserDefaults（flutter.splash_dark），
+        // 这里读上一次的值；没有记录时才退回系统外观。
+        let isDark: Bool
+        if let saved = UserDefaults.standard.object(forKey: "flutter.splash_dark") as? Bool {
+            isDark = saved
+        } else {
+            isDark = NSApp.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        }
         let background = isDark
             ? NSColor(srgbRed: 15.0 / 255.0, green: 14.0 / 255.0, blue: 29.0 / 255.0, alpha: 1.0)
-            : NSColor(srgbRed: 237.0 / 255.0, green: 243.0 / 255.0, blue: 253.0 / 255.0, alpha: 1.0)
+            : NSColor(srgbRed: 233.0 / 255.0, green: 242.0 / 255.0, blue: 254.0 / 255.0, alpha: 1.0)
         let titleColor = isDark
             ? NSColor(calibratedWhite: 0.88, alpha: 1.0)
             : NSColor(calibratedWhite: 0.30, alpha: 1.0)
