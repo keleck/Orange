@@ -83,13 +83,44 @@ class AppController {
     }, args: [groupName, proxyName]);
   }
 
-  restartCore() async {
+  /// 正在进行的重启。重启过程中再来的请求排到它后面，
+  /// 避免两次重启交错（reStart/initCore 各跑两遍，核心状态错乱）。
+  Future<void>? _restartInFlight;
+
+  restartCore() {
+    final inFlight = _restartInFlight;
+    if (inFlight != null) {
+      return inFlight.then((_) => restartCore());
+    }
+    final future = _performRestart();
+    _restartInFlight = future;
+    return future.whenComplete(() {
+      if (identical(_restartInFlight, future)) {
+        _restartInFlight = null;
+      }
+    });
+  }
+
+  Future<void> _performRestart() async {
     commonPrint.log("restart core");
+    // 授权必须在重启之前完成：重启内部还会走一次 apply，
+    // 如果那时才弹授权，apply 会再触发一次重启，形成重启套重启。
+    await _authorizeTunBeforeRestart();
     await clashService?.reStart();
     await _initCore();
     if (_ref.read(runTimeProvider.notifier).isStart) {
       await globalState.handleStart();
     }
+  }
+
+  /// 重启前先把 TUN 授权要到手，结果写进 realTunEnable。
+  Future<void> _authorizeTunBeforeRestart() async {
+    final wanted = _ref.read(patchClashConfigProvider).tun.enable;
+    if (!wanted) return;
+    if (_ref.read(realTunEnableProvider)) return;
+    final code = await system.authorizeCore();
+    _ref.read(realTunEnableProvider.notifier).value =
+        code == AuthorizeCode.success;
   }
 
   updateStatus(bool isStart) async {
@@ -313,10 +344,10 @@ class AppController {
       final code = await system.authorizeCore();
       switch (code) {
         case AuthorizeCode.success:
-          await restartCore();
-          // 授权成功后继续执行后续逻辑，确保立即应用 TUN 配置并触发网卡安装
+          // 授权已拿到，交给调用方继续 apply。
+          // 这里不能再调 restartCore：restartCore 内部也会 apply，
+          // 会变成重启套重启（上游 932826b5 修的就是这个）。
           break;
-          return Result.error("");
         case AuthorizeCode.none:
           break;
         case AuthorizeCode.error:
